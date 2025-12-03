@@ -206,10 +206,213 @@ impl WhiteBalance {
     }
 }
 
-// TODO: Add ExposureProgram enum
-// Map all CrExposureProgram_* constants from crsdk_sys::SCRSDK
-// Including: M, P, A, S, Auto, Movie modes, Scene modes, S&Q motion, etc.
-// Reference: CrExposureProgram_CrExposure_M_Manual, CrExposureProgram_CrExposure_P_Auto, etc.
+/// Exposure program mode (shooting mode)
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u32)]
+pub enum ExposureProgram {
+    /// Manual exposure (M mode)
+    Manual = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_M_Manual,
+    /// Program auto (P mode)
+    ProgramAuto = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_P_Auto,
+    /// Aperture priority (A mode)
+    AperturePriority = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_A_AperturePriority,
+    /// Shutter speed priority (S mode)
+    ShutterPriority = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_S_ShutterSpeedPriority,
+    /// Program Creative
+    ProgramCreative = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Program_Creative,
+    /// Program Action
+    ProgramAction = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Program_Action,
+    /// Portrait scene mode
+    Portrait = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Portrait,
+    /// Intelligent auto
+    Auto = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Auto,
+    /// Intelligent auto plus
+    AutoPlus = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Auto_Plus,
+    /// P mode variant A
+    PA = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_P_A,
+    /// P mode variant S
+    PS = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_P_S,
+    /// Sports action scene mode
+    SportsAction = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Sports_Action,
+    /// Sunset scene mode
+    Sunset = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Sunset,
+    /// Night scene mode
+    Night = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Night,
+    /// Landscape scene mode
+    Landscape = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Landscape,
+    /// Macro scene mode
+    Macro = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Macro,
+    /// Handheld twilight scene mode
+    HandheldTwilight = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_HandheldTwilight,
+    /// Night portrait scene mode
+    NightPortrait = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_NightPortrait,
+    /// Anti motion blur scene mode
+    AntiMotionBlur = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_AntiMotionBlur,
+    /// Pet scene mode
+    Pet = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Pet,
+    /// Gourmet scene mode
+    Gourmet = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Gourmet,
+    /// Fireworks scene mode
+    Fireworks = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Fireworks,
+    /// High sensitivity scene mode
+    HighSensitivity = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_HighSensitivity,
+    /// Memory recall mode
+    MemoryRecall = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_MemoryRecall,
+    /// Continuous priority AE 8 pictures
+    ContinuousPriorityAE8 =
+        crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_ContinuousPriority_AE_8pics,
+    /// Continuous priority AE 10 pictures
+    ContinuousPriorityAE10 =
+        crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_ContinuousPriority_AE_10pics,
+    /// Continuous priority AE 12 pictures
+    ContinuousPriorityAE12 =
+        crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_ContinuousPriority_AE_12pics,
+    /// 3D sweep panorama mode
+    SweepPanorama3D = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_3D_SweepPanorama,
+    /// Sweep panorama mode
+    SweepPanorama = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_SweepPanorama,
+    /// Movie program auto (P mode)
+    MovieP = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Movie_P,
+    /// Movie aperture priority (A mode)
+    MovieA = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Movie_A,
+    /// Movie shutter priority (S mode)
+    MovieS = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Movie_S,
+    /// Movie manual (M mode)
+    MovieM = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Movie_M,
+    /// Movie auto mode
+    MovieAuto = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Movie_Auto,
+    /// Movie flexible exposure (F mode)
+    MovieF = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Movie_F,
+    /// Movie S&Q Motion program auto (P mode)
+    MovieSQMotionP = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Movie_SQMotion_P,
+    /// Movie S&Q Motion aperture priority (A mode)
+    MovieSQMotionA = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Movie_SQMotion_A,
+    /// Movie S&Q Motion shutter priority (S mode)
+    MovieSQMotionS = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Movie_SQMotion_S,
+    /// Movie S&Q Motion manual (M mode)
+    MovieSQMotionM = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Movie_SQMotion_M,
+    /// Movie S&Q Motion auto
+    MovieSQMotionAuto = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Movie_SQMotion_AUTO,
+    /// Movie S&Q Motion flexible exposure (F mode)
+    MovieSQMotionF = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Movie_SQMotion_F,
+    /// Flash off mode
+    FlashOff = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Flash_Off,
+    /// Picture effect mode
+    PictureEffect = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_PictureEffect,
+    /// High frame rate program auto (P mode)
+    HiFrameRateP = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_HiFrameRate_P,
+    /// High frame rate aperture priority (A mode)
+    HiFrameRateA = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_HiFrameRate_A,
+    /// High frame rate shutter priority (S mode)
+    HiFrameRateS = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_HiFrameRate_S,
+    /// High frame rate manual (M mode)
+    HiFrameRateM = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_HiFrameRate_M,
+    /// S&Q Motion program auto (P mode)
+    SQMotionP = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_SQMotion_P,
+    /// S&Q Motion aperture priority (A mode)
+    SQMotionA = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_SQMotion_A,
+    /// S&Q Motion shutter priority (S mode)
+    SQMotionS = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_SQMotion_S,
+    /// S&Q Motion manual (M mode)
+    SQMotionM = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_SQMotion_M,
+    /// Movie mode
+    Movie = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_MOVIE,
+    /// Still mode
+    Still = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_STILL,
+    /// Movie flexible exposure mode (F mode)
+    MovieFMode = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Movie_F_Mode,
+    /// Movie interval recording flexible exposure (F mode)
+    MovieIntervalRecF = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Movie_IntervalRec_F,
+    /// Movie interval recording program auto (P mode)
+    MovieIntervalRecP = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Movie_IntervalRec_P,
+    /// Movie interval recording aperture priority (A mode)
+    MovieIntervalRecA = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Movie_IntervalRec_A,
+    /// Movie interval recording shutter priority (S mode)
+    MovieIntervalRecS = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Movie_IntervalRec_S,
+    /// Movie interval recording manual (M mode)
+    MovieIntervalRecM = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Movie_IntervalRec_M,
+    /// Movie interval recording auto
+    MovieIntervalRecAuto = crsdk_sys::SCRSDK::CrExposureProgram_CrExposure_Movie_IntervalRec_AUTO,
+}
+
+impl ExposureProgram {
+    /// Get the raw SDK value
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    /// Create from raw SDK value
+    pub fn from_raw(value: u64) -> Option<Self> {
+        use crsdk_sys::SCRSDK::*;
+        Some(match value as u32 {
+            CrExposureProgram_CrExposure_M_Manual => Self::Manual,
+            CrExposureProgram_CrExposure_P_Auto => Self::ProgramAuto,
+            CrExposureProgram_CrExposure_A_AperturePriority => Self::AperturePriority,
+            CrExposureProgram_CrExposure_S_ShutterSpeedPriority => Self::ShutterPriority,
+            CrExposureProgram_CrExposure_Program_Creative => Self::ProgramCreative,
+            CrExposureProgram_CrExposure_Program_Action => Self::ProgramAction,
+            CrExposureProgram_CrExposure_Portrait => Self::Portrait,
+            CrExposureProgram_CrExposure_Auto => Self::Auto,
+            CrExposureProgram_CrExposure_Auto_Plus => Self::AutoPlus,
+            CrExposureProgram_CrExposure_P_A => Self::PA,
+            CrExposureProgram_CrExposure_P_S => Self::PS,
+            CrExposureProgram_CrExposure_Sports_Action => Self::SportsAction,
+            CrExposureProgram_CrExposure_Sunset => Self::Sunset,
+            CrExposureProgram_CrExposure_Night => Self::Night,
+            CrExposureProgram_CrExposure_Landscape => Self::Landscape,
+            CrExposureProgram_CrExposure_Macro => Self::Macro,
+            CrExposureProgram_CrExposure_HandheldTwilight => Self::HandheldTwilight,
+            CrExposureProgram_CrExposure_NightPortrait => Self::NightPortrait,
+            CrExposureProgram_CrExposure_AntiMotionBlur => Self::AntiMotionBlur,
+            CrExposureProgram_CrExposure_Pet => Self::Pet,
+            CrExposureProgram_CrExposure_Gourmet => Self::Gourmet,
+            CrExposureProgram_CrExposure_Fireworks => Self::Fireworks,
+            CrExposureProgram_CrExposure_HighSensitivity => Self::HighSensitivity,
+            CrExposureProgram_CrExposure_MemoryRecall => Self::MemoryRecall,
+            CrExposureProgram_CrExposure_ContinuousPriority_AE_8pics => Self::ContinuousPriorityAE8,
+            CrExposureProgram_CrExposure_ContinuousPriority_AE_10pics => {
+                Self::ContinuousPriorityAE10
+            }
+            CrExposureProgram_CrExposure_ContinuousPriority_AE_12pics => {
+                Self::ContinuousPriorityAE12
+            }
+            CrExposureProgram_CrExposure_3D_SweepPanorama => Self::SweepPanorama3D,
+            CrExposureProgram_CrExposure_SweepPanorama => Self::SweepPanorama,
+            CrExposureProgram_CrExposure_Movie_P => Self::MovieP,
+            CrExposureProgram_CrExposure_Movie_A => Self::MovieA,
+            CrExposureProgram_CrExposure_Movie_S => Self::MovieS,
+            CrExposureProgram_CrExposure_Movie_M => Self::MovieM,
+            CrExposureProgram_CrExposure_Movie_Auto => Self::MovieAuto,
+            CrExposureProgram_CrExposure_Movie_F => Self::MovieF,
+            CrExposureProgram_CrExposure_Movie_SQMotion_P => Self::MovieSQMotionP,
+            CrExposureProgram_CrExposure_Movie_SQMotion_A => Self::MovieSQMotionA,
+            CrExposureProgram_CrExposure_Movie_SQMotion_S => Self::MovieSQMotionS,
+            CrExposureProgram_CrExposure_Movie_SQMotion_M => Self::MovieSQMotionM,
+            CrExposureProgram_CrExposure_Movie_SQMotion_AUTO => Self::MovieSQMotionAuto,
+            CrExposureProgram_CrExposure_Movie_SQMotion_F => Self::MovieSQMotionF,
+            CrExposureProgram_CrExposure_Flash_Off => Self::FlashOff,
+            CrExposureProgram_CrExposure_PictureEffect => Self::PictureEffect,
+            CrExposureProgram_CrExposure_HiFrameRate_P => Self::HiFrameRateP,
+            CrExposureProgram_CrExposure_HiFrameRate_A => Self::HiFrameRateA,
+            CrExposureProgram_CrExposure_HiFrameRate_S => Self::HiFrameRateS,
+            CrExposureProgram_CrExposure_HiFrameRate_M => Self::HiFrameRateM,
+            CrExposureProgram_CrExposure_SQMotion_P => Self::SQMotionP,
+            CrExposureProgram_CrExposure_SQMotion_A => Self::SQMotionA,
+            CrExposureProgram_CrExposure_SQMotion_S => Self::SQMotionS,
+            CrExposureProgram_CrExposure_SQMotion_M => Self::SQMotionM,
+            CrExposureProgram_CrExposure_MOVIE => Self::Movie,
+            CrExposureProgram_CrExposure_STILL => Self::Still,
+            CrExposureProgram_CrExposure_Movie_F_Mode => Self::MovieFMode,
+            CrExposureProgram_CrExposure_Movie_IntervalRec_F => Self::MovieIntervalRecF,
+            CrExposureProgram_CrExposure_Movie_IntervalRec_P => Self::MovieIntervalRecP,
+            CrExposureProgram_CrExposure_Movie_IntervalRec_A => Self::MovieIntervalRecA,
+            CrExposureProgram_CrExposure_Movie_IntervalRec_S => Self::MovieIntervalRecS,
+            CrExposureProgram_CrExposure_Movie_IntervalRec_M => Self::MovieIntervalRecM,
+            CrExposureProgram_CrExposure_Movie_IntervalRec_AUTO => Self::MovieIntervalRecAuto,
+            _ => return None,
+        })
+    }
+}
 
 // TODO: Add DriveMode enum
 // Map all CrDriveMode_* constants from crsdk_sys::SCRSDK
@@ -435,6 +638,14 @@ mod tests {
         let raw = wb.as_raw();
         let back = WhiteBalance::from_raw(raw);
         assert_eq!(back, Some(wb));
+    }
+
+    #[test]
+    fn test_exposure_program_roundtrip() {
+        let mode = ExposureProgram::Manual;
+        let raw = mode.as_raw();
+        let back = ExposureProgram::from_raw(raw);
+        assert_eq!(back, Some(mode));
     }
 
     #[test]
