@@ -65,11 +65,6 @@ impl CameraDevice {
     pub fn model(&self) -> CameraModel {
         self.model
     }
-
-    /// Get the device handle (for internal use)
-    pub(crate) fn handle(&self) -> i64 {
-        self.handle
-    }
 }
 
 impl Drop for CameraDevice {
@@ -91,30 +86,36 @@ pub struct CameraDeviceBuilder {
 }
 
 impl CameraDeviceBuilder {
+    /// Create a new builder with default settings
     pub fn new() -> Self {
         Self::default()
     }
 
+    /// Set the camera's IP address
     pub fn ip_address(mut self, ip: Ipv4Addr) -> Self {
         self.info.ip_address = Some(ip);
         self
     }
 
+    /// Set the camera's MAC address
     pub fn mac_address(mut self, mac: MacAddr) -> Self {
         self.info.mac_address = Some(mac);
         self
     }
 
+    /// Set the camera model
     pub fn model(mut self, model: CameraModel) -> Self {
         self.info.model = Some(model);
         self
     }
 
+    /// Enable or disable SSH tunnel
     pub fn ssh_enabled(mut self, enabled: bool) -> Self {
         self.info.ssh_enabled = enabled;
         self
     }
 
+    /// Set SSH credentials (also enables SSH)
     pub fn ssh_credentials(mut self, user: impl Into<String>, password: impl Into<String>) -> Self {
         self.info.ssh_user = Some(user.into());
         self.info.ssh_password = Some(password.into());
@@ -122,6 +123,7 @@ impl CameraDeviceBuilder {
         self
     }
 
+    /// Set the SSH fingerprint for verification
     pub fn ssh_fingerprint(mut self, fingerprint: impl Into<String>) -> Self {
         self.info.ssh_fingerprint = Some(fingerprint.into());
         self
@@ -139,7 +141,7 @@ impl CameraDeviceBuilder {
             .info
             .mac_address
             .ok_or_else(|| Error::InvalidParameter("MAC address is required".to_string()))?;
-        let model = self.info.model.unwrap_or(CameraModel::FX3);
+        let model = self.info.model.unwrap_or(CameraModel::Fx3);
 
         ensure_sdk_initialized()?;
 
@@ -178,7 +180,7 @@ impl CameraDeviceBuilder {
             .info
             .mac_address
             .ok_or_else(|| Error::InvalidParameter("MAC address is required".to_string()))?;
-        let model = self.info.model.unwrap_or(CameraModel::FX3);
+        let model = self.info.model.unwrap_or(CameraModel::Fx3);
 
         ensure_sdk_initialized()?;
 

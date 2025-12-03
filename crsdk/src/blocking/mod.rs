@@ -13,7 +13,7 @@
 //!     let mut builder = CameraDevice::builder()
 //!         .ip_address("192.168.1.100".parse()?)
 //!         .mac_address("AA:BB:CC:DD:EE:FF".parse()?)
-//!         .model(CameraModel::FX3);
+//!         .model(CameraModel::Fx3);
 //!
 //!     // For SSH connections
 //!     builder = builder.ssh_enabled(true);

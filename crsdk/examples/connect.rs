@@ -48,7 +48,7 @@ async fn main() -> Result<()> {
     let mut builder = CameraDevice::builder()
         .ip_address(args.ip.parse().expect("Invalid IP address"))
         .mac_address(args.mac.parse().expect("Invalid MAC address"))
-        .model(CameraModel::FX3);
+        .model(CameraModel::Fx3);
 
     if args.ssh {
         let user = args.user.expect("--user required with --ssh");
