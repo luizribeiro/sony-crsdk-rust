@@ -59,12 +59,14 @@
 pub mod blocking;
 mod device;
 mod error;
+mod property;
 mod sdk;
 mod types;
 
 // Re-exports for async API (default)
 pub use device::{CameraDevice, CameraDeviceBuilder};
 pub use error::{Error, Result};
+pub use property::{DataType, DeviceProperty, EnableFlag, FocusMode, PropertyCode, WhiteBalance};
 pub use sdk::Sdk;
 pub use types::{CameraModel, ConnectionInfo, MacAddr};
 
