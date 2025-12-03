@@ -41,6 +41,7 @@
 //! ## Implemented Features
 //!
 //! ✅ SDK initialization and lifecycle
+//! ✅ Camera discovery (network and USB enumeration)
 //! ✅ Basic connection (IP + MAC + SSH)
 //! ✅ Error handling
 //! ✅ Property system (ISO, aperture, shutter speed, focus mode, etc.)
@@ -48,7 +49,6 @@
 //!
 //! ## Planned Features
 //!
-//! - Camera discovery
 //! - Live view streaming
 //! - Event callbacks
 //! - Content transfer (download images)
@@ -66,14 +66,14 @@ mod sdk;
 mod types;
 
 // Re-exports for async API (default)
-pub use device::{CameraDevice, CameraDeviceBuilder};
+pub use device::{discover_cameras, CameraDevice, CameraDeviceBuilder};
 pub use error::{Error, Result};
 pub use property::{
     DataType, DeviceProperty, DriveMode, EnableFlag, ExposureProgram, FlashMode, FocusArea,
     FocusMode, MeteringMode, PropertyCode, WhiteBalance,
 };
 pub use sdk::Sdk;
-pub use types::{CameraModel, ConnectionInfo, MacAddr};
+pub use types::{CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, MacAddr};
 
 #[cfg(test)]
 mod tests {
