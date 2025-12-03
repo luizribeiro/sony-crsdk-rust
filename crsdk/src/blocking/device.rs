@@ -6,6 +6,8 @@ use asyncwrap::blocking_impl;
 
 use crate::command::{CommandId, CommandParam, LockIndicator};
 use crate::error::{Error, Result};
+use crate::event::CameraEvent;
+use crate::event_sender::EventSender;
 use crate::property::{
     device_property_from_sdk, DeviceProperty, DriveMode, ExposureProgram, FlashMode, FocusArea,
     FocusMode, MeteringMode, PropertyCode, WhiteBalance,
@@ -14,11 +16,12 @@ use crate::types::{
     ip_to_sdk_format, CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, MacAddr,
 };
 use crate::Sdk;
-use std::ffi::CString;
+use std::ffi::{c_void, CString};
 use std::net::Ipv4Addr;
 use std::ptr;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
+use tokio::sync::mpsc;
 
 static SDK_INITIALIZED: AtomicBool = AtomicBool::new(false);
 
@@ -232,7 +235,20 @@ fn create_camera_info(
 pub struct CameraDevice {
     handle: i64,
     model: CameraModel,
+    /// Event receiver - events from SDK callbacks arrive here
+    event_receiver: mpsc::UnboundedReceiver<CameraEvent>,
+    /// Callback pointer - must be destroyed when device is dropped
+    callback_ptr: *mut crsdk_sys::SCRSDK::IDeviceCallback,
+    /// Event sender pointer - must be reclaimed when device is dropped
+    event_sender_ptr: *mut c_void,
 }
+
+// SAFETY: CameraDevice can be sent between threads because:
+// - handle is just an i64
+// - model is Copy
+// - event_receiver is Send
+// - callback_ptr and event_sender_ptr are only accessed in Drop
+unsafe impl Send for CameraDevice {}
 
 #[blocking_impl(crate::CameraDevice, strategy = "block_in_place")]
 impl CameraDevice {
@@ -559,14 +575,63 @@ impl CameraDevice {
     pub fn stop_recording(&self) -> Result<()> {
         self.send_command(CommandId::MovieRecord, CommandParam::Up)
     }
+
+    /// Try to receive an event without blocking
+    ///
+    /// Returns `None` if no events are currently available.
+    /// For async code, use `events()` to get a stream instead.
+    pub fn try_recv_event(&mut self) -> Option<CameraEvent> {
+        self.event_receiver.try_recv().ok()
+    }
+
+    /// Take the event receiver for use with async code
+    ///
+    /// This consumes the receiver from this device. After calling this,
+    /// `try_recv_event()` will always return `None`.
+    ///
+    /// The returned receiver implements `Stream` and can be used with
+    /// `while let Some(event) = receiver.recv().await { ... }`
+    pub fn take_event_receiver(&mut self) -> mpsc::UnboundedReceiver<CameraEvent> {
+        // Replace with a dummy channel - the sender is never used
+        let (_, dummy_receiver) = mpsc::unbounded_channel();
+        std::mem::replace(&mut self.event_receiver, dummy_receiver)
+    }
 }
 
 impl Drop for CameraDevice {
     fn drop(&mut self) {
+        // IMPORTANT: Order matters here to avoid use-after-free
+        //
+        // 1. Disconnect() tells the SDK we're done, and blocks until all
+        //    pending callbacks complete (per Sony SDK documentation).
+        // 2. ReleaseDevice() releases internal SDK resources.
+        // 3. Destroy callback - safe because SDK guarantees no more calls
+        //    after Disconnect() returns.
+        // 4. Reclaim EventSender - safe because callback is destroyed.
+        //
+        // This order ensures no callbacks can fire after we free memory.
+
         if self.handle != 0 {
+            // SAFETY: handle is valid if non-zero, obtained from SDK Connect
             unsafe {
                 crsdk_sys::SCRSDK::Disconnect(self.handle);
                 crsdk_sys::SCRSDK::ReleaseDevice(self.handle);
+            }
+        }
+
+        if !self.callback_ptr.is_null() {
+            // SAFETY: callback_ptr was created by crsdk_create_rust_callback
+            // and SDK callbacks are complete after Disconnect()
+            unsafe {
+                crsdk_sys::crsdk_destroy_rust_callback(self.callback_ptr);
+            }
+        }
+
+        if !self.event_sender_ptr.is_null() {
+            // SAFETY: event_sender_ptr was created by EventSender::into_raw()
+            // and callback is destroyed so no more sends possible
+            unsafe {
+                let _ = EventSender::from_raw(self.event_sender_ptr);
             }
         }
     }
@@ -683,6 +748,15 @@ impl CameraDeviceBuilder {
             None => create_camera_info(ip, mac, model, self.info.ssh_enabled)?,
         };
 
+        // Create event channel and callback
+        let (event_sender, event_receiver) = mpsc::unbounded_channel();
+        let event_sender = EventSender::new(event_sender);
+        let event_sender_ptr = event_sender.into_raw();
+
+        // Create the C++ callback that will forward events to our channel
+        // SAFETY: event_sender_ptr is a valid pointer from EventSender::into_raw()
+        let callback_ptr = unsafe { crsdk_sys::crsdk_create_rust_callback(event_sender_ptr) };
+
         let mut device_handle: i64 = 0;
 
         let user_cstr = self
@@ -710,12 +784,10 @@ impl CameraDeviceBuilder {
             .as_ref()
             .map_or(0, |s| s.len() as u32);
 
-        let callback = unsafe { crsdk_sys::crsdk_get_minimal_callback() };
-
         let result = unsafe {
             crsdk_sys::SCRSDK::Connect(
                 camera_info_ptr,
-                callback,
+                callback_ptr,
                 &mut device_handle,
                 crsdk_sys::SCRSDK::CrSdkControlMode_CrSdkControlMode_Remote,
                 crsdk_sys::SCRSDK::CrReconnectingSet_CrReconnecting_ON,
@@ -727,12 +799,21 @@ impl CameraDeviceBuilder {
         };
 
         if result != 0 {
+            // Clean up callback and event sender on failure
+            // SAFETY: callback_ptr was just created above
+            unsafe {
+                crsdk_sys::crsdk_destroy_rust_callback(callback_ptr);
+                let _ = EventSender::from_raw(event_sender_ptr);
+            }
             return Err(Error::from_sdk_error(result as u32));
         }
 
         Ok(CameraDevice {
             handle: device_handle,
             model,
+            event_receiver,
+            callback_ptr,
+            event_sender_ptr,
         })
     }
 }

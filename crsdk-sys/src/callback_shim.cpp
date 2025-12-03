@@ -1,33 +1,12 @@
-// Minimal IDeviceCallback implementation for Rust FFI
-// All methods have empty default implementations in the SDK header
+// IDeviceCallback implementation for Rust FFI
 //
-// TODO: Implement proper event forwarding to Rust
+// This file provides two callback implementations:
+// 1. MinimalCallback - does nothing, used when events aren't needed
+// 2. RustCallback - forwards all events to Rust via function pointers
 //
-// The SDK calls these methods to notify about camera events:
-//   - OnConnected(version)        -> connection established
-//   - OnDisconnected(error)       -> connection lost
-//   - OnPropertyChanged()         -> camera settings changed (ISO, shutter, etc.)
-//   - OnPropertyChangedCodes()    -> which specific properties changed
-//   - OnError(error)              -> camera error occurred
-//   - OnWarning(warning)          -> camera warning
-//   - OnCompleteDownload()        -> file download finished
-//   - OnNotifyContentsTransfer()  -> transfer progress updates
-//
-// To implement:
-// 1. Add Rust function pointers for each event type
-// 2. Store them in a struct accessible from C++
-// 3. Override each virtual method to call the Rust function pointer
-// 4. On Rust side: send events through tokio::sync::mpsc channel
-// 5. Expose as async Stream<Item=CameraEvent> on CameraDevice
-//
-// Example Rust API:
-//   while let Some(event) = camera.events().next().await {
-//       match event {
-//           CameraEvent::PropertyChanged(codes) => { ... }
-//           CameraEvent::Disconnected(error) => break,
-//           _ => {}
-//       }
-//   }
+// The RustCallback stores a context pointer (the Rust channel sender) and
+// calls Rust FFI functions for each event. These functions are non-blocking
+// and simply send to a tokio::sync::mpsc channel.
 
 #include "IDeviceCallback.h"
 #include "ICrCameraObjectInfo.h"
@@ -128,8 +107,111 @@ namespace {
     static MinimalCallback g_callback;
 }
 
+// Rust FFI function declarations - these are implemented in Rust
+// and send events to a tokio::sync::mpsc channel
+extern "C" {
+    void crsdk_event_connected(void* ctx, CrInt32u version);
+    void crsdk_event_disconnected(void* ctx, CrInt32u error);
+    void crsdk_event_property_changed(void* ctx, CrInt32u num, const CrInt32u* codes);
+    void crsdk_event_lv_property_changed(void* ctx, CrInt32u num, const CrInt32u* codes);
+    void crsdk_event_download_complete(void* ctx, const CrChar* filename);
+    void crsdk_event_contents_transfer(void* ctx, CrInt32u notify, CrInt64u handle, const CrChar* filename);
+    void crsdk_event_warning(void* ctx, CrInt32u warning);
+    void crsdk_event_warning_ext(void* ctx, CrInt32u warning, CrInt32 p1, CrInt32 p2, CrInt32 p3);
+    void crsdk_event_error(void* ctx, CrInt32u error);
+    void crsdk_event_remote_transfer_progress(void* ctx, CrInt32u notify, CrInt32u percent, const CrChar* filename);
+    void crsdk_event_remote_transfer_data(void* ctx, CrInt32u notify, CrInt32u percent, const CrInt8u* data, CrInt64u size);
+    void crsdk_event_contents_list_changed(void* ctx, CrInt32u notify, CrInt32u slot, CrInt32u added);
+    void crsdk_event_firmware_update(void* ctx, CrInt32u notify);
+}
+
+// Callback class that forwards events to Rust
+class RustCallback : public SCRSDK::IDeviceCallback {
+public:
+    explicit RustCallback(void* ctx) : ctx_(ctx) {}
+
+    void OnConnected(SCRSDK::DeviceConnectionVersioin version) override {
+        if (ctx_) crsdk_event_connected(ctx_, static_cast<CrInt32u>(version));
+    }
+
+    void OnDisconnected(CrInt32u error) override {
+        if (ctx_) crsdk_event_disconnected(ctx_, error);
+    }
+
+    void OnPropertyChanged() override {
+        // Use the codes version instead for more detail
+    }
+
+    void OnPropertyChangedCodes(CrInt32u num, CrInt32u* codes) override {
+        if (ctx_) crsdk_event_property_changed(ctx_, num, codes);
+    }
+
+    void OnLvPropertyChanged() override {
+        // Use the codes version instead for more detail
+    }
+
+    void OnLvPropertyChangedCodes(CrInt32u num, CrInt32u* codes) override {
+        if (ctx_) crsdk_event_lv_property_changed(ctx_, num, codes);
+    }
+
+    void OnCompleteDownload(CrChar* filename, CrInt32u /*type*/) override {
+        if (ctx_) crsdk_event_download_complete(ctx_, filename);
+    }
+
+    void OnNotifyContentsTransfer(CrInt32u notify, SCRSDK::CrContentHandle handle, CrChar* filename) override {
+        if (ctx_) crsdk_event_contents_transfer(ctx_, notify, handle, filename);
+    }
+
+    void OnWarning(CrInt32u warning) override {
+        if (ctx_) crsdk_event_warning(ctx_, warning);
+    }
+
+    void OnWarningExt(CrInt32u warning, CrInt32 p1, CrInt32 p2, CrInt32 p3) override {
+        if (ctx_) crsdk_event_warning_ext(ctx_, warning, p1, p2, p3);
+    }
+
+    void OnError(CrInt32u error) override {
+        if (ctx_) crsdk_event_error(ctx_, error);
+    }
+
+    void OnNotifyRemoteTransferResult(CrInt32u notify, CrInt32u percent, CrChar* filename) override {
+        if (ctx_) crsdk_event_remote_transfer_progress(ctx_, notify, percent, filename);
+    }
+
+    void OnNotifyRemoteTransferResult(CrInt32u notify, CrInt32u percent, CrInt8u* data, CrInt64u size) override {
+        if (ctx_) crsdk_event_remote_transfer_data(ctx_, notify, percent, data, size);
+    }
+
+    void OnNotifyRemoteTransferContentsListChanged(CrInt32u notify, CrInt32u slot, CrInt32u added) override {
+        if (ctx_) crsdk_event_contents_list_changed(ctx_, notify, slot, added);
+    }
+
+    void OnNotifyRemoteFirmwareUpdateResult(CrInt32u notify, const void* /*param*/) override {
+        if (ctx_) crsdk_event_firmware_update(ctx_, notify);
+    }
+
+    // These are less commonly needed - use defaults for now
+    // void OnNotifyFTPTransferResult(...) override { }
+    // void OnReceivePlaybackTimeCode(...) override { }
+    // void OnReceivePlaybackData(...) override { }
+    // void OnNotifyMonitorUpdated(...) override { }
+
+private:
+    void* ctx_;
+};
+
 extern "C" {
     SCRSDK::IDeviceCallback* crsdk_get_minimal_callback() {
         return &g_callback;
+    }
+
+    // Create a new RustCallback with the given context (Rust channel sender pointer)
+    SCRSDK::IDeviceCallback* crsdk_create_rust_callback(void* ctx) {
+        return new RustCallback(ctx);
+    }
+
+    // Destroy a RustCallback
+    void crsdk_destroy_rust_callback(SCRSDK::IDeviceCallback* callback) {
+        delete callback;
     }
 }

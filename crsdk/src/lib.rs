@@ -61,6 +61,8 @@ pub mod blocking;
 mod command;
 mod device;
 mod error;
+mod event;
+mod event_sender;
 mod property;
 mod sdk;
 mod types;
@@ -68,6 +70,7 @@ mod types;
 // Re-exports for async API (default)
 pub use device::{discover_cameras, CameraDevice, CameraDeviceBuilder};
 pub use error::{Error, Result};
+pub use event::CameraEvent;
 pub use property::{
     DataType, DeviceProperty, DriveMode, EnableFlag, ExposureProgram, FlashMode, FocusArea,
     FocusMode, MeteringMode, PropertyCode, WhiteBalance,

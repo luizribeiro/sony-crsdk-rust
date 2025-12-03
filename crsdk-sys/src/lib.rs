@@ -85,6 +85,18 @@ extern "C" {
     pub fn crsdk_camera_info_release(info: *mut SCRSDK::ICrCameraObjectInfo);
 }
 
+// Event callback shims
+extern "C" {
+    /// Create a new RustCallback with the given context pointer
+    ///
+    /// The context should be a pointer to a Rust EventSender that will receive events.
+    /// The callback must be destroyed with crsdk_destroy_rust_callback when done.
+    pub fn crsdk_create_rust_callback(ctx: *mut std::ffi::c_void) -> *mut SCRSDK::IDeviceCallback;
+
+    /// Destroy a RustCallback created with crsdk_create_rust_callback
+    pub fn crsdk_destroy_rust_callback(callback: *mut SCRSDK::IDeviceCallback);
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
