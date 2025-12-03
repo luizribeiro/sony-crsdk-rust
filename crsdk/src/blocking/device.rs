@@ -343,6 +343,19 @@ impl CameraDevice {
         self.release_shutter()?;
         Ok(())
     }
+
+    /// Start movie recording
+    ///
+    /// The camera must be in a mode that supports movie recording (Movie mode).
+    /// Call `stop_recording()` to stop.
+    pub fn start_recording(&self) -> Result<()> {
+        self.send_command(CommandId::MovieRecord, CommandParam::Down)
+    }
+
+    /// Stop movie recording
+    pub fn stop_recording(&self) -> Result<()> {
+        self.send_command(CommandId::MovieRecord, CommandParam::Up)
+    }
 }
 
 impl Drop for CameraDevice {
