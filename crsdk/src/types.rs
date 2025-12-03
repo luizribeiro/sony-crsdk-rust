@@ -96,10 +96,18 @@ impl CameraModel {
     /// Get SDK enum value for this model
     pub(crate) fn to_sdk_value(self) -> u32 {
         match self {
-            CameraModel::FX3 => crsdk_sys::SCRSDK::CrCameraDeviceModelList_CrCameraDeviceModel_ILME_FX3,
-            CameraModel::FX6 => crsdk_sys::SCRSDK::CrCameraDeviceModelList_CrCameraDeviceModel_ILME_FX6,
-            CameraModel::FX30 => crsdk_sys::SCRSDK::CrCameraDeviceModelList_CrCameraDeviceModel_ILME_FX30,
-            CameraModel::Alpha1 => crsdk_sys::SCRSDK::CrCameraDeviceModelList_CrCameraDeviceModel_ILCE_1,
+            CameraModel::FX3 => {
+                crsdk_sys::SCRSDK::CrCameraDeviceModelList_CrCameraDeviceModel_ILME_FX3
+            }
+            CameraModel::FX6 => {
+                crsdk_sys::SCRSDK::CrCameraDeviceModelList_CrCameraDeviceModel_ILME_FX6
+            }
+            CameraModel::FX30 => {
+                crsdk_sys::SCRSDK::CrCameraDeviceModelList_CrCameraDeviceModel_ILME_FX30
+            }
+            CameraModel::Alpha1 => {
+                crsdk_sys::SCRSDK::CrCameraDeviceModelList_CrCameraDeviceModel_ILCE_1
+            }
             _ => crsdk_sys::SCRSDK::CrCameraDeviceModelList_CrCameraDeviceModel_ILME_FX3,
         }
     }

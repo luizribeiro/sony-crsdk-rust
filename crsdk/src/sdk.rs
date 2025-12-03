@@ -45,9 +45,7 @@ impl Sdk {
 
         // Safety: We're calling the C++ SDK init function
         // The SDK must be initialized before any other operations
-        let result = unsafe {
-            crsdk_sys::SCRSDK::Init(0)
-        };
+        let result = unsafe { crsdk_sys::SCRSDK::Init(0) };
 
         if !result {
             return Err(Error::InitFailed);
@@ -55,7 +53,9 @@ impl Sdk {
 
         SDK_INITIALIZED.store(true, Ordering::Release);
 
-        Ok(Sdk { _marker: PhantomData })
+        Ok(Sdk {
+            _marker: PhantomData,
+        })
     }
 
     /// Get SDK version

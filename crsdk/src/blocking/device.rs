@@ -131,12 +131,14 @@ impl CameraDeviceBuilder {
     ///
     /// This stores the camera info internally and reuses it for connection.
     pub fn fetch_ssh_fingerprint(&mut self) -> Result<String> {
-        let ip = self.info.ip_address.ok_or_else(|| {
-            Error::InvalidParameter("IP address is required".to_string())
-        })?;
-        let mac = self.info.mac_address.ok_or_else(|| {
-            Error::InvalidParameter("MAC address is required".to_string())
-        })?;
+        let ip = self
+            .info
+            .ip_address
+            .ok_or_else(|| Error::InvalidParameter("IP address is required".to_string()))?;
+        let mac = self
+            .info
+            .mac_address
+            .ok_or_else(|| Error::InvalidParameter("MAC address is required".to_string()))?;
         let model = self.info.model.unwrap_or(CameraModel::FX3);
 
         ensure_sdk_initialized()?;
@@ -160,20 +162,22 @@ impl CameraDeviceBuilder {
 
         self.camera_info_ptr = Some(camera_info_ptr);
 
-        let fingerprint = String::from_utf8_lossy(&fingerprint_buf[..fingerprint_len as usize])
-            .into_owned();
+        let fingerprint =
+            String::from_utf8_lossy(&fingerprint_buf[..fingerprint_len as usize]).into_owned();
 
         Ok(fingerprint)
     }
 
     /// Connect to the camera (blocks until connected or error)
     pub fn connect(self) -> Result<CameraDevice> {
-        let ip = self.info.ip_address.ok_or_else(|| {
-            Error::InvalidParameter("IP address is required".to_string())
-        })?;
-        let mac = self.info.mac_address.ok_or_else(|| {
-            Error::InvalidParameter("MAC address is required".to_string())
-        })?;
+        let ip = self
+            .info
+            .ip_address
+            .ok_or_else(|| Error::InvalidParameter("IP address is required".to_string()))?;
+        let mac = self
+            .info
+            .mac_address
+            .ok_or_else(|| Error::InvalidParameter("MAC address is required".to_string()))?;
         let model = self.info.model.unwrap_or(CameraModel::FX3);
 
         ensure_sdk_initialized()?;
@@ -185,14 +189,30 @@ impl CameraDeviceBuilder {
 
         let mut device_handle: i64 = 0;
 
-        let user_cstr = self.info.ssh_user.as_ref().map(|s| CString::new(s.as_str()).unwrap());
-        let pass_cstr = self.info.ssh_password.as_ref().map(|s| CString::new(s.as_str()).unwrap());
-        let fp_cstr = self.info.ssh_fingerprint.as_ref().map(|s| CString::new(s.as_str()).unwrap());
+        let user_cstr = self
+            .info
+            .ssh_user
+            .as_ref()
+            .map(|s| CString::new(s.as_str()).unwrap());
+        let pass_cstr = self
+            .info
+            .ssh_password
+            .as_ref()
+            .map(|s| CString::new(s.as_str()).unwrap());
+        let fp_cstr = self
+            .info
+            .ssh_fingerprint
+            .as_ref()
+            .map(|s| CString::new(s.as_str()).unwrap());
 
         let user_ptr = user_cstr.as_ref().map_or(ptr::null(), |c| c.as_ptr());
         let pass_ptr = pass_cstr.as_ref().map_or(ptr::null(), |c| c.as_ptr());
         let fp_ptr = fp_cstr.as_ref().map_or(ptr::null(), |c| c.as_ptr());
-        let fp_len = self.info.ssh_fingerprint.as_ref().map_or(0, |s| s.len() as u32);
+        let fp_len = self
+            .info
+            .ssh_fingerprint
+            .as_ref()
+            .map_or(0, |s| s.len() as u32);
 
         let callback = unsafe { crsdk_sys::crsdk_get_minimal_callback() };
 
