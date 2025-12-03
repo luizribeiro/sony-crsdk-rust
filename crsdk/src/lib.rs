@@ -57,6 +57,7 @@
 #![warn(missing_docs)]
 
 pub mod blocking;
+mod command;
 mod device;
 mod error;
 mod property;
