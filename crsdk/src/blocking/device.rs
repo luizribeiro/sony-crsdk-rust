@@ -1,5 +1,7 @@
 //! Blocking camera device connection and control
 
+use asyncwrap::{async_wrap, blocking_impl};
+
 use crate::command::{CommandId, CommandParam, LockIndicator};
 use crate::error::{Error, Result};
 use crate::property::{
@@ -61,6 +63,7 @@ pub struct CameraDevice {
     model: CameraModel,
 }
 
+#[blocking_impl(crate::CameraDevice, strategy = "block_in_place")]
 impl CameraDevice {
     /// Create a new builder for configuring camera connection
     pub fn builder() -> CameraDeviceBuilder {
@@ -68,6 +71,7 @@ impl CameraDevice {
     }
 
     /// Get the camera model
+    #[async_wrap]
     pub fn model(&self) -> CameraModel {
         self.model
     }
@@ -75,6 +79,7 @@ impl CameraDevice {
     /// Get a property from the camera
     ///
     /// Returns the property with its current value, possible values, and metadata.
+    #[async_wrap]
     pub fn get_property(&self, code: PropertyCode) -> Result<DeviceProperty> {
         let mut properties_ptr: *mut crsdk_sys::SCRSDK::CrDeviceProperty = ptr::null_mut();
         let mut num_properties: i32 = 0;
@@ -117,6 +122,7 @@ impl CameraDevice {
     ///
     /// The value should be a raw u64 value. Use the enum's `as_raw()` method
     /// for enumerated properties like FocusMode or WhiteBalance.
+    #[async_wrap]
     pub fn set_property(&self, code: PropertyCode, value: u64) -> Result<()> {
         let prop = self.get_property(code)?;
 
@@ -155,111 +161,131 @@ impl CameraDevice {
     // -------------------------------------------------------------------------
 
     /// Get the current focus mode
+    #[async_wrap]
     pub fn focus_mode(&self) -> Result<FocusMode> {
         let prop = self.get_property(PropertyCode::FocusMode)?;
         FocusMode::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
     }
 
     /// Set the focus mode
+    #[async_wrap]
     pub fn set_focus_mode(&self, mode: FocusMode) -> Result<()> {
         self.set_property(PropertyCode::FocusMode, mode.as_raw())
     }
 
     /// Get the current white balance setting
+    #[async_wrap]
     pub fn white_balance(&self) -> Result<WhiteBalance> {
         let prop = self.get_property(PropertyCode::WhiteBalance)?;
         WhiteBalance::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
     }
 
     /// Set the white balance
+    #[async_wrap]
     pub fn set_white_balance(&self, wb: WhiteBalance) -> Result<()> {
         self.set_property(PropertyCode::WhiteBalance, wb.as_raw())
     }
 
     /// Get the current exposure program mode
+    #[async_wrap]
     pub fn exposure_program(&self) -> Result<ExposureProgram> {
         let prop = self.get_property(PropertyCode::ExposureProgram)?;
         ExposureProgram::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
     }
 
     /// Set the exposure program mode
+    #[async_wrap]
     pub fn set_exposure_program(&self, program: ExposureProgram) -> Result<()> {
         self.set_property(PropertyCode::ExposureProgram, program.as_raw())
     }
 
     /// Get the current drive mode
+    #[async_wrap]
     pub fn drive_mode(&self) -> Result<DriveMode> {
         let prop = self.get_property(PropertyCode::DriveMode)?;
         DriveMode::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
     }
 
     /// Set the drive mode
+    #[async_wrap]
     pub fn set_drive_mode(&self, mode: DriveMode) -> Result<()> {
         self.set_property(PropertyCode::DriveMode, mode.as_raw())
     }
 
     /// Get the current metering mode
+    #[async_wrap]
     pub fn metering_mode(&self) -> Result<MeteringMode> {
         let prop = self.get_property(PropertyCode::MeteringMode)?;
         MeteringMode::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
     }
 
     /// Set the metering mode
+    #[async_wrap]
     pub fn set_metering_mode(&self, mode: MeteringMode) -> Result<()> {
         self.set_property(PropertyCode::MeteringMode, mode.as_raw())
     }
 
     /// Get the current flash mode
+    #[async_wrap]
     pub fn flash_mode(&self) -> Result<FlashMode> {
         let prop = self.get_property(PropertyCode::FlashMode)?;
         FlashMode::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
     }
 
     /// Set the flash mode
+    #[async_wrap]
     pub fn set_flash_mode(&self, mode: FlashMode) -> Result<()> {
         self.set_property(PropertyCode::FlashMode, mode.as_raw())
     }
 
     /// Get the current focus area
+    #[async_wrap]
     pub fn focus_area(&self) -> Result<FocusArea> {
         let prop = self.get_property(PropertyCode::FocusArea)?;
         FocusArea::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
     }
 
     /// Set the focus area
+    #[async_wrap]
     pub fn set_focus_area(&self, area: FocusArea) -> Result<()> {
         self.set_property(PropertyCode::FocusArea, area.as_raw())
     }
 
     /// Get the current ISO sensitivity (raw value)
+    #[async_wrap]
     pub fn iso(&self) -> Result<u64> {
         let prop = self.get_property(PropertyCode::IsoSensitivity)?;
         Ok(prop.current_value)
     }
 
     /// Set the ISO sensitivity
+    #[async_wrap]
     pub fn set_iso(&self, value: u64) -> Result<()> {
         self.set_property(PropertyCode::IsoSensitivity, value)
     }
 
     /// Get the current aperture/f-number (raw SDK value)
+    #[async_wrap]
     pub fn aperture(&self) -> Result<u64> {
         let prop = self.get_property(PropertyCode::FNumber)?;
         Ok(prop.current_value)
     }
 
     /// Set the aperture/f-number
+    #[async_wrap]
     pub fn set_aperture(&self, value: u64) -> Result<()> {
         self.set_property(PropertyCode::FNumber, value)
     }
 
     /// Get the current shutter speed (raw SDK value)
+    #[async_wrap]
     pub fn shutter_speed(&self) -> Result<u64> {
         let prop = self.get_property(PropertyCode::ShutterSpeed)?;
         Ok(prop.current_value)
     }
 
     /// Set the shutter speed
+    #[async_wrap]
     pub fn set_shutter_speed(&self, value: u64) -> Result<()> {
         self.set_property(PropertyCode::ShutterSpeed, value)
     }
@@ -309,6 +335,7 @@ impl CameraDevice {
     ///
     /// This performs a full shutter release cycle: press down, brief delay, release up.
     /// The camera must be in a mode that supports still capture (Photo mode, not Movie mode).
+    #[async_wrap]
     pub fn capture(&self) -> Result<()> {
         self.send_command(CommandId::Release, CommandParam::Down)?;
         std::thread::sleep(Duration::from_millis(35));
@@ -321,6 +348,7 @@ impl CameraDevice {
     /// This is equivalent to pressing the shutter button halfway on a physical camera.
     /// The camera will attempt to focus on the current subject. Call `release_shutter()`
     /// to release the half-press state.
+    #[async_wrap]
     pub fn half_press_shutter(&self) -> Result<()> {
         self.set_s1_lock(LockIndicator::Locked)
     }
@@ -328,6 +356,7 @@ impl CameraDevice {
     /// Release the half-pressed shutter
     ///
     /// This releases the autofocus lock initiated by `half_press_shutter()`.
+    #[async_wrap]
     pub fn release_shutter(&self) -> Result<()> {
         self.set_s1_lock(LockIndicator::Unlocked)
     }
@@ -336,6 +365,7 @@ impl CameraDevice {
     ///
     /// Half-presses to focus, waits briefly, then captures the image.
     /// This is a convenience method that combines `half_press_shutter()` + delay + `capture()`.
+    #[async_wrap]
     pub fn focus_and_capture(&self) -> Result<()> {
         self.half_press_shutter()?;
         std::thread::sleep(Duration::from_millis(500));
@@ -348,11 +378,13 @@ impl CameraDevice {
     ///
     /// The camera must be in a mode that supports movie recording (Movie mode).
     /// Call `stop_recording()` to stop.
+    #[async_wrap]
     pub fn start_recording(&self) -> Result<()> {
         self.send_command(CommandId::MovieRecord, CommandParam::Down)
     }
 
     /// Stop movie recording
+    #[async_wrap]
     pub fn stop_recording(&self) -> Result<()> {
         self.send_command(CommandId::MovieRecord, CommandParam::Up)
     }
