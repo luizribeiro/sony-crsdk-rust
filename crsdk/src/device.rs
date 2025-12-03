@@ -150,8 +150,9 @@ impl CameraDeviceBuilder {
                 builder = builder.ssh_fingerprint(fp);
             }
 
-            // For SSH, we need to fetch fingerprint again since we can't pass the pointer
-            // TODO: Find a way to reuse the camera_info_ptr across async boundaries
+            // For SSH, we recreate the camera_info_ptr here. The pointer from
+            // fetch_ssh_fingerprint can't cross the spawn_blocking boundary (not Send).
+            // This costs an extra GetFingerprint call but avoids unsafe pointer-as-usize tricks.
             if info.ssh_enabled && info.ssh_user.is_some() {
                 builder.fetch_ssh_fingerprint()?;
             }
