@@ -33,4 +33,5 @@
 
 mod device;
 
+pub use crate::event::CameraEvent;
 pub use device::{discover_cameras, CameraDevice, CameraDeviceBuilder};

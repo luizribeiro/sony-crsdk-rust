@@ -5,8 +5,10 @@
 
 use crate::blocking;
 use crate::error::{Error, Result};
+use crate::event::CameraEvent;
 use crate::types::{CameraModel, ConnectionInfo, DiscoveredCamera, MacAddr};
 use std::net::Ipv4Addr;
+use tokio::sync::mpsc;
 
 /// Discover cameras connected via network and USB (async version)
 ///
@@ -47,6 +49,8 @@ pub async fn discover_cameras(timeout_secs: u8) -> Result<Vec<DiscoveredCamera>>
 pub struct CameraDevice {
     /// The underlying blocking device (public for macro-generated code)
     pub(crate) inner: blocking::CameraDevice,
+    /// Event receiver - taken from the blocking device for async access
+    event_receiver: Option<mpsc::UnboundedReceiver<CameraEvent>>,
 }
 
 impl CameraDevice {
@@ -58,6 +62,51 @@ impl CameraDevice {
     /// Get the underlying blocking device
     pub fn into_inner(self) -> blocking::CameraDevice {
         self.inner
+    }
+
+    /// Wait for the next event from the camera
+    ///
+    /// Returns `None` if the event channel is closed (camera disconnected)
+    /// or if the receiver has been taken via `take_event_receiver()`.
+    pub async fn recv_event(&mut self) -> Option<CameraEvent> {
+        if let Some(ref mut receiver) = self.event_receiver {
+            receiver.recv().await
+        } else {
+            None
+        }
+    }
+
+    /// Try to receive an event without blocking
+    ///
+    /// Returns `None` if no events are currently available or if the
+    /// receiver has been taken via `take_event_receiver()`.
+    pub fn try_recv_event(&mut self) -> Option<CameraEvent> {
+        if let Some(ref mut receiver) = self.event_receiver {
+            receiver.try_recv().ok()
+        } else {
+            None
+        }
+    }
+
+    /// Take the event receiver for use with async streams
+    ///
+    /// This consumes the receiver from this device. After calling this,
+    /// `recv_event()` and `try_recv_event()` will always return `None`.
+    ///
+    /// # Example
+    ///
+    /// ```no_run
+    /// use crsdk::CameraDevice;
+    ///
+    /// async fn handle_events(camera: &mut CameraDevice) {
+    ///     let mut receiver = camera.take_event_receiver().unwrap();
+    ///     while let Some(event) = receiver.recv().await {
+    ///         println!("Event: {:?}", event);
+    ///     }
+    /// }
+    /// ```
+    pub fn take_event_receiver(&mut self) -> Option<mpsc::UnboundedReceiver<CameraEvent>> {
+        self.event_receiver.take()
     }
 }
 
@@ -177,7 +226,14 @@ impl CameraDeviceBuilder {
         .await
         .map_err(|e| Error::Other(format!("Task join error: {}", e)))??;
 
-        Ok(CameraDevice { inner })
+        // Take the event receiver from the blocking device for async access
+        let mut inner = inner;
+        let event_receiver = Some(inner.take_event_receiver());
+
+        Ok(CameraDevice {
+            inner,
+            event_receiver,
+        })
     }
 }
 
