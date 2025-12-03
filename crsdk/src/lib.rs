@@ -38,16 +38,17 @@
 //! - Result-based error handling
 //! - Async operations via Tokio
 //!
-//! ## Phase 1: Foundation (Current)
+//! ## Implemented Features
 //!
 //! ✅ SDK initialization and lifecycle
-//! ✅ Camera discovery (coming soon)
-//! ✅ Basic connection (IP + MAC)
+//! ✅ Basic connection (IP + MAC + SSH)
 //! ✅ Error handling
+//! ✅ Property system (ISO, aperture, shutter speed, focus mode, etc.)
+//! ✅ Shooting operations (capture, autofocus, movie recording)
 //!
-//! Future phases will add:
-//! - Property system (ISO, aperture, shutter speed, etc.)
-//! - Shooting operations (capture, movie recording)
+//! ## Planned Features
+//!
+//! - Camera discovery
 //! - Live view streaming
 //! - Event callbacks
 //! - Content transfer (download images)
