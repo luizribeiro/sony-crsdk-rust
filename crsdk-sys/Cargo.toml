@@ -1,0 +1,19 @@
+[package]
+name = "crsdk-sys"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Unsafe FFI bindings to Sony Camera Remote SDK"
+links = "crsdk"
+
+[dependencies]
+libc.workspace = true
+
+[build-dependencies]
+bindgen = "0.70"
+cc = "1"
+
+[features]
+default = []
