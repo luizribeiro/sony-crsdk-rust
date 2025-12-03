@@ -1,7 +1,10 @@
 //! Blocking camera device connection and control
 
 use crate::error::{Error, Result};
-use crate::property::{device_property_from_sdk, DeviceProperty, PropertyCode};
+use crate::property::{
+    device_property_from_sdk, DeviceProperty, DriveMode, ExposureProgram, FlashMode, FocusArea,
+    FocusMode, MeteringMode, PropertyCode, WhiteBalance,
+};
 use crate::types::{ip_to_sdk_format, CameraModel, ConnectionInfo, MacAddr};
 use crate::Sdk;
 use std::ffi::CString;
@@ -145,12 +148,119 @@ impl CameraDevice {
         Ok(())
     }
 
-    // TODO: Add convenience methods for common properties (call generic methods internally)
-    //   - iso() / set_iso(value)
-    //   - aperture() / set_aperture(value)
-    //   - shutter_speed() / set_shutter_speed(value)
-    //   - white_balance() / set_white_balance(value)
-    //   - focus_mode() / set_focus_mode(value)
+    // -------------------------------------------------------------------------
+    // Convenience methods for common properties
+    // -------------------------------------------------------------------------
+
+    /// Get the current focus mode
+    pub fn focus_mode(&self) -> Result<FocusMode> {
+        let prop = self.get_property(PropertyCode::FocusMode)?;
+        FocusMode::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
+    }
+
+    /// Set the focus mode
+    pub fn set_focus_mode(&self, mode: FocusMode) -> Result<()> {
+        self.set_property(PropertyCode::FocusMode, mode.as_raw())
+    }
+
+    /// Get the current white balance setting
+    pub fn white_balance(&self) -> Result<WhiteBalance> {
+        let prop = self.get_property(PropertyCode::WhiteBalance)?;
+        WhiteBalance::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
+    }
+
+    /// Set the white balance
+    pub fn set_white_balance(&self, wb: WhiteBalance) -> Result<()> {
+        self.set_property(PropertyCode::WhiteBalance, wb.as_raw())
+    }
+
+    /// Get the current exposure program mode
+    pub fn exposure_program(&self) -> Result<ExposureProgram> {
+        let prop = self.get_property(PropertyCode::ExposureProgram)?;
+        ExposureProgram::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
+    }
+
+    /// Set the exposure program mode
+    pub fn set_exposure_program(&self, program: ExposureProgram) -> Result<()> {
+        self.set_property(PropertyCode::ExposureProgram, program.as_raw())
+    }
+
+    /// Get the current drive mode
+    pub fn drive_mode(&self) -> Result<DriveMode> {
+        let prop = self.get_property(PropertyCode::DriveMode)?;
+        DriveMode::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
+    }
+
+    /// Set the drive mode
+    pub fn set_drive_mode(&self, mode: DriveMode) -> Result<()> {
+        self.set_property(PropertyCode::DriveMode, mode.as_raw())
+    }
+
+    /// Get the current metering mode
+    pub fn metering_mode(&self) -> Result<MeteringMode> {
+        let prop = self.get_property(PropertyCode::MeteringMode)?;
+        MeteringMode::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
+    }
+
+    /// Set the metering mode
+    pub fn set_metering_mode(&self, mode: MeteringMode) -> Result<()> {
+        self.set_property(PropertyCode::MeteringMode, mode.as_raw())
+    }
+
+    /// Get the current flash mode
+    pub fn flash_mode(&self) -> Result<FlashMode> {
+        let prop = self.get_property(PropertyCode::FlashMode)?;
+        FlashMode::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
+    }
+
+    /// Set the flash mode
+    pub fn set_flash_mode(&self, mode: FlashMode) -> Result<()> {
+        self.set_property(PropertyCode::FlashMode, mode.as_raw())
+    }
+
+    /// Get the current focus area
+    pub fn focus_area(&self) -> Result<FocusArea> {
+        let prop = self.get_property(PropertyCode::FocusArea)?;
+        FocusArea::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
+    }
+
+    /// Set the focus area
+    pub fn set_focus_area(&self, area: FocusArea) -> Result<()> {
+        self.set_property(PropertyCode::FocusArea, area.as_raw())
+    }
+
+    /// Get the current ISO sensitivity (raw value)
+    pub fn iso(&self) -> Result<u64> {
+        let prop = self.get_property(PropertyCode::IsoSensitivity)?;
+        Ok(prop.current_value)
+    }
+
+    /// Set the ISO sensitivity
+    pub fn set_iso(&self, value: u64) -> Result<()> {
+        self.set_property(PropertyCode::IsoSensitivity, value)
+    }
+
+    /// Get the current aperture/f-number (raw SDK value)
+    pub fn aperture(&self) -> Result<u64> {
+        let prop = self.get_property(PropertyCode::FNumber)?;
+        Ok(prop.current_value)
+    }
+
+    /// Set the aperture/f-number
+    pub fn set_aperture(&self, value: u64) -> Result<()> {
+        self.set_property(PropertyCode::FNumber, value)
+    }
+
+    /// Get the current shutter speed (raw SDK value)
+    pub fn shutter_speed(&self) -> Result<u64> {
+        let prop = self.get_property(PropertyCode::ShutterSpeed)?;
+        Ok(prop.current_value)
+    }
+
+    /// Set the shutter speed
+    pub fn set_shutter_speed(&self, value: u64) -> Result<()> {
+        self.set_property(PropertyCode::ShutterSpeed, value)
+    }
 
     // TODO: Add shooting operations
     //   - capture() - take a photo (shutter release)
