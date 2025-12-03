@@ -1050,8 +1050,66 @@ impl DriveMode {
     }
 }
 
-// TODO: Add MeteringMode enum
-// Map all CrMeteringMode_* constants from crsdk_sys::SCRSDK
+/// Metering mode settings
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum MeteringMode {
+    /// Average metering
+    Average = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Average as u16,
+    /// Center-weighted average metering
+    CenterWeightedAverage =
+        crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_CenterWeightedAverage as u16,
+    /// Multi-spot metering
+    MultiSpot = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_MultiSpot as u16,
+    /// Center-spot metering
+    CenterSpot = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_CenterSpot as u16,
+    /// Multi-segment metering
+    Multi = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Multi as u16,
+    /// Center-weighted metering
+    CenterWeighted = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_CenterWeighted as u16,
+    /// Entire screen average metering
+    EntireScreenAverage = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_EntireScreenAverage as u16,
+    /// Spot metering (standard)
+    SpotStandard = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Spot_Standard as u16,
+    /// Spot metering (large)
+    SpotLarge = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Spot_Large as u16,
+    /// Highlight-weighted metering
+    HighLightWeighted = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_HighLightWeighted as u16,
+    /// Standard metering
+    Standard = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Standard as u16,
+    /// Backlight metering
+    Backlight = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Backlight as u16,
+    /// Spotlight metering
+    Spotlight = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Spotlight as u16,
+}
+
+impl MeteringMode {
+    /// Get the raw SDK value
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    /// Create from raw SDK value
+    pub fn from_raw(value: u64) -> Option<Self> {
+        use crsdk_sys::SCRSDK::*;
+        Some(match value as u16 {
+            CrMeteringMode_CrMetering_Average => Self::Average,
+            CrMeteringMode_CrMetering_CenterWeightedAverage => Self::CenterWeightedAverage,
+            CrMeteringMode_CrMetering_MultiSpot => Self::MultiSpot,
+            CrMeteringMode_CrMetering_CenterSpot => Self::CenterSpot,
+            CrMeteringMode_CrMetering_Multi => Self::Multi,
+            CrMeteringMode_CrMetering_CenterWeighted => Self::CenterWeighted,
+            CrMeteringMode_CrMetering_EntireScreenAverage => Self::EntireScreenAverage,
+            CrMeteringMode_CrMetering_Spot_Standard => Self::SpotStandard,
+            CrMeteringMode_CrMetering_Spot_Large => Self::SpotLarge,
+            CrMeteringMode_CrMetering_HighLightWeighted => Self::HighLightWeighted,
+            CrMeteringMode_CrMetering_Standard => Self::Standard,
+            CrMeteringMode_CrMetering_Backlight => Self::Backlight,
+            CrMeteringMode_CrMetering_Spotlight => Self::Spotlight,
+            _ => return None,
+        })
+    }
+}
 
 // TODO: Add FlashMode enum
 // Map all CrFlashMode_* constants from crsdk_sys::SCRSDK
