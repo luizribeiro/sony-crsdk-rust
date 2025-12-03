@@ -95,20 +95,17 @@ impl fmt::Display for CameraModel {
 impl CameraModel {
     /// Get SDK enum value for this model
     pub(crate) fn to_sdk_value(self) -> u32 {
+        use crsdk_sys::SCRSDK::*;
         match self {
-            CameraModel::Fx3 => {
-                crsdk_sys::SCRSDK::CrCameraDeviceModelList_CrCameraDeviceModel_ILME_FX3
-            }
-            CameraModel::Fx6 => {
-                crsdk_sys::SCRSDK::CrCameraDeviceModelList_CrCameraDeviceModel_ILME_FX6
-            }
-            CameraModel::Fx30 => {
-                crsdk_sys::SCRSDK::CrCameraDeviceModelList_CrCameraDeviceModel_ILME_FX30
-            }
-            CameraModel::Alpha1 => {
-                crsdk_sys::SCRSDK::CrCameraDeviceModelList_CrCameraDeviceModel_ILCE_1
-            }
-            _ => crsdk_sys::SCRSDK::CrCameraDeviceModelList_CrCameraDeviceModel_ILME_FX3,
+            CameraModel::Fx3 => CrCameraDeviceModelList_CrCameraDeviceModel_ILME_FX3,
+            CameraModel::Fx6 => CrCameraDeviceModelList_CrCameraDeviceModel_ILME_FX6,
+            CameraModel::Fx30 => CrCameraDeviceModelList_CrCameraDeviceModel_ILME_FX30,
+            CameraModel::Alpha1 => CrCameraDeviceModelList_CrCameraDeviceModel_ILCE_1,
+            CameraModel::Alpha7Iv => CrCameraDeviceModelList_CrCameraDeviceModel_ILCE_7M4,
+            CameraModel::Alpha7Rv => CrCameraDeviceModelList_CrCameraDeviceModel_ILCE_7RM5,
+            CameraModel::Alpha7Siii => CrCameraDeviceModelList_CrCameraDeviceModel_ILCE_7SM3,
+            CameraModel::Alpha9Ii => CrCameraDeviceModelList_CrCameraDeviceModel_ILCE_9M2,
+            CameraModel::Alpha9Iii => CrCameraDeviceModelList_CrCameraDeviceModel_ILCE_9M3,
         }
     }
 }
