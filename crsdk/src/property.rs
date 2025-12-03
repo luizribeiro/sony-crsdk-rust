@@ -1111,8 +1111,44 @@ impl MeteringMode {
     }
 }
 
-// TODO: Add FlashMode enum
-// Map all CrFlashMode_* constants from crsdk_sys::SCRSDK
+/// Flash mode settings
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum FlashMode {
+    /// Auto flash
+    Auto = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_Auto as u16,
+    /// Flash off
+    Off = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_Off as u16,
+    /// Fill flash (always on)
+    Fill = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_Fill as u16,
+    /// External sync flash
+    ExternalSync = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_ExternalSync as u16,
+    /// Slow sync flash
+    SlowSync = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_SlowSync as u16,
+    /// Rear sync flash
+    RearSync = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_RearSync as u16,
+}
+
+impl FlashMode {
+    /// Get the raw SDK value
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    /// Create from raw SDK value
+    pub fn from_raw(value: u64) -> Option<Self> {
+        use crsdk_sys::SCRSDK::*;
+        Some(match value as u16 {
+            CrFlashMode_CrFlash_Auto => Self::Auto,
+            CrFlashMode_CrFlash_Off => Self::Off,
+            CrFlashMode_CrFlash_Fill => Self::Fill,
+            CrFlashMode_CrFlash_ExternalSync => Self::ExternalSync,
+            CrFlashMode_CrFlash_SlowSync => Self::SlowSync,
+            CrFlashMode_CrFlash_RearSync => Self::RearSync,
+            _ => return None,
+        })
+    }
+}
 
 // TODO: Add FocusArea enum
 // Map all CrFocusArea_* constants from crsdk_sys::SCRSDK
