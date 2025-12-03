@@ -18,8 +18,8 @@
 //! #[tokio::main]
 //! async fn main() -> Result<()> {
 //!     let camera = CameraDevice::builder()
-//!         .ip_address("192.168.1.100".parse()?)
-//!         .mac_address("00:00:00:00:00:00".parse()?)
+//!         .ip_address("192.168.1.100".parse().unwrap())
+//!         .mac_address("00:00:00:00:00:00".parse().unwrap())
 //!         .connect()
 //!         .await?;
 //!
