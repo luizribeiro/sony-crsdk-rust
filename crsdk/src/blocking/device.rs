@@ -12,6 +12,7 @@ use std::ffi::CString;
 use std::net::Ipv4Addr;
 use std::ptr;
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::time::Duration;
 
 static SDK_INITIALIZED: AtomicBool = AtomicBool::new(false);
 
@@ -301,6 +302,17 @@ impl CameraDevice {
             return Err(Error::from_sdk_error(result as u32));
         }
 
+        Ok(())
+    }
+
+    /// Take a photo (shutter release)
+    ///
+    /// This performs a full shutter release cycle: press down, brief delay, release up.
+    /// The camera must be in a mode that supports still capture (Photo mode, not Movie mode).
+    pub fn capture(&self) -> Result<()> {
+        self.send_command(CommandId::Release, CommandParam::Down)?;
+        std::thread::sleep(Duration::from_millis(35));
+        self.send_command(CommandId::Release, CommandParam::Up)?;
         Ok(())
     }
 }
