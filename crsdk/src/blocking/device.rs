@@ -1,5 +1,6 @@
 //! Blocking camera device connection and control
 
+use crate::command::{CommandId, CommandParam, LockIndicator};
 use crate::error::{Error, Result};
 use crate::property::{
     device_property_from_sdk, DeviceProperty, DriveMode, ExposureProgram, FlashMode, FocusArea,
@@ -262,10 +263,46 @@ impl CameraDevice {
         self.set_property(PropertyCode::ShutterSpeed, value)
     }
 
-    // TODO: Add shooting operations
-    //   - capture() - take a photo (shutter release)
-    //   - half_press() / release() - autofocus control
-    //   - start_recording() / stop_recording() - movie recording
+    // -------------------------------------------------------------------------
+    // Command operations (shooting, recording, AF)
+    // -------------------------------------------------------------------------
+
+    /// Send a command to the camera
+    fn send_command(&self, command: CommandId, param: CommandParam) -> Result<()> {
+        let result = unsafe {
+            crsdk_sys::SCRSDK::SendCommand(self.handle, command.as_raw(), param.as_raw() as u16)
+        };
+
+        if result != 0 {
+            return Err(Error::from_sdk_error(result as u32));
+        }
+
+        Ok(())
+    }
+
+    /// Set the S1 (half-press shutter) lock state for autofocus
+    fn set_s1_lock(&self, lock: LockIndicator) -> Result<()> {
+        let mut sdk_prop = crsdk_sys::SCRSDK::CrDeviceProperty {
+            code: crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_S1,
+            valueType: crsdk_sys::SCRSDK::CrDataType_CrDataType_UInt16 as u32,
+            enableFlag: 0,
+            variableFlag: 0,
+            currentValue: lock.as_raw(),
+            currentStr: ptr::null_mut(),
+            valuesSize: 0,
+            values: ptr::null_mut(),
+            getSetValuesSize: 0,
+            getSetValues: ptr::null_mut(),
+        };
+
+        let result = unsafe { crsdk_sys::SCRSDK::SetDeviceProperty(self.handle, &mut sdk_prop) };
+
+        if result != 0 {
+            return Err(Error::from_sdk_error(result as u32));
+        }
+
+        Ok(())
+    }
 }
 
 impl Drop for CameraDevice {
