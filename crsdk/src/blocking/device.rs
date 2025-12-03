@@ -1,6 +1,7 @@
 //! Blocking camera device connection and control
 
 use crate::error::{Error, Result};
+use crate::property::{device_property_from_sdk, DeviceProperty, PropertyCode};
 use crate::types::{ip_to_sdk_format, CameraModel, ConnectionInfo, MacAddr};
 use crate::Sdk;
 use std::ffi::CString;
@@ -66,10 +67,83 @@ impl CameraDevice {
         self.model
     }
 
-    // TODO: Add generic property access
-    //   - get_property(code: PropertyCode) -> Result<PropertyValue>
-    //   - set_property(code: PropertyCode, value: impl Into<PropertyValue>) -> Result<()>
-    //   - Use SDK::GetDeviceProperties / SDK::SetDeviceProperty
+    /// Get a property from the camera
+    ///
+    /// Returns the property with its current value, possible values, and metadata.
+    pub fn get_property(&self, code: PropertyCode) -> Result<DeviceProperty> {
+        let mut properties_ptr: *mut crsdk_sys::SCRSDK::CrDeviceProperty = ptr::null_mut();
+        let mut num_properties: i32 = 0;
+
+        let result = unsafe {
+            crsdk_sys::SCRSDK::GetDeviceProperties(
+                self.handle,
+                &mut properties_ptr,
+                &mut num_properties,
+            )
+        };
+
+        if result != 0 {
+            return Err(Error::from_sdk_error(result as u32));
+        }
+
+        if properties_ptr.is_null() || num_properties == 0 {
+            return Err(Error::PropertyNotSupported);
+        }
+
+        let target_code = code.as_raw();
+        let mut found_property: Option<DeviceProperty> = None;
+
+        unsafe {
+            for i in 0..num_properties as usize {
+                let prop = &*properties_ptr.add(i);
+                if prop.code == target_code {
+                    found_property = Some(device_property_from_sdk(prop));
+                    break;
+                }
+            }
+
+            crsdk_sys::SCRSDK::ReleaseDeviceProperties(self.handle, properties_ptr);
+        }
+
+        found_property.ok_or(Error::PropertyNotSupported)
+    }
+
+    /// Set a property on the camera
+    ///
+    /// The value should be a raw u64 value. Use the enum's `as_raw()` method
+    /// for enumerated properties like FocusMode or WhiteBalance.
+    pub fn set_property(&self, code: PropertyCode, value: u64) -> Result<()> {
+        let prop = self.get_property(code)?;
+
+        if !prop.is_writable() {
+            return Err(Error::PropertyNotWritable);
+        }
+
+        if !prop.is_valid_value(value) {
+            return Err(Error::InvalidPropertyValue);
+        }
+
+        let mut sdk_prop = crsdk_sys::SCRSDK::CrDeviceProperty {
+            code: code.as_raw(),
+            valueType: 0,
+            enableFlag: 0,
+            variableFlag: 0,
+            currentValue: value,
+            currentStr: ptr::null_mut(),
+            valuesSize: 0,
+            values: ptr::null_mut(),
+            getSetValuesSize: 0,
+            getSetValues: ptr::null_mut(),
+        };
+
+        let result = unsafe { crsdk_sys::SCRSDK::SetDeviceProperty(self.handle, &mut sdk_prop) };
+
+        if result != 0 {
+            return Err(Error::from_sdk_error(result as u32));
+        }
+
+        Ok(())
+    }
 
     // TODO: Add convenience methods for common properties (call generic methods internally)
     //   - iso() / set_iso(value)
