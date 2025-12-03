@@ -82,7 +82,7 @@ async fn main() -> Result<()> {
     let camera = builder.connect().await?;
 
     println!("\nConnected!");
-    println!("  Model: {}", camera.model());
+    println!("  Model: {}", camera.model().await);
 
     println!("\nCamera is ready. Press Ctrl+C to disconnect.\n");
 

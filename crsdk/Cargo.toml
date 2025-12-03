@@ -11,6 +11,9 @@ description = "Safe, idiomatic Rust wrapper for Sony Camera Remote SDK"
 # Internal
 crsdk-sys = { path = "../crsdk-sys" }
 
+# Async wrapper generation
+asyncwrap = { git = "https://github.com/luizribeiro/asyncwrap" }
+
 # Async runtime
 tokio.workspace = true
 

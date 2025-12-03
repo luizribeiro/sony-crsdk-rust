@@ -1,6 +1,6 @@
 //! Async camera device connection and control
 //!
-//! This module wraps the blocking API with `spawn_blocking` for async usage.
+//! This module provides async wrappers around the blocking API using `block_in_place`.
 //! For synchronous code, use `crsdk::blocking` instead.
 
 use crate::blocking;
@@ -11,19 +11,16 @@ use std::net::Ipv4Addr;
 /// A connected camera device (async API)
 ///
 /// This wraps the blocking `CameraDevice` for use with async runtimes.
+/// All methods are auto-generated via the `asyncwrap` crate using `block_in_place`.
 pub struct CameraDevice {
-    inner: blocking::CameraDevice,
+    /// The underlying blocking device (public for macro-generated code)
+    pub(crate) inner: blocking::CameraDevice,
 }
 
 impl CameraDevice {
     /// Create a new builder for configuring camera connection
     pub fn builder() -> CameraDeviceBuilder {
         CameraDeviceBuilder::new()
-    }
-
-    /// Get the camera model
-    pub fn model(&self) -> CameraModel {
-        self.inner.model()
     }
 
     /// Get the underlying blocking device
@@ -36,8 +33,6 @@ impl CameraDevice {
 #[derive(Default)]
 pub struct CameraDeviceBuilder {
     info: ConnectionInfo,
-    /// Stored camera_info pointer from fingerprint fetch (as usize for Send safety)
-    camera_info_ptr: Option<usize>,
 }
 
 impl CameraDeviceBuilder {
@@ -85,12 +80,10 @@ impl CameraDeviceBuilder {
     }
 
     /// Fetch SSH fingerprint from camera for user confirmation
-    ///
-    /// This stores the camera info internally and reuses it for connection.
     pub async fn fetch_ssh_fingerprint(&mut self) -> Result<String> {
         let info = self.info.clone();
 
-        let (fingerprint, ptr) = tokio::task::spawn_blocking(move || {
+        let fingerprint = tokio::task::spawn_blocking(move || {
             let mut builder = blocking::CameraDeviceBuilder::new();
 
             if let Some(ip) = info.ip_address {
@@ -106,18 +99,10 @@ impl CameraDeviceBuilder {
                 builder = builder.ssh_enabled(true);
             }
 
-            let fingerprint = builder.fetch_ssh_fingerprint()?;
-
-            // Get the raw pointer for reuse (blocking builder stores it internally)
-            // We need to extract it - for now we'll recreate on connect
-            Ok::<_, Error>((fingerprint, None::<usize>))
+            builder.fetch_ssh_fingerprint()
         })
         .await
         .map_err(|e| Error::Other(format!("Task join error: {}", e)))??;
-
-        if let Some(p) = ptr {
-            self.camera_info_ptr = Some(p);
-        }
 
         Ok(fingerprint)
     }
@@ -150,9 +135,7 @@ impl CameraDeviceBuilder {
                 builder = builder.ssh_fingerprint(fp);
             }
 
-            // For SSH, we recreate the camera_info_ptr here. The pointer from
-            // fetch_ssh_fingerprint can't cross the spawn_blocking boundary (not Send).
-            // This costs an extra GetFingerprint call but avoids unsafe pointer-as-usize tricks.
+            // For SSH, we need to fetch fingerprint again since we can't reuse across threads
             if info.ssh_enabled && info.ssh_user.is_some() {
                 builder.fetch_ssh_fingerprint()?;
             }

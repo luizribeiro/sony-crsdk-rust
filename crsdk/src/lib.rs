@@ -23,7 +23,7 @@
 //!         .connect()
 //!         .await?;
 //!
-//!     println!("Connected to {}", camera.model());
+//!     println!("Connected to {}", camera.model().await);
 //!     Ok(())
 //! }
 //! ```
