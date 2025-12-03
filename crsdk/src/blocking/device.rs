@@ -65,6 +65,23 @@ impl CameraDevice {
     pub fn model(&self) -> CameraModel {
         self.model
     }
+
+    // TODO: Add generic property access
+    //   - get_property(code: PropertyCode) -> Result<PropertyValue>
+    //   - set_property(code: PropertyCode, value: impl Into<PropertyValue>) -> Result<()>
+    //   - Use SDK::GetDeviceProperties / SDK::SetDeviceProperty
+
+    // TODO: Add convenience methods for common properties (call generic methods internally)
+    //   - iso() / set_iso(value)
+    //   - aperture() / set_aperture(value)
+    //   - shutter_speed() / set_shutter_speed(value)
+    //   - white_balance() / set_white_balance(value)
+    //   - focus_mode() / set_focus_mode(value)
+
+    // TODO: Add shooting operations
+    //   - capture() - take a photo (shutter release)
+    //   - half_press() / release() - autofocus control
+    //   - start_recording() / stop_recording() - movie recording
 }
 
 impl Drop for CameraDevice {
