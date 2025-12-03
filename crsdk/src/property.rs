@@ -414,10 +414,641 @@ impl ExposureProgram {
     }
 }
 
-// TODO: Add DriveMode enum
-// Map all CrDriveMode_* constants from crsdk_sys::SCRSDK
-// Including: Single, Continuous (Hi/Mid/Lo), Timer, Bracket variations, Burst, etc.
-// Reference: CrDriveMode_CrDrive_Single, CrDriveMode_CrDrive_Continuous_Hi, etc.
+/// Drive mode / shooting mode settings
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u32)]
+pub enum DriveMode {
+    /// Single shooting
+    Single = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single,
+    /// Continuous shooting high speed
+    ContinuousHi = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Hi,
+    /// Continuous shooting high speed plus
+    ContinuousHiPlus = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Hi_Plus,
+    /// Continuous shooting high speed live view
+    ContinuousHiLive = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Hi_Live,
+    /// Continuous shooting low speed
+    ContinuousLo = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Lo,
+    /// Continuous shooting
+    Continuous = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous,
+    /// Continuous shooting speed priority
+    ContinuousSpeedPriority = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_SpeedPriority,
+    /// Continuous shooting mid speed
+    ContinuousMid = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Mid,
+    /// Continuous shooting mid speed live view
+    ContinuousMidLive = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Mid_Live,
+    /// Continuous shooting low speed live view
+    ContinuousLoLive = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Lo_Live,
+    /// Single burst shooting low
+    SingleBurstShootingLo = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_SingleBurstShooting_lo,
+    /// Single burst shooting mid
+    SingleBurstShootingMid = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_SingleBurstShooting_mid,
+    /// Single burst shooting high
+    SingleBurstShootingHi = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_SingleBurstShooting_hi,
+    /// Focus bracket shooting
+    FocusBracket = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_FocusBracket,
+    /// Timelapse shooting
+    Timelapse = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Timelapse,
+    /// Self-timer 2 seconds
+    Timer2s = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Timer_2s,
+    /// Self-timer 5 seconds
+    Timer5s = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Timer_5s,
+    /// Self-timer 10 seconds
+    Timer10s = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Timer_10s,
+    /// Continuous bracket 0.3 EV, 3 pictures
+    ContinuousBracket03Ev3Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_03Ev_3pics,
+    /// Continuous bracket 0.3 EV, 5 pictures
+    ContinuousBracket03Ev5Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_03Ev_5pics,
+    /// Continuous bracket 0.3 EV, 9 pictures
+    ContinuousBracket03Ev9Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_03Ev_9pics,
+    /// Continuous bracket 0.5 EV, 3 pictures
+    ContinuousBracket05Ev3Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_05Ev_3pics,
+    /// Continuous bracket 0.5 EV, 5 pictures
+    ContinuousBracket05Ev5Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_05Ev_5pics,
+    /// Continuous bracket 0.5 EV, 9 pictures
+    ContinuousBracket05Ev9Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_05Ev_9pics,
+    /// Continuous bracket 0.7 EV, 3 pictures
+    ContinuousBracket07Ev3Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_07Ev_3pics,
+    /// Continuous bracket 0.7 EV, 5 pictures
+    ContinuousBracket07Ev5Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_07Ev_5pics,
+    /// Continuous bracket 0.7 EV, 9 pictures
+    ContinuousBracket07Ev9Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_07Ev_9pics,
+    /// Continuous bracket 1.0 EV, 3 pictures
+    ContinuousBracket10Ev3Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_10Ev_3pics,
+    /// Continuous bracket 1.0 EV, 5 pictures
+    ContinuousBracket10Ev5Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_10Ev_5pics,
+    /// Continuous bracket 1.0 EV, 9 pictures
+    ContinuousBracket10Ev9Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_10Ev_9pics,
+    /// Continuous bracket 2.0 EV, 3 pictures
+    ContinuousBracket20Ev3Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_20Ev_3pics,
+    /// Continuous bracket 2.0 EV, 5 pictures
+    ContinuousBracket20Ev5Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_20Ev_5pics,
+    /// Continuous bracket 3.0 EV, 3 pictures
+    ContinuousBracket30Ev3Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_30Ev_3pics,
+    /// Continuous bracket 3.0 EV, 5 pictures
+    ContinuousBracket30Ev5Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_30Ev_5pics,
+    /// Continuous bracket 0.3 EV, 2 pictures plus
+    ContinuousBracket03Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_03Ev_2pics_Plus,
+    /// Continuous bracket 0.3 EV, 2 pictures minus
+    ContinuousBracket03Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_03Ev_2pics_Minus,
+    /// Continuous bracket 0.3 EV, 7 pictures
+    ContinuousBracket03Ev7Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_03Ev_7pics,
+    /// Continuous bracket 0.5 EV, 2 pictures plus
+    ContinuousBracket05Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_05Ev_2pics_Plus,
+    /// Continuous bracket 0.5 EV, 2 pictures minus
+    ContinuousBracket05Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_05Ev_2pics_Minus,
+    /// Continuous bracket 0.5 EV, 7 pictures
+    ContinuousBracket05Ev7Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_05Ev_7pics,
+    /// Continuous bracket 0.7 EV, 2 pictures plus
+    ContinuousBracket07Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_07Ev_2pics_Plus,
+    /// Continuous bracket 0.7 EV, 2 pictures minus
+    ContinuousBracket07Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_07Ev_2pics_Minus,
+    /// Continuous bracket 0.7 EV, 7 pictures
+    ContinuousBracket07Ev7Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_07Ev_7pics,
+    /// Continuous bracket 1.0 EV, 2 pictures plus
+    ContinuousBracket10Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_10Ev_2pics_Plus,
+    /// Continuous bracket 1.0 EV, 2 pictures minus
+    ContinuousBracket10Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_10Ev_2pics_Minus,
+    /// Continuous bracket 1.0 EV, 7 pictures
+    ContinuousBracket10Ev7Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_10Ev_7pics,
+    /// Continuous bracket 1.3 EV, 2 pictures plus
+    ContinuousBracket13Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_13Ev_2pics_Plus,
+    /// Continuous bracket 1.3 EV, 2 pictures minus
+    ContinuousBracket13Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_13Ev_2pics_Minus,
+    /// Continuous bracket 1.3 EV, 3 pictures
+    ContinuousBracket13Ev3Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_13Ev_3pics,
+    /// Continuous bracket 1.3 EV, 5 pictures
+    ContinuousBracket13Ev5Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_13Ev_5pics,
+    /// Continuous bracket 1.3 EV, 7 pictures
+    ContinuousBracket13Ev7Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_13Ev_7pics,
+    /// Continuous bracket 1.5 EV, 2 pictures plus
+    ContinuousBracket15Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_15Ev_2pics_Plus,
+    /// Continuous bracket 1.5 EV, 2 pictures minus
+    ContinuousBracket15Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_15Ev_2pics_Minus,
+    /// Continuous bracket 1.5 EV, 3 pictures
+    ContinuousBracket15Ev3Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_15Ev_3pics,
+    /// Continuous bracket 1.5 EV, 5 pictures
+    ContinuousBracket15Ev5Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_15Ev_5pics,
+    /// Continuous bracket 1.5 EV, 7 pictures
+    ContinuousBracket15Ev7Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_15Ev_7pics,
+    /// Continuous bracket 1.7 EV, 2 pictures plus
+    ContinuousBracket17Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_17Ev_2pics_Plus,
+    /// Continuous bracket 1.7 EV, 2 pictures minus
+    ContinuousBracket17Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_17Ev_2pics_Minus,
+    /// Continuous bracket 1.7 EV, 3 pictures
+    ContinuousBracket17Ev3Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_17Ev_3pics,
+    /// Continuous bracket 1.7 EV, 5 pictures
+    ContinuousBracket17Ev5Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_17Ev_5pics,
+    /// Continuous bracket 1.7 EV, 7 pictures
+    ContinuousBracket17Ev7Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_17Ev_7pics,
+    /// Continuous bracket 2.0 EV, 2 pictures plus
+    ContinuousBracket20Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_20Ev_2pics_Plus,
+    /// Continuous bracket 2.0 EV, 2 pictures minus
+    ContinuousBracket20Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_20Ev_2pics_Minus,
+    /// Continuous bracket 2.0 EV, 7 pictures
+    ContinuousBracket20Ev7Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_20Ev_7pics,
+    /// Continuous bracket 2.3 EV, 2 pictures plus
+    ContinuousBracket23Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_23Ev_2pics_Plus,
+    /// Continuous bracket 2.3 EV, 2 pictures minus
+    ContinuousBracket23Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_23Ev_2pics_Minus,
+    /// Continuous bracket 2.3 EV, 3 pictures
+    ContinuousBracket23Ev3Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_23Ev_3pics,
+    /// Continuous bracket 2.3 EV, 5 pictures
+    ContinuousBracket23Ev5Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_23Ev_5pics,
+    /// Continuous bracket 2.5 EV, 2 pictures plus
+    ContinuousBracket25Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_25Ev_2pics_Plus,
+    /// Continuous bracket 2.5 EV, 2 pictures minus
+    ContinuousBracket25Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_25Ev_2pics_Minus,
+    /// Continuous bracket 2.5 EV, 3 pictures
+    ContinuousBracket25Ev3Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_25Ev_3pics,
+    /// Continuous bracket 2.5 EV, 5 pictures
+    ContinuousBracket25Ev5Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_25Ev_5pics,
+    /// Continuous bracket 2.7 EV, 2 pictures plus
+    ContinuousBracket27Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_27Ev_2pics_Plus,
+    /// Continuous bracket 2.7 EV, 2 pictures minus
+    ContinuousBracket27Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_27Ev_2pics_Minus,
+    /// Continuous bracket 2.7 EV, 3 pictures
+    ContinuousBracket27Ev3Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_27Ev_3pics,
+    /// Continuous bracket 2.7 EV, 5 pictures
+    ContinuousBracket27Ev5Pics =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_27Ev_5pics,
+    /// Continuous bracket 3.0 EV, 2 pictures plus
+    ContinuousBracket30Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_30Ev_2pics_Plus,
+    /// Continuous bracket 3.0 EV, 2 pictures minus
+    ContinuousBracket30Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Bracket_30Ev_2pics_Minus,
+    /// Single bracket 0.3 EV, 3 pictures
+    SingleBracket03Ev3Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_03Ev_3pics,
+    /// Single bracket 0.3 EV, 5 pictures
+    SingleBracket03Ev5Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_03Ev_5pics,
+    /// Single bracket 0.3 EV, 9 pictures
+    SingleBracket03Ev9Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_03Ev_9pics,
+    /// Single bracket 0.5 EV, 3 pictures
+    SingleBracket05Ev3Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_05Ev_3pics,
+    /// Single bracket 0.5 EV, 5 pictures
+    SingleBracket05Ev5Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_05Ev_5pics,
+    /// Single bracket 0.5 EV, 9 pictures
+    SingleBracket05Ev9Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_05Ev_9pics,
+    /// Single bracket 0.7 EV, 3 pictures
+    SingleBracket07Ev3Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_07Ev_3pics,
+    /// Single bracket 0.7 EV, 5 pictures
+    SingleBracket07Ev5Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_07Ev_5pics,
+    /// Single bracket 0.7 EV, 9 pictures
+    SingleBracket07Ev9Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_07Ev_9pics,
+    /// Single bracket 1.0 EV, 3 pictures
+    SingleBracket10Ev3Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_10Ev_3pics,
+    /// Single bracket 1.0 EV, 5 pictures
+    SingleBracket10Ev5Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_10Ev_5pics,
+    /// Single bracket 1.0 EV, 9 pictures
+    SingleBracket10Ev9Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_10Ev_9pics,
+    /// Single bracket 2.0 EV, 3 pictures
+    SingleBracket20Ev3Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_20Ev_3pics,
+    /// Single bracket 2.0 EV, 5 pictures
+    SingleBracket20Ev5Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_20Ev_5pics,
+    /// Single bracket 3.0 EV, 3 pictures
+    SingleBracket30Ev3Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_30Ev_3pics,
+    /// Single bracket 3.0 EV, 5 pictures
+    SingleBracket30Ev5Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_30Ev_5pics,
+    /// Single bracket 0.3 EV, 2 pictures plus
+    SingleBracket03Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_03Ev_2pics_Plus,
+    /// Single bracket 0.3 EV, 2 pictures minus
+    SingleBracket03Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_03Ev_2pics_Minus,
+    /// Single bracket 0.3 EV, 7 pictures
+    SingleBracket03Ev7Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_03Ev_7pics,
+    /// Single bracket 0.5 EV, 2 pictures plus
+    SingleBracket05Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_05Ev_2pics_Plus,
+    /// Single bracket 0.5 EV, 2 pictures minus
+    SingleBracket05Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_05Ev_2pics_Minus,
+    /// Single bracket 0.5 EV, 7 pictures
+    SingleBracket05Ev7Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_05Ev_7pics,
+    /// Single bracket 0.7 EV, 2 pictures plus
+    SingleBracket07Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_07Ev_2pics_Plus,
+    /// Single bracket 0.7 EV, 2 pictures minus
+    SingleBracket07Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_07Ev_2pics_Minus,
+    /// Single bracket 0.7 EV, 7 pictures
+    SingleBracket07Ev7Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_07Ev_7pics,
+    /// Single bracket 1.0 EV, 2 pictures plus
+    SingleBracket10Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_10Ev_2pics_Plus,
+    /// Single bracket 1.0 EV, 2 pictures minus
+    SingleBracket10Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_10Ev_2pics_Minus,
+    /// Single bracket 1.0 EV, 7 pictures
+    SingleBracket10Ev7Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_10Ev_7pics,
+    /// Single bracket 1.3 EV, 2 pictures plus
+    SingleBracket13Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_13Ev_2pics_Plus,
+    /// Single bracket 1.3 EV, 2 pictures minus
+    SingleBracket13Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_13Ev_2pics_Minus,
+    /// Single bracket 1.3 EV, 3 pictures
+    SingleBracket13Ev3Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_13Ev_3pics,
+    /// Single bracket 1.3 EV, 5 pictures
+    SingleBracket13Ev5Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_13Ev_5pics,
+    /// Single bracket 1.3 EV, 7 pictures
+    SingleBracket13Ev7Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_13Ev_7pics,
+    /// Single bracket 1.5 EV, 2 pictures plus
+    SingleBracket15Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_15Ev_2pics_Plus,
+    /// Single bracket 1.5 EV, 2 pictures minus
+    SingleBracket15Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_15Ev_2pics_Minus,
+    /// Single bracket 1.5 EV, 3 pictures
+    SingleBracket15Ev3Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_15Ev_3pics,
+    /// Single bracket 1.5 EV, 5 pictures
+    SingleBracket15Ev5Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_15Ev_5pics,
+    /// Single bracket 1.5 EV, 7 pictures
+    SingleBracket15Ev7Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_15Ev_7pics,
+    /// Single bracket 1.7 EV, 2 pictures plus
+    SingleBracket17Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_17Ev_2pics_Plus,
+    /// Single bracket 1.7 EV, 2 pictures minus
+    SingleBracket17Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_17Ev_2pics_Minus,
+    /// Single bracket 1.7 EV, 3 pictures
+    SingleBracket17Ev3Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_17Ev_3pics,
+    /// Single bracket 1.7 EV, 5 pictures
+    SingleBracket17Ev5Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_17Ev_5pics,
+    /// Single bracket 1.7 EV, 7 pictures
+    SingleBracket17Ev7Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_17Ev_7pics,
+    /// Single bracket 2.0 EV, 2 pictures plus
+    SingleBracket20Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_20Ev_2pics_Plus,
+    /// Single bracket 2.0 EV, 2 pictures minus
+    SingleBracket20Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_20Ev_2pics_Minus,
+    /// Single bracket 2.0 EV, 7 pictures
+    SingleBracket20Ev7Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_20Ev_7pics,
+    /// Single bracket 2.3 EV, 2 pictures plus
+    SingleBracket23Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_23Ev_2pics_Plus,
+    /// Single bracket 2.3 EV, 2 pictures minus
+    SingleBracket23Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_23Ev_2pics_Minus,
+    /// Single bracket 2.3 EV, 3 pictures
+    SingleBracket23Ev3Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_23Ev_3pics,
+    /// Single bracket 2.3 EV, 5 pictures
+    SingleBracket23Ev5Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_23Ev_5pics,
+    /// Single bracket 2.5 EV, 2 pictures plus
+    SingleBracket25Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_25Ev_2pics_Plus,
+    /// Single bracket 2.5 EV, 2 pictures minus
+    SingleBracket25Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_25Ev_2pics_Minus,
+    /// Single bracket 2.5 EV, 3 pictures
+    SingleBracket25Ev3Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_25Ev_3pics,
+    /// Single bracket 2.5 EV, 5 pictures
+    SingleBracket25Ev5Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_25Ev_5pics,
+    /// Single bracket 2.7 EV, 2 pictures plus
+    SingleBracket27Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_27Ev_2pics_Plus,
+    /// Single bracket 2.7 EV, 2 pictures minus
+    SingleBracket27Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_27Ev_2pics_Minus,
+    /// Single bracket 2.7 EV, 3 pictures
+    SingleBracket27Ev3Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_27Ev_3pics,
+    /// Single bracket 2.7 EV, 5 pictures
+    SingleBracket27Ev5Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_27Ev_5pics,
+    /// Single bracket 3.0 EV, 2 pictures plus
+    SingleBracket30Ev2PicsPlus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_30Ev_2pics_Plus,
+    /// Single bracket 3.0 EV, 2 pictures minus
+    SingleBracket30Ev2PicsMinus =
+        crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Single_Bracket_30Ev_2pics_Minus,
+    /// White balance bracket low
+    WbBracketLo = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_WB_Bracket_Lo,
+    /// White balance bracket high
+    WbBracketHi = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_WB_Bracket_Hi,
+    /// DRO bracket low
+    DroBracketLo = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_DRO_Bracket_Lo,
+    /// DRO bracket high
+    DroBracketHi = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_DRO_Bracket_Hi,
+    /// Continuous self-timer 3 pictures
+    ContinuousTimer3Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Timer_3pics,
+    /// Continuous self-timer 5 pictures
+    ContinuousTimer5Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Timer_5pics,
+    /// Continuous self-timer 2 seconds, 3 pictures
+    ContinuousTimer2s3Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Timer_2s_3pics,
+    /// Continuous self-timer 2 seconds, 5 pictures
+    ContinuousTimer2s5Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Timer_2s_5pics,
+    /// Continuous self-timer 5 seconds, 3 pictures
+    ContinuousTimer5s3Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Timer_5s_3pics,
+    /// Continuous self-timer 5 seconds, 5 pictures
+    ContinuousTimer5s5Pics = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_Continuous_Timer_5s_5pics,
+    /// Low pass filter bracket
+    LpfBracket = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_LPF_Bracket,
+    /// Remote commander mode
+    RemoteCommander = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_RemoteCommander,
+    /// Mirror up mode
+    MirrorUp = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_MirrorUp,
+    /// Self portrait mode 1
+    SelfPortrait1 = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_SelfPortrait_1,
+    /// Self portrait mode 2
+    SelfPortrait2 = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_SelfPortrait_2,
+}
+
+impl DriveMode {
+    /// Get the raw SDK value
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    /// Create from raw SDK value
+    pub fn from_raw(value: u64) -> Option<Self> {
+        use crsdk_sys::SCRSDK::*;
+        Some(match value as u32 {
+            CrDriveMode_CrDrive_Single => Self::Single,
+            CrDriveMode_CrDrive_Continuous_Hi => Self::ContinuousHi,
+            CrDriveMode_CrDrive_Continuous_Hi_Plus => Self::ContinuousHiPlus,
+            CrDriveMode_CrDrive_Continuous_Hi_Live => Self::ContinuousHiLive,
+            CrDriveMode_CrDrive_Continuous_Lo => Self::ContinuousLo,
+            CrDriveMode_CrDrive_Continuous => Self::Continuous,
+            CrDriveMode_CrDrive_Continuous_SpeedPriority => Self::ContinuousSpeedPriority,
+            CrDriveMode_CrDrive_Continuous_Mid => Self::ContinuousMid,
+            CrDriveMode_CrDrive_Continuous_Mid_Live => Self::ContinuousMidLive,
+            CrDriveMode_CrDrive_Continuous_Lo_Live => Self::ContinuousLoLive,
+            CrDriveMode_CrDrive_SingleBurstShooting_lo => Self::SingleBurstShootingLo,
+            CrDriveMode_CrDrive_SingleBurstShooting_mid => Self::SingleBurstShootingMid,
+            CrDriveMode_CrDrive_SingleBurstShooting_hi => Self::SingleBurstShootingHi,
+            CrDriveMode_CrDrive_FocusBracket => Self::FocusBracket,
+            CrDriveMode_CrDrive_Timelapse => Self::Timelapse,
+            CrDriveMode_CrDrive_Timer_2s => Self::Timer2s,
+            CrDriveMode_CrDrive_Timer_5s => Self::Timer5s,
+            CrDriveMode_CrDrive_Timer_10s => Self::Timer10s,
+            CrDriveMode_CrDrive_Continuous_Bracket_03Ev_3pics => Self::ContinuousBracket03Ev3Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_03Ev_5pics => Self::ContinuousBracket03Ev5Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_03Ev_9pics => Self::ContinuousBracket03Ev9Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_05Ev_3pics => Self::ContinuousBracket05Ev3Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_05Ev_5pics => Self::ContinuousBracket05Ev5Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_05Ev_9pics => Self::ContinuousBracket05Ev9Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_07Ev_3pics => Self::ContinuousBracket07Ev3Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_07Ev_5pics => Self::ContinuousBracket07Ev5Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_07Ev_9pics => Self::ContinuousBracket07Ev9Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_10Ev_3pics => Self::ContinuousBracket10Ev3Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_10Ev_5pics => Self::ContinuousBracket10Ev5Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_10Ev_9pics => Self::ContinuousBracket10Ev9Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_20Ev_3pics => Self::ContinuousBracket20Ev3Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_20Ev_5pics => Self::ContinuousBracket20Ev5Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_30Ev_3pics => Self::ContinuousBracket30Ev3Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_30Ev_5pics => Self::ContinuousBracket30Ev5Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_03Ev_2pics_Plus => {
+                Self::ContinuousBracket03Ev2PicsPlus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_03Ev_2pics_Minus => {
+                Self::ContinuousBracket03Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_03Ev_7pics => Self::ContinuousBracket03Ev7Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_05Ev_2pics_Plus => {
+                Self::ContinuousBracket05Ev2PicsPlus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_05Ev_2pics_Minus => {
+                Self::ContinuousBracket05Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_05Ev_7pics => Self::ContinuousBracket05Ev7Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_07Ev_2pics_Plus => {
+                Self::ContinuousBracket07Ev2PicsPlus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_07Ev_2pics_Minus => {
+                Self::ContinuousBracket07Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_07Ev_7pics => Self::ContinuousBracket07Ev7Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_10Ev_2pics_Plus => {
+                Self::ContinuousBracket10Ev2PicsPlus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_10Ev_2pics_Minus => {
+                Self::ContinuousBracket10Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_10Ev_7pics => Self::ContinuousBracket10Ev7Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_13Ev_2pics_Plus => {
+                Self::ContinuousBracket13Ev2PicsPlus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_13Ev_2pics_Minus => {
+                Self::ContinuousBracket13Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_13Ev_3pics => Self::ContinuousBracket13Ev3Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_13Ev_5pics => Self::ContinuousBracket13Ev5Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_13Ev_7pics => Self::ContinuousBracket13Ev7Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_15Ev_2pics_Plus => {
+                Self::ContinuousBracket15Ev2PicsPlus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_15Ev_2pics_Minus => {
+                Self::ContinuousBracket15Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_15Ev_3pics => Self::ContinuousBracket15Ev3Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_15Ev_5pics => Self::ContinuousBracket15Ev5Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_15Ev_7pics => Self::ContinuousBracket15Ev7Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_17Ev_2pics_Plus => {
+                Self::ContinuousBracket17Ev2PicsPlus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_17Ev_2pics_Minus => {
+                Self::ContinuousBracket17Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_17Ev_3pics => Self::ContinuousBracket17Ev3Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_17Ev_5pics => Self::ContinuousBracket17Ev5Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_17Ev_7pics => Self::ContinuousBracket17Ev7Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_20Ev_2pics_Plus => {
+                Self::ContinuousBracket20Ev2PicsPlus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_20Ev_2pics_Minus => {
+                Self::ContinuousBracket20Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_20Ev_7pics => Self::ContinuousBracket20Ev7Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_23Ev_2pics_Plus => {
+                Self::ContinuousBracket23Ev2PicsPlus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_23Ev_2pics_Minus => {
+                Self::ContinuousBracket23Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_23Ev_3pics => Self::ContinuousBracket23Ev3Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_23Ev_5pics => Self::ContinuousBracket23Ev5Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_25Ev_2pics_Plus => {
+                Self::ContinuousBracket25Ev2PicsPlus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_25Ev_2pics_Minus => {
+                Self::ContinuousBracket25Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_25Ev_3pics => Self::ContinuousBracket25Ev3Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_25Ev_5pics => Self::ContinuousBracket25Ev5Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_27Ev_2pics_Plus => {
+                Self::ContinuousBracket27Ev2PicsPlus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_27Ev_2pics_Minus => {
+                Self::ContinuousBracket27Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_27Ev_3pics => Self::ContinuousBracket27Ev3Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_27Ev_5pics => Self::ContinuousBracket27Ev5Pics,
+            CrDriveMode_CrDrive_Continuous_Bracket_30Ev_2pics_Plus => {
+                Self::ContinuousBracket30Ev2PicsPlus
+            }
+            CrDriveMode_CrDrive_Continuous_Bracket_30Ev_2pics_Minus => {
+                Self::ContinuousBracket30Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Single_Bracket_03Ev_3pics => Self::SingleBracket03Ev3Pics,
+            CrDriveMode_CrDrive_Single_Bracket_03Ev_5pics => Self::SingleBracket03Ev5Pics,
+            CrDriveMode_CrDrive_Single_Bracket_03Ev_9pics => Self::SingleBracket03Ev9Pics,
+            CrDriveMode_CrDrive_Single_Bracket_05Ev_3pics => Self::SingleBracket05Ev3Pics,
+            CrDriveMode_CrDrive_Single_Bracket_05Ev_5pics => Self::SingleBracket05Ev5Pics,
+            CrDriveMode_CrDrive_Single_Bracket_05Ev_9pics => Self::SingleBracket05Ev9Pics,
+            CrDriveMode_CrDrive_Single_Bracket_07Ev_3pics => Self::SingleBracket07Ev3Pics,
+            CrDriveMode_CrDrive_Single_Bracket_07Ev_5pics => Self::SingleBracket07Ev5Pics,
+            CrDriveMode_CrDrive_Single_Bracket_07Ev_9pics => Self::SingleBracket07Ev9Pics,
+            CrDriveMode_CrDrive_Single_Bracket_10Ev_3pics => Self::SingleBracket10Ev3Pics,
+            CrDriveMode_CrDrive_Single_Bracket_10Ev_5pics => Self::SingleBracket10Ev5Pics,
+            CrDriveMode_CrDrive_Single_Bracket_10Ev_9pics => Self::SingleBracket10Ev9Pics,
+            CrDriveMode_CrDrive_Single_Bracket_20Ev_3pics => Self::SingleBracket20Ev3Pics,
+            CrDriveMode_CrDrive_Single_Bracket_20Ev_5pics => Self::SingleBracket20Ev5Pics,
+            CrDriveMode_CrDrive_Single_Bracket_30Ev_3pics => Self::SingleBracket30Ev3Pics,
+            CrDriveMode_CrDrive_Single_Bracket_30Ev_5pics => Self::SingleBracket30Ev5Pics,
+            CrDriveMode_CrDrive_Single_Bracket_03Ev_2pics_Plus => Self::SingleBracket03Ev2PicsPlus,
+            CrDriveMode_CrDrive_Single_Bracket_03Ev_2pics_Minus => {
+                Self::SingleBracket03Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Single_Bracket_03Ev_7pics => Self::SingleBracket03Ev7Pics,
+            CrDriveMode_CrDrive_Single_Bracket_05Ev_2pics_Plus => Self::SingleBracket05Ev2PicsPlus,
+            CrDriveMode_CrDrive_Single_Bracket_05Ev_2pics_Minus => {
+                Self::SingleBracket05Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Single_Bracket_05Ev_7pics => Self::SingleBracket05Ev7Pics,
+            CrDriveMode_CrDrive_Single_Bracket_07Ev_2pics_Plus => Self::SingleBracket07Ev2PicsPlus,
+            CrDriveMode_CrDrive_Single_Bracket_07Ev_2pics_Minus => {
+                Self::SingleBracket07Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Single_Bracket_07Ev_7pics => Self::SingleBracket07Ev7Pics,
+            CrDriveMode_CrDrive_Single_Bracket_10Ev_2pics_Plus => Self::SingleBracket10Ev2PicsPlus,
+            CrDriveMode_CrDrive_Single_Bracket_10Ev_2pics_Minus => {
+                Self::SingleBracket10Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Single_Bracket_10Ev_7pics => Self::SingleBracket10Ev7Pics,
+            CrDriveMode_CrDrive_Single_Bracket_13Ev_2pics_Plus => Self::SingleBracket13Ev2PicsPlus,
+            CrDriveMode_CrDrive_Single_Bracket_13Ev_2pics_Minus => {
+                Self::SingleBracket13Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Single_Bracket_13Ev_3pics => Self::SingleBracket13Ev3Pics,
+            CrDriveMode_CrDrive_Single_Bracket_13Ev_5pics => Self::SingleBracket13Ev5Pics,
+            CrDriveMode_CrDrive_Single_Bracket_13Ev_7pics => Self::SingleBracket13Ev7Pics,
+            CrDriveMode_CrDrive_Single_Bracket_15Ev_2pics_Plus => Self::SingleBracket15Ev2PicsPlus,
+            CrDriveMode_CrDrive_Single_Bracket_15Ev_2pics_Minus => {
+                Self::SingleBracket15Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Single_Bracket_15Ev_3pics => Self::SingleBracket15Ev3Pics,
+            CrDriveMode_CrDrive_Single_Bracket_15Ev_5pics => Self::SingleBracket15Ev5Pics,
+            CrDriveMode_CrDrive_Single_Bracket_15Ev_7pics => Self::SingleBracket15Ev7Pics,
+            CrDriveMode_CrDrive_Single_Bracket_17Ev_2pics_Plus => Self::SingleBracket17Ev2PicsPlus,
+            CrDriveMode_CrDrive_Single_Bracket_17Ev_2pics_Minus => {
+                Self::SingleBracket17Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Single_Bracket_17Ev_3pics => Self::SingleBracket17Ev3Pics,
+            CrDriveMode_CrDrive_Single_Bracket_17Ev_5pics => Self::SingleBracket17Ev5Pics,
+            CrDriveMode_CrDrive_Single_Bracket_17Ev_7pics => Self::SingleBracket17Ev7Pics,
+            CrDriveMode_CrDrive_Single_Bracket_20Ev_2pics_Plus => Self::SingleBracket20Ev2PicsPlus,
+            CrDriveMode_CrDrive_Single_Bracket_20Ev_2pics_Minus => {
+                Self::SingleBracket20Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Single_Bracket_20Ev_7pics => Self::SingleBracket20Ev7Pics,
+            CrDriveMode_CrDrive_Single_Bracket_23Ev_2pics_Plus => Self::SingleBracket23Ev2PicsPlus,
+            CrDriveMode_CrDrive_Single_Bracket_23Ev_2pics_Minus => {
+                Self::SingleBracket23Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Single_Bracket_23Ev_3pics => Self::SingleBracket23Ev3Pics,
+            CrDriveMode_CrDrive_Single_Bracket_23Ev_5pics => Self::SingleBracket23Ev5Pics,
+            CrDriveMode_CrDrive_Single_Bracket_25Ev_2pics_Plus => Self::SingleBracket25Ev2PicsPlus,
+            CrDriveMode_CrDrive_Single_Bracket_25Ev_2pics_Minus => {
+                Self::SingleBracket25Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Single_Bracket_25Ev_3pics => Self::SingleBracket25Ev3Pics,
+            CrDriveMode_CrDrive_Single_Bracket_25Ev_5pics => Self::SingleBracket25Ev5Pics,
+            CrDriveMode_CrDrive_Single_Bracket_27Ev_2pics_Plus => Self::SingleBracket27Ev2PicsPlus,
+            CrDriveMode_CrDrive_Single_Bracket_27Ev_2pics_Minus => {
+                Self::SingleBracket27Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_Single_Bracket_27Ev_3pics => Self::SingleBracket27Ev3Pics,
+            CrDriveMode_CrDrive_Single_Bracket_27Ev_5pics => Self::SingleBracket27Ev5Pics,
+            CrDriveMode_CrDrive_Single_Bracket_30Ev_2pics_Plus => Self::SingleBracket30Ev2PicsPlus,
+            CrDriveMode_CrDrive_Single_Bracket_30Ev_2pics_Minus => {
+                Self::SingleBracket30Ev2PicsMinus
+            }
+            CrDriveMode_CrDrive_WB_Bracket_Lo => Self::WbBracketLo,
+            CrDriveMode_CrDrive_WB_Bracket_Hi => Self::WbBracketHi,
+            CrDriveMode_CrDrive_DRO_Bracket_Lo => Self::DroBracketLo,
+            CrDriveMode_CrDrive_DRO_Bracket_Hi => Self::DroBracketHi,
+            CrDriveMode_CrDrive_Continuous_Timer_3pics => Self::ContinuousTimer3Pics,
+            CrDriveMode_CrDrive_Continuous_Timer_5pics => Self::ContinuousTimer5Pics,
+            CrDriveMode_CrDrive_Continuous_Timer_2s_3pics => Self::ContinuousTimer2s3Pics,
+            CrDriveMode_CrDrive_Continuous_Timer_2s_5pics => Self::ContinuousTimer2s5Pics,
+            CrDriveMode_CrDrive_Continuous_Timer_5s_3pics => Self::ContinuousTimer5s3Pics,
+            CrDriveMode_CrDrive_Continuous_Timer_5s_5pics => Self::ContinuousTimer5s5Pics,
+            CrDriveMode_CrDrive_LPF_Bracket => Self::LpfBracket,
+            CrDriveMode_CrDrive_RemoteCommander => Self::RemoteCommander,
+            CrDriveMode_CrDrive_MirrorUp => Self::MirrorUp,
+            CrDriveMode_CrDrive_SelfPortrait_1 => Self::SelfPortrait1,
+            CrDriveMode_CrDrive_SelfPortrait_2 => Self::SelfPortrait2,
+            _ => return None,
+        })
+    }
+}
 
 // TODO: Add MeteringMode enum
 // Map all CrMeteringMode_* constants from crsdk_sys::SCRSDK
@@ -645,6 +1276,14 @@ mod tests {
         let mode = ExposureProgram::Manual;
         let raw = mode.as_raw();
         let back = ExposureProgram::from_raw(raw);
+        assert_eq!(back, Some(mode));
+    }
+
+    #[test]
+    fn test_drive_mode_roundtrip() {
+        let mode = DriveMode::Single;
+        let raw = mode.as_raw();
+        let back = DriveMode::from_raw(raw);
         assert_eq!(back, Some(mode));
     }
 
