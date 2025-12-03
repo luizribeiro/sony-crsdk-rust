@@ -66,7 +66,10 @@ mod types;
 // Re-exports for async API (default)
 pub use device::{CameraDevice, CameraDeviceBuilder};
 pub use error::{Error, Result};
-pub use property::{DataType, DeviceProperty, EnableFlag, FocusMode, PropertyCode, WhiteBalance};
+pub use property::{
+    DataType, DeviceProperty, DriveMode, EnableFlag, ExposureProgram, FlashMode, FocusArea,
+    FocusMode, MeteringMode, PropertyCode, WhiteBalance,
+};
 pub use sdk::Sdk;
 pub use types::{CameraModel, ConnectionInfo, MacAddr};
 
