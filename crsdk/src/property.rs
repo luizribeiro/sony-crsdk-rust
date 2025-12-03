@@ -1150,8 +1150,127 @@ impl FlashMode {
     }
 }
 
-// TODO: Add FocusArea enum
-// Map all CrFocusArea_* constants from crsdk_sys::SCRSDK
+/// Focus area settings
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum FocusArea {
+    /// Unknown focus area
+    Unknown = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Unknown as u16,
+    /// Wide focus area
+    Wide = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Wide as u16,
+    /// Zone focus area
+    Zone = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Zone as u16,
+    /// Center focus area
+    Center = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Center as u16,
+    /// Flexible spot small
+    FlexibleSpotS = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Flexible_Spot_S as u16,
+    /// Flexible spot medium
+    FlexibleSpotM = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Flexible_Spot_M as u16,
+    /// Flexible spot large
+    FlexibleSpotL = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Flexible_Spot_L as u16,
+    /// Expand flexible spot
+    ExpandFlexibleSpot = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Expand_Flexible_Spot as u16,
+    /// Flexible spot (generic)
+    FlexibleSpot = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Flexible_Spot as u16,
+    /// Tracking wide
+    TrackingWide = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Wide as u16,
+    /// Tracking zone
+    TrackingZone = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Zone as u16,
+    /// Tracking center
+    TrackingCenter = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Center as u16,
+    /// Tracking flexible spot small
+    TrackingFlexibleSpotS =
+        crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_S as u16,
+    /// Tracking flexible spot medium
+    TrackingFlexibleSpotM =
+        crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_M as u16,
+    /// Tracking flexible spot large
+    TrackingFlexibleSpotL =
+        crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_L as u16,
+    /// Tracking expand flexible spot
+    TrackingExpandFlexibleSpot =
+        crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Expand_Flexible_Spot as u16,
+    /// Tracking flexible spot (generic)
+    TrackingFlexibleSpot = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Flexible_Spot as u16,
+    /// Flexible spot extra small
+    FlexibleSpotXS = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Flexible_Spot_XS as u16,
+    /// Flexible spot extra large
+    FlexibleSpotXL = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Flexible_Spot_XL as u16,
+    /// Flexible spot free size 1
+    FlexibleSpotFreeSize1 =
+        crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Flexible_Spot_FreeSize1 as u16,
+    /// Flexible spot free size 2
+    FlexibleSpotFreeSize2 =
+        crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Flexible_Spot_FreeSize2 as u16,
+    /// Flexible spot free size 3
+    FlexibleSpotFreeSize3 =
+        crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Flexible_Spot_FreeSize3 as u16,
+    /// Tracking flexible spot extra small
+    TrackingFlexibleSpotXS =
+        crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_XS as u16,
+    /// Tracking flexible spot extra large
+    TrackingFlexibleSpotXL =
+        crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_XL as u16,
+    /// Tracking flexible spot free size 1
+    TrackingFlexibleSpotFreeSize1 =
+        crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_FreeSize1 as u16,
+    /// Tracking flexible spot free size 2
+    TrackingFlexibleSpotFreeSize2 =
+        crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_FreeSize2 as u16,
+    /// Tracking flexible spot free size 3
+    TrackingFlexibleSpotFreeSize3 =
+        crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_FreeSize3 as u16,
+}
+
+impl FocusArea {
+    /// Get the raw SDK value
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    /// Create from raw SDK value
+    pub fn from_raw(value: u64) -> Option<Self> {
+        use crsdk_sys::SCRSDK::*;
+        Some(match value as u16 {
+            CrFocusArea_CrFocusArea_Unknown => Self::Unknown,
+            CrFocusArea_CrFocusArea_Wide => Self::Wide,
+            CrFocusArea_CrFocusArea_Zone => Self::Zone,
+            CrFocusArea_CrFocusArea_Center => Self::Center,
+            CrFocusArea_CrFocusArea_Flexible_Spot_S => Self::FlexibleSpotS,
+            CrFocusArea_CrFocusArea_Flexible_Spot_M => Self::FlexibleSpotM,
+            CrFocusArea_CrFocusArea_Flexible_Spot_L => Self::FlexibleSpotL,
+            CrFocusArea_CrFocusArea_Expand_Flexible_Spot => Self::ExpandFlexibleSpot,
+            CrFocusArea_CrFocusArea_Flexible_Spot => Self::FlexibleSpot,
+            CrFocusArea_CrFocusArea_Tracking_Wide => Self::TrackingWide,
+            CrFocusArea_CrFocusArea_Tracking_Zone => Self::TrackingZone,
+            CrFocusArea_CrFocusArea_Tracking_Center => Self::TrackingCenter,
+            CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_S => Self::TrackingFlexibleSpotS,
+            CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_M => Self::TrackingFlexibleSpotM,
+            CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_L => Self::TrackingFlexibleSpotL,
+            CrFocusArea_CrFocusArea_Tracking_Expand_Flexible_Spot => {
+                Self::TrackingExpandFlexibleSpot
+            }
+            CrFocusArea_CrFocusArea_Tracking_Flexible_Spot => Self::TrackingFlexibleSpot,
+            CrFocusArea_CrFocusArea_Flexible_Spot_XS => Self::FlexibleSpotXS,
+            CrFocusArea_CrFocusArea_Flexible_Spot_XL => Self::FlexibleSpotXL,
+            CrFocusArea_CrFocusArea_Flexible_Spot_FreeSize1 => Self::FlexibleSpotFreeSize1,
+            CrFocusArea_CrFocusArea_Flexible_Spot_FreeSize2 => Self::FlexibleSpotFreeSize2,
+            CrFocusArea_CrFocusArea_Flexible_Spot_FreeSize3 => Self::FlexibleSpotFreeSize3,
+            CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_XS => Self::TrackingFlexibleSpotXS,
+            CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_XL => Self::TrackingFlexibleSpotXL,
+            CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_FreeSize1 => {
+                Self::TrackingFlexibleSpotFreeSize1
+            }
+            CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_FreeSize2 => {
+                Self::TrackingFlexibleSpotFreeSize2
+            }
+            CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_FreeSize3 => {
+                Self::TrackingFlexibleSpotFreeSize3
+            }
+            _ => return None,
+        })
+    }
+}
 
 /// SDK data type classification
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
