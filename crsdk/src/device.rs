@@ -5,8 +5,40 @@
 
 use crate::blocking;
 use crate::error::{Error, Result};
-use crate::types::{CameraModel, ConnectionInfo, MacAddr};
+use crate::types::{CameraModel, ConnectionInfo, DiscoveredCamera, MacAddr};
 use std::net::Ipv4Addr;
+
+/// Discover cameras connected via network and USB (async version)
+///
+/// This function enumerates all cameras that are currently connected and
+/// visible to the SDK. It searches on both network (Ethernet/WiFi) and USB.
+///
+/// # Arguments
+///
+/// * `timeout_secs` - How long to scan for cameras (1-10 seconds recommended)
+///
+/// # Returns
+///
+/// A vector of discovered cameras. Empty if no cameras found.
+///
+/// # Example
+///
+/// ```no_run
+/// use crsdk::discover_cameras;
+///
+/// #[tokio::main]
+/// async fn main() {
+///     let cameras = discover_cameras(3).await.expect("Discovery failed");
+///     for camera in &cameras {
+///         println!("Found: {}", camera);
+///     }
+/// }
+/// ```
+pub async fn discover_cameras(timeout_secs: u8) -> Result<Vec<DiscoveredCamera>> {
+    tokio::task::spawn_blocking(move || blocking::discover_cameras(timeout_secs))
+        .await
+        .map_err(|e| Error::Other(format!("Task join error: {}", e)))?
+}
 
 /// A connected camera device (async API)
 ///

@@ -1,6 +1,8 @@
 //! Blocking camera device connection and control
 
-use asyncwrap::{async_wrap, blocking_impl};
+#[allow(unused_imports)]
+use asyncwrap::async_wrap;
+use asyncwrap::blocking_impl;
 
 use crate::command::{CommandId, CommandParam, LockIndicator};
 use crate::error::{Error, Result};
@@ -8,7 +10,9 @@ use crate::property::{
     device_property_from_sdk, DeviceProperty, DriveMode, ExposureProgram, FlashMode, FocusArea,
     FocusMode, MeteringMode, PropertyCode, WhiteBalance,
 };
-use crate::types::{ip_to_sdk_format, CameraModel, ConnectionInfo, MacAddr};
+use crate::types::{
+    ip_to_sdk_format, CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, MacAddr,
+};
 use crate::Sdk;
 use std::ffi::CString;
 use std::net::Ipv4Addr;
@@ -25,6 +29,173 @@ fn ensure_sdk_initialized() -> Result<()> {
         SDK_INITIALIZED.store(true, Ordering::Release);
     }
     Ok(())
+}
+
+/// Discover cameras connected via network and USB
+///
+/// This function enumerates all cameras that are currently connected and
+/// visible to the SDK. It searches on both network (Ethernet/WiFi) and USB.
+///
+/// # Arguments
+///
+/// * `timeout_secs` - How long to scan for cameras (1-10 seconds recommended)
+///
+/// # Returns
+///
+/// A vector of discovered cameras. Empty if no cameras found.
+pub fn discover_cameras(timeout_secs: u8) -> Result<Vec<DiscoveredCamera>> {
+    ensure_sdk_initialized()?;
+
+    let mut enum_ptr: *mut crsdk_sys::SCRSDK::ICrEnumCameraObjectInfo = ptr::null_mut();
+
+    let result = unsafe { crsdk_sys::SCRSDK::EnumCameraObjects(&mut enum_ptr, timeout_secs) };
+
+    if result != 0 {
+        return Err(Error::from_sdk_error(result as u32));
+    }
+
+    if enum_ptr.is_null() {
+        return Ok(Vec::new());
+    }
+
+    let count = unsafe { crsdk_sys::crsdk_enum_camera_get_count(enum_ptr) };
+    let mut cameras = Vec::with_capacity(count as usize);
+
+    for i in 0..count {
+        let info_ptr = unsafe { crsdk_sys::crsdk_enum_camera_get_info(enum_ptr, i) };
+        if info_ptr.is_null() {
+            continue;
+        }
+
+        let camera = camera_info_from_sdk(info_ptr);
+        cameras.push(camera);
+    }
+
+    unsafe {
+        crsdk_sys::crsdk_enum_camera_release(enum_ptr);
+    }
+
+    Ok(cameras)
+}
+
+/// Parse a string field from SDK camera info.
+///
+/// # Safety
+/// The caller must ensure `info` is a valid pointer to ICrCameraObjectInfo
+/// that remains valid for the duration of this call.
+unsafe fn parse_sdk_string(
+    info: *const crsdk_sys::SCRSDK::ICrCameraObjectInfo,
+    get_ptr: unsafe extern "C" fn(*const crsdk_sys::SCRSDK::ICrCameraObjectInfo) -> *const i8,
+    get_size: unsafe extern "C" fn(*const crsdk_sys::SCRSDK::ICrCameraObjectInfo) -> u32,
+) -> String {
+    // SAFETY: Caller guarantees info is valid. The SDK returns a pointer to
+    // internal buffer that is valid for the lifetime of the enumeration.
+    let ptr = unsafe { get_ptr(info) };
+    let size = unsafe { get_size(info) };
+    if ptr.is_null() || size == 0 {
+        String::new()
+    } else {
+        // SAFETY: We verified ptr is non-null and size is from the SDK.
+        // The SDK guarantees the buffer contains at least `size` bytes.
+        let slice = unsafe { std::slice::from_raw_parts(ptr as *const u8, size as usize) };
+        String::from_utf8_lossy(slice)
+            .trim_end_matches('\0')
+            .to_string()
+    }
+}
+
+fn camera_info_from_sdk(info: *const crsdk_sys::SCRSDK::ICrCameraObjectInfo) -> DiscoveredCamera {
+    // SAFETY: info pointer validity is guaranteed by the SDK's enumeration API.
+    // GetCameraObjectInfo returns valid pointers for indices 0..GetCount()-1.
+    let model = unsafe {
+        parse_sdk_string(
+            info,
+            crsdk_sys::crsdk_camera_info_get_model,
+            crsdk_sys::crsdk_camera_info_get_model_size,
+        )
+    };
+
+    let name = unsafe {
+        parse_sdk_string(
+            info,
+            crsdk_sys::crsdk_camera_info_get_name,
+            crsdk_sys::crsdk_camera_info_get_name_size,
+        )
+    };
+
+    let connection_type = unsafe {
+        // SAFETY: info is valid per caller contract
+        let ptr = crsdk_sys::crsdk_camera_info_get_connection_type(info);
+        if ptr.is_null() {
+            tracing::warn!("Connection type pointer is null");
+            ConnectionType::Unknown
+        } else {
+            // SAFETY: SDK guarantees null-terminated string if pointer is non-null
+            let cstr = std::ffi::CStr::from_ptr(ptr);
+            let type_str = cstr.to_str().unwrap_or("");
+            match type_str.to_lowercase().as_str() {
+                s if s.contains("ether") || s.contains("network") || s.contains("ip") => {
+                    ConnectionType::Network
+                }
+                s if s.contains("usb") => ConnectionType::Usb,
+                other => {
+                    if !other.is_empty() {
+                        tracing::debug!("Unknown connection type: {}", other);
+                    }
+                    ConnectionType::Unknown
+                }
+            }
+        }
+    };
+
+    // SAFETY: info is valid per caller contract
+    let ip_address = unsafe {
+        let ip_packed = crsdk_sys::crsdk_camera_info_get_ip_address(info);
+        if ip_packed == 0 {
+            None
+        } else {
+            // SDK stores IP in little-endian format
+            let bytes = ip_packed.to_le_bytes();
+            Some(Ipv4Addr::new(bytes[0], bytes[1], bytes[2], bytes[3]))
+        }
+    };
+
+    // SAFETY: info is valid per caller contract
+    let mac_address = unsafe {
+        let mac_ptr = crsdk_sys::crsdk_camera_info_get_mac_address(info);
+        let mac_size = crsdk_sys::crsdk_camera_info_get_mac_address_size(info);
+        if mac_ptr.is_null() || mac_size < 6 {
+            None
+        } else {
+            let mut bytes = [0u8; 6];
+            // SAFETY: We verified mac_ptr is non-null and mac_size >= 6
+            ptr::copy_nonoverlapping(mac_ptr, bytes.as_mut_ptr(), 6);
+            Some(MacAddr::new(bytes))
+        }
+    };
+
+    // SAFETY: info is valid per caller contract
+    let ssh_supported = unsafe { crsdk_sys::crsdk_camera_info_get_ssh_support(info) != 0 };
+
+    // SAFETY: info is valid per caller contract
+    let usb_pid = unsafe {
+        let pid = crsdk_sys::crsdk_camera_info_get_usb_pid(info);
+        if pid == 0 {
+            None
+        } else {
+            Some(pid)
+        }
+    };
+
+    DiscoveredCamera {
+        model,
+        name,
+        connection_type,
+        ip_address,
+        mac_address,
+        ssh_supported,
+        usb_pid,
+    }
 }
 
 fn create_camera_info(
@@ -563,5 +734,17 @@ impl CameraDeviceBuilder {
             handle: device_handle,
             model,
         })
+    }
+}
+
+impl Drop for CameraDeviceBuilder {
+    fn drop(&mut self) {
+        if let Some(ptr) = self.camera_info_ptr.take() {
+            // SAFETY: The pointer was created by CreateCameraObjectInfoEthernetConnection
+            // and we have exclusive ownership. Release() is the SDK's method to free it.
+            unsafe {
+                crsdk_sys::crsdk_camera_info_release(ptr);
+            }
+        }
     }
 }

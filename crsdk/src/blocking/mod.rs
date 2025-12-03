@@ -33,4 +33,4 @@
 
 mod device;
 
-pub use device::{CameraDevice, CameraDeviceBuilder};
+pub use device::{discover_cameras, CameraDevice, CameraDeviceBuilder};
