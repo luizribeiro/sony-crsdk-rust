@@ -57,37 +57,37 @@ impl fmt::Display for MacAddr {
 #[repr(u32)]
 pub enum CameraModel {
     /// Sony FX3
-    FX3,
+    Fx3,
     /// Sony FX6
-    FX6,
+    Fx6,
     /// Sony FX30
-    FX30,
+    Fx30,
     /// Sony α1
     Alpha1,
     /// Sony α7 IV
-    Alpha7_IV,
+    Alpha7Iv,
     /// Sony α7R V
-    Alpha7R_V,
+    Alpha7Rv,
     /// Sony α7S III
-    Alpha7S_III,
+    Alpha7Siii,
     /// Sony α9 II
-    Alpha9_II,
+    Alpha9Ii,
     /// Sony α9 III
-    Alpha9_III,
+    Alpha9Iii,
 }
 
 impl fmt::Display for CameraModel {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            CameraModel::FX3 => write!(f, "Sony FX3"),
-            CameraModel::FX6 => write!(f, "Sony FX6"),
-            CameraModel::FX30 => write!(f, "Sony FX30"),
+            CameraModel::Fx3 => write!(f, "Sony FX3"),
+            CameraModel::Fx6 => write!(f, "Sony FX6"),
+            CameraModel::Fx30 => write!(f, "Sony FX30"),
             CameraModel::Alpha1 => write!(f, "Sony α1"),
-            CameraModel::Alpha7_IV => write!(f, "Sony α7 IV"),
-            CameraModel::Alpha7R_V => write!(f, "Sony α7R V"),
-            CameraModel::Alpha7S_III => write!(f, "Sony α7S III"),
-            CameraModel::Alpha9_II => write!(f, "Sony α9 II"),
-            CameraModel::Alpha9_III => write!(f, "Sony α9 III"),
+            CameraModel::Alpha7Iv => write!(f, "Sony α7 IV"),
+            CameraModel::Alpha7Rv => write!(f, "Sony α7R V"),
+            CameraModel::Alpha7Siii => write!(f, "Sony α7S III"),
+            CameraModel::Alpha9Ii => write!(f, "Sony α9 II"),
+            CameraModel::Alpha9Iii => write!(f, "Sony α9 III"),
         }
     }
 }
@@ -96,13 +96,13 @@ impl CameraModel {
     /// Get SDK enum value for this model
     pub(crate) fn to_sdk_value(self) -> u32 {
         match self {
-            CameraModel::FX3 => {
+            CameraModel::Fx3 => {
                 crsdk_sys::SCRSDK::CrCameraDeviceModelList_CrCameraDeviceModel_ILME_FX3
             }
-            CameraModel::FX6 => {
+            CameraModel::Fx6 => {
                 crsdk_sys::SCRSDK::CrCameraDeviceModelList_CrCameraDeviceModel_ILME_FX6
             }
-            CameraModel::FX30 => {
+            CameraModel::Fx30 => {
                 crsdk_sys::SCRSDK::CrCameraDeviceModelList_CrCameraDeviceModel_ILME_FX30
             }
             CameraModel::Alpha1 => {

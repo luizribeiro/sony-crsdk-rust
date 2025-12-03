@@ -58,7 +58,7 @@ async fn main() -> Result<()> {
     let camera = CameraDevice::builder()
         .ip_address("192.168.1.100".parse()?)
         .mac_address("00:00:00:00:00:00".parse()?)
-        .model(CameraModel::FX3)
+        .model(CameraModel::Fx3)
         .ssh_credentials("your_username", "yourpassword")
         .connect()
         .await?;
