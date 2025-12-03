@@ -315,6 +315,34 @@ impl CameraDevice {
         self.send_command(CommandId::Release, CommandParam::Up)?;
         Ok(())
     }
+
+    /// Half-press the shutter to activate autofocus
+    ///
+    /// This is equivalent to pressing the shutter button halfway on a physical camera.
+    /// The camera will attempt to focus on the current subject. Call `release_shutter()`
+    /// to release the half-press state.
+    pub fn half_press_shutter(&self) -> Result<()> {
+        self.set_s1_lock(LockIndicator::Locked)
+    }
+
+    /// Release the half-pressed shutter
+    ///
+    /// This releases the autofocus lock initiated by `half_press_shutter()`.
+    pub fn release_shutter(&self) -> Result<()> {
+        self.set_s1_lock(LockIndicator::Unlocked)
+    }
+
+    /// Autofocus and capture in one operation
+    ///
+    /// Half-presses to focus, waits briefly, then captures the image.
+    /// This is a convenience method that combines `half_press_shutter()` + delay + `capture()`.
+    pub fn focus_and_capture(&self) -> Result<()> {
+        self.half_press_shutter()?;
+        std::thread::sleep(Duration::from_millis(500));
+        self.capture()?;
+        self.release_shutter()?;
+        Ok(())
+    }
 }
 
 impl Drop for CameraDevice {
