@@ -149,6 +149,7 @@ fn render_property_list(
     app: &App,
     properties: &[&crate::property::Property],
 ) {
+    const NAME_WIDTH: usize = 34;
     let props_focused = app.property_editor.focus == PropertyEditorFocus::Properties;
 
     let items: Vec<ListItem> = properties
@@ -200,8 +201,10 @@ fn render_property_list(
             ListItem::new(Line::from(vec![
                 Span::styled(prefix, name_style),
                 Span::styled(pin_indicator, pin_style),
-                Span::styled(prop.code.name(), name_style),
-                Span::raw(": "),
+                Span::styled(
+                    format!("{:width$}", prop.code.name(), width = NAME_WIDTH),
+                    name_style,
+                ),
                 Span::styled(prop.current_value(), value_style),
                 suffix,
             ]))
