@@ -29,19 +29,27 @@ fn centered_rect(width: u16, height: u16, area: Rect) -> Rect {
         .split(vertical[0])[0]
 }
 
-fn render_ssh_modal(frame: &mut Frame, state: &SshCredentialsState) {
-    let area = centered_rect(50, 11, frame.area());
-
+fn render_modal_frame(
+    frame: &mut Frame,
+    width: u16,
+    height: u16,
+    title: &str,
+    color: Color,
+) -> Rect {
+    let area = centered_rect(width, height, frame.area());
     frame.render_widget(Clear, area);
 
     let block = Block::default()
-        .title(" SSH Authentication ")
+        .title(title)
         .borders(Borders::ALL)
-        .border_style(Style::default().fg(Color::Cyan));
+        .border_style(Style::default().fg(color));
 
     frame.render_widget(block.clone(), area);
+    block.inner(area)
+}
 
-    let inner = block.inner(area);
+fn render_ssh_modal(frame: &mut Frame, state: &SshCredentialsState) {
+    let inner = render_modal_frame(frame, 50, 11, " SSH Authentication ", Color::Cyan);
     let layout = Layout::vertical([
         Constraint::Length(2), // Camera info
         Constraint::Length(2), // Username
@@ -110,18 +118,13 @@ fn render_ssh_modal(frame: &mut Frame, state: &SshCredentialsState) {
 }
 
 fn render_fingerprint_modal(frame: &mut Frame, state: &SshFingerprintState) {
-    let area = centered_rect(60, 12, frame.area());
-
-    frame.render_widget(Clear, area);
-
-    let block = Block::default()
-        .title(" SSH Fingerprint Verification ")
-        .borders(Borders::ALL)
-        .border_style(Style::default().fg(Color::Yellow));
-
-    frame.render_widget(block.clone(), area);
-
-    let inner = block.inner(area);
+    let inner = render_modal_frame(
+        frame,
+        60,
+        12,
+        " SSH Fingerprint Verification ",
+        Color::Yellow,
+    );
     let layout = Layout::vertical([
         Constraint::Length(2), // Camera info
         Constraint::Length(1), // Spacer
@@ -165,18 +168,7 @@ fn render_fingerprint_modal(frame: &mut Frame, state: &SshFingerprintState) {
 }
 
 fn render_manual_modal(frame: &mut Frame, state: &ManualConnectionState) {
-    let area = centered_rect(50, 12, frame.area());
-
-    frame.render_widget(Clear, area);
-
-    let block = Block::default()
-        .title(" Manual Connection ")
-        .borders(Borders::ALL)
-        .border_style(Style::default().fg(Color::Cyan));
-
-    frame.render_widget(block.clone(), area);
-
-    let inner = block.inner(area);
+    let inner = render_modal_frame(frame, 50, 12, " Manual Connection ", Color::Cyan);
     let layout = Layout::vertical([
         Constraint::Length(2), // IP Address
         Constraint::Length(2), // MAC Address
@@ -263,18 +255,7 @@ fn render_manual_modal(frame: &mut Frame, state: &ManualConnectionState) {
 }
 
 fn render_confirmation_modal(frame: &mut Frame, message: &str) {
-    let area = centered_rect(40, 7, frame.area());
-
-    frame.render_widget(Clear, area);
-
-    let block = Block::default()
-        .title(" Confirm ")
-        .borders(Borders::ALL)
-        .border_style(Style::default().fg(Color::Yellow));
-
-    frame.render_widget(block.clone(), area);
-
-    let inner = block.inner(area);
+    let inner = render_modal_frame(frame, 40, 7, " Confirm ", Color::Yellow);
     let layout = Layout::vertical([
         Constraint::Min(2),    // Message
         Constraint::Length(2), // Buttons
@@ -295,18 +276,7 @@ fn render_confirmation_modal(frame: &mut Frame, message: &str) {
 }
 
 fn render_error_modal(frame: &mut Frame, message: &str) {
-    let area = centered_rect(50, 7, frame.area());
-
-    frame.render_widget(Clear, area);
-
-    let block = Block::default()
-        .title(" Error ")
-        .borders(Borders::ALL)
-        .border_style(Style::default().fg(Color::Red));
-
-    frame.render_widget(block.clone(), area);
-
-    let inner = block.inner(area);
+    let inner = render_modal_frame(frame, 50, 7, " Error ", Color::Red);
     let layout = Layout::vertical([
         Constraint::Min(2),    // Message
         Constraint::Length(2), // Button
