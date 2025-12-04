@@ -17,3 +17,6 @@ Cargo.lock
 
 # Sony SDK Libraries (download separately from Sony)
 libs/
+
+# misc
+*.log
