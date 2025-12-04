@@ -150,13 +150,11 @@ impl EventHandler {
         match key.code {
             KeyCode::Char('q') => Some(Action::Quit),
             KeyCode::Char('?') => Some(Action::ShowHelp),
-            KeyCode::Esc => match focus {
-                PropertyEditorFocus::Values => Some(Action::PropertyEditorTab),
-                _ => Some(Action::Back),
-            },
+            KeyCode::Esc => Some(Action::Back),
             KeyCode::Char('j') | KeyCode::Down => Some(Action::PropertyEditorNext),
             KeyCode::Char('k') | KeyCode::Up => Some(Action::PropertyEditorPrev),
-            KeyCode::Tab => Some(Action::PropertyEditorTab),
+            KeyCode::Tab => Some(Action::PropertyEditorNextCategory),
+            KeyCode::BackTab => Some(Action::PropertyEditorPrevCategory),
             KeyCode::Char('h') | KeyCode::Left => Some(Action::PropertyEditorValuePrev),
             KeyCode::Char('l') | KeyCode::Right => Some(Action::PropertyEditorValueNext),
             KeyCode::Char('*') => Some(Action::TogglePropertyPin),

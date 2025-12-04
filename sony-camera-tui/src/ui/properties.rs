@@ -286,17 +286,7 @@ fn render_value_list(
 
 fn render_shortcuts(frame: &mut Frame, area: Rect, app: &App) {
     let shortcuts = match app.property_editor.focus {
-        PropertyEditorFocus::Categories => Line::from(vec![
-            Span::styled(" ↑↓ ", Style::default().fg(Color::Cyan)),
-            Span::styled("Navigate", Style::default().fg(Color::DarkGray)),
-            Span::raw("  "),
-            Span::styled(" Tab ", Style::default().fg(Color::Cyan)),
-            Span::styled("Properties", Style::default().fg(Color::DarkGray)),
-            Span::raw("  "),
-            Span::styled(" Esc ", Style::default().fg(Color::Cyan)),
-            Span::styled("Back", Style::default().fg(Color::DarkGray)),
-        ]),
-        PropertyEditorFocus::Properties => Line::from(vec![
+        PropertyEditorFocus::Categories | PropertyEditorFocus::Properties => Line::from(vec![
             Span::styled(" ↑↓ ", Style::default().fg(Color::Cyan)),
             Span::styled("Select", Style::default().fg(Color::DarkGray)),
             Span::raw("  "),
@@ -306,11 +296,11 @@ fn render_shortcuts(frame: &mut Frame, area: Rect, app: &App) {
             Span::styled(" o ", Style::default().fg(Color::Cyan)),
             Span::styled("Values", Style::default().fg(Color::DarkGray)),
             Span::raw("  "),
+            Span::styled(" Tab ", Style::default().fg(Color::Cyan)),
+            Span::styled("Category", Style::default().fg(Color::DarkGray)),
+            Span::raw("  "),
             Span::styled(" * ", Style::default().fg(Color::Yellow)),
             Span::styled("Pin", Style::default().fg(Color::DarkGray)),
-            Span::raw("  "),
-            Span::styled(" Tab ", Style::default().fg(Color::Cyan)),
-            Span::styled("Categories", Style::default().fg(Color::DarkGray)),
             Span::raw("  "),
             Span::styled(" Esc ", Style::default().fg(Color::Cyan)),
             Span::styled("Back", Style::default().fg(Color::DarkGray)),
@@ -321,6 +311,9 @@ fn render_shortcuts(frame: &mut Frame, area: Rect, app: &App) {
             Span::raw("  "),
             Span::styled(" Enter ", Style::default().fg(Color::Cyan)),
             Span::styled("Apply", Style::default().fg(Color::DarkGray)),
+            Span::raw("  "),
+            Span::styled(" Tab ", Style::default().fg(Color::Cyan)),
+            Span::styled("Category", Style::default().fg(Color::DarkGray)),
             Span::raw("  "),
             Span::styled(" Esc ", Style::default().fg(Color::Cyan)),
             Span::styled("Cancel", Style::default().fg(Color::DarkGray)),
