@@ -6,7 +6,9 @@ use ratatui::{
     Frame,
 };
 
-use crate::app::{ManualConnectionState, Modal, SshCredentialsState, SshFingerprintState};
+use crate::app::{
+    ManualConnectionState, Modal, PropertySearchState, SshCredentialsState, SshFingerprintState,
+};
 use crsdk::CameraModel;
 
 pub fn render(frame: &mut Frame, modal: &Modal) {
@@ -14,6 +16,7 @@ pub fn render(frame: &mut Frame, modal: &Modal) {
         Modal::SshCredentials(state) => render_ssh_modal(frame, state),
         Modal::SshFingerprintConfirm(state) => render_fingerprint_modal(frame, state),
         Modal::ManualConnection(state) => render_manual_modal(frame, state),
+        Modal::PropertySearch(state) => render_property_search_modal(frame, state),
         Modal::Confirmation { message } => render_confirmation_modal(frame, message),
         Modal::Error { message } => render_error_modal(frame, message),
     }
@@ -327,4 +330,74 @@ fn render_input_field(
     ]);
 
     frame.render_widget(Paragraph::new(line), area);
+}
+
+fn render_property_search_modal(frame: &mut Frame, state: &PropertySearchState) {
+    let max_results = 10;
+    let height = 4 + max_results.min(state.results.len().max(1)) as u16;
+    let inner = render_modal_frame(frame, 50, height, " Search Properties ", Color::Cyan);
+
+    let layout = Layout::vertical([
+        Constraint::Length(2), // Search input
+        Constraint::Min(1),    // Results
+        Constraint::Length(1), // Shortcuts
+    ])
+    .split(inner);
+
+    // Search input
+    let search_line = Line::from(vec![
+        Span::styled("  / ", Style::default().fg(Color::DarkGray)),
+        Span::styled(&state.query, Style::default().fg(Color::Cyan)),
+        Span::styled("▎", Style::default().fg(Color::Cyan)),
+    ]);
+    frame.render_widget(Paragraph::new(search_line), layout[0]);
+
+    // Results
+    let results_area = layout[1];
+    if state.results.is_empty() {
+        let no_results = Paragraph::new(Line::from(vec![Span::styled(
+            "    No matching properties",
+            Style::default().fg(Color::DarkGray),
+        )]));
+        frame.render_widget(no_results, results_area);
+    } else {
+        let visible_results: Vec<Line> = state
+            .results
+            .iter()
+            .take(max_results)
+            .enumerate()
+            .map(|(i, &id)| {
+                let is_selected = i == state.selected_index;
+                let prefix = if is_selected { "▸ " } else { "  " };
+                let style = if is_selected {
+                    Style::default().fg(Color::Cyan)
+                } else {
+                    Style::default().fg(Color::White)
+                };
+                let category_style = Style::default().fg(Color::DarkGray);
+
+                Line::from(vec![
+                    Span::styled(format!("  {}", prefix), style),
+                    Span::styled(format!("{:12}", id.category().name()), category_style),
+                    Span::styled(id.name(), style),
+                ])
+            })
+            .collect();
+
+        let results_paragraph = Paragraph::new(visible_results);
+        frame.render_widget(results_paragraph, results_area);
+    }
+
+    // Shortcuts
+    let shortcuts = Line::from(vec![
+        Span::styled("  ↑↓ ", Style::default().fg(Color::Cyan)),
+        Span::styled("Select", Style::default().fg(Color::DarkGray)),
+        Span::raw("  "),
+        Span::styled("Enter ", Style::default().fg(Color::Cyan)),
+        Span::styled("Go", Style::default().fg(Color::DarkGray)),
+        Span::raw("  "),
+        Span::styled("Esc ", Style::default().fg(Color::Cyan)),
+        Span::styled("Cancel", Style::default().fg(Color::DarkGray)),
+    ]);
+    frame.render_widget(Paragraph::new(shortcuts), layout[2]);
 }

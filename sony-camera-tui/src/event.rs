@@ -98,6 +98,8 @@ impl EventHandler {
             KeyCode::Delete => Some(Action::ModalInputDelete),
             KeyCode::Left => Some(Action::ModalInputLeft),
             KeyCode::Right => Some(Action::ModalInputRight),
+            KeyCode::Down => Some(Action::ModalSelectNext),
+            KeyCode::Up => Some(Action::ModalSelectPrev),
             _ => None,
         }
     }
@@ -141,6 +143,7 @@ impl EventHandler {
             // Navigation
             KeyCode::Char('p') => Some(Action::ShowPropertyEditor),
             KeyCode::Char('e') => Some(Action::ShowEventsExpanded),
+            KeyCode::Char('/') => Some(Action::ShowPropertySearch),
             KeyCode::Char('d') | KeyCode::Esc => Some(Action::Disconnect),
             _ => None,
         }
@@ -163,6 +166,7 @@ impl EventHandler {
                 PropertyEditorFocus::Values => Some(Action::PropertyEditorApplyValue),
                 _ => None,
             },
+            KeyCode::Char('/') => Some(Action::ShowPropertySearch),
             _ => None,
         }
     }

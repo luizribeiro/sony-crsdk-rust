@@ -37,6 +37,27 @@ pub enum PropertyId {
 }
 
 impl PropertyId {
+    pub const ALL: &'static [Self] = &[
+        Self::ExposureMode,
+        Self::ShutterSpeed,
+        Self::Aperture,
+        Self::Iso,
+        Self::ExposureComp,
+        Self::FocusMode,
+        Self::FocusArea,
+        Self::WhiteBalance,
+        Self::DriveMode,
+        Self::MeteringMode,
+        Self::FlashMode,
+        Self::FileType,
+        Self::ImageQuality,
+        Self::ImageSize,
+        Self::ColorSpace,
+        Self::MovieFormat,
+        Self::MovieQuality,
+        Self::RecordingFrameRate,
+    ];
+
     pub fn category(self) -> PropertyCategory {
         match self {
             Self::ExposureMode
@@ -587,5 +608,162 @@ pub fn parse_display_value(id: PropertyId, display: &str) -> Option<u64> {
         PropertyId::Iso => parse_iso(display),
         PropertyId::ExposureComp => parse_exposure_comp(display).map(|v| v as u64),
         _ => None,
+    }
+}
+
+/// Fuzzy match score for a query against a property name
+/// Returns Some(score) if matches, None if no match
+/// Higher scores are better matches
+fn fuzzy_match_score(query: &str, name: &str) -> Option<i32> {
+    if query.is_empty() {
+        return Some(0);
+    }
+
+    let query_lower = query.to_lowercase();
+    let name_lower = name.to_lowercase();
+
+    // Exact match gets highest score
+    if name_lower == query_lower {
+        return Some(1000);
+    }
+
+    // Prefix match gets high score (shorter names get bonus)
+    if name_lower.starts_with(&query_lower) {
+        let length_bonus = (100i32).saturating_sub(name.len() as i32).max(0);
+        return Some(500 + length_bonus);
+    }
+
+    // Contains match (shorter names get bonus)
+    if name_lower.contains(&query_lower) {
+        let length_bonus = (100i32).saturating_sub(name.len() as i32).max(0);
+        return Some(200 + length_bonus);
+    }
+
+    // Fuzzy match: all query chars must appear in order
+    let mut query_chars = query_lower.chars().peekable();
+    let mut score = 0;
+    let mut prev_matched = false;
+
+    for c in name_lower.chars() {
+        if let Some(&qc) = query_chars.peek() {
+            if c == qc {
+                query_chars.next();
+                // Bonus for consecutive matches
+                if prev_matched {
+                    score += 10;
+                } else {
+                    score += 5;
+                }
+                prev_matched = true;
+            } else {
+                prev_matched = false;
+            }
+        }
+    }
+
+    // All query chars must be consumed for a match
+    if query_chars.peek().is_none() {
+        Some(score)
+    } else {
+        None
+    }
+}
+
+/// Search properties by fuzzy matching query against property names
+pub fn search_properties(query: &str) -> Vec<PropertyId> {
+    let mut results: Vec<(PropertyId, i32)> = PropertyId::ALL
+        .iter()
+        .filter_map(|&id| {
+            let name = id.name();
+            let category_name = id.category().name();
+            // Match against property name or "category: name"
+            let full_name = format!("{}: {}", category_name, name);
+
+            let score =
+                fuzzy_match_score(query, name).or_else(|| fuzzy_match_score(query, &full_name));
+
+            score.map(|s| (id, s))
+        })
+        .collect();
+
+    // Sort by score descending
+    results.sort_by(|a, b| b.1.cmp(&a.1));
+
+    results.into_iter().map(|(id, _)| id).collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_fuzzy_match_exact() {
+        assert_eq!(fuzzy_match_score("iso", "ISO"), Some(1000));
+        assert_eq!(fuzzy_match_score("aperture", "Aperture"), Some(1000));
+    }
+
+    #[test]
+    fn test_fuzzy_match_prefix() {
+        let score = fuzzy_match_score("shut", "Shutter").unwrap();
+        assert!(score > 500 && score < 1000);
+    }
+
+    #[test]
+    fn test_fuzzy_match_contains() {
+        let score = fuzzy_match_score("utter", "Shutter").unwrap();
+        assert!(score > 200 && score < 500);
+    }
+
+    #[test]
+    fn test_fuzzy_match_sequential_chars() {
+        assert!(fuzzy_match_score("sr", "Shutter").is_some());
+        assert!(fuzzy_match_score("ae", "Aperture").is_some());
+    }
+
+    #[test]
+    fn test_fuzzy_match_no_match() {
+        assert_eq!(fuzzy_match_score("xyz", "ISO"), None);
+        assert_eq!(fuzzy_match_score("zba", "Aperture"), None);
+    }
+
+    #[test]
+    fn test_fuzzy_match_empty_query() {
+        assert_eq!(fuzzy_match_score("", "anything"), Some(0));
+    }
+
+    #[test]
+    fn test_search_properties_empty_returns_all() {
+        let results = search_properties("");
+        assert_eq!(results.len(), PropertyId::ALL.len());
+    }
+
+    #[test]
+    fn test_search_properties_exact_match_first() {
+        let results = search_properties("ISO");
+        assert!(!results.is_empty());
+        assert_eq!(results[0], PropertyId::Iso);
+    }
+
+    #[test]
+    fn test_search_properties_partial_match() {
+        let results = search_properties("shut");
+        assert!(!results.is_empty());
+        assert_eq!(results[0], PropertyId::ShutterSpeed);
+    }
+
+    #[test]
+    fn test_search_properties_case_insensitive() {
+        let results1 = search_properties("ISO");
+        let results2 = search_properties("iso");
+        assert_eq!(results1[0], results2[0]);
+    }
+
+    #[test]
+    fn test_all_properties_count() {
+        assert_eq!(
+            PropertyId::ALL.len(),
+            18,
+            "PropertyId::ALL out of sync with enum variants"
+        );
     }
 }
