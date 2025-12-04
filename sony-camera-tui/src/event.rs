@@ -121,12 +121,7 @@ impl EventHandler {
         match key.code {
             KeyCode::Char('q') => Some(Action::Quit),
             KeyCode::Char('?') => Some(Action::ShowHelp),
-            // Panel navigation
-            KeyCode::Tab => Some(Action::FocusNextPanel),
-            KeyCode::BackTab => Some(Action::FocusPrevPanel),
-            KeyCode::Char('1') => Some(Action::FocusPanel(1)),
-            KeyCode::Char('2') => Some(Action::FocusPanel(2)),
-            // Property navigation within panel
+            // Property navigation
             KeyCode::Char('j') | KeyCode::Down => Some(Action::SelectNextDashboardProperty),
             KeyCode::Char('k') | KeyCode::Up => Some(Action::SelectPrevDashboardProperty),
             // Adjust property values

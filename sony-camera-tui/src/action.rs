@@ -19,9 +19,6 @@ pub enum Action {
     ShowManualConnect,
 
     // Dashboard
-    FocusNextPanel,
-    FocusPrevPanel,
-    FocusPanel(usize),
     SelectNextDashboardProperty,
     SelectPrevDashboardProperty,
     AdjustPropertyUp,
