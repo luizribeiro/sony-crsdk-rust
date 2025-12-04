@@ -7,7 +7,8 @@ use ratatui::{
 };
 
 use crate::app::{App, ConnectedCamera, DashboardState, EventsLogState, MediaSlotInfo};
-use crate::property::{Property, PropertyCategory};
+use crate::property::Property;
+use crsdk::PropertyCategory;
 
 use super::header::{self, HeaderState};
 
@@ -241,23 +242,23 @@ fn render_quick_settings_panel(frame: &mut Frame, area: Rect, app: &App) {
     let mut lines: Vec<Line> = Vec::new();
     let mut current_category: Option<PropertyCategory> = None;
 
-    for (idx, &prop_id) in pinned_ids.iter().enumerate() {
-        let category = prop_id.category();
+    for (idx, &prop_code) in pinned_ids.iter().enumerate() {
+        let category = prop_code.category();
         if current_category != Some(category) {
             current_category = Some(category);
             lines.push(Line::from(vec![
                 Span::styled(
-                    format!("  ─── {} ", category.name().to_uppercase()),
+                    format!("  ─── {} ", category.to_string().to_uppercase()),
                     Style::default().fg(Color::Rgb(80, 80, 80)),
                 ),
                 Span::styled("─".repeat(18), Style::default().fg(Color::Rgb(40, 40, 40))),
             ]));
         }
 
-        if let Some(prop) = app.properties.get(prop_id) {
+        if let Some(prop) = app.properties.get(prop_code) {
             let selected = idx == app.dashboard.selected_property;
-            let has_pending = app.has_pending_change(prop_id);
-            let is_in_flight = app.is_in_flight(prop_id);
+            let has_pending = app.has_pending_change(prop_code);
+            let is_in_flight = app.is_in_flight(prop_code);
             lines.push(render_property_line(
                 prop,
                 selected,
@@ -277,7 +278,13 @@ fn render_property_line(
     has_pending: bool,
     is_in_flight: bool,
 ) -> Line<'static> {
-    let name = prop.id.name();
+    const NAME_WIDTH: usize = 16;
+    let full_name = prop.code.name();
+    let name = if full_name.len() > NAME_WIDTH {
+        format!("{}…", &full_name[..NAME_WIDTH - 1])
+    } else {
+        full_name.to_string()
+    };
     let value = prop.current_value().to_string();
     let is_disabled = !prop.writable;
 
@@ -286,7 +293,7 @@ fn render_property_line(
             Line::from(vec![
                 Span::styled("  ▸ ", Style::default().fg(Color::Rgb(80, 80, 80))),
                 Span::styled(
-                    format!("{:10}", name),
+                    format!("{:width$}", name, width = NAME_WIDTH),
                     Style::default().fg(Color::Rgb(80, 80, 80)),
                 ),
                 Span::raw("  "),
@@ -297,10 +304,12 @@ fn render_property_line(
                 Span::styled(" 🔒", Style::default().fg(Color::Rgb(80, 80, 80))),
             ])
         } else if is_in_flight {
-            // Gray arrows while waiting for SDK confirmation (locked)
             Line::from(vec![
                 Span::styled("  ▸ ", Style::default().fg(Color::Cyan)),
-                Span::styled(format!("{:10}", name), Style::default().fg(Color::White)),
+                Span::styled(
+                    format!("{:width$}", name, width = NAME_WIDTH),
+                    Style::default().fg(Color::White),
+                ),
                 Span::styled("◀ ", Style::default().fg(Color::Rgb(60, 60, 60))),
                 Span::styled(
                     format!("{:>10}", value),
@@ -311,10 +320,12 @@ fn render_property_line(
                 Span::styled(" ▶", Style::default().fg(Color::Rgb(60, 60, 60))),
             ])
         } else if has_pending {
-            // Yellow arrows while debouncing (can still change)
             Line::from(vec![
                 Span::styled("  ▸ ", Style::default().fg(Color::Cyan)),
-                Span::styled(format!("{:10}", name), Style::default().fg(Color::White)),
+                Span::styled(
+                    format!("{:width$}", name, width = NAME_WIDTH),
+                    Style::default().fg(Color::White),
+                ),
                 Span::styled("◀ ", Style::default().fg(Color::Yellow)),
                 Span::styled(
                     format!("{:>10}", value),
@@ -327,7 +338,10 @@ fn render_property_line(
         } else {
             Line::from(vec![
                 Span::styled("  ▸ ", Style::default().fg(Color::Cyan)),
-                Span::styled(format!("{:10}", name), Style::default().fg(Color::White)),
+                Span::styled(
+                    format!("{:width$}", name, width = NAME_WIDTH),
+                    Style::default().fg(Color::White),
+                ),
                 Span::styled("◀ ", Style::default().fg(Color::Cyan)),
                 Span::styled(
                     format!("{:>10}", value),
@@ -342,7 +356,7 @@ fn render_property_line(
         Line::from(vec![
             Span::raw("    "),
             Span::styled(
-                format!("{:10}", name),
+                format!("{:width$}", name, width = NAME_WIDTH),
                 Style::default().fg(Color::Rgb(80, 80, 80)),
             ),
             Span::raw("  "),
@@ -355,7 +369,10 @@ fn render_property_line(
     } else {
         Line::from(vec![
             Span::raw("    "),
-            Span::styled(format!("{:10}", name), Style::default().fg(Color::DarkGray)),
+            Span::styled(
+                format!("{:width$}", name, width = NAME_WIDTH),
+                Style::default().fg(Color::DarkGray),
+            ),
             Span::raw("  "),
             Span::styled(format!("{:>10}", value), Style::default().fg(Color::White)),
             Span::raw("   "),

@@ -8,8 +8,8 @@ use crate::camera_service::{
     CameraCommand, CameraServiceHandle, CameraUpdate, DiscoveredCameraInfo, MediaSlotStatus,
     SlotInfo,
 };
-use crate::property::{PropertyCategory, PropertyId, PropertyStore};
-use crsdk::{CameraModel, MacAddr};
+use crate::property::PropertyStore;
+use crsdk::{CameraModel, DevicePropertyCode, MacAddr, PropertyCategory};
 
 const PROPERTY_DEBOUNCE_MS: u64 = 400;
 const IN_FLIGHT_TIMEOUT_MS: u64 = 2000;
@@ -66,7 +66,7 @@ pub struct ManualConnectionState {
 #[derive(Debug, Clone, Default)]
 pub struct PropertySearchState {
     pub query: String,
-    pub results: Vec<crate::property::PropertyId>,
+    pub results: Vec<DevicePropertyCode>,
     pub selected_index: usize,
 }
 
@@ -166,11 +166,11 @@ pub struct PropertyEditorState {
 }
 
 impl PropertyEditorState {
-    pub fn current_category(&self) -> PropertyCategory {
-        PropertyCategory::ALL
+    pub fn current_category(&self, available: &[PropertyCategory]) -> PropertyCategory {
+        available
             .get(self.category_index)
             .copied()
-            .unwrap_or_default()
+            .unwrap_or(PropertyCategory::Exposure)
     }
 }
 
@@ -202,10 +202,10 @@ pub struct App {
 
     camera_service: CameraServiceHandle,
 
-    /// Pending property change for debouncing (property_id, value_index, timestamp)
-    pending_property: Option<(PropertyId, usize, Instant)>,
+    /// Pending property change for debouncing (property_code, value_index, timestamp)
+    pending_property: Option<(DevicePropertyCode, usize, Instant)>,
     /// Property currently being sent to SDK, waiting for confirmation (with timestamp for timeout)
-    in_flight_property: Option<(PropertyId, Instant)>,
+    in_flight_property: Option<(DevicePropertyCode, Instant)>,
 }
 
 impl App {
@@ -250,36 +250,36 @@ impl App {
 
     /// Flush any pending property change to the camera (call when debounce timeout fires)
     pub async fn flush_pending_property(&mut self) {
-        if let Some((id, value_index, timestamp)) = self.pending_property.take() {
+        if let Some((code, value_index, timestamp)) = self.pending_property.take() {
             if timestamp.elapsed() >= Duration::from_millis(PROPERTY_DEBOUNCE_MS) {
-                tracing::debug!("Setting in_flight_property to {:?}", id);
-                self.in_flight_property = Some((id, Instant::now()));
+                tracing::debug!("Setting in_flight_property to {:?}", code);
+                self.in_flight_property = Some((code, Instant::now()));
                 let _ = self
                     .camera_service
-                    .send(CameraCommand::SetProperty { id, value_index })
+                    .send(CameraCommand::SetProperty { code, value_index })
                     .await;
             }
         }
     }
 
     /// Queue a property change with debouncing
-    fn queue_property_change(&mut self, id: PropertyId, value_index: usize) {
-        self.pending_property = Some((id, value_index, Instant::now()));
+    fn queue_property_change(&mut self, code: DevicePropertyCode, value_index: usize) {
+        self.pending_property = Some((code, value_index, Instant::now()));
     }
 
     /// Check if a specific property has a pending change (debouncing)
-    pub fn has_pending_change(&self, id: PropertyId) -> bool {
+    pub fn has_pending_change(&self, code: DevicePropertyCode) -> bool {
         self.pending_property
-            .map(|(pending_id, _, _)| pending_id == id)
+            .map(|(pending_code, _, _)| pending_code == code)
             .unwrap_or(false)
     }
 
     /// Check if a specific property is in-flight (sent to SDK, waiting for response)
     /// Returns false if the in-flight state has timed out (2 seconds)
-    pub fn is_in_flight(&self, id: PropertyId) -> bool {
+    pub fn is_in_flight(&self, code: DevicePropertyCode) -> bool {
         match self.in_flight_property {
-            Some((in_flight_id, timestamp)) => {
-                in_flight_id == id
+            Some((in_flight_code, timestamp)) => {
+                in_flight_code == code
                     && timestamp.elapsed() < Duration::from_millis(IN_FLIGHT_TIMEOUT_MS)
             }
             None => false,
@@ -310,11 +310,16 @@ impl App {
 
                 // Derive format info from property store now that properties are loaded
                 // FileType shows RAW/JPEG/RAW+JPEG, ImageQuality shows JPEG compression level
-                if let Some(file_type) = self.properties.get(PropertyId::FileType) {
+                if let Some(file_type) = self
+                    .properties
+                    .get(DevicePropertyCode::StillImageStoreDestination)
+                {
                     let ft = file_type.current_value();
                     // Append JPEG quality if relevant (contains JPEG)
                     if ft.contains("JPEG") {
-                        if let Some(quality) = self.properties.get(PropertyId::ImageQuality) {
+                        if let Some(quality) =
+                            self.properties.get(DevicePropertyCode::StillImageQuality)
+                        {
                             self.dashboard.camera_info.image_format =
                                 format!("{} {}", ft, quality.current_value());
                         } else {
@@ -324,9 +329,12 @@ impl App {
                         self.dashboard.camera_info.image_format = ft.to_string();
                     }
                 }
-                if let Some(prop) = self.properties.get(PropertyId::MovieFormat) {
+                if let Some(prop) = self.properties.get(DevicePropertyCode::MovieFileFormat) {
                     let format = prop.current_value().to_string();
-                    if let Some(quality) = self.properties.get(PropertyId::MovieQuality) {
+                    if let Some(quality) = self
+                        .properties
+                        .get(DevicePropertyCode::MovieRecordingSetting)
+                    {
                         self.dashboard.camera_info.recording_format =
                             format!("{} {}", format, quality.current_value());
                     } else {
@@ -335,23 +343,20 @@ impl App {
                 }
             }
             CameraUpdate::PropertyChanged {
-                id,
+                code,
                 value,
                 available,
                 writable,
             } => {
                 // Clear in-flight state if this property was waiting for confirmation
-                if let Some((in_flight_id, _)) = self.in_flight_property {
-                    if in_flight_id == id {
-                        tracing::debug!("Clearing in_flight_property for {:?}", id);
+                if let Some((in_flight_code, _)) = self.in_flight_property {
+                    if in_flight_code == code {
+                        tracing::debug!("Clearing in_flight_property for {:?}", code);
                         self.in_flight_property = None;
                     }
                 }
                 self.properties
-                    .update_from_sdk_formatted(id, &value, available, writable);
-                if id == PropertyId::ExposureMode {
-                    self.properties.update_writable_for_mode();
-                }
+                    .update_property(code, &value, available, writable);
             }
             CameraUpdate::Error { message } => {
                 self.log_event("Error", &message);
@@ -449,11 +454,11 @@ impl App {
         }
     }
 
-    pub fn pinned_property_ids(&self) -> Vec<PropertyId> {
+    pub fn pinned_property_ids(&self) -> Vec<DevicePropertyCode> {
         self.properties.pinned_ids().to_vec()
     }
 
-    pub fn selected_pinned_property_id(&self) -> Option<PropertyId> {
+    pub fn selected_pinned_property_id(&self) -> Option<DevicePropertyCode> {
         self.properties
             .pinned_ids()
             .get(self.dashboard.selected_property)
@@ -582,28 +587,28 @@ impl App {
                 }
             }
             Action::AdjustPropertyUp => {
-                if let Some(id) = self.selected_pinned_property_id() {
-                    if !self.is_in_flight(id) {
-                        if let Some(prop) = self.properties.get_mut(id) {
+                if let Some(code) = self.selected_pinned_property_id() {
+                    if !self.is_in_flight(code) {
+                        if let Some(prop) = self.properties.get_mut(code) {
                             let new_index = prop.next();
-                            self.queue_property_change(id, new_index);
+                            self.queue_property_change(code, new_index);
                         }
                     }
                 }
             }
             Action::AdjustPropertyDown => {
-                if let Some(id) = self.selected_pinned_property_id() {
-                    if !self.is_in_flight(id) {
-                        if let Some(prop) = self.properties.get_mut(id) {
+                if let Some(code) = self.selected_pinned_property_id() {
+                    if !self.is_in_flight(code) {
+                        if let Some(prop) = self.properties.get_mut(code) {
                             let new_index = prop.prev();
-                            self.queue_property_change(id, new_index);
+                            self.queue_property_change(code, new_index);
                         }
                     }
                 }
             }
             Action::OpenPropertyInEditor => {
-                if let Some(id) = self.selected_pinned_property_id() {
-                    self.jump_to_property_in_editor(id);
+                if let Some(code) = self.selected_pinned_property_id() {
+                    self.jump_to_property_in_editor(code);
                 }
             }
             Action::Capture => {
@@ -625,7 +630,7 @@ impl App {
                 self.screen = Screen::EventsExpanded;
             }
             Action::ShowPropertySearch => {
-                let results = crate::property::search_properties("");
+                let results = crate::property::search_properties(&self.properties, "");
                 self.modal = Some(Modal::PropertySearch(PropertySearchState {
                     query: String::new(),
                     results,
@@ -646,11 +651,14 @@ impl App {
     }
 
     async fn handle_property_editor_action(&mut self, action: Action) {
+        let available_categories = self.properties.available_categories();
+        let category_count = available_categories.len().max(1);
+
         match action {
             Action::PropertyEditorNext => match self.property_editor.focus {
                 PropertyEditorFocus::Categories => {
                     self.property_editor.category_index =
-                        (self.property_editor.category_index + 1) % PropertyCategory::ALL.len();
+                        (self.property_editor.category_index + 1) % category_count;
                     self.property_editor.property_index = 0;
                 }
                 PropertyEditorFocus::Properties => {
@@ -661,8 +669,8 @@ impl App {
                     }
                 }
                 PropertyEditorFocus::Values => {
-                    if let Some(id) = self.selected_property_id_in_editor() {
-                        if let Some(prop) = self.properties.get(id) {
+                    if let Some(code) = self.selected_property_id_in_editor() {
+                        if let Some(prop) = self.properties.get(code) {
                             if !prop.values.is_empty() {
                                 self.property_editor.value_preview_index =
                                     (self.property_editor.value_preview_index + 1)
@@ -678,7 +686,7 @@ impl App {
                         .property_editor
                         .category_index
                         .checked_sub(1)
-                        .unwrap_or(PropertyCategory::ALL.len() - 1);
+                        .unwrap_or(category_count - 1);
                     self.property_editor.property_index = 0;
                 }
                 PropertyEditorFocus::Properties => {
@@ -692,8 +700,8 @@ impl App {
                     }
                 }
                 PropertyEditorFocus::Values => {
-                    if let Some(id) = self.selected_property_id_in_editor() {
-                        if let Some(prop) = self.properties.get(id) {
+                    if let Some(code) = self.selected_property_id_in_editor() {
+                        if let Some(prop) = self.properties.get(code) {
                             if !prop.values.is_empty() {
                                 self.property_editor.value_preview_index = self
                                     .property_editor
@@ -713,11 +721,11 @@ impl App {
             }
             Action::PropertyEditorValueNext => {
                 if self.property_editor.focus == PropertyEditorFocus::Properties {
-                    if let Some(id) = self.selected_property_id_in_editor() {
-                        if !self.is_in_flight(id) {
-                            if let Some(prop) = self.properties.get_mut(id) {
+                    if let Some(code) = self.selected_property_id_in_editor() {
+                        if !self.is_in_flight(code) {
+                            if let Some(prop) = self.properties.get_mut(code) {
                                 let new_index = prop.next();
-                                self.queue_property_change(id, new_index);
+                                self.queue_property_change(code, new_index);
                             }
                         }
                     }
@@ -725,11 +733,11 @@ impl App {
             }
             Action::PropertyEditorValuePrev => {
                 if self.property_editor.focus == PropertyEditorFocus::Properties {
-                    if let Some(id) = self.selected_property_id_in_editor() {
-                        if !self.is_in_flight(id) {
-                            if let Some(prop) = self.properties.get_mut(id) {
+                    if let Some(code) = self.selected_property_id_in_editor() {
+                        if !self.is_in_flight(code) {
+                            if let Some(prop) = self.properties.get_mut(code) {
                                 let new_index = prop.prev();
-                                self.queue_property_change(id, new_index);
+                                self.queue_property_change(code, new_index);
                             }
                         }
                     }
@@ -737,8 +745,8 @@ impl App {
             }
             Action::PropertyEditorOpenValues => {
                 if self.property_editor.focus == PropertyEditorFocus::Properties {
-                    if let Some(id) = self.selected_property_id_in_editor() {
-                        if let Some(prop) = self.properties.get(id) {
+                    if let Some(code) = self.selected_property_id_in_editor() {
+                        if let Some(prop) = self.properties.get(code) {
                             if prop.writable && !prop.values.is_empty() {
                                 self.property_editor.value_preview_index = prop.current_index;
                                 self.property_editor.focus = PropertyEditorFocus::Values;
@@ -749,12 +757,12 @@ impl App {
             }
             Action::PropertyEditorApplyValue => {
                 if self.property_editor.focus == PropertyEditorFocus::Values {
-                    if let Some(id) = self.selected_property_id_in_editor() {
-                        if !self.is_in_flight(id) {
+                    if let Some(code) = self.selected_property_id_in_editor() {
+                        if !self.is_in_flight(code) {
                             let new_index = self.property_editor.value_preview_index;
-                            if let Some(prop) = self.properties.get_mut(id) {
+                            if let Some(prop) = self.properties.get_mut(code) {
                                 prop.current_index = new_index;
-                                self.queue_property_change(id, new_index);
+                                self.queue_property_change(code, new_index);
                             }
                         }
                     }
@@ -763,13 +771,13 @@ impl App {
             }
             Action::TogglePropertyPin => {
                 if self.property_editor.focus == PropertyEditorFocus::Properties {
-                    if let Some(id) = self.selected_property_id_in_editor() {
-                        self.properties.toggle_pin(id);
+                    if let Some(code) = self.selected_property_id_in_editor() {
+                        self.properties.toggle_pin(code);
                     }
                 }
             }
             Action::ShowPropertySearch => {
-                let results = crate::property::search_properties("");
+                let results = crate::property::search_properties(&self.properties, "");
                 self.modal = Some(Modal::PropertySearch(PropertySearchState {
                     query: String::new(),
                     results,
@@ -781,7 +789,8 @@ impl App {
     }
 
     fn change_property_category(&mut self, delta: isize) {
-        let len = PropertyCategory::ALL.len();
+        let categories = self.properties.available_categories();
+        let len = categories.len().max(1);
         self.property_editor.category_index = if delta > 0 {
             (self.property_editor.category_index + 1) % len
         } else {
@@ -794,28 +803,30 @@ impl App {
         self.property_editor.focus = PropertyEditorFocus::Properties;
     }
 
-    fn current_category_properties(&self) -> Vec<PropertyId> {
-        let category = self.property_editor.current_category();
+    fn current_category_properties(&self) -> Vec<DevicePropertyCode> {
+        let categories = self.properties.available_categories();
+        let category = self.property_editor.current_category(&categories);
         self.properties
             .properties_by_category(category)
             .iter()
-            .map(|p| p.id)
+            .map(|p| p.code)
             .collect()
     }
 
-    fn selected_property_id_in_editor(&self) -> Option<PropertyId> {
+    fn selected_property_id_in_editor(&self) -> Option<DevicePropertyCode> {
         let props = self.current_category_properties();
         props.get(self.property_editor.property_index).copied()
     }
 
-    fn jump_to_property_in_editor(&mut self, id: PropertyId) {
-        let category = id.category();
-        if let Some(cat_idx) = PropertyCategory::ALL.iter().position(|&c| c == category) {
+    fn jump_to_property_in_editor(&mut self, code: DevicePropertyCode) {
+        let category = code.category();
+        let categories = self.properties.available_categories();
+        if let Some(cat_idx) = categories.iter().position(|&c| c == category) {
             self.property_editor.category_index = cat_idx;
         }
 
         let props = self.properties.properties_by_category(category);
-        if let Some(prop_idx) = props.iter().position(|p| p.id == id) {
+        if let Some(prop_idx) = props.iter().position(|p| p.code == code) {
             self.property_editor.property_index = prop_idx;
         }
 
@@ -984,7 +995,7 @@ impl App {
     fn modal_input_char(&mut self, c: char) {
         if let Some(Modal::PropertySearch(ref mut state)) = self.modal {
             state.query.push(c);
-            state.results = crate::property::search_properties(&state.query);
+            state.results = crate::property::search_properties(&self.properties, &state.query);
             state.selected_index = 0;
         } else {
             self.with_focused_modal_field(|text| text.push(c));
@@ -994,7 +1005,7 @@ impl App {
     fn modal_input_backspace(&mut self) {
         if let Some(Modal::PropertySearch(ref mut state)) = self.modal {
             state.query.pop();
-            state.results = crate::property::search_properties(&state.query);
+            state.results = crate::property::search_properties(&self.properties, &state.query);
             state.selected_index = 0;
         } else {
             self.with_focused_modal_field(|text| {
