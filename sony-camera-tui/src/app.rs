@@ -70,26 +70,6 @@ pub struct PropertySearchState {
     pub selected_index: usize,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub enum Panel {
-    #[default]
-    QuickSettings,
-    Events,
-}
-
-impl Panel {
-    pub fn next(self) -> Self {
-        match self {
-            Panel::QuickSettings => Panel::Events,
-            Panel::Events => Panel::QuickSettings,
-        }
-    }
-
-    pub fn prev(self) -> Self {
-        self.next()
-    }
-}
-
 #[derive(Debug, Clone)]
 pub struct DiscoveredCamera {
     pub model: String,
@@ -160,27 +140,13 @@ impl Default for CameraInfo {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct DashboardState {
-    pub focused_panel: Panel,
     pub selected_property: usize,
     pub is_recording: bool,
     pub recording_seconds: u64,
     pub session_seconds: u64,
     pub camera_info: CameraInfo,
-}
-
-impl Default for DashboardState {
-    fn default() -> Self {
-        Self {
-            focused_panel: Panel::QuickSettings,
-            selected_property: 0,
-            is_recording: false,
-            recording_seconds: 0,
-            session_seconds: 0,
-            camera_info: CameraInfo::default(),
-        }
-    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
@@ -598,71 +564,46 @@ impl App {
 
     async fn handle_dashboard_action(&mut self, action: Action) {
         match action {
-            Action::FocusNextPanel | Action::FocusPrevPanel => {
-                self.dashboard.focused_panel = self.dashboard.focused_panel.next();
-                self.dashboard.selected_property = 0;
-            }
-            Action::FocusPanel(n) => {
-                let new_panel = match n {
-                    1 => Panel::QuickSettings,
-                    2 => Panel::Events,
-                    _ => self.dashboard.focused_panel,
-                };
-                if new_panel != self.dashboard.focused_panel {
-                    self.dashboard.selected_property = 0;
-                }
-                self.dashboard.focused_panel = new_panel;
-            }
             Action::SelectNextDashboardProperty => {
-                if self.dashboard.focused_panel == Panel::QuickSettings {
-                    let count = self.properties.pinned_ids().len();
-                    if count > 0 {
-                        self.dashboard.selected_property =
-                            (self.dashboard.selected_property + 1) % count;
-                    }
+                let count = self.properties.pinned_ids().len();
+                if count > 0 {
+                    self.dashboard.selected_property =
+                        (self.dashboard.selected_property + 1) % count;
                 }
             }
             Action::SelectPrevDashboardProperty => {
-                if self.dashboard.focused_panel == Panel::QuickSettings {
-                    let count = self.properties.pinned_ids().len();
-                    if count > 0 {
-                        self.dashboard.selected_property = self
-                            .dashboard
-                            .selected_property
-                            .checked_sub(1)
-                            .unwrap_or(count - 1);
-                    }
+                let count = self.properties.pinned_ids().len();
+                if count > 0 {
+                    self.dashboard.selected_property = self
+                        .dashboard
+                        .selected_property
+                        .checked_sub(1)
+                        .unwrap_or(count - 1);
                 }
             }
             Action::AdjustPropertyUp => {
-                if self.dashboard.focused_panel == Panel::QuickSettings {
-                    if let Some(id) = self.selected_pinned_property_id() {
-                        if !self.is_in_flight(id) {
-                            if let Some(prop) = self.properties.get_mut(id) {
-                                let new_index = prop.next();
-                                self.queue_property_change(id, new_index);
-                            }
+                if let Some(id) = self.selected_pinned_property_id() {
+                    if !self.is_in_flight(id) {
+                        if let Some(prop) = self.properties.get_mut(id) {
+                            let new_index = prop.next();
+                            self.queue_property_change(id, new_index);
                         }
                     }
                 }
             }
             Action::AdjustPropertyDown => {
-                if self.dashboard.focused_panel == Panel::QuickSettings {
-                    if let Some(id) = self.selected_pinned_property_id() {
-                        if !self.is_in_flight(id) {
-                            if let Some(prop) = self.properties.get_mut(id) {
-                                let new_index = prop.prev();
-                                self.queue_property_change(id, new_index);
-                            }
+                if let Some(id) = self.selected_pinned_property_id() {
+                    if !self.is_in_flight(id) {
+                        if let Some(prop) = self.properties.get_mut(id) {
+                            let new_index = prop.prev();
+                            self.queue_property_change(id, new_index);
                         }
                     }
                 }
             }
             Action::OpenPropertyInEditor => {
-                if self.dashboard.focused_panel == Panel::QuickSettings {
-                    if let Some(id) = self.selected_pinned_property_id() {
-                        self.jump_to_property_in_editor(id);
-                    }
+                if let Some(id) = self.selected_pinned_property_id() {
+                    self.jump_to_property_in_editor(id);
                 }
             }
             Action::Capture => {

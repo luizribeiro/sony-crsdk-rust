@@ -6,8 +6,8 @@ use ratatui::{
     Frame,
 };
 
-use crate::app::{App, ConnectedCamera, DashboardState, EventsLogState, MediaSlotInfo, Panel};
-use crate::property::{Property, PropertyCategory, PropertyId, PropertyStore};
+use crate::app::{App, ConnectedCamera, DashboardState, EventsLogState, MediaSlotInfo};
+use crate::property::{Property, PropertyCategory};
 
 use super::header::{self, HeaderState};
 
@@ -53,8 +53,8 @@ fn render_panels(frame: &mut Frame, area: Rect, app: &App) {
         is_connected,
         is_ready,
     );
-    render_quick_settings_panel(frame, left_panels[1], app);
-    render_events_panel(frame, columns[1], &app.events_log, &app.dashboard);
+    render_events_panel(frame, left_panels[1], &app.events_log);
+    render_quick_settings_panel(frame, columns[1], app);
 }
 
 fn render_camera_info_panel(
@@ -71,9 +71,9 @@ fn render_camera_info_panel(
     };
 
     let title_style = if is_ready {
-        Style::default()
+        Style::default().fg(Color::Rgb(180, 180, 180))
     } else {
-        Style::default().fg(Color::Rgb(60, 60, 60))
+        Style::default().fg(Color::Rgb(80, 80, 80))
     };
 
     let block = Block::default()
@@ -190,31 +190,23 @@ fn render_slot_line<'a>(label: &'a str, slot: &'a MediaSlotInfo) -> Line<'a> {
 }
 
 fn render_quick_settings_panel(frame: &mut Frame, area: Rect, app: &App) {
-    let focused = app.dashboard.focused_panel == Panel::QuickSettings;
     let is_connected = app.connected_camera.is_some();
     let is_ready = app.properties.is_loaded();
 
-    let border_style = if !is_ready {
-        Style::default().fg(Color::Rgb(40, 40, 40))
-    } else if focused {
+    let border_style = if is_ready {
         Style::default().fg(Color::Cyan)
     } else {
-        Style::default().fg(Color::Rgb(60, 60, 60))
+        Style::default().fg(Color::Rgb(40, 40, 40))
     };
 
-    let title_style = if !is_ready {
-        Style::default().fg(Color::Rgb(60, 60, 60))
-    } else if focused {
+    let title_style = if is_ready {
         Style::default().fg(Color::Cyan)
     } else {
-        Style::default().fg(Color::DarkGray)
+        Style::default().fg(Color::Rgb(60, 60, 60))
     };
 
     let block = Block::default()
-        .title(Line::from(vec![
-            Span::styled(" Quick Settings ", title_style),
-            Span::styled("[1]", Style::default().fg(Color::Rgb(80, 80, 80))),
-        ]))
+        .title(Span::styled(" Quick Settings ", title_style))
         .borders(Borders::ALL)
         .border_style(border_style);
 
@@ -269,7 +261,6 @@ fn render_quick_settings_panel(frame: &mut Frame, area: Rect, app: &App) {
             lines.push(render_property_line(
                 prop,
                 selected,
-                focused,
                 has_pending,
                 is_in_flight,
             ));
@@ -283,7 +274,6 @@ fn render_quick_settings_panel(frame: &mut Frame, area: Rect, app: &App) {
 fn render_property_line(
     prop: &Property,
     selected: bool,
-    panel_focused: bool,
     has_pending: bool,
     is_in_flight: bool,
 ) -> Line<'static> {
@@ -291,7 +281,7 @@ fn render_property_line(
     let value = prop.current_value().to_string();
     let is_disabled = !prop.writable;
 
-    if selected && panel_focused {
+    if selected {
         if is_disabled {
             Line::from(vec![
                 Span::styled("  ▸ ", Style::default().fg(Color::Rgb(80, 80, 80))),
@@ -373,33 +363,14 @@ fn render_property_line(
     }
 }
 
-fn render_events_panel(
-    frame: &mut Frame,
-    area: Rect,
-    events: &EventsLogState,
-    state: &DashboardState,
-) {
-    let focused = state.focused_panel == Panel::Events;
-
-    let border_style = if focused {
-        Style::default().fg(Color::Cyan)
-    } else {
-        Style::default().fg(Color::Rgb(60, 60, 60))
-    };
-
-    let title_style = if focused {
-        Style::default().fg(Color::Cyan)
-    } else {
-        Style::default().fg(Color::DarkGray)
-    };
-
+fn render_events_panel(frame: &mut Frame, area: Rect, events: &EventsLogState) {
     let block = Block::default()
-        .title(Line::from(vec![
-            Span::styled(" Events ", title_style),
-            Span::styled("[2]", Style::default().fg(Color::Rgb(80, 80, 80))),
-        ]))
+        .title(Span::styled(
+            " Events ",
+            Style::default().fg(Color::Rgb(180, 180, 180)),
+        ))
         .borders(Borders::ALL)
-        .border_style(border_style);
+        .border_style(Style::default().fg(Color::Rgb(60, 60, 60)));
 
     let inner = block.inner(area);
     frame.render_widget(block, area);

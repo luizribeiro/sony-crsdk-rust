@@ -69,8 +69,14 @@ fn render_content(frame: &mut Frame, area: Rect, app: &App) {
 fn render_categories(frame: &mut Frame, area: Rect, app: &App) {
     let focused = app.property_editor.focus == PropertyEditorFocus::Categories;
 
+    let title_style = if focused {
+        Style::default().fg(Color::Cyan)
+    } else {
+        Style::default().fg(Color::Rgb(180, 180, 180))
+    };
+
     let block = Block::default()
-        .title(" Categories ")
+        .title(Span::styled(" Categories ", title_style))
         .borders(Borders::ALL)
         .border_style(if focused {
             Style::default().fg(Color::Cyan)
