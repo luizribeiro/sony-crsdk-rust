@@ -9,7 +9,7 @@ use crate::camera_service::{
     SlotInfo,
 };
 use crate::property::{PropertyCategory, PropertyId, PropertyStore};
-use crsdk::MacAddr;
+use crsdk::{CameraModel, MacAddr};
 
 const PROPERTY_DEBOUNCE_MS: u64 = 400;
 const IN_FLIGHT_TIMEOUT_MS: u64 = 2000;
@@ -885,6 +885,23 @@ impl App {
             }
             Action::ModalInputBackspace => {
                 self.modal_input_backspace();
+            }
+            Action::ModalInputLeft => {
+                if let Some(Modal::ManualConnection(ref mut state)) = self.modal {
+                    if state.focused_field == 2 {
+                        state.model_index = state
+                            .model_index
+                            .checked_sub(1)
+                            .unwrap_or(CameraModel::ALL.len() - 1);
+                    }
+                }
+            }
+            Action::ModalInputRight => {
+                if let Some(Modal::ManualConnection(ref mut state)) = self.modal {
+                    if state.focused_field == 2 {
+                        state.model_index = (state.model_index + 1) % CameraModel::ALL.len();
+                    }
+                }
             }
             _ => {}
         }

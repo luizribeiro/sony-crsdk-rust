@@ -93,6 +93,19 @@ impl fmt::Display for CameraModel {
 }
 
 impl CameraModel {
+    /// All available camera models
+    pub const ALL: &'static [CameraModel] = &[
+        CameraModel::Fx3,
+        CameraModel::Fx6,
+        CameraModel::Fx30,
+        CameraModel::Alpha1,
+        CameraModel::Alpha7Iv,
+        CameraModel::Alpha7Rv,
+        CameraModel::Alpha7Siii,
+        CameraModel::Alpha9Ii,
+        CameraModel::Alpha9Iii,
+    ];
+
     /// Get SDK enum value for this model
     pub(crate) fn to_sdk_value(self) -> u32 {
         use crsdk_sys::SCRSDK::*;
