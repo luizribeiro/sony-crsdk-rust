@@ -240,6 +240,12 @@ async fn recv_event(rx: &mut Option<mpsc::UnboundedReceiver<SdkEvent>>) -> Optio
 }
 
 impl CameraService {
+    async fn send_update(&self, update: CameraUpdate) {
+        if let Err(e) = self.update_tx.send(update).await {
+            tracing::debug!("UI channel closed, update not sent: {}", e);
+        }
+    }
+
     async fn handle_command(&mut self, cmd: CameraCommand) {
         match cmd {
             CameraCommand::Discover => {
@@ -298,7 +304,7 @@ impl CameraService {
     }
 
     async fn handle_discover(&mut self) {
-        let _ = self.update_tx.send(CameraUpdate::DiscoveryStarted).await;
+        self.send_update(CameraUpdate::DiscoveryStarted).await;
 
         match crsdk::discover_cameras(5).await {
             Ok(cameras) => {
@@ -320,18 +326,14 @@ impl CameraService {
                     })
                     .collect();
 
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::DiscoveryResult { cameras: infos })
+                self.send_update(CameraUpdate::DiscoveryResult { cameras: infos })
                     .await;
             }
             Err(e) => {
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::Error {
-                        message: format!("Discovery failed: {}", e),
-                    })
-                    .await;
+                self.send_update(CameraUpdate::Error {
+                    message: format!("Discovery failed: {}", e),
+                })
+                .await;
             }
         }
     }
@@ -353,25 +355,21 @@ impl CameraService {
         match builder.fetch_ssh_fingerprint().await {
             Ok(fingerprint) => {
                 tracing::info!("Got SSH fingerprint: {}", fingerprint);
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::SshFingerprintFetched {
-                        fingerprint,
-                        ip,
-                        mac,
-                        ssh_user,
-                        ssh_pass,
-                    })
-                    .await;
+                self.send_update(CameraUpdate::SshFingerprintFetched {
+                    fingerprint,
+                    ip,
+                    mac,
+                    ssh_user,
+                    ssh_pass,
+                })
+                .await;
             }
             Err(e) => {
                 tracing::error!("Failed to fetch SSH fingerprint: {}", e);
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::Error {
-                        message: format!("Failed to fetch SSH fingerprint: {}", e),
-                    })
-                    .await;
+                self.send_update(CameraUpdate::Error {
+                    message: format!("Failed to fetch SSH fingerprint: {}", e),
+                })
+                .await;
             }
         }
     }
@@ -402,13 +400,11 @@ impl CameraService {
                 self.event_rx = device.take_event_receiver();
                 self.device = Some(device);
 
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::Connected {
-                        model: model.clone(),
-                        address,
-                    })
-                    .await;
+                self.send_update(CameraUpdate::Connected {
+                    model: model.clone(),
+                    address,
+                })
+                .await;
 
                 // Wait for camera to initialize and send property updates
                 tracing::info!("Waiting for camera to initialize...");
@@ -420,12 +416,10 @@ impl CameraService {
             }
             Err(e) => {
                 tracing::error!("Connection failed: {}", e);
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::Error {
-                        message: format!("Connection failed: {}", e),
-                    })
-                    .await;
+                self.send_update(CameraUpdate::Error {
+                    message: format!("Connection failed: {}", e),
+                })
+                .await;
             }
         }
     }
@@ -444,13 +438,11 @@ impl CameraService {
                 self.event_rx = device.take_event_receiver();
                 self.device = Some(device);
 
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::Connected {
-                        model: model.clone(),
-                        address,
-                    })
-                    .await;
+                self.send_update(CameraUpdate::Connected {
+                    model: model.clone(),
+                    address,
+                })
+                .await;
 
                 // Wait for camera to initialize and send property updates
                 tracing::info!("Waiting for camera to initialize...");
@@ -462,12 +454,10 @@ impl CameraService {
             }
             Err(e) => {
                 tracing::error!("Connection failed: {}", e);
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::Error {
-                        message: format!("Connection failed: {}", e),
-                    })
-                    .await;
+                self.send_update(CameraUpdate::Error {
+                    message: format!("Connection failed: {}", e),
+                })
+                .await;
             }
         }
     }
@@ -476,9 +466,7 @@ impl CameraService {
         self.device = None;
         self.event_rx = None;
         self.cached_properties.clear();
-        let _ = self
-            .update_tx
-            .send(CameraUpdate::Disconnected { error: None })
+        self.send_update(CameraUpdate::Disconnected { error: None })
             .await;
     }
 
@@ -540,15 +528,13 @@ impl CameraService {
 
                     self.cached_properties.insert(code, prop);
 
-                    let _ = self
-                        .update_tx
-                        .send(CameraUpdate::PropertyChanged {
-                            id: property_id,
-                            value: current,
-                            available,
-                            writable,
-                        })
-                        .await;
+                    self.send_update(CameraUpdate::PropertyChanged {
+                        id: property_id,
+                        value: current,
+                        available,
+                        writable,
+                    })
+                    .await;
                 }
                 Err(e) => {
                     tracing::warn!(
@@ -561,7 +547,7 @@ impl CameraService {
             }
         }
 
-        let _ = self.update_tx.send(CameraUpdate::PropertiesLoaded).await;
+        self.send_update(CameraUpdate::PropertiesLoaded).await;
 
         self.sync_camera_info().await;
     }
@@ -691,48 +677,40 @@ impl CameraService {
             None
         };
 
-        let _ = self
-            .update_tx
-            .send(CameraUpdate::CameraInfoUpdate {
-                battery_percent,
-                lens_model,
-                focal_length_mm,
-                overheating_state,
-                slot1,
-                slot2,
-                slot3,
-            })
-            .await;
+        self.send_update(CameraUpdate::CameraInfoUpdate {
+            battery_percent,
+            lens_model,
+            focal_length_mm,
+            overheating_state,
+            slot1,
+            slot2,
+            slot3,
+        })
+        .await;
     }
 
     async fn handle_set_property(&mut self, id: PropertyId, value_index: usize) {
         let Some(code) = id.to_sdk_code() else {
-            let _ = self
-                .update_tx
-                .send(CameraUpdate::Error {
-                    message: format!("Property {:?} has no SDK mapping", id),
-                })
-                .await;
+            self.send_update(CameraUpdate::Error {
+                message: format!("Property {:?} has no SDK mapping", id),
+            })
+            .await;
             return;
         };
 
         let Some(ref cached) = self.cached_properties.get(&code) else {
-            let _ = self
-                .update_tx
-                .send(CameraUpdate::Error {
-                    message: format!("Property {:?} not in cache", id),
-                })
-                .await;
+            self.send_update(CameraUpdate::Error {
+                message: format!("Property {:?} not in cache", id),
+            })
+            .await;
             return;
         };
 
         let Some(&value) = cached.possible_values.get(value_index) else {
-            let _ = self
-                .update_tx
-                .send(CameraUpdate::Error {
-                    message: format!("Invalid value index {} for {:?}", value_index, id),
-                })
-                .await;
+            self.send_update(CameraUpdate::Error {
+                message: format!("Invalid value index {} for {:?}", value_index, id),
+            })
+            .await;
             return;
         };
 
@@ -741,135 +719,105 @@ impl CameraService {
 
     async fn handle_set_property_raw(&mut self, code: PropertyCode, value: u64) {
         let Some(ref device) = self.device else {
-            let _ = self
-                .update_tx
-                .send(CameraUpdate::Error {
-                    message: "Not connected".to_string(),
-                })
-                .await;
+            self.send_update(CameraUpdate::Error {
+                message: "Not connected".to_string(),
+            })
+            .await;
             return;
         };
 
         if let Err(e) = device.set_property(code, value).await {
-            let _ = self
-                .update_tx
-                .send(CameraUpdate::Error {
-                    message: format!("Failed to set property: {}", e),
-                })
-                .await;
+            self.send_update(CameraUpdate::Error {
+                message: format!("Failed to set property: {}", e),
+            })
+            .await;
         }
     }
 
     async fn handle_capture(&mut self) {
         let Some(ref device) = self.device else {
-            let _ = self
-                .update_tx
-                .send(CameraUpdate::Error {
-                    message: "Not connected".to_string(),
-                })
-                .await;
+            self.send_update(CameraUpdate::Error {
+                message: "Not connected".to_string(),
+            })
+            .await;
             return;
         };
 
         match device.capture().await {
             Ok(()) => {
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::CaptureComplete { success: true })
+                self.send_update(CameraUpdate::CaptureComplete { success: true })
                     .await;
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::SdkEvent {
-                        event_type: "Capture".to_string(),
-                        details: "Photo captured".to_string(),
-                    })
-                    .await;
+                self.send_update(CameraUpdate::SdkEvent {
+                    event_type: "Capture".to_string(),
+                    details: "Photo captured".to_string(),
+                })
+                .await;
             }
             Err(e) => {
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::CaptureComplete { success: false })
+                self.send_update(CameraUpdate::CaptureComplete { success: false })
                     .await;
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::Error {
-                        message: format!("Capture failed: {}", e),
-                    })
-                    .await;
+                self.send_update(CameraUpdate::Error {
+                    message: format!("Capture failed: {}", e),
+                })
+                .await;
             }
         }
     }
 
     async fn handle_start_recording(&mut self) {
         let Some(ref device) = self.device else {
-            let _ = self
-                .update_tx
-                .send(CameraUpdate::Error {
-                    message: "Not connected".to_string(),
-                })
-                .await;
+            self.send_update(CameraUpdate::Error {
+                message: "Not connected".to_string(),
+            })
+            .await;
             return;
         };
 
         match device.start_recording().await {
             Ok(()) => {
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::RecordingStateChanged { is_recording: true })
+                self.send_update(CameraUpdate::RecordingStateChanged { is_recording: true })
                     .await;
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::SdkEvent {
-                        event_type: "Recording".to_string(),
-                        details: "Recording started".to_string(),
-                    })
-                    .await;
+                self.send_update(CameraUpdate::SdkEvent {
+                    event_type: "Recording".to_string(),
+                    details: "Recording started".to_string(),
+                })
+                .await;
             }
             Err(e) => {
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::Error {
-                        message: format!("Start recording failed: {}", e),
-                    })
-                    .await;
+                self.send_update(CameraUpdate::Error {
+                    message: format!("Start recording failed: {}", e),
+                })
+                .await;
             }
         }
     }
 
     async fn handle_stop_recording(&mut self) {
         let Some(ref device) = self.device else {
-            let _ = self
-                .update_tx
-                .send(CameraUpdate::Error {
-                    message: "Not connected".to_string(),
-                })
-                .await;
+            self.send_update(CameraUpdate::Error {
+                message: "Not connected".to_string(),
+            })
+            .await;
             return;
         };
 
         match device.stop_recording().await {
             Ok(()) => {
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::RecordingStateChanged {
-                        is_recording: false,
-                    })
-                    .await;
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::SdkEvent {
-                        event_type: "Recording".to_string(),
-                        details: "Recording stopped".to_string(),
-                    })
-                    .await;
+                self.send_update(CameraUpdate::RecordingStateChanged {
+                    is_recording: false,
+                })
+                .await;
+                self.send_update(CameraUpdate::SdkEvent {
+                    event_type: "Recording".to_string(),
+                    details: "Recording stopped".to_string(),
+                })
+                .await;
             }
             Err(e) => {
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::Error {
-                        message: format!("Stop recording failed: {}", e),
-                    })
-                    .await;
+                self.send_update(CameraUpdate::Error {
+                    message: format!("Stop recording failed: {}", e),
+                })
+                .await;
             }
         }
     }
@@ -895,12 +843,10 @@ impl CameraService {
             }
             Err(e) => {
                 tracing::error!("Half-press shutter failed: {}", e);
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::Error {
-                        message: format!("Autofocus failed: {}", e),
-                    })
-                    .await;
+                self.send_update(CameraUpdate::Error {
+                    message: format!("Autofocus failed: {}", e),
+                })
+                .await;
             }
         }
     }
@@ -930,13 +876,11 @@ impl CameraService {
     async fn handle_device_event(&mut self, event: SdkEvent) {
         match event {
             SdkEvent::Connected { version } => {
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::SdkEvent {
-                        event_type: "Connected".to_string(),
-                        details: format!("Protocol v{}", version),
-                    })
-                    .await;
+                self.send_update(CameraUpdate::SdkEvent {
+                    event_type: "Connected".to_string(),
+                    details: format!("Protocol v{}", version),
+                })
+                .await;
             }
             SdkEvent::Disconnected { error } => {
                 let error_msg = if error == 0 {
@@ -947,9 +891,7 @@ impl CameraService {
                 self.device = None;
                 self.event_rx = None;
                 self.cached_properties.clear();
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::Disconnected { error: error_msg })
+                self.send_update(CameraUpdate::Disconnected { error: error_msg })
                     .await;
             }
             SdkEvent::PropertyChanged { codes } => {
@@ -967,15 +909,13 @@ impl CameraService {
 
                                 self.cached_properties.insert(code, prop);
 
-                                let _ = self
-                                    .update_tx
-                                    .send(CameraUpdate::PropertyChanged {
-                                        id: property_id,
-                                        value: current,
-                                        available,
-                                        writable,
-                                    })
-                                    .await;
+                                self.send_update(CameraUpdate::PropertyChanged {
+                                    id: property_id,
+                                    value: current,
+                                    available,
+                                    writable,
+                                })
+                                .await;
                             }
                         }
                     }
@@ -1027,31 +967,25 @@ impl CameraService {
                 } else {
                     format!("{} (0x{:08X})", warning_name, code)
                 };
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::SdkEvent {
-                        event_type: "Warning".to_string(),
-                        details,
-                    })
-                    .await;
+                self.send_update(CameraUpdate::SdkEvent {
+                    event_type: "Warning".to_string(),
+                    details,
+                })
+                .await;
             }
             SdkEvent::Error { code } => {
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::SdkEvent {
-                        event_type: "Error".to_string(),
-                        details: format!("Code: 0x{:08X}", code),
-                    })
-                    .await;
+                self.send_update(CameraUpdate::SdkEvent {
+                    event_type: "Error".to_string(),
+                    details: format!("Code: 0x{:08X}", code),
+                })
+                .await;
             }
             SdkEvent::DownloadComplete { filename } => {
-                let _ = self
-                    .update_tx
-                    .send(CameraUpdate::SdkEvent {
-                        event_type: "Download".to_string(),
-                        details: filename,
-                    })
-                    .await;
+                self.send_update(CameraUpdate::SdkEvent {
+                    event_type: "Download".to_string(),
+                    details: filename,
+                })
+                .await;
             }
             _ => {}
         }
