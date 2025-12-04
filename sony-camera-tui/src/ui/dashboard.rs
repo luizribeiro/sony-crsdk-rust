@@ -2,9 +2,29 @@ use ratatui::{
     layout::{Constraint, Layout, Rect},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, List, ListItem, Paragraph},
+    widgets::{
+        Block, Borders, List, ListItem, Paragraph, Scrollbar, ScrollbarOrientation, ScrollbarState,
+    },
     Frame,
 };
+
+fn scroll_offset_for_selection(
+    selected: usize,
+    visible_height: usize,
+    total_items: usize,
+) -> usize {
+    if total_items <= visible_height {
+        return 0;
+    }
+    let half_visible = visible_height / 2;
+    if selected < half_visible {
+        0
+    } else if selected >= total_items.saturating_sub(half_visible) {
+        total_items.saturating_sub(visible_height)
+    } else {
+        selected.saturating_sub(half_visible)
+    }
+}
 
 use crate::app::{App, ConnectedCamera, DashboardState, EventsLogState, MediaSlotInfo};
 use crate::property::Property;
@@ -241,6 +261,7 @@ fn render_quick_settings_panel(frame: &mut Frame, area: Rect, app: &App) {
 
     let mut lines: Vec<Line> = Vec::new();
     let mut current_category: Option<PropertyCategory> = None;
+    let mut selected_line_index: usize = 0;
 
     for (idx, &prop_code) in pinned_ids.iter().enumerate() {
         let category = prop_code.category();
@@ -253,6 +274,10 @@ fn render_quick_settings_panel(frame: &mut Frame, area: Rect, app: &App) {
                 ),
                 Span::styled("─".repeat(18), Style::default().fg(Color::Rgb(40, 40, 40))),
             ]));
+        }
+
+        if idx == app.dashboard.selected_property {
+            selected_line_index = lines.len();
         }
 
         if let Some(prop) = app.properties.get(prop_code) {
@@ -268,8 +293,19 @@ fn render_quick_settings_panel(frame: &mut Frame, area: Rect, app: &App) {
         }
     }
 
-    let paragraph = Paragraph::new(lines);
+    let visible_height = inner.height as usize;
+    let scroll_offset =
+        scroll_offset_for_selection(selected_line_index, visible_height, lines.len());
+
+    let paragraph = Paragraph::new(lines.clone()).scroll((scroll_offset as u16, 0));
     frame.render_widget(paragraph, inner);
+
+    if lines.len() > visible_height {
+        let mut scrollbar_state = ScrollbarState::new(lines.len()).position(scroll_offset);
+        let scrollbar = Scrollbar::new(ScrollbarOrientation::VerticalRight)
+            .style(Style::default().fg(Color::Rgb(60, 60, 60)));
+        frame.render_stateful_widget(scrollbar, inner, &mut scrollbar_state);
+    }
 }
 
 fn render_property_line(
