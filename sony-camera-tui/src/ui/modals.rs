@@ -334,8 +334,7 @@ fn render_input_field(
 
 fn render_property_search_modal(frame: &mut Frame, state: &PropertySearchState) {
     let max_results = 10;
-    let height = 4 + max_results.min(state.results.len().max(1)) as u16;
-    let inner = render_modal_frame(frame, 50, height, " Search Properties ", Color::Cyan);
+    let inner = render_modal_frame(frame, 50, 14, " Search Properties ", Color::Cyan);
 
     let layout = Layout::vertical([
         Constraint::Length(2), // Search input
