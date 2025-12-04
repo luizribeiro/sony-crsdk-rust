@@ -177,20 +177,10 @@ impl Default for DashboardState {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum PropertyEditorFocus {
-    #[default]
     Categories,
+    #[default]
     Properties,
     Values,
-}
-
-impl PropertyEditorFocus {
-    pub fn toggle(self) -> Self {
-        match self {
-            Self::Categories => Self::Properties,
-            Self::Properties => Self::Categories,
-            Self::Values => Self::Properties,
-        }
-    }
 }
 
 #[derive(Debug, Clone, Default)]
@@ -535,7 +525,14 @@ impl App {
                 self.screen = Screen::Discovery;
                 self.connected_camera = None;
             }
-            Screen::PropertyEditor | Screen::EventsExpanded => {
+            Screen::PropertyEditor => {
+                if self.property_editor.focus == PropertyEditorFocus::Values {
+                    self.property_editor.focus = PropertyEditorFocus::Properties;
+                } else {
+                    self.screen = Screen::Dashboard;
+                }
+            }
+            Screen::EventsExpanded => {
                 self.screen = Screen::Dashboard;
             }
         }
@@ -751,8 +748,11 @@ impl App {
                     }
                 }
             },
-            Action::PropertyEditorTab => {
-                self.property_editor.focus = self.property_editor.focus.toggle();
+            Action::PropertyEditorNextCategory => {
+                self.change_property_category(1);
+            }
+            Action::PropertyEditorPrevCategory => {
+                self.change_property_category(-1);
             }
             Action::PropertyEditorValueNext => {
                 if self.property_editor.focus == PropertyEditorFocus::Properties {
@@ -813,6 +813,20 @@ impl App {
             }
             _ => {}
         }
+    }
+
+    fn change_property_category(&mut self, delta: isize) {
+        let len = PropertyCategory::ALL.len();
+        self.property_editor.category_index = if delta > 0 {
+            (self.property_editor.category_index + 1) % len
+        } else {
+            self.property_editor
+                .category_index
+                .checked_sub(1)
+                .unwrap_or(len - 1)
+        };
+        self.property_editor.property_index = 0;
+        self.property_editor.focus = PropertyEditorFocus::Properties;
     }
 
     fn current_category_properties(&self) -> Vec<PropertyId> {
