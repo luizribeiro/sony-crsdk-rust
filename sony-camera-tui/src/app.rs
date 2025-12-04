@@ -29,6 +29,7 @@ pub enum Modal {
     SshCredentials(SshCredentialsState),
     SshFingerprintConfirm(SshFingerprintState),
     ManualConnection(ManualConnectionState),
+    PropertySearch(PropertySearchState),
     Confirmation { message: String },
     Error { message: String },
 }
@@ -60,6 +61,13 @@ pub struct ManualConnectionState {
     pub model_index: usize,
     pub ssh_enabled: bool,
     pub focused_field: usize,
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct PropertySearchState {
+    pub query: String,
+    pub results: Vec<PropertyId>,
+    pub selected_index: usize,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
@@ -675,6 +683,14 @@ impl App {
             Action::ShowEventsExpanded => {
                 self.screen = Screen::EventsExpanded;
             }
+            Action::ShowPropertySearch => {
+                let results = crate::property::search_properties("");
+                self.modal = Some(Modal::PropertySearch(PropertySearchState {
+                    query: String::new(),
+                    results,
+                    selected_index: 0,
+                }));
+            }
             Action::Disconnect => {
                 let _ = self.camera_service.send(CameraCommand::Disconnect).await;
             }
@@ -811,6 +827,14 @@ impl App {
                     }
                 }
             }
+            Action::ShowPropertySearch => {
+                let results = crate::property::search_properties("");
+                self.modal = Some(Modal::PropertySearch(PropertySearchState {
+                    query: String::new(),
+                    results,
+                    selected_index: 0,
+                }));
+            }
             _ => {}
         }
     }
@@ -922,6 +946,12 @@ impl App {
                     self.modal = None;
                     self.connect_to_camera(camera).await;
                 }
+                Modal::PropertySearch(state) => {
+                    if let Some(&id) = state.results.get(state.selected_index) {
+                        self.modal = None;
+                        self.jump_to_property_in_editor(id);
+                    }
+                }
                 _ => {
                     self.modal = None;
                 }
@@ -970,6 +1000,23 @@ impl App {
                     }
                 }
             }
+            Action::ModalSelectNext => {
+                if let Some(Modal::PropertySearch(ref mut state)) = self.modal {
+                    if !state.results.is_empty() {
+                        state.selected_index = (state.selected_index + 1) % state.results.len();
+                    }
+                }
+            }
+            Action::ModalSelectPrev => {
+                if let Some(Modal::PropertySearch(ref mut state)) = self.modal {
+                    if !state.results.is_empty() {
+                        state.selected_index = state
+                            .selected_index
+                            .checked_sub(1)
+                            .unwrap_or(state.results.len() - 1);
+                    }
+                }
+            }
             _ => {}
         }
     }
@@ -994,13 +1041,25 @@ impl App {
     }
 
     fn modal_input_char(&mut self, c: char) {
-        self.with_focused_modal_field(|text| text.push(c));
+        if let Some(Modal::PropertySearch(ref mut state)) = self.modal {
+            state.query.push(c);
+            state.results = crate::property::search_properties(&state.query);
+            state.selected_index = 0;
+        } else {
+            self.with_focused_modal_field(|text| text.push(c));
+        }
     }
 
     fn modal_input_backspace(&mut self) {
-        self.with_focused_modal_field(|text| {
-            text.pop();
-        });
+        if let Some(Modal::PropertySearch(ref mut state)) = self.modal {
+            state.query.pop();
+            state.results = crate::property::search_properties(&state.query);
+            state.selected_index = 0;
+        } else {
+            self.with_focused_modal_field(|text| {
+                text.pop();
+            });
+        }
     }
 
     async fn connect_to_camera(&mut self, camera: DiscoveredCamera) {

@@ -46,6 +46,7 @@ pub enum Action {
     OpenPropertyInEditor,       // Jump to property in editor (o)
     PropertyEditorOpenValues,   // Open value selector (o in property editor)
     PropertyEditorApplyValue,   // Apply selected value (Enter in Values focus)
+    ShowPropertySearch,         // Open property search modal (/)
 
     // Events log
     ScrollEventsUp,
@@ -65,4 +66,6 @@ pub enum Action {
     ModalInputDelete,
     ModalInputLeft,
     ModalInputRight,
+    ModalSelectNext,
+    ModalSelectPrev,
 }
