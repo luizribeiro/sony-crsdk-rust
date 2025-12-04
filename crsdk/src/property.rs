@@ -34,8 +34,10 @@ pub enum PropertyCode {
     AspectRatio = crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_AspectRatio,
     /// Still image size
     ImageSize = crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_ImageSize,
-    /// Still image quality
+    /// Still image quality (JPEG compression level)
     ImageQuality = crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_StillImageQuality,
+    /// Still image file type (RAW/JPEG/RAW+JPEG/HEIF)
+    FileType = crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_FileType,
     /// Movie file format
     MovieFormat = crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_Movie_File_Format,
     /// Movie recording setting
@@ -43,6 +45,53 @@ pub enum PropertyCode {
         crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_Movie_Recording_Setting,
     /// Zoom scale
     ZoomScale = crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_Zoom_Scale,
+
+    // Camera info properties
+    /// Battery remaining percentage (0-100)
+    BatteryRemain = crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_BatteryRemain,
+    /// Battery level indicator
+    BatteryLevel = crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_BatteryLevel,
+    /// Lens model name
+    LensModelName = crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_LensModelName,
+
+    // Media slot 1
+    /// Media slot 1 status
+    MediaSlot1Status = crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_MediaSLOT1_Status,
+    /// Media slot 1 remaining photos
+    MediaSlot1RemainingPhotos =
+        crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_MediaSLOT1_RemainingNumber,
+    /// Media slot 1 remaining recording time (seconds)
+    MediaSlot1RemainingTime =
+        crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_MediaSLOT1_RemainingTime,
+
+    // Media slot 2
+    /// Media slot 2 status
+    MediaSlot2Status = crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_MediaSLOT2_Status,
+    /// Media slot 2 remaining photos
+    MediaSlot2RemainingPhotos =
+        crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_MediaSLOT2_RemainingNumber,
+    /// Media slot 2 remaining recording time (seconds)
+    MediaSlot2RemainingTime =
+        crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_MediaSLOT2_RemainingTime,
+
+    // Media slot 3 (some cameras like FX6, FX9 have 3 slots)
+    /// Media slot 3 status
+    MediaSlot3Status = crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_MediaSLOT3_Status,
+    /// Media slot 3 remaining recording time (seconds)
+    MediaSlot3RemainingTime =
+        crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_MediaSLOT3_RemainingTime,
+
+    // Lens and focus info
+    /// Focal distance in meters (value in mm, 0xFFFFFFFF = infinity)
+    FocalDistanceInMeter =
+        crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_FocalDistanceInMeter,
+    /// Zoom distance (current focal length)
+    ZoomDistance = crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_ZoomDistance,
+
+    // Device status
+    /// Device overheating state (0=normal, 1=pre-overheating, 2=overheating)
+    DeviceOverheatingState =
+        crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_DeviceOverheatingState,
 }
 
 impl PropertyCode {
@@ -70,11 +119,40 @@ impl PropertyCode {
             CrDevicePropertyCode_CrDeviceProperty_AspectRatio => Self::AspectRatio,
             CrDevicePropertyCode_CrDeviceProperty_ImageSize => Self::ImageSize,
             CrDevicePropertyCode_CrDeviceProperty_StillImageQuality => Self::ImageQuality,
+            CrDevicePropertyCode_CrDeviceProperty_FileType => Self::FileType,
             CrDevicePropertyCode_CrDeviceProperty_Movie_File_Format => Self::MovieFormat,
             CrDevicePropertyCode_CrDeviceProperty_Movie_Recording_Setting => {
                 Self::MovieRecordingSetting
             }
             CrDevicePropertyCode_CrDeviceProperty_Zoom_Scale => Self::ZoomScale,
+            CrDevicePropertyCode_CrDeviceProperty_BatteryRemain => Self::BatteryRemain,
+            CrDevicePropertyCode_CrDeviceProperty_BatteryLevel => Self::BatteryLevel,
+            CrDevicePropertyCode_CrDeviceProperty_LensModelName => Self::LensModelName,
+            CrDevicePropertyCode_CrDeviceProperty_MediaSLOT1_Status => Self::MediaSlot1Status,
+            CrDevicePropertyCode_CrDeviceProperty_MediaSLOT1_RemainingNumber => {
+                Self::MediaSlot1RemainingPhotos
+            }
+            CrDevicePropertyCode_CrDeviceProperty_MediaSLOT1_RemainingTime => {
+                Self::MediaSlot1RemainingTime
+            }
+            CrDevicePropertyCode_CrDeviceProperty_MediaSLOT2_Status => Self::MediaSlot2Status,
+            CrDevicePropertyCode_CrDeviceProperty_MediaSLOT2_RemainingNumber => {
+                Self::MediaSlot2RemainingPhotos
+            }
+            CrDevicePropertyCode_CrDeviceProperty_MediaSLOT2_RemainingTime => {
+                Self::MediaSlot2RemainingTime
+            }
+            CrDevicePropertyCode_CrDeviceProperty_MediaSLOT3_Status => Self::MediaSlot3Status,
+            CrDevicePropertyCode_CrDeviceProperty_MediaSLOT3_RemainingTime => {
+                Self::MediaSlot3RemainingTime
+            }
+            CrDevicePropertyCode_CrDeviceProperty_FocalDistanceInMeter => {
+                Self::FocalDistanceInMeter
+            }
+            CrDevicePropertyCode_CrDeviceProperty_ZoomDistance => Self::ZoomDistance,
+            CrDevicePropertyCode_CrDeviceProperty_DeviceOverheatingState => {
+                Self::DeviceOverheatingState
+            }
             _ => return None,
         })
     }
@@ -1290,7 +1368,19 @@ pub enum DataType {
 impl DataType {
     pub(crate) fn from_sdk(value: u32) -> Self {
         use crsdk_sys::SCRSDK::*;
-        match value {
+
+        // SDK data types can have modifier bits:
+        // - ArrayBit (0x2000): indicates an array of values
+        // - RangeBit (0x4000): indicates a range (min, max, step)
+        // - SignBit  (0x1000): indicates signed type
+        // We need to extract the base element type (lower bits)
+        const ARRAY_BIT: u32 = 0x2000;
+        const RANGE_BIT: u32 = 0x4000;
+
+        // Mask off the array/range bits to get the base type
+        let base_type = value & !(ARRAY_BIT | RANGE_BIT);
+
+        match base_type {
             CrDataType_CrDataType_UInt8 => Self::UInt8,
             CrDataType_CrDataType_UInt16 => Self::UInt16,
             CrDataType_CrDataType_UInt32 => Self::UInt32,
@@ -1300,7 +1390,7 @@ impl DataType {
             CrDataType_CrDataType_Int32 => Self::Int32,
             CrDataType_CrDataType_Int64 => Self::Int64,
             CrDataType_CrDataType_STR => Self::String,
-            other => Self::Unknown(other),
+            _ => Self::Unknown(value),
         }
     }
 }
@@ -1355,6 +1445,8 @@ pub struct DeviceProperty {
     pub enable_flag: EnableFlag,
     /// Current value as u64 (for numeric properties)
     pub current_value: u64,
+    /// Current value as string (for string properties)
+    pub current_string: Option<String>,
     /// Possible values this property can be set to
     pub possible_values: Vec<u64>,
 }
@@ -1442,17 +1534,354 @@ pub(crate) fn parse_possible_values(
     result
 }
 
+/// Parse UTF-16 string from SDK's currentStr pointer
+/// SDK format: first u16 is length, followed by that many u16 characters
+unsafe fn parse_current_string(str_ptr: *const u16) -> Option<String> {
+    if str_ptr.is_null() {
+        return None;
+    }
+
+    // SAFETY: caller ensures str_ptr is valid
+    // First element is the string length
+    let len = unsafe { *str_ptr } as usize;
+    if len == 0 || len > 1024 {
+        return None;
+    }
+
+    // String data starts at index 1, length is (len - 1) characters
+    // The length includes the length field itself, so actual char count is len - 1
+    let char_count = len.saturating_sub(1);
+    if char_count == 0 {
+        return None;
+    }
+
+    // SAFETY: we read len from the first element, string data follows at offset 1
+    let slice = unsafe { std::slice::from_raw_parts(str_ptr.add(1), char_count) };
+    String::from_utf16(slice).ok()
+}
+
 /// Convert SDK CrDeviceProperty to our DeviceProperty
 pub(crate) unsafe fn device_property_from_sdk(
     prop: &crsdk_sys::SCRSDK::CrDeviceProperty,
 ) -> DeviceProperty {
     let data_type = DataType::from_sdk(prop.valueType);
+
+    // Try getSetValues first (settable values), fall back to values (all possible values)
+    let possible_values = if prop.getSetValuesSize > 0 && !prop.getSetValues.is_null() {
+        parse_possible_values(data_type, prop.getSetValues, prop.getSetValuesSize)
+    } else {
+        parse_possible_values(data_type, prop.values, prop.valuesSize)
+    };
+
+    // Always try to parse string value - some string properties don't report String data type
+    // SAFETY: parse_current_string handles null pointers safely
+    let current_string = unsafe { parse_current_string(prop.currentStr) };
+
     DeviceProperty {
         code: prop.code,
         data_type,
         enable_flag: EnableFlag::from_sdk(prop.enableFlag),
         current_value: prop.currentValue,
-        possible_values: parse_possible_values(data_type, prop.values, prop.valuesSize),
+        current_string,
+        possible_values,
+    }
+}
+
+/// Convert SDK CrDeviceProperty to our DeviceProperty with debug info
+pub(crate) unsafe fn device_property_from_sdk_debug(
+    prop: &crsdk_sys::SCRSDK::CrDeviceProperty,
+) -> (DeviceProperty, String) {
+    let data_type = DataType::from_sdk(prop.valueType);
+
+    let values_from_sdk = parse_possible_values(data_type, prop.values, prop.valuesSize);
+    let get_set_values = parse_possible_values(data_type, prop.getSetValues, prop.getSetValuesSize);
+
+    // Always try to parse string value - some string properties don't report String data type
+    // SAFETY: parse_current_string handles null pointers safely
+    let current_string = unsafe { parse_current_string(prop.currentStr) };
+
+    let debug_info = format!(
+        "dataType={:?}(raw={}) valuesSize={} values_ptr={:?} getSetValuesSize={} getSetValues_ptr={:?} values={:?} getSetValues={:?} currentStr={:?}",
+        data_type,
+        prop.valueType,
+        prop.valuesSize,
+        prop.values,
+        prop.getSetValuesSize,
+        prop.getSetValues,
+        values_from_sdk,
+        get_set_values,
+        current_string,
+    );
+
+    let possible_values = if !get_set_values.is_empty() {
+        get_set_values
+    } else {
+        values_from_sdk
+    };
+
+    let device_prop = DeviceProperty {
+        code: prop.code,
+        data_type,
+        enable_flag: EnableFlag::from_sdk(prop.enableFlag),
+        current_value: prop.currentValue,
+        current_string,
+        possible_values,
+    };
+
+    (device_prop, debug_info)
+}
+
+/// File type for still images (RAW vs JPEG) - used by MediaSLOT_FileType
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum FileType {
+    None = 0,
+    Jpeg = 1,
+    Raw = 2,
+    RawJpeg = 3,
+    RawHeif = 4,
+    Heif = 5,
+}
+
+impl FileType {
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    pub fn from_raw(value: u64) -> Option<Self> {
+        Some(match value as u16 {
+            0 => Self::None,
+            1 => Self::Jpeg,
+            2 => Self::Raw,
+            3 => Self::RawJpeg,
+            4 => Self::RawHeif,
+            5 => Self::Heif,
+            _ => return None,
+        })
+    }
+}
+
+impl std::fmt::Display for FileType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::None => "--",
+                Self::Jpeg => "JPEG",
+                Self::Raw => "RAW",
+                Self::RawJpeg => "RAW+JPEG",
+                Self::RawHeif => "RAW+HEIF",
+                Self::Heif => "HEIF",
+            }
+        )
+    }
+}
+
+/// JPEG image quality level - used by StillImageQuality property
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum ImageQuality {
+    Unknown = 0,
+    Light = 1,
+    Standard = 2,
+    Fine = 3,
+    ExFine = 4,
+}
+
+impl ImageQuality {
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    pub fn from_raw(value: u64) -> Option<Self> {
+        Some(match value as u16 {
+            0 => Self::Unknown,
+            1 => Self::Light,
+            2 => Self::Standard,
+            3 => Self::Fine,
+            4 => Self::ExFine,
+            _ => return None,
+        })
+    }
+}
+
+impl std::fmt::Display for ImageQuality {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Unknown => "--",
+                Self::Light => "Light",
+                Self::Standard => "Standard",
+                Self::Fine => "Fine",
+                Self::ExFine => "Extra Fine",
+            }
+        )
+    }
+}
+
+/// Movie file format
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum MovieFileFormat {
+    Avchd = 0,
+    Mp4 = 1,
+    XavcS4k = 2,
+    XavcSHd = 3,
+    XavcHs8k = 4,
+    XavcHs4k = 5,
+    XavcSL4k = 6,
+    XavcSLHd = 7,
+    XavcSI4k = 8,
+    XavcSIHd = 9,
+    XavcI = 10,
+    XavcL = 11,
+    XavcHsHd = 12,
+    XavcSIDci4k = 13,
+    XavcHIHq = 14,
+    XavcHISq = 15,
+    XavcHL = 16,
+    XOcnXt = 17,
+    XOcnSt = 18,
+}
+
+impl MovieFileFormat {
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    pub fn from_raw(value: u64) -> Option<Self> {
+        Some(match value as u8 {
+            0 => Self::Avchd,
+            1 => Self::Mp4,
+            2 => Self::XavcS4k,
+            3 => Self::XavcSHd,
+            4 => Self::XavcHs8k,
+            5 => Self::XavcHs4k,
+            6 => Self::XavcSL4k,
+            7 => Self::XavcSLHd,
+            8 => Self::XavcSI4k,
+            9 => Self::XavcSIHd,
+            10 => Self::XavcI,
+            11 => Self::XavcL,
+            12 => Self::XavcHsHd,
+            13 => Self::XavcSIDci4k,
+            14 => Self::XavcHIHq,
+            15 => Self::XavcHISq,
+            16 => Self::XavcHL,
+            17 => Self::XOcnXt,
+            18 => Self::XOcnSt,
+            _ => return None,
+        })
+    }
+}
+
+impl std::fmt::Display for MovieFileFormat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Avchd => "AVCHD",
+                Self::Mp4 => "MP4",
+                Self::XavcS4k => "XAVC S 4K",
+                Self::XavcSHd => "XAVC S HD",
+                Self::XavcHs8k => "XAVC HS 8K",
+                Self::XavcHs4k => "XAVC HS 4K",
+                Self::XavcSL4k => "XAVC S-L 4K",
+                Self::XavcSLHd => "XAVC S-L HD",
+                Self::XavcSI4k => "XAVC S-I 4K",
+                Self::XavcSIHd => "XAVC S-I HD",
+                Self::XavcI => "XAVC I",
+                Self::XavcL => "XAVC L",
+                Self::XavcHsHd => "XAVC HS HD",
+                Self::XavcSIDci4k => "XAVC S-I DCI 4K",
+                Self::XavcHIHq => "XAVC H-I HQ",
+                Self::XavcHISq => "XAVC H-I SQ",
+                Self::XavcHL => "XAVC H-L",
+                Self::XOcnXt => "X-OCN XT",
+                Self::XOcnSt => "X-OCN ST",
+            }
+        )
+    }
+}
+
+/// Format movie recording quality/bitrate setting to display string
+pub fn format_movie_quality(value: u64) -> String {
+    match value as u16 {
+        0 => "--".to_string(),
+        1 => "60p 50M".to_string(),
+        2 => "30p 50M".to_string(),
+        3 => "24p 50M".to_string(),
+        4 => "50p 50M".to_string(),
+        5 => "25p 50M".to_string(),
+        6 => "60i 24M".to_string(),
+        7 => "50i 24M FX".to_string(),
+        8 => "60i 17M FH".to_string(),
+        9 => "50i 17M FH".to_string(),
+        10 => "60p 28M PS".to_string(),
+        11 => "50p 28M PS".to_string(),
+        12 => "24p 24M FX".to_string(),
+        13 => "25p 24M FX".to_string(),
+        14 => "24p 17M FH".to_string(),
+        15 => "25p 17M FH".to_string(),
+        16 => "120p 50M 720".to_string(),
+        17 => "100p 50M 720".to_string(),
+        18 => "1080 30p 16M".to_string(),
+        19 => "1080 25p 16M".to_string(),
+        20 => "720 30p 6M".to_string(),
+        21 => "720 25p 6M".to_string(),
+        22 => "1080 60p 28M".to_string(),
+        23 => "1080 50p 28M".to_string(),
+        24 => "60p 25M".to_string(),
+        25 => "50p 25M".to_string(),
+        26 => "30p 16M".to_string(),
+        27 => "25p 16M".to_string(),
+        28 => "120p 100M".to_string(),
+        29 => "100p 100M".to_string(),
+        30 => "120p 60M".to_string(),
+        31 => "100p 60M".to_string(),
+        32 => "30p 100M".to_string(),
+        33 => "25p 100M".to_string(),
+        34 => "24p 100M".to_string(),
+        35 => "30p 60M".to_string(),
+        36 => "25p 60M".to_string(),
+        37 => "24p 60M".to_string(),
+        38 => "600M 10bit".to_string(),
+        39 => "500M 10bit".to_string(),
+        40 => "400M 10bit".to_string(),
+        41 => "300M 10bit".to_string(),
+        42 => "280M 10bit".to_string(),
+        43 => "250M 10bit".to_string(),
+        44 => "240M 10bit".to_string(),
+        45 => "222M 10bit".to_string(),
+        46 => "200M 10bit".to_string(),
+        47 => "200M 10bit 420".to_string(),
+        48 => "200M 8bit".to_string(),
+        49 => "185M 10bit".to_string(),
+        50 => "150M 10bit 420".to_string(),
+        51 => "150M 8bit".to_string(),
+        52 => "140M 10bit".to_string(),
+        53 => "111M 10bit".to_string(),
+        54 => "100M 10bit".to_string(),
+        55 => "100M 10bit 420".to_string(),
+        56 => "100M 8bit".to_string(),
+        57 => "93M 10bit".to_string(),
+        58 => "89M 10bit".to_string(),
+        59 => "75M 10bit 420".to_string(),
+        60 => "60M 8bit".to_string(),
+        61 => "50M 10bit".to_string(),
+        62 => "50M 10bit 420".to_string(),
+        63 => "50M 8bit".to_string(),
+        64 => "45M 10bit 420".to_string(),
+        65 => "30M 10bit 420".to_string(),
+        66 => "25M 8bit".to_string(),
+        67 => "16M 8bit".to_string(),
+        68 => "520M 10bit".to_string(),
+        69 => "260M 10bit".to_string(),
+        _ => format!("{}M", value),
     }
 }
 

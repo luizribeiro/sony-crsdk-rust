@@ -1,0 +1,306 @@
+use ratatui::{
+    layout::{Constraint, Layout, Rect},
+    style::{Color, Modifier, Style},
+    text::{Line, Span},
+    widgets::{Block, Borders, List, ListItem, Paragraph},
+    Frame,
+};
+
+use crate::app::{App, ConnectedCamera, PropertyEditorFocus};
+use crate::property::PropertyCategory;
+
+use super::header::{self, HeaderState};
+
+pub fn render(frame: &mut Frame, app: &App, camera: &Option<ConnectedCamera>) {
+    let area = frame.area();
+
+    let layout = Layout::vertical([
+        Constraint::Length(1),
+        Constraint::Min(10),
+        Constraint::Length(1),
+    ])
+    .split(area);
+
+    let exposure_mode = app.properties.exposure_mode();
+    let header_state = HeaderState {
+        camera,
+        exposure_mode: Some(exposure_mode),
+        is_recording: app.dashboard.is_recording,
+        recording_seconds: if app.dashboard.is_recording {
+            Some(app.dashboard.recording_seconds)
+        } else {
+            None
+        },
+    };
+    header::render(frame, layout[0], &header_state);
+    render_content(frame, layout[1], app);
+    render_shortcuts(frame, layout[2], app);
+}
+
+fn render_content(frame: &mut Frame, area: Rect, app: &App) {
+    // Show "not connected" message if properties not loaded
+    if !app.properties.is_loaded() {
+        let block = Block::default()
+            .title(" Properties ")
+            .borders(Borders::ALL)
+            .border_style(Style::default().fg(Color::Rgb(40, 40, 40)));
+        let inner = block.inner(area);
+        frame.render_widget(block, area);
+
+        let msg = if app.connected_camera.is_some() {
+            "  Loading properties..."
+        } else {
+            "  Not connected - press Esc to return to dashboard"
+        };
+        let paragraph = Paragraph::new(Line::from(vec![Span::styled(
+            msg,
+            Style::default().fg(Color::Rgb(60, 60, 60)),
+        )]));
+        frame.render_widget(paragraph, inner);
+        return;
+    }
+
+    let columns = Layout::horizontal([Constraint::Length(18), Constraint::Min(40)]).split(area);
+
+    render_categories(frame, columns[0], app);
+    render_property_values(frame, columns[1], app);
+}
+
+fn render_categories(frame: &mut Frame, area: Rect, app: &App) {
+    let focused = app.property_editor.focus == PropertyEditorFocus::Categories;
+
+    let block = Block::default()
+        .title(" Categories ")
+        .borders(Borders::ALL)
+        .border_style(if focused {
+            Style::default().fg(Color::Cyan)
+        } else {
+            Style::default().fg(Color::Rgb(60, 60, 60))
+        });
+
+    let items: Vec<ListItem> = PropertyCategory::ALL
+        .iter()
+        .enumerate()
+        .map(|(i, cat)| {
+            let is_selected = i == app.property_editor.category_index;
+            let style = if is_selected && focused {
+                Style::default().fg(Color::Cyan)
+            } else if is_selected {
+                Style::default().fg(Color::White)
+            } else {
+                Style::default().fg(Color::DarkGray)
+            };
+
+            let prefix = if is_selected && focused { "▸ " } else { "  " };
+            ListItem::new(Line::from(vec![
+                Span::styled(prefix, style),
+                Span::styled(cat.name(), style),
+            ]))
+        })
+        .collect();
+
+    let list = List::new(items).block(block);
+    frame.render_widget(list, area);
+}
+
+fn render_property_values(frame: &mut Frame, area: Rect, app: &App) {
+    let current_category = app.property_editor.current_category();
+    let props_focused = app.property_editor.focus == PropertyEditorFocus::Properties;
+
+    let block = Block::default()
+        .title(format!(" {} ", current_category.name()))
+        .borders(Borders::ALL)
+        .border_style(if props_focused {
+            Style::default().fg(Color::Cyan)
+        } else {
+            Style::default().fg(Color::Rgb(60, 60, 60))
+        });
+
+    let properties = app.properties.properties_by_category(current_category);
+
+    if properties.is_empty() {
+        let paragraph = Paragraph::new("\n  No properties available")
+            .style(Style::default().fg(Color::DarkGray))
+            .block(block);
+        frame.render_widget(paragraph, area);
+        return;
+    }
+
+    let inner_area = block.inner(area);
+    frame.render_widget(block, area);
+
+    let columns = Layout::horizontal([Constraint::Percentage(50), Constraint::Percentage(50)])
+        .split(inner_area);
+
+    render_property_list(frame, columns[0], app, &properties);
+    render_value_list(frame, columns[1], app, &properties);
+}
+
+fn render_property_list(
+    frame: &mut Frame,
+    area: Rect,
+    app: &App,
+    properties: &[&crate::property::Property],
+) {
+    let props_focused = app.property_editor.focus == PropertyEditorFocus::Properties;
+
+    let items: Vec<ListItem> = properties
+        .iter()
+        .enumerate()
+        .map(|(i, prop)| {
+            let is_selected = i == app.property_editor.property_index;
+            let is_pinned = app.properties.is_pinned(prop.id);
+
+            let name_style = if !prop.writable {
+                Style::default().fg(Color::Rgb(80, 80, 80))
+            } else if is_selected && props_focused {
+                Style::default().fg(Color::Cyan)
+            } else if is_selected {
+                Style::default().fg(Color::White)
+            } else {
+                Style::default().fg(Color::DarkGray)
+            };
+
+            let value_style = if is_selected && props_focused {
+                Style::default()
+                    .fg(Color::Cyan)
+                    .add_modifier(Modifier::BOLD)
+            } else if is_selected {
+                Style::default().fg(Color::White)
+            } else {
+                Style::default().fg(Color::DarkGray)
+            };
+
+            let prefix = if is_selected && props_focused {
+                "▸ "
+            } else {
+                "  "
+            };
+
+            let pin_indicator = if is_pinned { "★ " } else { "  " };
+            let pin_style = if is_pinned {
+                Style::default().fg(Color::Yellow)
+            } else {
+                Style::default()
+            };
+
+            let suffix = if !prop.writable {
+                Span::styled(" 🔒", Style::default().fg(Color::Rgb(80, 80, 80)))
+            } else {
+                Span::raw("")
+            };
+
+            ListItem::new(Line::from(vec![
+                Span::styled(prefix, name_style),
+                Span::styled(pin_indicator, pin_style),
+                Span::styled(prop.id.name(), name_style),
+                Span::raw(": "),
+                Span::styled(prop.current_value(), value_style),
+                suffix,
+            ]))
+        })
+        .collect();
+
+    let list = List::new(items);
+    frame.render_widget(list, area);
+}
+
+fn render_value_list(
+    frame: &mut Frame,
+    area: Rect,
+    app: &App,
+    properties: &[&crate::property::Property],
+) {
+    let Some(prop) = properties.get(app.property_editor.property_index) else {
+        return;
+    };
+
+    let props_focused = app.property_editor.focus == PropertyEditorFocus::Properties;
+
+    let block = Block::default()
+        .title(Line::from(vec![Span::styled(
+            " Available ",
+            Style::default().fg(if props_focused {
+                Color::Cyan
+            } else {
+                Color::DarkGray
+            }),
+        )]))
+        .borders(Borders::LEFT)
+        .border_style(if props_focused {
+            Style::default().fg(Color::Cyan)
+        } else {
+            Style::default().fg(Color::Rgb(60, 60, 60))
+        });
+
+    let inner = block.inner(area);
+    frame.render_widget(block, area);
+
+    if prop.values.is_empty() {
+        let hint = Paragraph::new(Line::from(vec![Span::styled(
+            "\n  No values available",
+            Style::default().fg(Color::DarkGray),
+        )]));
+        frame.render_widget(hint, inner);
+        return;
+    }
+
+    let items: Vec<ListItem> = prop
+        .values
+        .iter()
+        .map(|val| {
+            let is_current = val == prop.current_value();
+
+            let style = if is_current {
+                Style::default()
+                    .fg(Color::Green)
+                    .add_modifier(Modifier::BOLD)
+            } else {
+                Style::default().fg(Color::DarkGray)
+            };
+
+            let prefix = if is_current { "▸ " } else { "  " };
+
+            ListItem::new(Line::from(vec![
+                Span::styled(prefix, style),
+                Span::styled(val, style),
+            ]))
+        })
+        .collect();
+
+    let list = List::new(items);
+    frame.render_widget(list, inner);
+}
+
+fn render_shortcuts(frame: &mut Frame, area: Rect, app: &App) {
+    let shortcuts = match app.property_editor.focus {
+        PropertyEditorFocus::Categories => Line::from(vec![
+            Span::styled(" ↑↓ ", Style::default().fg(Color::Cyan)),
+            Span::styled("Navigate", Style::default().fg(Color::DarkGray)),
+            Span::raw("  "),
+            Span::styled(" Tab ", Style::default().fg(Color::Cyan)),
+            Span::styled("Properties", Style::default().fg(Color::DarkGray)),
+            Span::raw("  "),
+            Span::styled(" Esc ", Style::default().fg(Color::Cyan)),
+            Span::styled("Back", Style::default().fg(Color::DarkGray)),
+        ]),
+        PropertyEditorFocus::Properties => Line::from(vec![
+            Span::styled(" ↑↓ ", Style::default().fg(Color::Cyan)),
+            Span::styled("Select", Style::default().fg(Color::DarkGray)),
+            Span::raw("  "),
+            Span::styled(" ←→ ", Style::default().fg(Color::Cyan)),
+            Span::styled("Adjust", Style::default().fg(Color::DarkGray)),
+            Span::raw("  "),
+            Span::styled(" * ", Style::default().fg(Color::Yellow)),
+            Span::styled("Pin", Style::default().fg(Color::DarkGray)),
+            Span::raw("  "),
+            Span::styled(" Tab ", Style::default().fg(Color::Cyan)),
+            Span::styled("Categories", Style::default().fg(Color::DarkGray)),
+            Span::raw("  "),
+            Span::styled(" Esc ", Style::default().fg(Color::Cyan)),
+            Span::styled("Back", Style::default().fg(Color::DarkGray)),
+        ]),
+    };
+
+    frame.render_widget(Paragraph::new(shortcuts), area);
+}

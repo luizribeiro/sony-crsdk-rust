@@ -63,6 +63,7 @@ mod device;
 mod error;
 mod event;
 mod event_sender;
+pub mod format;
 mod property;
 mod sdk;
 mod types;
@@ -72,8 +73,9 @@ pub use device::{discover_cameras, CameraDevice, CameraDeviceBuilder};
 pub use error::{Error, Result};
 pub use event::CameraEvent;
 pub use property::{
-    DataType, DeviceProperty, DriveMode, EnableFlag, ExposureProgram, FlashMode, FocusArea,
-    FocusMode, MeteringMode, PropertyCode, WhiteBalance,
+    format_movie_quality, DataType, DeviceProperty, DriveMode, EnableFlag, ExposureProgram,
+    FileType, FlashMode, FocusArea, FocusMode, ImageQuality, MeteringMode, MovieFileFormat,
+    PropertyCode, WhiteBalance,
 };
 pub use sdk::Sdk;
 pub use types::{CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, MacAddr};
