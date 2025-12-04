@@ -685,18 +685,6 @@ impl App {
                     .send(CameraCommand::HalfPressShutter)
                     .await;
             }
-            Action::Capture => {
-                let _ = self.camera_service.send(CameraCommand::Capture).await;
-            }
-            Action::StartRecording => {
-                let _ = self
-                    .camera_service
-                    .send(CameraCommand::StartRecording)
-                    .await;
-            }
-            Action::StopRecording => {
-                let _ = self.camera_service.send(CameraCommand::StopRecording).await;
-            }
             _ => {}
         }
     }
