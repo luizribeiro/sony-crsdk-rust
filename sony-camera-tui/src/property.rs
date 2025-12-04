@@ -669,14 +669,13 @@ fn fuzzy_match_score(query: &str, name: &str) -> Option<i32> {
     }
 }
 
-/// Search properties by fuzzy matching query against property names
+/// Search supported properties by fuzzy matching query against property names
 pub fn search_properties(query: &str) -> Vec<PropertyId> {
     let mut results: Vec<(PropertyId, i32)> = PropertyId::ALL
         .iter()
         .filter_map(|&id| {
             let name = id.name();
             let category_name = id.category().name();
-            // Match against property name or "category: name"
             let full_name = format!("{}: {}", category_name, name);
 
             let score =
