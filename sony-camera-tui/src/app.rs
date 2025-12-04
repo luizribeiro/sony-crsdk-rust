@@ -499,8 +499,7 @@ impl App {
             return;
         }
 
-        if self.modal.is_some() {
-            let modal = self.modal.clone().unwrap();
+        if let Some(modal) = self.modal.clone() {
             self.handle_modal_action(action, modal).await;
             return;
         }
