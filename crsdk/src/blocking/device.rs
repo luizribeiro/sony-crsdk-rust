@@ -9,8 +9,8 @@ use crate::error::{Error, Result};
 use crate::event::CameraEvent;
 use crate::event_sender::EventSender;
 use crate::property::{
-    device_property_from_sdk, DeviceProperty, DriveMode, ExposureProgram, FlashMode, FocusArea,
-    FocusMode, MeteringMode, PropertyCode, WhiteBalance,
+    device_property_from_sdk, device_property_from_sdk_debug, DeviceProperty, DriveMode,
+    ExposureProgram, FlashMode, FocusArea, FocusMode, MeteringMode, PropertyCode, WhiteBalance,
 };
 use crate::types::{
     ip_to_sdk_format, CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, MacAddr,
@@ -250,6 +250,12 @@ pub struct CameraDevice {
 // - callback_ptr and event_sender_ptr are only accessed in Drop
 unsafe impl Send for CameraDevice {}
 
+// SAFETY: CameraDevice can be shared between threads because:
+// - All mutable state access goes through the SDK which handles synchronization
+// - The raw pointers (callback_ptr, event_sender_ptr) are only accessed in Drop
+// - The event_receiver is accessed via &mut self (exclusive access)
+unsafe impl Sync for CameraDevice {}
+
 #[blocking_impl(crate::CameraDevice, strategy = "block_in_place")]
 impl CameraDevice {
     /// Create a new builder for configuring camera connection
@@ -303,6 +309,81 @@ impl CameraDevice {
         }
 
         found_property.ok_or(Error::PropertyNotSupported)
+    }
+
+    /// Get all properties from the camera
+    ///
+    /// Returns all properties the camera currently exposes.
+    /// Useful for debugging what properties are available.
+    #[async_wrap]
+    pub fn get_all_properties(&self) -> Result<Vec<DeviceProperty>> {
+        let mut properties_ptr: *mut crsdk_sys::SCRSDK::CrDeviceProperty = ptr::null_mut();
+        let mut num_properties: i32 = 0;
+
+        let result = unsafe {
+            crsdk_sys::SCRSDK::GetDeviceProperties(
+                self.handle,
+                &mut properties_ptr,
+                &mut num_properties,
+            )
+        };
+
+        if result != 0 {
+            return Err(Error::from_sdk_error(result as u32));
+        }
+
+        if properties_ptr.is_null() || num_properties == 0 {
+            return Ok(Vec::new());
+        }
+
+        let mut properties = Vec::with_capacity(num_properties as usize);
+
+        unsafe {
+            for i in 0..num_properties as usize {
+                let prop = &*properties_ptr.add(i);
+                properties.push(device_property_from_sdk(prop));
+            }
+
+            crsdk_sys::SCRSDK::ReleaseDeviceProperties(self.handle, properties_ptr);
+        }
+
+        Ok(properties)
+    }
+
+    /// Get all properties with debug info (for debugging SDK values)
+    #[async_wrap]
+    pub fn get_all_properties_debug(&self) -> Result<Vec<(DeviceProperty, String)>> {
+        let mut properties_ptr: *mut crsdk_sys::SCRSDK::CrDeviceProperty = ptr::null_mut();
+        let mut num_properties: i32 = 0;
+
+        let result = unsafe {
+            crsdk_sys::SCRSDK::GetDeviceProperties(
+                self.handle,
+                &mut properties_ptr,
+                &mut num_properties,
+            )
+        };
+
+        if result != 0 {
+            return Err(Error::from_sdk_error(result as u32));
+        }
+
+        if properties_ptr.is_null() || num_properties == 0 {
+            return Ok(Vec::new());
+        }
+
+        let mut properties = Vec::with_capacity(num_properties as usize);
+
+        unsafe {
+            for i in 0..num_properties as usize {
+                let prop = &*properties_ptr.add(i);
+                properties.push(device_property_from_sdk_debug(prop));
+            }
+
+            crsdk_sys::SCRSDK::ReleaseDeviceProperties(self.handle, properties_ptr);
+        }
+
+        Ok(properties)
     }
 
     /// Set a property on the camera

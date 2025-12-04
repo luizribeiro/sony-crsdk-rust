@@ -1,13 +1,23 @@
 [target.aarch64-apple-darwin]
 rustflags = [
+    # For examples in target/debug/examples/
     "-C", "link-arg=-Wl,-rpath,@executable_path/../../../libs/crsdk",
-    "-C", "link-arg=-Wl,-rpath,@executable_path/../../../libs/adapters", 
+    "-C", "link-arg=-Wl,-rpath,@executable_path/../../../libs/adapters",
     "-C", "link-arg=-Wl,-rpath,@executable_path/../../../libs/opencv",
+    # For binaries in target/debug/
+    "-C", "link-arg=-Wl,-rpath,@executable_path/../../libs/crsdk",
+    "-C", "link-arg=-Wl,-rpath,@executable_path/../../libs/adapters",
+    "-C", "link-arg=-Wl,-rpath,@executable_path/../../libs/opencv",
 ]
 
 [target.x86_64-apple-darwin]
 rustflags = [
+    # For examples in target/debug/examples/
     "-C", "link-arg=-Wl,-rpath,@executable_path/../../../libs/crsdk",
     "-C", "link-arg=-Wl,-rpath,@executable_path/../../../libs/adapters",
     "-C", "link-arg=-Wl,-rpath,@executable_path/../../../libs/opencv",
+    # For binaries in target/debug/
+    "-C", "link-arg=-Wl,-rpath,@executable_path/../../libs/crsdk",
+    "-C", "link-arg=-Wl,-rpath,@executable_path/../../libs/adapters",
+    "-C", "link-arg=-Wl,-rpath,@executable_path/../../libs/opencv",
 ]
