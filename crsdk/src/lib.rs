@@ -71,7 +71,7 @@ mod types;
 // Re-exports for async API (default)
 pub use device::{discover_cameras, CameraDevice, CameraDeviceBuilder};
 pub use error::{Error, Result};
-pub use event::CameraEvent;
+pub use event::{warning_code_name, warning_param_description, CameraEvent};
 pub use property::{
     format_movie_quality, DataType, DeviceProperty, DriveMode, EnableFlag, ExposureProgram,
     FileType, FlashMode, FocusArea, FocusMode, ImageQuality, MeteringMode, MovieFileFormat,
