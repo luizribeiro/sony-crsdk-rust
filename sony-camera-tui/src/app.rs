@@ -13,6 +13,7 @@ use crsdk::MacAddr;
 
 const PROPERTY_DEBOUNCE_MS: u64 = 400;
 const IN_FLIGHT_TIMEOUT_MS: u64 = 2000;
+const MAX_EVENT_LOG_SIZE: usize = 100;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum Screen {
@@ -476,8 +477,7 @@ impl App {
             event_type: event_type.to_string(),
             details: details.to_string(),
         });
-        // Keep only last 100 events
-        while self.events_log.events.len() > 100 {
+        while self.events_log.events.len() > MAX_EVENT_LOG_SIZE {
             self.events_log.events.pop_front();
         }
     }
