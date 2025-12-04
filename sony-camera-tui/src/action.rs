@@ -36,13 +36,15 @@ pub enum Action {
     Disconnect,
 
     // Property editor
-    PropertyEditorNext,      // Move down in current focus area (j/down)
-    PropertyEditorPrev,      // Move up in current focus area (k/up)
-    PropertyEditorTab,       // Cycle focus: Categories <-> Properties
-    PropertyEditorValueNext, // Change to next value (l/right)
-    PropertyEditorValuePrev, // Change to prev value (h/left)
-    TogglePropertyPin,       // Toggle pin to quick settings (*)
-    OpenPropertyInEditor,    // Jump to property in editor (o)
+    PropertyEditorNext,       // Move down in current focus area (j/down)
+    PropertyEditorPrev,       // Move up in current focus area (k/up)
+    PropertyEditorTab,        // Cycle focus: Categories <-> Properties
+    PropertyEditorValueNext,  // Change to next value (l/right)
+    PropertyEditorValuePrev,  // Change to prev value (h/left)
+    TogglePropertyPin,        // Toggle pin to quick settings (*)
+    OpenPropertyInEditor,     // Jump to property in editor (o)
+    PropertyEditorOpenValues, // Open value selector (o in property editor)
+    PropertyEditorApplyValue, // Apply selected value (Enter in Values focus)
 
     // Events log
     ScrollEventsUp,

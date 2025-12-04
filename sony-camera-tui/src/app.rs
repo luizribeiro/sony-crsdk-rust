@@ -180,6 +180,7 @@ pub enum PropertyEditorFocus {
     #[default]
     Categories,
     Properties,
+    Values,
 }
 
 impl PropertyEditorFocus {
@@ -187,6 +188,7 @@ impl PropertyEditorFocus {
         match self {
             Self::Categories => Self::Properties,
             Self::Properties => Self::Categories,
+            Self::Values => Self::Properties,
         }
     }
 }
@@ -196,6 +198,7 @@ pub struct PropertyEditorState {
     pub category_index: usize,
     pub property_index: usize,
     pub focus: PropertyEditorFocus,
+    pub value_preview_index: usize,
 }
 
 impl PropertyEditorState {
@@ -703,6 +706,17 @@ impl App {
                             (self.property_editor.property_index + 1) % props.len();
                     }
                 }
+                PropertyEditorFocus::Values => {
+                    if let Some(id) = self.selected_property_id_in_editor() {
+                        if let Some(prop) = self.properties.get(id) {
+                            if !prop.values.is_empty() {
+                                self.property_editor.value_preview_index =
+                                    (self.property_editor.value_preview_index + 1)
+                                        % prop.values.len();
+                            }
+                        }
+                    }
+                }
             },
             Action::PropertyEditorPrev => match self.property_editor.focus {
                 PropertyEditorFocus::Categories => {
@@ -721,6 +735,19 @@ impl App {
                             .property_index
                             .checked_sub(1)
                             .unwrap_or(props.len() - 1);
+                    }
+                }
+                PropertyEditorFocus::Values => {
+                    if let Some(id) = self.selected_property_id_in_editor() {
+                        if let Some(prop) = self.properties.get(id) {
+                            if !prop.values.is_empty() {
+                                self.property_editor.value_preview_index = self
+                                    .property_editor
+                                    .value_preview_index
+                                    .checked_sub(1)
+                                    .unwrap_or(prop.values.len() - 1);
+                            }
+                        }
                     }
                 }
             },
@@ -749,6 +776,32 @@ impl App {
                             }
                         }
                     }
+                }
+            }
+            Action::PropertyEditorOpenValues => {
+                if self.property_editor.focus == PropertyEditorFocus::Properties {
+                    if let Some(id) = self.selected_property_id_in_editor() {
+                        if let Some(prop) = self.properties.get(id) {
+                            if prop.writable && !prop.values.is_empty() {
+                                self.property_editor.value_preview_index = prop.current_index;
+                                self.property_editor.focus = PropertyEditorFocus::Values;
+                            }
+                        }
+                    }
+                }
+            }
+            Action::PropertyEditorApplyValue => {
+                if self.property_editor.focus == PropertyEditorFocus::Values {
+                    if let Some(id) = self.selected_property_id_in_editor() {
+                        if !self.is_in_flight(id) {
+                            let new_index = self.property_editor.value_preview_index;
+                            if let Some(prop) = self.properties.get_mut(id) {
+                                prop.current_index = new_index;
+                                self.queue_property_change(id, new_index);
+                            }
+                        }
+                    }
+                    self.property_editor.focus = PropertyEditorFocus::Properties;
                 }
             }
             Action::TogglePropertyPin => {
