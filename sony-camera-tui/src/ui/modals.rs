@@ -7,6 +7,7 @@ use ratatui::{
 };
 
 use crate::app::{ManualConnectionState, Modal, SshCredentialsState, SshFingerprintState};
+use crsdk::CameraModel;
 
 pub fn render(frame: &mut Frame, modal: &Modal) {
     match modal {
@@ -206,8 +207,9 @@ fn render_manual_modal(frame: &mut Frame, state: &ManualConnectionState) {
     );
 
     // Model selection
-    let models = ["FX3", "FX6", "FX30", "Alpha 1", "Alpha 7 IV"];
-    let selected_model = models.get(state.model_index).unwrap_or(&"FX3");
+    let selected_model = CameraModel::ALL
+        .get(state.model_index)
+        .unwrap_or(&CameraModel::Fx3);
     let model_style = if state.focused_field == 2 {
         Style::default().fg(Color::Cyan)
     } else {
@@ -223,7 +225,7 @@ fn render_manual_modal(frame: &mut Frame, state: &ManualConnectionState) {
                 Color::DarkGray
             }),
         ),
-        Span::styled(*selected_model, model_style),
+        Span::styled(selected_model.to_string(), model_style),
         Span::styled(
             " ▶",
             Style::default().fg(if state.focused_field == 2 {
