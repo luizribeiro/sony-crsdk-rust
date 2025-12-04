@@ -7,7 +7,10 @@ use std::net::Ipv4Addr;
 
 use tokio::sync::mpsc;
 
-use crsdk::{CameraDevice, CameraEvent as SdkEvent, DeviceProperty, MacAddr, PropertyCode};
+use crsdk::{
+    warning_code_name, warning_param_description, CameraDevice, CameraEvent as SdkEvent,
+    DeviceProperty, MacAddr, PropertyCode,
+};
 
 use crate::property::{format_sdk_value, PropertyId};
 
@@ -922,9 +925,9 @@ impl CameraService {
                 }
             }
             SdkEvent::Warning { code, params } => {
-                let warning_name = format_warning_code(code);
+                let warning_name = warning_code_name(code);
                 let details = if let Some((p1, p2, p3)) = params {
-                    let param_desc = format_warning_params(code, p1);
+                    let param_desc = warning_param_description(code, p1);
 
                     // Handle AF Status events (0x00060001)
                     if code == 0x00060001 {
@@ -956,13 +959,12 @@ impl CameraService {
                         }
                     }
 
-                    if param_desc.is_empty() {
-                        format!(
+                    match param_desc {
+                        Some(desc) => format!("{}: {}", warning_name, desc),
+                        None => format!(
                             "{} (0x{:08X}) p1={} p2={} p3={}",
                             warning_name, code, p1, p2, p3
-                        )
-                    } else {
-                        format!("{}: {}", warning_name, param_desc)
+                        ),
                     }
                 } else {
                     format!("{} (0x{:08X})", warning_name, code)
@@ -989,65 +991,6 @@ impl CameraService {
             }
             _ => {}
         }
-    }
-}
-
-fn format_warning_code(code: u32) -> &'static str {
-    match code {
-        // Standard warnings (0x0002xxxx)
-        0x00020000 => "Unknown",
-        0x00020001 => "Reconnected",
-        0x00020002 => "Reconnecting",
-        0x00020003 => "Storage Full",
-        0x00020004 => "SetFileName Failed",
-        0x00020005 => "GetImage Failed",
-        0x00020007 => "Network Error",
-        0x00020008 => "Network Recovered",
-        0x00020009 => "Format Failed",
-        0x0002000A => "Format Invalid",
-        0x0002000B => "Format Complete",
-        0x00020010 => "Frame Not Updated",
-        0x00020012 => "Already Connected",
-
-        // Extended warnings (0x0006xxxx)
-        0x00060000 => "Ext Unknown",
-        0x00060001 => "AF Status",
-        0x00060002 => "Operation Results",
-        0x00060003 => "Operation Invalid",
-        0x00060004 => "PTZF Result",
-        0x00060005 => "Preset PTZF Clear",
-        0x00060006 => "Preset PTZF Set",
-        0x00060007 => "Preset PTZF Event",
-
-        _ => "Unknown Warning",
-    }
-}
-
-fn format_warning_params(code: u32, p1: i32) -> String {
-    match code {
-        // AF Status (0x00060001)
-        0x00060001 => match p1 {
-            0x01 => "Unlocked".to_string(),
-            0x02 => "Focused (AF-S)".to_string(),
-            0x03 => "Not Focused (AF-S)".to_string(),
-            0x05 => "Tracking Subject (AF-C)".to_string(),
-            0x06 => "Focused (AF-C)".to_string(),
-            0x07 => "Not Focused (AF-C)".to_string(),
-            0x08 => "Unpaused".to_string(),
-            0x09 => "Paused".to_string(),
-            _ => format!("Status {}", p1),
-        },
-        // Operation Results (0x00060002)
-        0x00060002 => match p1 {
-            0 => "Invalid".to_string(),
-            1 => "OK".to_string(),
-            2 => "NG".to_string(),
-            3 => "Invalid Parameter".to_string(),
-            4 => "Camera Status Error".to_string(),
-            5 => "Canceled".to_string(),
-            _ => format!("Result {}", p1),
-        },
-        _ => String::new(),
     }
 }
 
