@@ -278,13 +278,8 @@ fn render_property_line(
     has_pending: bool,
     is_in_flight: bool,
 ) -> Line<'static> {
-    const NAME_WIDTH: usize = 16;
-    let full_name = prop.code.name();
-    let name = if full_name.len() > NAME_WIDTH {
-        format!("{}…", &full_name[..NAME_WIDTH - 1])
-    } else {
-        full_name.to_string()
-    };
+    const NAME_WIDTH: usize = 28;
+    let name = prop.code.name().to_string();
     let value = prop.current_value().to_string();
     let is_disabled = !prop.writable;
 
