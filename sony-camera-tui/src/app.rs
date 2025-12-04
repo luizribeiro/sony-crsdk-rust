@@ -907,44 +907,33 @@ impl App {
         }
     }
 
-    fn modal_input_char(&mut self, c: char) {
+    fn with_focused_modal_field<F>(&mut self, f: F)
+    where
+        F: FnOnce(&mut String),
+    {
         match &mut self.modal {
             Some(Modal::SshCredentials(state)) => match state.focused_field {
-                0 => state.username.push(c),
-                1 => state.password.push(c),
+                0 => f(&mut state.username),
+                1 => f(&mut state.password),
                 _ => {}
             },
             Some(Modal::ManualConnection(state)) => match state.focused_field {
-                0 => state.ip_address.push(c),
-                1 => state.mac_address.push(c),
+                0 => f(&mut state.ip_address),
+                1 => f(&mut state.mac_address),
                 _ => {}
             },
             _ => {}
         }
     }
 
+    fn modal_input_char(&mut self, c: char) {
+        self.with_focused_modal_field(|text| text.push(c));
+    }
+
     fn modal_input_backspace(&mut self) {
-        match &mut self.modal {
-            Some(Modal::SshCredentials(state)) => match state.focused_field {
-                0 => {
-                    state.username.pop();
-                }
-                1 => {
-                    state.password.pop();
-                }
-                _ => {}
-            },
-            Some(Modal::ManualConnection(state)) => match state.focused_field {
-                0 => {
-                    state.ip_address.pop();
-                }
-                1 => {
-                    state.mac_address.pop();
-                }
-                _ => {}
-            },
-            _ => {}
-        }
+        self.with_focused_modal_field(|text| {
+            text.pop();
+        });
     }
 
     async fn connect_to_camera(&mut self, camera: DiscoveredCamera) {
