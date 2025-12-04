@@ -1948,6 +1948,7 @@ mod tests {
             data_type: DataType::UInt32,
             enable_flag: EnableFlag::ReadWrite,
             current_value: 100,
+            current_string: None,
             possible_values: vec![100, 200, 400, 800],
         };
         assert!(prop.is_valid_value(100));
@@ -1959,6 +1960,7 @@ mod tests {
             data_type: DataType::UInt32,
             enable_flag: EnableFlag::ReadWrite,
             current_value: 100,
+            current_string: None,
             possible_values: vec![],
         };
         assert!(prop_empty.is_valid_value(999));

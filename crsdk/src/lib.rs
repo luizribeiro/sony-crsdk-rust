@@ -80,6 +80,9 @@ pub use property::{
 pub use sdk::Sdk;
 pub use types::{CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, MacAddr};
 
+// Re-export generated property codes (complete SDK coverage)
+pub use crsdk_sys::{DevicePropertyCode, PropertyCategory};
+
 #[cfg(test)]
 mod tests {
     use super::*;
