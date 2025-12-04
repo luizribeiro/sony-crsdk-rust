@@ -333,8 +333,7 @@ fn render_input_field(
 }
 
 fn render_property_search_modal(frame: &mut Frame, state: &PropertySearchState) {
-    let max_results = 10;
-    let inner = render_modal_frame(frame, 50, 14, " Search Properties ", Color::Cyan);
+    let inner = render_modal_frame(frame, 60, 16, " Search Properties ", Color::Cyan);
 
     let layout = Layout::vertical([
         Constraint::Length(2), // Search input
@@ -353,6 +352,8 @@ fn render_property_search_modal(frame: &mut Frame, state: &PropertySearchState) 
 
     // Results
     let results_area = layout[1];
+    let visible_count = results_area.height as usize;
+
     if state.results.is_empty() {
         let no_results = Paragraph::new(Line::from(vec![Span::styled(
             "    No matching properties",
@@ -360,11 +361,19 @@ fn render_property_search_modal(frame: &mut Frame, state: &PropertySearchState) 
         )]));
         frame.render_widget(no_results, results_area);
     } else {
+        // Calculate scroll offset to keep selection visible
+        let scroll_offset = if state.selected_index >= visible_count {
+            state.selected_index - visible_count + 1
+        } else {
+            0
+        };
+
         let visible_results: Vec<Line> = state
             .results
             .iter()
-            .take(max_results)
             .enumerate()
+            .skip(scroll_offset)
+            .take(visible_count)
             .map(|(i, &code)| {
                 let is_selected = i == state.selected_index;
                 let prefix = if is_selected { "▸ " } else { "  " };
@@ -373,11 +382,22 @@ fn render_property_search_modal(frame: &mut Frame, state: &PropertySearchState) 
                 } else {
                     Style::default().fg(Color::White)
                 };
-                let category_style = Style::default().fg(Color::DarkGray);
+
+                // Truncate category to 14 chars max
+                let category_str = code.category().to_string();
+                let category_display = if category_str.len() > 14 {
+                    format!("{}…", &category_str[..13])
+                } else {
+                    category_str
+                };
 
                 Line::from(vec![
                     Span::styled(format!("  {}", prefix), style),
-                    Span::styled(format!("{:12}", code.category()), category_style),
+                    Span::styled(
+                        format!("{:14}", category_display),
+                        Style::default().fg(Color::DarkGray),
+                    ),
+                    Span::styled(" │ ", Style::default().fg(Color::Rgb(60, 60, 60))),
                     Span::styled(code.name(), style),
                 ])
             })
@@ -385,6 +405,21 @@ fn render_property_search_modal(frame: &mut Frame, state: &PropertySearchState) 
 
         let results_paragraph = Paragraph::new(visible_results);
         frame.render_widget(results_paragraph, results_area);
+
+        // Show scroll indicator if needed
+        if state.results.len() > visible_count {
+            let indicator = format!(" {}/{} ", state.selected_index + 1, state.results.len());
+            let indicator_area = Rect {
+                x: results_area.x + results_area.width - indicator.len() as u16 - 1,
+                y: results_area.y,
+                width: indicator.len() as u16,
+                height: 1,
+            };
+            frame.render_widget(
+                Paragraph::new(indicator).style(Style::default().fg(Color::DarkGray)),
+                indicator_area,
+            );
+        }
     }
 
     // Shortcuts
