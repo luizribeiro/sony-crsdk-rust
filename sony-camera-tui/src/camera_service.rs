@@ -701,7 +701,7 @@ impl CameraService {
             return;
         };
 
-        let Some(ref cached) = self.cached_properties.get(&code) else {
+        let Some(cached) = self.cached_properties.get(&code) else {
             self.send_update(CameraUpdate::Error {
                 message: format!("Property {:?} not in cache", id),
             })

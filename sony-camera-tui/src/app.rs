@@ -66,7 +66,7 @@ pub struct ManualConnectionState {
 #[derive(Debug, Clone, Default)]
 pub struct PropertySearchState {
     pub query: String,
-    pub results: Vec<PropertyId>,
+    pub results: Vec<crate::property::PropertyId>,
     pub selected_index: usize,
 }
 
