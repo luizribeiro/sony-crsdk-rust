@@ -215,19 +215,19 @@ fn render_value_list(
         return;
     };
 
-    let props_focused = app.property_editor.focus == PropertyEditorFocus::Properties;
+    let values_focused = app.property_editor.focus == PropertyEditorFocus::Values;
 
     let block = Block::default()
         .title(Line::from(vec![Span::styled(
             " Available ",
-            Style::default().fg(if props_focused {
+            Style::default().fg(if values_focused {
                 Color::Cyan
             } else {
                 Color::DarkGray
             }),
         )]))
         .borders(Borders::LEFT)
-        .border_style(if props_focused {
+        .border_style(if values_focused {
             Style::default().fg(Color::Cyan)
         } else {
             Style::default().fg(Color::Rgb(60, 60, 60))
@@ -248,10 +248,16 @@ fn render_value_list(
     let items: Vec<ListItem> = prop
         .values
         .iter()
-        .map(|val| {
+        .enumerate()
+        .map(|(i, val)| {
             let is_current = val == prop.current_value();
+            let is_selected = values_focused && i == app.property_editor.value_preview_index;
 
-            let style = if is_current {
+            let style = if is_selected {
+                Style::default()
+                    .fg(Color::Cyan)
+                    .add_modifier(Modifier::BOLD)
+            } else if is_current {
                 Style::default()
                     .fg(Color::Green)
                     .add_modifier(Modifier::BOLD)
@@ -259,7 +265,13 @@ fn render_value_list(
                 Style::default().fg(Color::DarkGray)
             };
 
-            let prefix = if is_current { "▸ " } else { "  " };
+            let prefix = if is_selected {
+                "▸ "
+            } else if is_current {
+                "● "
+            } else {
+                "  "
+            };
 
             ListItem::new(Line::from(vec![
                 Span::styled(prefix, style),
@@ -291,6 +303,9 @@ fn render_shortcuts(frame: &mut Frame, area: Rect, app: &App) {
             Span::styled(" ←→ ", Style::default().fg(Color::Cyan)),
             Span::styled("Adjust", Style::default().fg(Color::DarkGray)),
             Span::raw("  "),
+            Span::styled(" o ", Style::default().fg(Color::Cyan)),
+            Span::styled("Values", Style::default().fg(Color::DarkGray)),
+            Span::raw("  "),
             Span::styled(" * ", Style::default().fg(Color::Yellow)),
             Span::styled("Pin", Style::default().fg(Color::DarkGray)),
             Span::raw("  "),
@@ -299,6 +314,16 @@ fn render_shortcuts(frame: &mut Frame, area: Rect, app: &App) {
             Span::raw("  "),
             Span::styled(" Esc ", Style::default().fg(Color::Cyan)),
             Span::styled("Back", Style::default().fg(Color::DarkGray)),
+        ]),
+        PropertyEditorFocus::Values => Line::from(vec![
+            Span::styled(" ↑↓ ", Style::default().fg(Color::Cyan)),
+            Span::styled("Select", Style::default().fg(Color::DarkGray)),
+            Span::raw("  "),
+            Span::styled(" Enter ", Style::default().fg(Color::Cyan)),
+            Span::styled("Apply", Style::default().fg(Color::DarkGray)),
+            Span::raw("  "),
+            Span::styled(" Esc ", Style::default().fg(Color::Cyan)),
+            Span::styled("Cancel", Style::default().fg(Color::DarkGray)),
         ]),
     };
 

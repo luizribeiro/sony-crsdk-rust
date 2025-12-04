@@ -5,7 +5,7 @@ use futures::StreamExt;
 use tokio::time::{interval, Interval};
 
 use crate::action::Action;
-use crate::app::{App, Screen};
+use crate::app::{App, PropertyEditorFocus, Screen};
 
 pub struct EventHandler {
     events: EventStream,
@@ -76,7 +76,7 @@ impl EventHandler {
         match app.screen {
             Screen::Discovery => Self::map_discovery_key(key),
             Screen::Dashboard => Self::map_dashboard_key(key),
-            Screen::PropertyEditor => Self::map_property_editor_key(key),
+            Screen::PropertyEditor => Self::map_property_editor_key(key, app.property_editor.focus),
             Screen::EventsExpanded => Self::map_events_key(key),
         }
     }
@@ -146,17 +146,25 @@ impl EventHandler {
         }
     }
 
-    fn map_property_editor_key(key: KeyEvent) -> Option<Action> {
+    fn map_property_editor_key(key: KeyEvent, focus: PropertyEditorFocus) -> Option<Action> {
         match key.code {
             KeyCode::Char('q') => Some(Action::Quit),
             KeyCode::Char('?') => Some(Action::ShowHelp),
-            KeyCode::Esc => Some(Action::Back),
+            KeyCode::Esc => match focus {
+                PropertyEditorFocus::Values => Some(Action::PropertyEditorTab),
+                _ => Some(Action::Back),
+            },
             KeyCode::Char('j') | KeyCode::Down => Some(Action::PropertyEditorNext),
             KeyCode::Char('k') | KeyCode::Up => Some(Action::PropertyEditorPrev),
             KeyCode::Tab => Some(Action::PropertyEditorTab),
             KeyCode::Char('h') | KeyCode::Left => Some(Action::PropertyEditorValuePrev),
             KeyCode::Char('l') | KeyCode::Right => Some(Action::PropertyEditorValueNext),
             KeyCode::Char('*') => Some(Action::TogglePropertyPin),
+            KeyCode::Char('o') | KeyCode::Enter => match focus {
+                PropertyEditorFocus::Properties => Some(Action::PropertyEditorOpenValues),
+                PropertyEditorFocus::Values => Some(Action::PropertyEditorApplyValue),
+                _ => None,
+            },
             _ => None,
         }
     }
