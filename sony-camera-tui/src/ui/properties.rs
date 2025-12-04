@@ -2,9 +2,29 @@ use ratatui::{
     layout::{Constraint, Layout, Rect},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, List, ListItem, Paragraph},
+    widgets::{
+        Block, Borders, List, ListItem, Paragraph, Scrollbar, ScrollbarOrientation, ScrollbarState,
+    },
     Frame,
 };
+
+fn scroll_offset_for_selection(
+    selected: usize,
+    visible_height: usize,
+    total_items: usize,
+) -> usize {
+    if total_items <= visible_height {
+        return 0;
+    }
+    let half_visible = visible_height / 2;
+    if selected < half_visible {
+        0
+    } else if selected >= total_items.saturating_sub(half_visible) {
+        total_items.saturating_sub(visible_height)
+    } else {
+        selected.saturating_sub(half_visible)
+    }
+}
 
 use crate::app::{App, ConnectedCamera, PropertyEditorFocus};
 
@@ -84,6 +104,14 @@ fn render_categories(frame: &mut Frame, area: Rect, app: &App) {
             Style::default().fg(Color::Rgb(60, 60, 60))
         });
 
+    let inner = block.inner(area);
+    let visible_height = inner.height as usize;
+    let scroll_offset = scroll_offset_for_selection(
+        app.property_editor.category_index,
+        visible_height,
+        categories.len(),
+    );
+
     let items: Vec<ListItem> = categories
         .iter()
         .enumerate()
@@ -105,8 +133,16 @@ fn render_categories(frame: &mut Frame, area: Rect, app: &App) {
         })
         .collect();
 
-    let list = List::new(items).block(block);
+    let visible_items: Vec<ListItem> = items.into_iter().skip(scroll_offset).collect();
+    let list = List::new(visible_items).block(block);
     frame.render_widget(list, area);
+
+    if categories.len() > visible_height {
+        let mut scrollbar_state = ScrollbarState::new(categories.len()).position(scroll_offset);
+        let scrollbar = Scrollbar::new(ScrollbarOrientation::VerticalRight)
+            .style(Style::default().fg(Color::Rgb(60, 60, 60)));
+        frame.render_stateful_widget(scrollbar, inner, &mut scrollbar_state);
+    }
 }
 
 fn render_property_values(frame: &mut Frame, area: Rect, app: &App) {
@@ -151,6 +187,12 @@ fn render_property_list(
 ) {
     const NAME_WIDTH: usize = 34;
     let props_focused = app.property_editor.focus == PropertyEditorFocus::Properties;
+    let visible_height = area.height as usize;
+    let scroll_offset = scroll_offset_for_selection(
+        app.property_editor.property_index,
+        visible_height,
+        properties.len(),
+    );
 
     let items: Vec<ListItem> = properties
         .iter()
@@ -211,8 +253,16 @@ fn render_property_list(
         })
         .collect();
 
-    let list = List::new(items);
+    let visible_items: Vec<ListItem> = items.into_iter().skip(scroll_offset).collect();
+    let list = List::new(visible_items);
     frame.render_widget(list, area);
+
+    if properties.len() > visible_height {
+        let mut scrollbar_state = ScrollbarState::new(properties.len()).position(scroll_offset);
+        let scrollbar = Scrollbar::new(ScrollbarOrientation::VerticalRight)
+            .style(Style::default().fg(Color::Rgb(60, 60, 60)));
+        frame.render_stateful_widget(scrollbar, area, &mut scrollbar_state);
+    }
 }
 
 fn render_value_list(
@@ -255,6 +305,13 @@ fn render_value_list(
         return;
     }
 
+    let visible_height = inner.height as usize;
+    let scroll_offset = scroll_offset_for_selection(
+        app.property_editor.value_preview_index,
+        visible_height,
+        prop.values.len(),
+    );
+
     let items: Vec<ListItem> = prop
         .values
         .iter()
@@ -290,8 +347,16 @@ fn render_value_list(
         })
         .collect();
 
-    let list = List::new(items);
+    let visible_items: Vec<ListItem> = items.into_iter().skip(scroll_offset).collect();
+    let list = List::new(visible_items);
     frame.render_widget(list, inner);
+
+    if prop.values.len() > visible_height {
+        let mut scrollbar_state = ScrollbarState::new(prop.values.len()).position(scroll_offset);
+        let scrollbar = Scrollbar::new(ScrollbarOrientation::VerticalRight)
+            .style(Style::default().fg(Color::Rgb(60, 60, 60)));
+        frame.render_stateful_widget(scrollbar, inner, &mut scrollbar_state);
+    }
 }
 
 fn render_shortcuts(frame: &mut Frame, area: Rect, app: &App) {
