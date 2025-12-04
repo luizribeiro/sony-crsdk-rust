@@ -16,6 +16,9 @@
 // Include the generated bindings
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
+// Include generated property code enum
+include!(concat!(env!("OUT_DIR"), "/property_codes.rs"));
+
 // Re-export SCRSDK namespace at crate root for convenience
 pub use root::SCRSDK;
 
