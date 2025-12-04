@@ -9,10 +9,10 @@ use tokio::sync::mpsc;
 
 use crsdk::{
     warning_code_name, warning_param_description, CameraDevice, CameraEvent as SdkEvent,
-    DeviceProperty, MacAddr, PropertyCode,
+    DeviceProperty, DevicePropertyCode, MacAddr, PropertyCode,
 };
 
-use crate::property::{format_sdk_value, PropertyId};
+use crate::property::format_sdk_value;
 
 /// Messages from CameraService to App
 #[derive(Debug, Clone)]
@@ -23,7 +23,7 @@ pub enum CameraUpdate {
     Disconnected { error: Option<String> },
     /// A property value changed
     PropertyChanged {
-        id: PropertyId,
+        code: DevicePropertyCode,
         value: String,
         available: Vec<String>,
         writable: bool,
@@ -127,7 +127,10 @@ pub enum CameraCommand {
     /// Disconnect from current camera
     Disconnect,
     /// Set a property value by index in the available values
-    SetProperty { id: PropertyId, value_index: usize },
+    SetProperty {
+        code: DevicePropertyCode,
+        value_index: usize,
+    },
     /// Set a property by raw value
     SetPropertyRaw { code: PropertyCode, value: u64 },
     /// Capture a photo
@@ -171,7 +174,7 @@ pub struct CameraService {
     update_tx: mpsc::Sender<CameraUpdate>,
     device: Option<CameraDevice>,
     event_rx: Option<mpsc::UnboundedReceiver<SdkEvent>>,
-    cached_properties: std::collections::HashMap<PropertyCode, DeviceProperty>,
+    cached_properties: std::collections::HashMap<DevicePropertyCode, DeviceProperty>,
     /// Whether AF (half-press) is currently engaged
     af_engaged: bool,
     /// When to auto-release AF (following SDK example pattern of fixed delay)
@@ -279,8 +282,8 @@ impl CameraService {
             CameraCommand::Disconnect => {
                 self.handle_disconnect().await;
             }
-            CameraCommand::SetProperty { id, value_index } => {
-                self.handle_set_property(id, value_index).await;
+            CameraCommand::SetProperty { code, value_index } => {
+                self.handle_set_property(code, value_index).await;
             }
             CameraCommand::SetPropertyRaw { code, value } => {
                 self.handle_set_property_raw(code, value).await;
@@ -478,75 +481,46 @@ impl CameraService {
             return;
         };
 
-        // First, dump ALL properties with debug info to understand SDK values
         match device.get_all_properties_debug().await {
             Ok(all_props) => {
-                tracing::info!("Camera exposes {} properties:", all_props.len());
-                for (prop, debug_info) in &all_props {
-                    tracing::info!(
-                        "  - code=0x{:08X} value={} writable={} {}",
-                        prop.code,
-                        prop.current_value,
-                        prop.enable_flag.is_writable(),
-                        debug_info
-                    );
+                tracing::info!("Camera exposes {} properties", all_props.len());
+
+                for (prop, _debug_info) in all_props {
+                    if !prop.enable_flag.is_readable() {
+                        continue;
+                    }
+
+                    if let Some(code) = DevicePropertyCode::from_raw(prop.code) {
+                        let current = format_sdk_value(code, prop.current_value);
+                        let available: Vec<String> = prop
+                            .possible_values
+                            .iter()
+                            .map(|&v| format_sdk_value(code, v))
+                            .collect();
+                        let writable = prop.enable_flag.is_writable();
+
+                        tracing::debug!(
+                            "Property {}: raw={} formatted='{}' writable={}",
+                            code.name(),
+                            prop.current_value,
+                            current,
+                            writable
+                        );
+
+                        self.cached_properties.insert(code, prop);
+
+                        self.send_update(CameraUpdate::PropertyChanged {
+                            code,
+                            value: current,
+                            available,
+                            writable,
+                        })
+                        .await;
+                    }
                 }
             }
             Err(e) => {
                 tracing::error!("Failed to get all properties: {}", e);
-            }
-        }
-
-        // Now try to sync the specific properties we care about
-        for property_id in PropertyId::all_sdk_mapped() {
-            let Some(code) = property_id.to_sdk_code() else {
-                continue;
-            };
-
-            tracing::debug!(
-                "Looking for {:?} (code=0x{:08X})",
-                property_id,
-                code.as_raw()
-            );
-
-            match device.get_property(code).await {
-                Ok(prop) => {
-                    let current = format_sdk_value(property_id, prop.current_value);
-                    let available: Vec<String> = prop
-                        .possible_values
-                        .iter()
-                        .map(|&v| format_sdk_value(property_id, v))
-                        .collect();
-                    let writable = prop.enable_flag.is_writable();
-
-                    tracing::debug!(
-                        "Property {:?}: raw={} formatted='{}' possible_values={:?} available={:?} writable={}",
-                        property_id,
-                        prop.current_value,
-                        current,
-                        prop.possible_values,
-                        available,
-                        writable
-                    );
-
-                    self.cached_properties.insert(code, prop);
-
-                    self.send_update(CameraUpdate::PropertyChanged {
-                        id: property_id,
-                        value: current,
-                        available,
-                        writable,
-                    })
-                    .await;
-                }
-                Err(e) => {
-                    tracing::warn!(
-                        "Failed to read property {:?} (0x{:08X}): {}",
-                        property_id,
-                        code.as_raw(),
-                        e
-                    );
-                }
             }
         }
 
@@ -692,18 +666,10 @@ impl CameraService {
         .await;
     }
 
-    async fn handle_set_property(&mut self, id: PropertyId, value_index: usize) {
-        let Some(code) = id.to_sdk_code() else {
-            self.send_update(CameraUpdate::Error {
-                message: format!("Property {:?} has no SDK mapping", id),
-            })
-            .await;
-            return;
-        };
-
+    async fn handle_set_property(&mut self, code: DevicePropertyCode, value_index: usize) {
         let Some(cached) = self.cached_properties.get(&code) else {
             self.send_update(CameraUpdate::Error {
-                message: format!("Property {:?} not in cache", id),
+                message: format!("Property {} not in cache", code.name()),
             })
             .await;
             return;
@@ -711,13 +677,20 @@ impl CameraService {
 
         let Some(&value) = cached.possible_values.get(value_index) else {
             self.send_update(CameraUpdate::Error {
-                message: format!("Invalid value index {} for {:?}", value_index, id),
+                message: format!("Invalid value index {} for {}", value_index, code.name()),
             })
             .await;
             return;
         };
 
-        self.handle_set_property_raw(code, value).await;
+        let Some(property_code) = PropertyCode::from_raw(code.as_raw()) else {
+            self.send_update(CameraUpdate::Error {
+                message: format!("Property {} not supported for setting", code.name()),
+            })
+            .await;
+            return;
+        };
+        self.handle_set_property_raw(property_code, value).await;
     }
 
     async fn handle_set_property_raw(&mut self, code: PropertyCode, value: u64) {
@@ -898,22 +871,26 @@ impl CameraService {
                     .await;
             }
             SdkEvent::PropertyChanged { codes } => {
-                for code in codes {
-                    if let Some(property_id) = PropertyId::from_sdk_code(code) {
+                for sdk_code in codes {
+                    if let Some(code) = DevicePropertyCode::from_raw(sdk_code.as_raw()) {
                         if let Some(ref device) = self.device {
-                            if let Ok(prop) = device.get_property(code).await {
-                                let current = format_sdk_value(property_id, prop.current_value);
+                            if let Ok(prop) = device.get_property(sdk_code).await {
+                                if !prop.enable_flag.is_readable() {
+                                    continue;
+                                }
+
+                                let current = format_sdk_value(code, prop.current_value);
                                 let available: Vec<String> = prop
                                     .possible_values
                                     .iter()
-                                    .map(|&v| format_sdk_value(property_id, v))
+                                    .map(|&v| format_sdk_value(code, v))
                                     .collect();
                                 let writable = prop.enable_flag.is_writable();
 
                                 self.cached_properties.insert(code, prop);
 
                                 self.send_update(CameraUpdate::PropertyChanged {
-                                    id: property_id,
+                                    code,
                                     value: current,
                                     available,
                                     writable,

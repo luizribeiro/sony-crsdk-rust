@@ -365,7 +365,7 @@ fn render_property_search_modal(frame: &mut Frame, state: &PropertySearchState) 
             .iter()
             .take(max_results)
             .enumerate()
-            .map(|(i, &id)| {
+            .map(|(i, &code)| {
                 let is_selected = i == state.selected_index;
                 let prefix = if is_selected { "▸ " } else { "  " };
                 let style = if is_selected {
@@ -377,8 +377,8 @@ fn render_property_search_modal(frame: &mut Frame, state: &PropertySearchState) 
 
                 Line::from(vec![
                     Span::styled(format!("  {}", prefix), style),
-                    Span::styled(format!("{:12}", id.category().name()), category_style),
-                    Span::styled(id.name(), style),
+                    Span::styled(format!("{:12}", code.category()), category_style),
+                    Span::styled(code.name(), style),
                 ])
             })
             .collect();

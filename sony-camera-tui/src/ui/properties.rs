@@ -7,7 +7,6 @@ use ratatui::{
 };
 
 use crate::app::{App, ConnectedCamera, PropertyEditorFocus};
-use crate::property::PropertyCategory;
 
 use super::header::{self, HeaderState};
 
@@ -68,6 +67,7 @@ fn render_content(frame: &mut Frame, area: Rect, app: &App) {
 
 fn render_categories(frame: &mut Frame, area: Rect, app: &App) {
     let focused = app.property_editor.focus == PropertyEditorFocus::Categories;
+    let categories = app.properties.available_categories();
 
     let title_style = if focused {
         Style::default().fg(Color::Cyan)
@@ -84,7 +84,7 @@ fn render_categories(frame: &mut Frame, area: Rect, app: &App) {
             Style::default().fg(Color::Rgb(60, 60, 60))
         });
 
-    let items: Vec<ListItem> = PropertyCategory::ALL
+    let items: Vec<ListItem> = categories
         .iter()
         .enumerate()
         .map(|(i, cat)| {
@@ -100,7 +100,7 @@ fn render_categories(frame: &mut Frame, area: Rect, app: &App) {
             let prefix = if is_selected && focused { "▸ " } else { "  " };
             ListItem::new(Line::from(vec![
                 Span::styled(prefix, style),
-                Span::styled(cat.name(), style),
+                Span::styled(cat.to_string(), style),
             ]))
         })
         .collect();
@@ -110,11 +110,12 @@ fn render_categories(frame: &mut Frame, area: Rect, app: &App) {
 }
 
 fn render_property_values(frame: &mut Frame, area: Rect, app: &App) {
-    let current_category = app.property_editor.current_category();
+    let categories = app.properties.available_categories();
+    let current_category = app.property_editor.current_category(&categories);
     let props_focused = app.property_editor.focus == PropertyEditorFocus::Properties;
 
     let block = Block::default()
-        .title(format!(" {} ", current_category.name()))
+        .title(format!(" {} ", current_category))
         .borders(Borders::ALL)
         .border_style(if props_focused {
             Style::default().fg(Color::Cyan)
@@ -155,7 +156,7 @@ fn render_property_list(
         .enumerate()
         .map(|(i, prop)| {
             let is_selected = i == app.property_editor.property_index;
-            let is_pinned = app.properties.is_pinned(prop.id);
+            let is_pinned = app.properties.is_pinned(prop.code);
 
             let name_style = if !prop.writable {
                 Style::default().fg(Color::Rgb(80, 80, 80))
@@ -199,7 +200,7 @@ fn render_property_list(
             ListItem::new(Line::from(vec![
                 Span::styled(prefix, name_style),
                 Span::styled(pin_indicator, pin_style),
-                Span::styled(prop.id.name(), name_style),
+                Span::styled(prop.code.name(), name_style),
                 Span::raw(": "),
                 Span::styled(prop.current_value(), value_style),
                 suffix,
