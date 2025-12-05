@@ -164,6 +164,9 @@ pub fn format_movie_quality(value: u64) -> String {
 
 pub fn description(code: DevicePropertyCode) -> &'static str {
     match code {
+        DevicePropertyCode::AudioRecording => {
+            "Enables or disables audio recording with video. Turn off when using external audio recorders."
+        }
         DevicePropertyCode::MovieFileFormat => {
             "Container format for video. XAVC S/HS/I offer high quality with various compression options. MP4 is widely compatible."
         }
@@ -245,6 +248,7 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
 
 pub fn display_name(code: DevicePropertyCode) -> &'static str {
     match code {
+        DevicePropertyCode::AudioRecording => "Audio Rec",
         DevicePropertyCode::MovieFileFormat => "Movie Format",
         DevicePropertyCode::MovieRecordingSetting => "Movie Quality",
         DevicePropertyCode::MovieRecordingFrameRateSetting => "Movie Frame Rate",
@@ -288,6 +292,7 @@ pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
     use PropertyValueType as V;
 
     Some(match code {
+        DevicePropertyCode::AudioRecording => V::OnOff,
         DevicePropertyCode::MovieRecordingSetting => V::MovieQuality,
         DevicePropertyCode::MovieFileFormat | DevicePropertyCode::MovieProxyFileFormat => {
             V::MovieFileFormat
