@@ -1960,6 +1960,47 @@ impl std::fmt::Display for AspectRatio {
     }
 }
 
+/// Image size settings for still images.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ImageSize {
+    Large = 1,
+    Medium = 2,
+    Small = 3,
+    Vga = 4,
+}
+
+impl ImageSize {
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    pub fn from_raw(value: u64) -> Option<Self> {
+        Some(match value as u8 {
+            1 => Self::Large,
+            2 => Self::Medium,
+            3 => Self::Small,
+            4 => Self::Vga,
+            _ => return None,
+        })
+    }
+}
+
+impl std::fmt::Display for ImageSize {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Large => "L",
+                Self::Medium => "M",
+                Self::Small => "S",
+                Self::Vga => "VGA",
+            }
+        )
+    }
+}
+
 /// Format movie recording quality/bitrate setting to display string
 pub fn format_movie_quality(value: u64) -> String {
     match value as u16 {
