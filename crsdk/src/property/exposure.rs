@@ -1,5 +1,6 @@
 //! Exposure-related property types and metadata.
 
+use super::PropertyValueType;
 use crsdk_sys::DevicePropertyCode;
 
 /// Exposure program mode (shooting mode)
@@ -405,4 +406,30 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::MeteredManualLevel => "Metered Manual Level",
         _ => code.name(),
     }
+}
+
+pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
+    use PropertyValueType as V;
+
+    Some(match code {
+        DevicePropertyCode::FNumber => V::Aperture,
+        DevicePropertyCode::ShutterSpeed | DevicePropertyCode::ShutterSpeedCurrentValue => {
+            V::ShutterSpeed
+        }
+        DevicePropertyCode::IsoSensitivity => V::Iso,
+        DevicePropertyCode::ExposureBiasCompensation => V::ExposureCompensation,
+        DevicePropertyCode::ExposureProgramMode => V::ExposureProgram,
+        DevicePropertyCode::MeteringMode => V::MeteringMode,
+        DevicePropertyCode::ShutterModeStatus => V::ShutterModeStatus,
+        DevicePropertyCode::ShutterMode => V::ShutterMode,
+        DevicePropertyCode::ExposureCtrlType => V::ExposureCtrlType,
+        DevicePropertyCode::AutoSlowShutter
+        | DevicePropertyCode::ShutterSetting
+        | DevicePropertyCode::ShutterECSSetting
+        | DevicePropertyCode::ShutterSlow => V::Switch,
+        DevicePropertyCode::IrisModeSetting
+        | DevicePropertyCode::ShutterModeSetting
+        | DevicePropertyCode::GainControlSetting => V::AutoManual,
+        _ => return None,
+    })
 }

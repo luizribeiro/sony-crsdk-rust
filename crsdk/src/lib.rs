@@ -73,12 +73,12 @@ pub use device::{discover_cameras, CameraDevice, CameraDeviceBuilder};
 pub use error::{Error, Result};
 pub use event::{warning_code_name, warning_param_description, CameraEvent};
 pub use property::{
-    format_movie_quality, AspectRatio, AutoManual, DataType, DeviceProperty, DriveMode, EnableFlag,
-    ExposureCtrlType, ExposureProgram, FileType, FlashMode, FocusArea, FocusMode,
-    FocusTrackingStatus, ImageQuality, ImageSize, IntervalRecShutterType, LiveViewDisplayEffect,
-    LockIndicator, MeteringMode, MovieFileFormat, OnOff, PrioritySetInAF, PrioritySetInAWB,
-    ShutterMode, ShutterModeStatus, SilentModeApertureDrive, SubjectRecognitionAF, Switch,
-    WhiteBalance,
+    format_movie_quality, property_value_type, AspectRatio, AutoManual, DataType, DeviceProperty,
+    DriveMode, EnableFlag, ExposureCtrlType, ExposureProgram, FileType, FlashMode, FocusArea,
+    FocusMode, FocusTrackingStatus, ImageQuality, ImageSize, IntervalRecShutterType,
+    LiveViewDisplayEffect, LockIndicator, MeteringMode, MovieFileFormat, OnOff, PrioritySetInAF,
+    PrioritySetInAWB, PropertyValueType, ShutterMode, ShutterModeStatus, SilentModeApertureDrive,
+    SubjectRecognitionAF, Switch, WhiteBalance,
 };
 pub use sdk::Sdk;
 pub use types::{CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, MacAddr};

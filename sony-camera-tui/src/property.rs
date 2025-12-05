@@ -2,15 +2,11 @@ use std::collections::HashMap;
 
 use crsdk::{
     format::{
-        format_aperture, format_exposure_comp, format_iso_compact, format_shutter_speed,
-        parse_aperture, parse_exposure_comp, parse_iso, parse_shutter_speed,
+        format_aperture, format_color_temp, format_exposure_comp, format_iso_compact,
+        format_shutter_speed, parse_aperture, parse_exposure_comp, parse_iso, parse_shutter_speed,
     },
-    format_movie_quality, property_display_name, AspectRatio, AutoManual, DevicePropertyCode,
-    DriveMode, ExposureCtrlType, ExposureProgram, FileType, FlashMode, FocusArea, FocusMode,
-    FocusTrackingStatus, ImageQuality, ImageSize, IntervalRecShutterType, LiveViewDisplayEffect,
-    LockIndicator, MeteringMode, MovieFileFormat, OnOff, PrioritySetInAF, PrioritySetInAWB,
-    PropertyCategory, ShutterMode, ShutterModeStatus, SilentModeApertureDrive,
-    SubjectRecognitionAF, Switch, WhiteBalance,
+    format_movie_quality, property_display_name, property_value_type, DevicePropertyCode,
+    PropertyCategory, PropertyValueType,
 };
 
 #[derive(Debug, Clone)]
@@ -265,111 +261,103 @@ fn category_sort_order(cat: PropertyCategory) -> u8 {
 }
 
 pub fn format_sdk_value(code: DevicePropertyCode, raw: u64) -> String {
-    match code {
-        DevicePropertyCode::FNumber => format_aperture(raw),
-        DevicePropertyCode::ShutterSpeed => format_shutter_speed(raw),
-        DevicePropertyCode::IsoSensitivity => format_iso_compact(raw),
-        DevicePropertyCode::ExposureBiasCompensation => format_exposure_comp(raw as i64),
-        DevicePropertyCode::ExposureProgramMode => ExposureProgram::from_raw(raw)
+    use PropertyValueType::*;
+
+    match property_value_type(code) {
+        // Formatted numeric values
+        Aperture => format_aperture(raw),
+        ShutterSpeed => format_shutter_speed(raw),
+        Iso => format_iso_compact(raw),
+        ExposureCompensation => format_exposure_comp(raw as i64),
+        ColorTemperature => format_color_temp(raw),
+        MovieQuality => format_movie_quality(raw),
+
+        // Enum types
+        ExposureProgram => crsdk::ExposureProgram::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("0x{:X}", raw)),
-        DevicePropertyCode::FocusMode => FocusMode::from_raw(raw)
+        MeteringMode => crsdk::MeteringMode::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("0x{:X}", raw)),
-        DevicePropertyCode::FocusArea => FocusArea::from_raw(raw)
+        FocusMode => crsdk::FocusMode::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("0x{:X}", raw)),
-        DevicePropertyCode::WhiteBalance => WhiteBalance::from_raw(raw)
+        FocusArea => crsdk::FocusArea::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("0x{:X}", raw)),
-        DevicePropertyCode::DriveMode => DriveMode::from_raw(raw)
+        SubjectRecognitionAF => crsdk::SubjectRecognitionAF::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("0x{:X}", raw)),
-        DevicePropertyCode::MeteringMode => MeteringMode::from_raw(raw)
+        PrioritySetInAF => crsdk::PrioritySetInAF::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("0x{:X}", raw)),
-        DevicePropertyCode::FlashMode => FlashMode::from_raw(raw)
+        FocusTrackingStatus => crsdk::FocusTrackingStatus::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("0x{:X}", raw)),
-        DevicePropertyCode::StillImageStoreDestination => FileType::from_raw(raw)
+        WhiteBalance => crsdk::WhiteBalance::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("0x{:X}", raw)),
-        DevicePropertyCode::StillImageQuality => ImageQuality::from_raw(raw)
+        PrioritySetInAWB => crsdk::PrioritySetInAWB::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("0x{:X}", raw)),
-        DevicePropertyCode::MovieFileFormat => MovieFileFormat::from_raw(raw)
+        DriveMode => crsdk::DriveMode::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("0x{:X}", raw)),
-        DevicePropertyCode::MovieRecordingSetting => format_movie_quality(raw),
-        DevicePropertyCode::AutoSlowShutter
-        | DevicePropertyCode::SilentMode
-        | DevicePropertyCode::NDFilter
-        | DevicePropertyCode::ShutterSetting
-        | DevicePropertyCode::ShutterECSSetting
-        | DevicePropertyCode::ShutterSlow
-        | DevicePropertyCode::AFAssist
-        | DevicePropertyCode::PreAF
-        | DevicePropertyCode::AFWithShutter
-        | DevicePropertyCode::SubjectRecognitionInAF
-        | DevicePropertyCode::FaceEyeFrameDisplay => Switch::from_raw(raw)
+        IntervalRecShutterType => crsdk::IntervalRecShutterType::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("0x{:X}", raw)),
+        FlashMode => crsdk::FlashMode::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("0x{:X}", raw)),
+        FileType => crsdk::FileType::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("0x{:X}", raw)),
+        ImageQuality => crsdk::ImageQuality::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("0x{:X}", raw)),
+        AspectRatio => crsdk::AspectRatio::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("0x{:X}", raw)),
+        ImageSize => crsdk::ImageSize::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("0x{:X}", raw)),
+        MovieFileFormat => crsdk::MovieFileFormat::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("0x{:X}", raw)),
+        ShutterModeStatus => crsdk::ShutterModeStatus::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("0x{:X}", raw)),
+        ShutterMode => crsdk::ShutterMode::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("0x{:X}", raw)),
+        ExposureCtrlType => crsdk::ExposureCtrlType::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("0x{:X}", raw)),
+        LiveViewDisplayEffect => crsdk::LiveViewDisplayEffect::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("0x{:X}", raw)),
+        SilentModeApertureDrive => crsdk::SilentModeApertureDrive::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("0x{:X}", raw)),
+
+        // Generic toggle types
+        OnOff => crsdk::OnOff::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("{}", raw)),
-        DevicePropertyCode::RedEyeReduction | DevicePropertyCode::AudioRecording => {
-            OnOff::from_raw(raw)
-                .map(|v| v.to_string())
-                .unwrap_or_else(|| format!("{}", raw))
-        }
-        DevicePropertyCode::IrisModeSetting
-        | DevicePropertyCode::ShutterModeSetting
-        | DevicePropertyCode::GainControlSetting
-        | DevicePropertyCode::NDFilterModeSetting
-        | DevicePropertyCode::FocusModeSetting => AutoManual::from_raw(raw)
+        Switch => crsdk::Switch::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("{}", raw)),
-        DevicePropertyCode::AspectRatio => AspectRatio::from_raw(raw)
+        AutoManual => crsdk::AutoManual::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("{}", raw)),
-        DevicePropertyCode::ImageSize => ImageSize::from_raw(raw)
+        LockIndicator => crsdk::LockIndicator::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("{}", raw)),
-        DevicePropertyCode::LiveViewDisplayEffect => LiveViewDisplayEffect::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("{}", raw)),
-        DevicePropertyCode::ShutterModeStatus => ShutterModeStatus::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("{}", raw)),
-        DevicePropertyCode::ShutterMode => ShutterMode::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("{}", raw)),
-        DevicePropertyCode::ExposureCtrlType => ExposureCtrlType::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("{}", raw)),
-        DevicePropertyCode::IntervalRecShutterType => IntervalRecShutterType::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("{}", raw)),
-        DevicePropertyCode::SilentModeApertureDriveInAF => SilentModeApertureDrive::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("{}", raw)),
-        DevicePropertyCode::SubjectRecognitionAF => SubjectRecognitionAF::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("{}", raw)),
-        DevicePropertyCode::PrioritySetInAFS | DevicePropertyCode::PrioritySetInAFC => {
-            PrioritySetInAF::from_raw(raw)
-                .map(|v| v.to_string())
-                .unwrap_or_else(|| format!("{}", raw))
-        }
-        DevicePropertyCode::FocusTrackingStatus => FocusTrackingStatus::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("{}", raw)),
-        DevicePropertyCode::AWBL | DevicePropertyCode::AEL | DevicePropertyCode::FEL => {
-            LockIndicator::from_raw(raw)
-                .map(|v| v.to_string())
-                .unwrap_or_else(|| format!("{}", raw))
-        }
-        DevicePropertyCode::PrioritySetInAWB => PrioritySetInAWB::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("{}", raw)),
-        _ => format!("{}", raw),
+
+        // Raw value types
+        Percentage => format!("{}%", raw),
+        Integer => format!("{}", raw),
+        Unknown => format!("{}", raw),
     }
 }
 

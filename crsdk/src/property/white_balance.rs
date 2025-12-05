@@ -1,5 +1,6 @@
 //! White balance property types and metadata.
 
+use super::PropertyValueType;
 use crsdk_sys::DevicePropertyCode;
 
 /// White balance settings
@@ -181,4 +182,16 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::CustomWBExecutionState => "Custom WB Status",
         _ => code.name(),
     }
+}
+
+pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
+    use PropertyValueType as V;
+
+    Some(match code {
+        DevicePropertyCode::WhiteBalance => V::WhiteBalance,
+        DevicePropertyCode::Colortemp => V::ColorTemperature,
+        DevicePropertyCode::PrioritySetInAWB => V::PrioritySetInAWB,
+        DevicePropertyCode::AWBL => V::LockIndicator,
+        _ => return None,
+    })
 }
