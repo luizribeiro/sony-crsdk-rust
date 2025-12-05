@@ -903,6 +903,9 @@ fn other_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::SoftSkinEffect => {
             "Smooths skin tones in portraits. Higher settings provide more smoothing."
         }
+        DevicePropertyCode::RecorderMainStatus => {
+            "Current status of the main video recorder. Shows if recording is active, paused, or stopped."
+        }
         _ => "",
     }
 }
@@ -947,6 +950,7 @@ fn other_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::ContinuousShootingSpotBoostEnableStatus => "Burst Boost Avail",
         DevicePropertyCode::AspectRatio => "Aspect",
         DevicePropertyCode::SoftSkinEffect => "Soft Skin",
+        DevicePropertyCode::RecorderMainStatus => "Main Rec Status",
         _ => code.name(),
     }
 }
