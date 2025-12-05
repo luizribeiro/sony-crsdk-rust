@@ -3,7 +3,7 @@
 //! Events are delivered asynchronously when the camera state changes.
 //! Use `CameraDevice::events()` to receive them.
 
-use crate::property::PropertyCode;
+use crsdk_sys::DevicePropertyCode;
 
 /// Events received from the camera via SDK callbacks
 #[derive(Debug, Clone)]
@@ -26,7 +26,7 @@ pub enum CameraEvent {
     /// Call `camera.get_property()` to read the new values.
     PropertyChanged {
         /// Property codes that changed
-        codes: Vec<PropertyCode>,
+        codes: Vec<DevicePropertyCode>,
     },
 
     /// Live view properties changed

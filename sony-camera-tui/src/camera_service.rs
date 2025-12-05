@@ -9,7 +9,7 @@ use tokio::sync::mpsc;
 
 use crsdk::{
     warning_code_name, warning_param_description, CameraDevice, CameraEvent as SdkEvent,
-    DeviceProperty, DevicePropertyCode, MacAddr, PropertyCode,
+    DeviceProperty, DevicePropertyCode, MacAddr,
 };
 
 use crate::property::format_sdk_value;
@@ -132,7 +132,10 @@ pub enum CameraCommand {
         value_index: usize,
     },
     /// Set a property by raw value
-    SetPropertyRaw { code: PropertyCode, value: u64 },
+    SetPropertyRaw {
+        code: DevicePropertyCode,
+        value: u64,
+    },
     /// Capture a photo
     Capture,
     /// Start video recording
@@ -540,13 +543,13 @@ impl CameraService {
         let mut overheating_state: Option<u8> = None;
 
         // Battery
-        if let Ok(prop) = device.get_property(PropertyCode::BatteryRemain).await {
+        if let Ok(prop) = device.get_property(DevicePropertyCode::BatteryRemain).await {
             battery_percent = Some(prop.current_value as u8);
             tracing::debug!("Battery: {}%", prop.current_value);
         }
 
         // Lens model - uses string property API
-        if let Ok(prop) = device.get_property(PropertyCode::LensModelName).await {
+        if let Ok(prop) = device.get_property(DevicePropertyCode::LensModelName).await {
             tracing::debug!(
                 "Lens model property: data_type={:?} current_value={} current_string={:?}",
                 prop.data_type,
@@ -557,7 +560,7 @@ impl CameraService {
         }
 
         // Focal length / zoom distance (in mm)
-        if let Ok(prop) = device.get_property(PropertyCode::ZoomDistance).await {
+        if let Ok(prop) = device.get_property(DevicePropertyCode::ZoomDistance).await {
             if prop.current_value > 0 && prop.current_value != 0xFFFFFFFF {
                 focal_length_mm = Some(prop.current_value as u32);
                 tracing::debug!("Zoom distance: {}mm", prop.current_value);
@@ -566,7 +569,7 @@ impl CameraService {
 
         // Overheating state (0=normal, 1=pre-overheating, 2=overheating)
         if let Ok(prop) = device
-            .get_property(PropertyCode::DeviceOverheatingState)
+            .get_property(DevicePropertyCode::DeviceOverheatingState)
             .await
         {
             overheating_state = Some(prop.current_value as u8);
@@ -574,17 +577,20 @@ impl CameraService {
         }
 
         // Media slot 1 - if status read fails, camera doesn't have this slot
-        let slot1 = if let Ok(prop) = device.get_property(PropertyCode::MediaSlot1Status).await {
+        let slot1 = if let Ok(prop) = device
+            .get_property(DevicePropertyCode::MediaSLOT1Status)
+            .await
+        {
             let status = parse_slot_status(prop.current_value);
             tracing::debug!("Slot 1 status: {:?}", status);
 
             let remaining_photos = device
-                .get_property(PropertyCode::MediaSlot1RemainingPhotos)
+                .get_property(DevicePropertyCode::MediaSLOT1RemainingNumber)
                 .await
                 .ok()
                 .map(|p| p.current_value as u32);
             let remaining_time_sec = device
-                .get_property(PropertyCode::MediaSlot1RemainingTime)
+                .get_property(DevicePropertyCode::MediaSLOT1RemainingTime)
                 .await
                 .ok()
                 .map(|p| p.current_value as u32);
@@ -604,17 +610,20 @@ impl CameraService {
         };
 
         // Media slot 2
-        let slot2 = if let Ok(prop) = device.get_property(PropertyCode::MediaSlot2Status).await {
+        let slot2 = if let Ok(prop) = device
+            .get_property(DevicePropertyCode::MediaSLOT2Status)
+            .await
+        {
             let status = parse_slot_status(prop.current_value);
             tracing::debug!("Slot 2 status: {:?}", status);
 
             let remaining_photos = device
-                .get_property(PropertyCode::MediaSlot2RemainingPhotos)
+                .get_property(DevicePropertyCode::MediaSLOT2RemainingNumber)
                 .await
                 .ok()
                 .map(|p| p.current_value as u32);
             let remaining_time_sec = device
-                .get_property(PropertyCode::MediaSlot2RemainingTime)
+                .get_property(DevicePropertyCode::MediaSLOT2RemainingTime)
                 .await
                 .ok()
                 .map(|p| p.current_value as u32);
@@ -634,12 +643,15 @@ impl CameraService {
         };
 
         // Media slot 3 (optional - some cameras have 3 slots)
-        let slot3 = if let Ok(prop) = device.get_property(PropertyCode::MediaSlot3Status).await {
+        let slot3 = if let Ok(prop) = device
+            .get_property(DevicePropertyCode::MediaSLOT3Status)
+            .await
+        {
             let status = parse_slot_status(prop.current_value);
             tracing::debug!("Slot 3 status: {:?}", status);
 
             let remaining_time_sec = device
-                .get_property(PropertyCode::MediaSlot3RemainingTime)
+                .get_property(DevicePropertyCode::MediaSLOT3RemainingTime)
                 .await
                 .ok()
                 .map(|p| p.current_value as u32);
@@ -683,17 +695,10 @@ impl CameraService {
             return;
         };
 
-        let Some(property_code) = PropertyCode::from_raw(code.as_raw()) else {
-            self.send_update(CameraUpdate::Error {
-                message: format!("Property {} not supported for setting", code.name()),
-            })
-            .await;
-            return;
-        };
-        self.handle_set_property_raw(property_code, value).await;
+        self.handle_set_property_raw(code, value).await;
     }
 
-    async fn handle_set_property_raw(&mut self, code: PropertyCode, value: u64) {
+    async fn handle_set_property_raw(&mut self, code: DevicePropertyCode, value: u64) {
         let Some(ref device) = self.device else {
             self.send_update(CameraUpdate::Error {
                 message: "Not connected".to_string(),

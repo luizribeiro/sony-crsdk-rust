@@ -10,12 +10,13 @@ use crate::event::CameraEvent;
 use crate::event_sender::EventSender;
 use crate::property::{
     device_property_from_sdk, device_property_from_sdk_debug, DeviceProperty, DriveMode,
-    ExposureProgram, FlashMode, FocusArea, FocusMode, MeteringMode, PropertyCode, WhiteBalance,
+    ExposureProgram, FlashMode, FocusArea, FocusMode, MeteringMode, WhiteBalance,
 };
 use crate::types::{
     ip_to_sdk_format, CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, MacAddr,
 };
 use crate::Sdk;
+use crsdk_sys::DevicePropertyCode;
 use std::ffi::{c_void, CString};
 use std::net::Ipv4Addr;
 use std::ptr;
@@ -273,7 +274,7 @@ impl CameraDevice {
     ///
     /// Returns the property with its current value, possible values, and metadata.
     #[async_wrap]
-    pub fn get_property(&self, code: PropertyCode) -> Result<DeviceProperty> {
+    pub fn get_property(&self, code: DevicePropertyCode) -> Result<DeviceProperty> {
         let mut properties_ptr: *mut crsdk_sys::SCRSDK::CrDeviceProperty = ptr::null_mut();
         let mut num_properties: i32 = 0;
 
@@ -391,7 +392,7 @@ impl CameraDevice {
     /// The value should be a raw u64 value. Use the enum's `as_raw()` method
     /// for enumerated properties like FocusMode or WhiteBalance.
     #[async_wrap]
-    pub fn set_property(&self, code: PropertyCode, value: u64) -> Result<()> {
+    pub fn set_property(&self, code: DevicePropertyCode, value: u64) -> Result<()> {
         let prop = self.get_property(code)?;
 
         if !prop.is_writable() {
@@ -431,131 +432,131 @@ impl CameraDevice {
     /// Get the current focus mode
     #[async_wrap]
     pub fn focus_mode(&self) -> Result<FocusMode> {
-        let prop = self.get_property(PropertyCode::FocusMode)?;
+        let prop = self.get_property(DevicePropertyCode::FocusMode)?;
         FocusMode::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
     }
 
     /// Set the focus mode
     #[async_wrap]
     pub fn set_focus_mode(&self, mode: FocusMode) -> Result<()> {
-        self.set_property(PropertyCode::FocusMode, mode.as_raw())
+        self.set_property(DevicePropertyCode::FocusMode, mode.as_raw())
     }
 
     /// Get the current white balance setting
     #[async_wrap]
     pub fn white_balance(&self) -> Result<WhiteBalance> {
-        let prop = self.get_property(PropertyCode::WhiteBalance)?;
+        let prop = self.get_property(DevicePropertyCode::WhiteBalance)?;
         WhiteBalance::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
     }
 
     /// Set the white balance
     #[async_wrap]
     pub fn set_white_balance(&self, wb: WhiteBalance) -> Result<()> {
-        self.set_property(PropertyCode::WhiteBalance, wb.as_raw())
+        self.set_property(DevicePropertyCode::WhiteBalance, wb.as_raw())
     }
 
     /// Get the current exposure program mode
     #[async_wrap]
     pub fn exposure_program(&self) -> Result<ExposureProgram> {
-        let prop = self.get_property(PropertyCode::ExposureProgram)?;
+        let prop = self.get_property(DevicePropertyCode::ExposureProgramMode)?;
         ExposureProgram::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
     }
 
     /// Set the exposure program mode
     #[async_wrap]
     pub fn set_exposure_program(&self, program: ExposureProgram) -> Result<()> {
-        self.set_property(PropertyCode::ExposureProgram, program.as_raw())
+        self.set_property(DevicePropertyCode::ExposureProgramMode, program.as_raw())
     }
 
     /// Get the current drive mode
     #[async_wrap]
     pub fn drive_mode(&self) -> Result<DriveMode> {
-        let prop = self.get_property(PropertyCode::DriveMode)?;
+        let prop = self.get_property(DevicePropertyCode::DriveMode)?;
         DriveMode::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
     }
 
     /// Set the drive mode
     #[async_wrap]
     pub fn set_drive_mode(&self, mode: DriveMode) -> Result<()> {
-        self.set_property(PropertyCode::DriveMode, mode.as_raw())
+        self.set_property(DevicePropertyCode::DriveMode, mode.as_raw())
     }
 
     /// Get the current metering mode
     #[async_wrap]
     pub fn metering_mode(&self) -> Result<MeteringMode> {
-        let prop = self.get_property(PropertyCode::MeteringMode)?;
+        let prop = self.get_property(DevicePropertyCode::MeteringMode)?;
         MeteringMode::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
     }
 
     /// Set the metering mode
     #[async_wrap]
     pub fn set_metering_mode(&self, mode: MeteringMode) -> Result<()> {
-        self.set_property(PropertyCode::MeteringMode, mode.as_raw())
+        self.set_property(DevicePropertyCode::MeteringMode, mode.as_raw())
     }
 
     /// Get the current flash mode
     #[async_wrap]
     pub fn flash_mode(&self) -> Result<FlashMode> {
-        let prop = self.get_property(PropertyCode::FlashMode)?;
+        let prop = self.get_property(DevicePropertyCode::FlashMode)?;
         FlashMode::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
     }
 
     /// Set the flash mode
     #[async_wrap]
     pub fn set_flash_mode(&self, mode: FlashMode) -> Result<()> {
-        self.set_property(PropertyCode::FlashMode, mode.as_raw())
+        self.set_property(DevicePropertyCode::FlashMode, mode.as_raw())
     }
 
     /// Get the current focus area
     #[async_wrap]
     pub fn focus_area(&self) -> Result<FocusArea> {
-        let prop = self.get_property(PropertyCode::FocusArea)?;
+        let prop = self.get_property(DevicePropertyCode::FocusArea)?;
         FocusArea::from_raw(prop.current_value).ok_or(Error::InvalidPropertyValue)
     }
 
     /// Set the focus area
     #[async_wrap]
     pub fn set_focus_area(&self, area: FocusArea) -> Result<()> {
-        self.set_property(PropertyCode::FocusArea, area.as_raw())
+        self.set_property(DevicePropertyCode::FocusArea, area.as_raw())
     }
 
     /// Get the current ISO sensitivity (raw value)
     #[async_wrap]
     pub fn iso(&self) -> Result<u64> {
-        let prop = self.get_property(PropertyCode::IsoSensitivity)?;
+        let prop = self.get_property(DevicePropertyCode::IsoSensitivity)?;
         Ok(prop.current_value)
     }
 
     /// Set the ISO sensitivity
     #[async_wrap]
     pub fn set_iso(&self, value: u64) -> Result<()> {
-        self.set_property(PropertyCode::IsoSensitivity, value)
+        self.set_property(DevicePropertyCode::IsoSensitivity, value)
     }
 
     /// Get the current aperture/f-number (raw SDK value)
     #[async_wrap]
     pub fn aperture(&self) -> Result<u64> {
-        let prop = self.get_property(PropertyCode::FNumber)?;
+        let prop = self.get_property(DevicePropertyCode::FNumber)?;
         Ok(prop.current_value)
     }
 
     /// Set the aperture/f-number
     #[async_wrap]
     pub fn set_aperture(&self, value: u64) -> Result<()> {
-        self.set_property(PropertyCode::FNumber, value)
+        self.set_property(DevicePropertyCode::FNumber, value)
     }
 
     /// Get the current shutter speed (raw SDK value)
     #[async_wrap]
     pub fn shutter_speed(&self) -> Result<u64> {
-        let prop = self.get_property(PropertyCode::ShutterSpeed)?;
+        let prop = self.get_property(DevicePropertyCode::ShutterSpeed)?;
         Ok(prop.current_value)
     }
 
     /// Set the shutter speed
     #[async_wrap]
     pub fn set_shutter_speed(&self, value: u64) -> Result<()> {
-        self.set_property(PropertyCode::ShutterSpeed, value)
+        self.set_property(DevicePropertyCode::ShutterSpeed, value)
     }
 
     // -------------------------------------------------------------------------
