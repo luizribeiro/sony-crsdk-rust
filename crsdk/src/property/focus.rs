@@ -275,43 +275,175 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::FaceEyeFrameDisplay => {
             "Shows or hides the frame overlay around detected faces and eyes. Useful visual feedback for subject tracking."
         }
+        DevicePropertyCode::FocusBracketExposureLock1stImg => {
+            "When enabled, locks exposure from the first shot in a focus bracket sequence. Prevents exposure variation across the stack."
+        }
+        DevicePropertyCode::FocusBracketIntervalUntilNextShot => {
+            "Time delay between each shot in focus bracketing. Allows flash recycling or vibration settling."
+        }
+        DevicePropertyCode::FocusBracketOrder => {
+            "Direction of focus movement through the bracket sequence. Start from near or far end of the focus range."
+        }
+        DevicePropertyCode::FocusBracketRecordingFolder => {
+            "Folder where focus bracket sequences are saved. Helps organize stacking sequences for post-processing."
+        }
+        DevicePropertyCode::FocusBracketShootingStatus => {
+            "Current state of focus bracket shooting. Shows if a bracket sequence is in progress."
+        }
+        DevicePropertyCode::FocusDrivingStatus => {
+            "Current state of the focus motor. Shows if focus is moving, stopped, or actively adjusting."
+        }
+        DevicePropertyCode::FocusIndication => {
+            "Focus lock indicator. Shows when autofocus has achieved or lost focus on the subject."
+        }
+        DevicePropertyCode::FocusMagnificationTime => {
+            "How long focus magnification stays on screen before automatically returning to normal view."
+        }
+        DevicePropertyCode::FocusMap => {
+            "Visual depth map showing focus distances across the frame. Helps visualize depth of field."
+        }
+        DevicePropertyCode::FocusSpeedDirectSync => {
+            "Links focus speed directly to control input. Faster movements create faster focus changes."
+        }
+        DevicePropertyCode::FocusSpeedRange => {
+            "Limits the focus motor speed range. Useful for smooth, controlled focus pulls in video."
+        }
+        DevicePropertyCode::FocusTouchSpotStatus => {
+            "Shows if touch-to-focus is active at a specific screen position."
+        }
+        DevicePropertyCode::FocusOperationWithInt16 => {
+            "Focus adjustment command using 16-bit precision. Allows finer control over focus position changes."
+        }
+        DevicePropertyCode::FocusOperationWithInt16EnableStatus => {
+            "Indicates whether 16-bit precision focus control is available on this camera."
+        }
+        DevicePropertyCode::FollowFocusPositionSetting => {
+            "Target focus position for follow focus systems. Used with external focus controllers."
+        }
+        DevicePropertyCode::FollowFocusPositionCurrentValue => {
+            "Current focus position in follow focus mode. Shows where the lens is currently focused."
+        }
+        DevicePropertyCode::InitialFocusMagnifier => {
+            "Initial magnification level when entering focus magnifier mode. Higher values show more detail."
+        }
+        DevicePropertyCode::AFInFocusMagnifier => {
+            "Enables autofocus while focus magnifier is active. Allows AF at magnified view for precision."
+        }
+        DevicePropertyCode::ZoomAndFocusPositionLoad => {
+            "Recalls a saved zoom and focus position preset. Useful for repeatable shot setups."
+        }
+        DevicePropertyCode::ZoomAndFocusPositionSave => {
+            "Saves current zoom and focus position to a preset. For repeatable shot setups."
+        }
+        DevicePropertyCode::ZoomAndFocusPresetDataVersion => {
+            "Version of the zoom/focus preset data format. For compatibility checking."
+        }
+        DevicePropertyCode::ZoomAndFocusPresetZoomOnlySet => {
+            "Saves only zoom position (not focus) to a preset. Useful when focus should be manual."
+        }
+        DevicePropertyCode::AutoFocusHold => {
+            "Temporarily pauses autofocus. Useful to prevent focus from changing during recomposition."
+        }
+        DevicePropertyCode::PushAutoFocus => {
+            "Activates autofocus once. Similar to back-button focus—camera focuses then stops."
+        }
+        DevicePropertyCode::FocusModeStatus => {
+            "Current effective focus mode. May differ from setting if camera overrides in certain modes."
+        }
+        DevicePropertyCode::FocusOperation => {
+            "Manual focus adjustment direction. Controls whether to focus nearer or farther."
+        }
+        DevicePropertyCode::FocusBracketFocusRange => {
+            "Focus distance range to cover during bracketing. Determines the depth of the focus stack."
+        }
+        DevicePropertyCode::FocusBracketShotNumber => {
+            "Number of shots in the focus bracket sequence. More shots mean smaller focus steps."
+        }
+        DevicePropertyCode::AFFreeSizeAndPositionSetting => {
+            "Custom AF area size and position. Allows precise positioning of the focus area anywhere on screen."
+        }
+        DevicePropertyCode::AFAreaPositionAFS => {
+            "AF area position used in AF-S (single) mode. Can differ from AF-C position."
+        }
+        DevicePropertyCode::AFAreaPositionAFC => {
+            "AF area position used in AF-C (continuous) mode. Can differ from AF-S position."
+        }
+        DevicePropertyCode::AFAreaPosition => {
+            "Position of the AF area on screen. Controls where the camera focuses within the frame."
+        }
+        DevicePropertyCode::FocusPositionSetting => {
+            "Target focus position for manual or follow focus control. Sets where the lens should focus."
+        }
+        DevicePropertyCode::FocusPositionCurrentValue => {
+            "Current focus position of the lens. Shows the actual focus distance or position value."
+        }
+        DevicePropertyCode::NearFar => {
+            "Manual focus adjustment amount and direction. Controls how much to move focus nearer or farther."
+        }
+        DevicePropertyCode::DefaultAFFreeSizeAndPositionSetting => {
+            "Default size and position for custom AF areas. Sets the initial AF area when creating new flexible spots."
+        }
         _ => "",
     }
 }
 
 pub fn display_name(code: DevicePropertyCode) -> &'static str {
     match code {
-        DevicePropertyCode::FocusMode => "Focus Mode",
-        DevicePropertyCode::FocusModeStatus => "Focus Mode Status",
-        DevicePropertyCode::FocusModeSetting => "Focus Mode Setting",
-        DevicePropertyCode::FocusArea => "Focus Area",
-        DevicePropertyCode::AFTrackingSensitivity => "AF Tracking Sensitivity",
-        DevicePropertyCode::AFAreaPosition => "AF Area Position",
+        DevicePropertyCode::FocusMode => "AF Mode",
+        DevicePropertyCode::FocusModeStatus => "AF Mode Status",
+        DevicePropertyCode::FocusModeSetting => "AF Mode Setting",
+        DevicePropertyCode::FocusArea => "AF Area",
+        DevicePropertyCode::AFTrackingSensitivity => "AF Track Sens.",
+        DevicePropertyCode::AFAreaPosition => "AF Area Pos",
+        DevicePropertyCode::AFAreaPositionAFS => "AF Area (AF-S)",
+        DevicePropertyCode::AFAreaPositionAFC => "AF Area (AF-C)",
         DevicePropertyCode::FocusMagnifierSetting => "Focus Magnifier",
-        DevicePropertyCode::NearFar => "Near/Far Adjust",
+        DevicePropertyCode::NearFar => "Near/Far",
         DevicePropertyCode::AFAssist => "AF Assist",
-        DevicePropertyCode::AFIlluminator => "AF Illuminator",
-        DevicePropertyCode::AFWithShutter => "AF with Shutter",
+        DevicePropertyCode::AFIlluminator => "AF Illum.",
+        DevicePropertyCode::AFWithShutter => "AF w/ Shutter",
         DevicePropertyCode::PreAF => "Pre-AF",
-        DevicePropertyCode::FocusOperation => "Focus Operation",
-        DevicePropertyCode::FocusDrivingStatus => "Focus Driving Status",
-        DevicePropertyCode::FocusIndication => "Focus Indication",
-        DevicePropertyCode::FocusPositionSetting => "Focus Position",
-        DevicePropertyCode::FocusPositionCurrentValue => "Focus Position (Current)",
-        DevicePropertyCode::AFTransitionSpeed => "AF Transition Speed",
-        DevicePropertyCode::AFSubjShiftSens => "AF Subject Shift Sensitivity",
-        DevicePropertyCode::AFTrackForSpeedChange => "AF Track Speed Change",
-        DevicePropertyCode::PrioritySetInAFS => "Priority in AF-S",
-        DevicePropertyCode::PrioritySetInAFC => "Priority in AF-C",
-        DevicePropertyCode::PushAutoFocus => "Push Auto Focus",
+        DevicePropertyCode::FocusOperation => "Focus Op.",
+        DevicePropertyCode::FocusOperationWithInt16 => "Focus Op. (16-bit)",
+        DevicePropertyCode::FocusOperationWithInt16EnableStatus => "Focus 16-bit Avail",
+        DevicePropertyCode::FocusDrivingStatus => "Focus Drive Status",
+        DevicePropertyCode::FocusIndication => "Focus Lock",
+        DevicePropertyCode::FocusPositionSetting => "Focus Pos",
+        DevicePropertyCode::FocusPositionCurrentValue => "Focus Pos (Curr)",
+        DevicePropertyCode::AFTransitionSpeed => "AF Trans. Speed",
+        DevicePropertyCode::AFSubjShiftSens => "AF Subj. Shift",
+        DevicePropertyCode::AFTrackForSpeedChange => "AF Track Spd",
+        DevicePropertyCode::PrioritySetInAFS => "Priority (AF-S)",
+        DevicePropertyCode::PrioritySetInAFC => "Priority (AF-C)",
+        DevicePropertyCode::PushAutoFocus => "Push AF",
         DevicePropertyCode::AutoFocusHold => "AF Hold",
-        DevicePropertyCode::FocusBracketShotNumber => "Focus Bracket Shots",
-        DevicePropertyCode::FocusBracketFocusRange => "Focus Bracket Range",
-        DevicePropertyCode::SubjectRecognitionInAF => "Subject Recognition",
-        DevicePropertyCode::SubjectRecognitionAF => "Subject Recognition AF",
-        DevicePropertyCode::FaceEyeDetectionAFStatus => "Face/Eye Detection Status",
-        DevicePropertyCode::FaceEyeFrameDisplay => "Face/Eye Frame Display",
-        DevicePropertyCode::FocusTrackingStatus => "Focus Tracking Status",
+        DevicePropertyCode::FocusBracketShotNumber => "Focus Brkt Shots",
+        DevicePropertyCode::FocusBracketFocusRange => "Focus Brkt Range",
+        DevicePropertyCode::FocusBracketExposureLock1stImg => "Focus Brkt AE Lock",
+        DevicePropertyCode::FocusBracketIntervalUntilNextShot => "Focus Brkt Interval",
+        DevicePropertyCode::FocusBracketOrder => "Focus Brkt Order",
+        DevicePropertyCode::FocusBracketRecordingFolder => "Focus Brkt Folder",
+        DevicePropertyCode::FocusBracketShootingStatus => "Focus Brkt Status",
+        DevicePropertyCode::SubjectRecognitionInAF => "Subject Recog.",
+        DevicePropertyCode::SubjectRecognitionAF => "Subject Recog. AF",
+        DevicePropertyCode::FaceEyeDetectionAFStatus => "Face/Eye Status",
+        DevicePropertyCode::FaceEyeFrameDisplay => "Face/Eye Frame",
+        DevicePropertyCode::FocusTrackingStatus => "Focus Track Status",
+        DevicePropertyCode::FocusMagnificationTime => "Focus Mag. Time",
+        DevicePropertyCode::FocusMap => "Depth Map",
+        DevicePropertyCode::FocusSpeedDirectSync => "Focus Spd Sync",
+        DevicePropertyCode::FocusSpeedRange => "Focus Spd Range",
+        DevicePropertyCode::FocusTouchSpotStatus => "Touch Focus Status",
+        DevicePropertyCode::FollowFocusPositionSetting => "Follow Focus Pos",
+        DevicePropertyCode::FollowFocusPositionCurrentValue => "Follow Focus Curr",
+        DevicePropertyCode::InitialFocusMagnifier => "Init. Focus Mag.",
+        DevicePropertyCode::AFInFocusMagnifier => "AF in Magnifier",
+        DevicePropertyCode::AFFreeSizeAndPositionSetting => "AF Free Size/Pos",
+        DevicePropertyCode::ZoomAndFocusPositionLoad => "Zoom/Focus Load",
+        DevicePropertyCode::ZoomAndFocusPositionSave => "Zoom/Focus Save",
+        DevicePropertyCode::ZoomAndFocusPresetDataVersion => "Zoom/Focus Ver.",
+        DevicePropertyCode::ZoomAndFocusPresetZoomOnlySet => "Zoom Only Preset",
+        DevicePropertyCode::DefaultAFFreeSizeAndPositionSetting => "Default AF Size/Pos",
         _ => code.name(),
     }
 }
@@ -332,7 +464,46 @@ pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
         DevicePropertyCode::AFAssist
         | DevicePropertyCode::PreAF
         | DevicePropertyCode::AFWithShutter
-        | DevicePropertyCode::FaceEyeFrameDisplay => V::Switch,
+        | DevicePropertyCode::FaceEyeFrameDisplay
+        | DevicePropertyCode::AFInFocusMagnifier
+        | DevicePropertyCode::FocusBracketExposureLock1stImg => V::Switch,
+        DevicePropertyCode::FocusModeStatus => V::FocusMode,
+        DevicePropertyCode::FocusBracketIntervalUntilNextShot
+        | DevicePropertyCode::FocusBracketOrder
+        | DevicePropertyCode::FocusBracketShootingStatus
+        | DevicePropertyCode::FocusDrivingStatus
+        | DevicePropertyCode::FocusIndication
+        | DevicePropertyCode::FocusMagnificationTime
+        | DevicePropertyCode::FocusSpeedRange
+        | DevicePropertyCode::FocusTouchSpotStatus
+        | DevicePropertyCode::FocusPositionSetting
+        | DevicePropertyCode::FocusPositionCurrentValue
+        | DevicePropertyCode::FollowFocusPositionSetting
+        | DevicePropertyCode::FollowFocusPositionCurrentValue
+        | DevicePropertyCode::InitialFocusMagnifier
+        | DevicePropertyCode::FocusBracketShotNumber
+        | DevicePropertyCode::FocusBracketFocusRange
+        | DevicePropertyCode::AFTransitionSpeed
+        | DevicePropertyCode::AFTrackingSensitivity => V::Integer,
+        DevicePropertyCode::FocusOperation
+        | DevicePropertyCode::FocusOperationWithInt16
+        | DevicePropertyCode::NearFar => V::Integer,
+        DevicePropertyCode::FocusSpeedDirectSync
+        | DevicePropertyCode::FocusOperationWithInt16EnableStatus
+        | DevicePropertyCode::AutoFocusHold
+        | DevicePropertyCode::PushAutoFocus => V::Integer,
+        DevicePropertyCode::ZoomAndFocusPositionLoad
+        | DevicePropertyCode::ZoomAndFocusPositionSave
+        | DevicePropertyCode::ZoomAndFocusPresetDataVersion
+        | DevicePropertyCode::ZoomAndFocusPresetZoomOnlySet
+        | DevicePropertyCode::FocusMap
+        | DevicePropertyCode::AFAreaPosition
+        | DevicePropertyCode::AFAreaPositionAFS
+        | DevicePropertyCode::AFAreaPositionAFC
+        | DevicePropertyCode::AFFreeSizeAndPositionSetting
+        | DevicePropertyCode::DefaultAFFreeSizeAndPositionSetting
+        | DevicePropertyCode::FocusBracketRecordingFolder
+        | DevicePropertyCode::FocusMagnifierSetting => V::Integer,
         _ => return None,
     })
 }
