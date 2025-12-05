@@ -180,7 +180,16 @@ fn to_pascal_case(s: &str) -> String {
 fn categorize_property(name: &str) -> &'static str {
     let lower = name.to_lowercase();
 
-    if lower.contains("battery")
+    // WhiteBalance check first - "white" and "customwb" properties should not be caught
+    // by "temperature" (Power) or "gain" (Exposure) checks
+    if lower.starts_with("whitebalance")
+        || lower.starts_with("customwb")
+        || lower.starts_with("colortemp")
+        || lower.starts_with("colortuning")
+        || lower.starts_with("awb")
+    {
+        "WhiteBalance"
+    } else if lower.contains("battery")
         || lower.contains("power")
         || lower.contains("temperature")
         || lower.contains("overheating")
@@ -213,6 +222,7 @@ fn categorize_property(name: &str) -> &'static str {
         "Exposure"
     } else if lower.contains("white")
         || lower.contains("colortemp")
+        || lower.contains("colortuning")
         || lower.contains("wb")
         || lower.contains("awb")
     {
