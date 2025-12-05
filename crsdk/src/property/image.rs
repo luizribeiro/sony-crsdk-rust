@@ -285,6 +285,15 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::LiveViewImageQuality => {
             "Quality setting for live view stream. Higher quality uses more bandwidth."
         }
+        DevicePropertyCode::FTPAutoTransferTargetStillImage => {
+            "Auto-transfer setting for still images to FTP server."
+        }
+        DevicePropertyCode::FTPTransferStillImageQualitySize => {
+            "Quality and size setting for still images transferred via FTP."
+        }
+        DevicePropertyCode::ProtectImageInFTPTransfer => {
+            "Protects images from deletion after FTP transfer."
+        }
         _ => "",
     }
 }
@@ -345,6 +354,9 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::PictureProfileResetEnableStatus => "PP Reset Avail",
         DevicePropertyCode::DisplayQualityFinder => "Finder Quality",
         DevicePropertyCode::LiveViewImageQuality => "LV Quality",
+        DevicePropertyCode::FTPAutoTransferTargetStillImage => "FTP Auto (Still)",
+        DevicePropertyCode::FTPTransferStillImageQualitySize => "FTP Still Quality",
+        DevicePropertyCode::ProtectImageInFTPTransfer => "FTP Protect Image",
         _ => code.name(),
     }
 }

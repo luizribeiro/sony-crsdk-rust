@@ -247,6 +247,12 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         | DevicePropertyCode::MediaSLOT3RecordingAvailableType => {
             "Types of recordings supported by the card in this slot (photo, video, etc.)."
         }
+        DevicePropertyCode::MovieFTPAutoTransferTarget => {
+            "Target files for automatic FTP transfer of movie recordings."
+        }
+        DevicePropertyCode::MovieFTPTransferTarget => {
+            "Target files for manual FTP transfer of movie recordings."
+        }
         _ => "",
     }
 }
@@ -292,6 +298,8 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::MediaSLOT1RecordingAvailableType => "Slot 1 Rec Type",
         DevicePropertyCode::MediaSLOT2RecordingAvailableType => "Slot 2 Rec Type",
         DevicePropertyCode::MediaSLOT3RecordingAvailableType => "Slot 3 Rec Type",
+        DevicePropertyCode::MovieFTPAutoTransferTarget => "Movie FTP Auto",
+        DevicePropertyCode::MovieFTPTransferTarget => "Movie FTP Target",
         _ => code.name(),
     }
 }

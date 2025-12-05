@@ -461,6 +461,78 @@ fn common_value_type(code: DevicePropertyCode) -> PropertyValueType {
         | DevicePropertyCode::AutoSwitchMedia
         | DevicePropertyCode::SimulRecSetting => PropertyValueType::Integer,
 
+        // Power/Battery
+        DevicePropertyCode::SecondBatteryLevel | DevicePropertyCode::TotalBatteryLevel => {
+            PropertyValueType::Percentage
+        }
+        DevicePropertyCode::SecondBatteryRemain
+        | DevicePropertyCode::TotalBatteryRemain
+        | DevicePropertyCode::BatteryRemainingInMinutes
+        | DevicePropertyCode::BatteryRemainDisplayUnit
+        | DevicePropertyCode::BatteryRemainingInVoltage
+        | DevicePropertyCode::CameraPowerStatus
+        | DevicePropertyCode::PowerSource
+        | DevicePropertyCode::RecordablePowerSources
+        | DevicePropertyCode::DCVoltage => PropertyValueType::Integer,
+
+        // Camera system
+        DevicePropertyCode::CameraOperatingMode
+        | DevicePropertyCode::CameraErrorCautionStatus
+        | DevicePropertyCode::CameraSystemErrorInfo
+        | DevicePropertyCode::CameraShakeStatus
+        | DevicePropertyCode::CameraSettingReadOperationEnableStatus
+        | DevicePropertyCode::CameraSettingSaveOperationEnableStatus
+        | DevicePropertyCode::CameraSettingsResetEnableStatus
+        | DevicePropertyCode::SdkControlMode
+        | DevicePropertyCode::BodyKeyLock => PropertyValueType::Integer,
+
+        // FTP
+        DevicePropertyCode::FTPAutoTransfer
+        | DevicePropertyCode::FTPAutoTransferTarget
+        | DevicePropertyCode::FTPTransferTarget
+        | DevicePropertyCode::FTPAutoTransferTargetStillImage
+        | DevicePropertyCode::FTPTransferStillImageQualitySize
+        | DevicePropertyCode::FTPConnectionStatus
+        | DevicePropertyCode::FTPConnectionErrorInfo
+        | DevicePropertyCode::FTPServerSettingOperationEnableStatus
+        | DevicePropertyCode::FTPServerSettingVersion
+        | DevicePropertyCode::FTPTransferSettingReadOperationEnableStatus
+        | DevicePropertyCode::FTPTransferSettingSaveOperationEnableStatus
+        | DevicePropertyCode::FTPTransferSettingSaveReadState
+        | DevicePropertyCode::FTPJobListDataVersion
+        | DevicePropertyCode::SelectFTPServer
+        | DevicePropertyCode::SelectFTPServerID
+        | DevicePropertyCode::ProtectImageInFTPTransfer
+        | DevicePropertyCode::MovieFTPAutoTransferTarget
+        | DevicePropertyCode::MovieFTPTransferTarget => PropertyValueType::Integer,
+
+        // Subject Recognition
+        DevicePropertyCode::SubjectRecognitionAF
+        | DevicePropertyCode::SubjectRecognitionInAF
+        | DevicePropertyCode::SubjectRecognitionAnimalBirdPriority
+        | DevicePropertyCode::SubjectRecognitionAnimalBirdDetectionParts
+        | DevicePropertyCode::SubjectRecognitionAnimalDetectionParts
+        | DevicePropertyCode::SubjectRecognitionAnimalDetectionSensitivity
+        | DevicePropertyCode::SubjectRecognitionAnimalTrackingSensitivity
+        | DevicePropertyCode::SubjectRecognitionAnimalTrackingSubjectShiftRange
+        | DevicePropertyCode::SubjectRecognitionBirdDetectionParts
+        | DevicePropertyCode::SubjectRecognitionBirdDetectionSensitivity
+        | DevicePropertyCode::SubjectRecognitionBirdTrackingSensitivity
+        | DevicePropertyCode::SubjectRecognitionBirdTrackingSubjectShiftRange
+        | DevicePropertyCode::SubjectRecognitionInsectDetectionSensitivity
+        | DevicePropertyCode::SubjectRecognitionInsectTrackingSensitivity
+        | DevicePropertyCode::SubjectRecognitionInsectTrackingSubjectShiftRange
+        | DevicePropertyCode::SubjectRecognitionCarTrainDetectionSensitivity
+        | DevicePropertyCode::SubjectRecognitionCarTrainTrackingSensitivity
+        | DevicePropertyCode::SubjectRecognitionCarTrainTrackingSubjectShiftRange
+        | DevicePropertyCode::SubjectRecognitionPlaneDetectionSensitivity
+        | DevicePropertyCode::SubjectRecognitionPlaneTrackingSensitivity
+        | DevicePropertyCode::SubjectRecognitionPlaneTrackingSubjectShiftRange
+        | DevicePropertyCode::SubjectRecognitionPersonTrackingSubjectShiftRange
+        | DevicePropertyCode::SubjectRecognitionPriorityOnRegisteredFace => {
+            PropertyValueType::Integer
+        }
+
         _ => PropertyValueType::Unknown,
     }
 }
@@ -828,13 +900,24 @@ fn power_description(code: DevicePropertyCode) -> &'static str {
             "Remaining battery capacity as a percentage. Monitor this to avoid running out during a shoot."
         }
         DevicePropertyCode::BatteryLevel => "Battery charge level indicator. Shows approximate remaining power.",
+        DevicePropertyCode::BatteryRemainingInMinutes => "Estimated recording time remaining in minutes.",
+        DevicePropertyCode::BatteryRemainingInVoltage => "Battery voltage reading for precise monitoring.",
+        DevicePropertyCode::BatteryRemainDisplayUnit => "Unit for battery display (percentage or time).",
+        DevicePropertyCode::SecondBatteryLevel => "Charge level of the second battery (grip or backup).",
+        DevicePropertyCode::SecondBatteryRemain => "Remaining capacity of the second battery.",
+        DevicePropertyCode::TotalBatteryLevel => "Combined charge level from all battery sources.",
+        DevicePropertyCode::TotalBatteryRemain => "Total remaining capacity from all batteries.",
+        DevicePropertyCode::DCVoltage => "DC power supply voltage when using external power.",
         DevicePropertyCode::PowerSource => "Current power source—internal battery, external battery grip, or AC adapter.",
+        DevicePropertyCode::RecordablePowerSources => "Power sources that provide enough power for recording.",
         DevicePropertyCode::AutoPowerOffTemperature => {
             "Temperature threshold for automatic shutdown. Higher settings allow longer recording but risk overheating damage."
         }
         DevicePropertyCode::DeviceOverheatingState => {
             "Current thermal status. Warning levels indicate the camera may shut down soon to prevent damage."
         }
+        DevicePropertyCode::FTPPowerSave => "Power saving mode when using FTP transfer.",
+        DevicePropertyCode::CameraPowerStatus => "Current power state of the camera.",
         _ => "",
     }
 }
@@ -846,12 +929,18 @@ fn power_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::BatteryRemainingInMinutes => "Battery (Minutes)",
         DevicePropertyCode::BatteryRemainingInVoltage => "Battery Voltage",
         DevicePropertyCode::BatteryRemainDisplayUnit => "Battery Display Unit",
+        DevicePropertyCode::SecondBatteryLevel => "Battery 2 Level",
+        DevicePropertyCode::SecondBatteryRemain => "Battery 2 Remaining",
+        DevicePropertyCode::TotalBatteryLevel => "Total Battery Level",
+        DevicePropertyCode::TotalBatteryRemain => "Total Battery",
         DevicePropertyCode::PowerSource => "Power Source",
         DevicePropertyCode::AutoPowerOffTemperature => "Auto Power Off Temp",
         DevicePropertyCode::DeviceOverheatingState => "Overheating State",
         DevicePropertyCode::RecordablePowerSources => "Recordable Power Sources",
         DevicePropertyCode::USBPowerSupply => "USB Power Supply",
         DevicePropertyCode::DCVoltage => "DC Voltage",
+        DevicePropertyCode::FTPPowerSave => "FTP Power Save",
+        DevicePropertyCode::CameraPowerStatus => "Power Status",
         _ => code.name(),
     }
 }
@@ -1275,6 +1364,10 @@ fn nd_filter_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::DispModeCandidate => {
             "Available display modes for the current shooting mode."
         }
+        // Routes here due to "train" containing "nd"
+        DevicePropertyCode::SubjectRecognitionCarTrainDetectionSensitivity => {
+            "Sensitivity for car/train detection."
+        }
         _ => "",
     }
 }
@@ -1310,6 +1403,8 @@ fn nd_filter_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::DigitalExtenderMagnificationSetting => "Digital Extender",
         DevicePropertyCode::SelectFinder => "Finder Select",
         DevicePropertyCode::DispModeCandidate => "Disp Mode Options",
+        // Routes here due to "train" containing "nd"
+        DevicePropertyCode::SubjectRecognitionCarTrainDetectionSensitivity => "Vehicle Sens",
         _ => code.name(),
     }
 }
@@ -1549,6 +1644,107 @@ fn other_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::LiveViewProtocol => {
             "Protocol used for live view streaming (USB, network, etc.)."
         }
+        // Camera system properties
+        DevicePropertyCode::CameraPowerStatus => "Current power state of the camera.",
+        DevicePropertyCode::CameraOperatingMode => "Current operating mode (photo, video, playback).",
+        DevicePropertyCode::CameraErrorCautionStatus => "Error or warning status from the camera.",
+        DevicePropertyCode::CameraSystemErrorInfo => "Detailed system error information.",
+        DevicePropertyCode::CameraShakeStatus => "Camera shake detection status for blur warning.",
+        DevicePropertyCode::CameraSettingReadOperationEnableStatus => {
+            "Whether camera settings can be read from file."
+        }
+        DevicePropertyCode::CameraSettingSaveOperationEnableStatus => {
+            "Whether camera settings can be saved to file."
+        }
+        DevicePropertyCode::CameraSettingsResetEnableStatus => {
+            "Whether factory reset is available."
+        }
+        DevicePropertyCode::SdkControlMode => "SDK control mode for remote operation.",
+        DevicePropertyCode::BodyKeyLock => "Locks physical buttons to prevent accidental changes.",
+        DevicePropertyCode::DCVoltage => "DC power supply voltage when using external power.",
+        // FTP and file transfer (non-Movie category)
+        DevicePropertyCode::FTPConnectionStatus => "Current FTP server connection state.",
+        DevicePropertyCode::FTPConnectionErrorInfo => "FTP connection error details.",
+        DevicePropertyCode::FTPAutoTransfer => "Automatically transfers files to FTP server.",
+        DevicePropertyCode::FTPAutoTransferTarget => "Which files to auto-transfer (all, selected).",
+        DevicePropertyCode::FTPAutoTransferTargetStillImage => "Auto-transfer setting for still images.",
+        DevicePropertyCode::FTPTransferTarget => "Target files for manual FTP transfer.",
+        DevicePropertyCode::FTPTransferStillImageQualitySize => "Quality/size setting for FTP transfers.",
+        DevicePropertyCode::FTPServerSettingOperationEnableStatus => "Whether FTP settings can be modified.",
+        DevicePropertyCode::FTPServerSettingVersion => "FTP server settings version.",
+        DevicePropertyCode::FTPTransferSettingReadOperationEnableStatus => {
+            "Whether FTP transfer settings can be read."
+        }
+        DevicePropertyCode::FTPTransferSettingSaveOperationEnableStatus => {
+            "Whether FTP transfer settings can be saved."
+        }
+        DevicePropertyCode::FTPTransferSettingSaveReadState => "Current FTP transfer settings state.",
+        DevicePropertyCode::FTPJobListDataVersion => "Version of the FTP job list data.",
+        DevicePropertyCode::SelectFTPServer => "Select which configured FTP server to use.",
+        DevicePropertyCode::SelectFTPServerID => "ID of the selected FTP server.",
+        DevicePropertyCode::ProtectImageInFTPTransfer => "Protect transferred images from deletion.",
+        // Subject recognition (AI detection)
+        DevicePropertyCode::SubjectRecognitionAF => "AI-powered subject detection for autofocus.",
+        DevicePropertyCode::SubjectRecognitionInAF => "Subject recognition mode during AF.",
+        DevicePropertyCode::SubjectRecognitionAnimalBirdPriority => {
+            "Priority between animal and bird detection."
+        }
+        DevicePropertyCode::SubjectRecognitionAnimalBirdDetectionParts => {
+            "Which body parts to detect on animals/birds (eye, body, head)."
+        }
+        DevicePropertyCode::SubjectRecognitionAnimalDetectionParts => "Body parts to detect on animals.",
+        DevicePropertyCode::SubjectRecognitionAnimalDetectionSensitivity => {
+            "Sensitivity for animal detection. Higher values detect smaller subjects."
+        }
+        DevicePropertyCode::SubjectRecognitionAnimalTrackingSensitivity => {
+            "How aggressively to track detected animals."
+        }
+        DevicePropertyCode::SubjectRecognitionAnimalTrackingSubjectShiftRange => {
+            "Range for tracking animal subjects across the frame."
+        }
+        DevicePropertyCode::SubjectRecognitionBirdDetectionParts => "Body parts to detect on birds.",
+        DevicePropertyCode::SubjectRecognitionBirdDetectionSensitivity => {
+            "Sensitivity for bird detection."
+        }
+        DevicePropertyCode::SubjectRecognitionBirdTrackingSensitivity => {
+            "How aggressively to track detected birds."
+        }
+        DevicePropertyCode::SubjectRecognitionBirdTrackingSubjectShiftRange => {
+            "Range for tracking bird subjects across the frame."
+        }
+        DevicePropertyCode::SubjectRecognitionInsectDetectionSensitivity => {
+            "Sensitivity for insect detection."
+        }
+        DevicePropertyCode::SubjectRecognitionInsectTrackingSensitivity => {
+            "How aggressively to track detected insects."
+        }
+        DevicePropertyCode::SubjectRecognitionInsectTrackingSubjectShiftRange => {
+            "Range for tracking insect subjects across the frame."
+        }
+        DevicePropertyCode::SubjectRecognitionCarTrainDetectionSensitivity => {
+            "Sensitivity for car/train detection."
+        }
+        DevicePropertyCode::SubjectRecognitionCarTrainTrackingSensitivity => {
+            "How aggressively to track detected vehicles."
+        }
+        DevicePropertyCode::SubjectRecognitionCarTrainTrackingSubjectShiftRange => {
+            "Range for tracking vehicle subjects across the frame."
+        }
+        DevicePropertyCode::SubjectRecognitionPlaneDetectionSensitivity => {
+            "Sensitivity for airplane detection."
+        }
+        DevicePropertyCode::SubjectRecognitionPlaneTrackingSensitivity => {
+            "How aggressively to track detected airplanes."
+        }
+        DevicePropertyCode::SubjectRecognitionPlaneTrackingSubjectShiftRange => {
+            "Range for tracking airplane subjects across the frame."
+        }
+        DevicePropertyCode::SubjectRecognitionPersonTrackingSubjectShiftRange => {
+            "Range for tracking person subjects across the frame."
+        }
+        DevicePropertyCode::SubjectRecognitionPriorityOnRegisteredFace => {
+            "Prioritize registered faces over other subjects."
+        }
         _ => "",
     }
 }
@@ -1633,6 +1829,56 @@ fn other_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::GridLineType => "Grid Type",
         DevicePropertyCode::LiveViewStatus => "LV Status",
         DevicePropertyCode::LiveViewProtocol => "LV Protocol",
+        // Camera system
+        DevicePropertyCode::CameraPowerStatus => "Power Status",
+        DevicePropertyCode::CameraErrorCautionStatus => "Error Status",
+        DevicePropertyCode::CameraSystemErrorInfo => "System Error",
+        DevicePropertyCode::CameraShakeStatus => "Shake Status",
+        DevicePropertyCode::CameraSettingReadOperationEnableStatus => "Settings Read",
+        DevicePropertyCode::CameraSettingSaveOperationEnableStatus => "Settings Save",
+        DevicePropertyCode::CameraSettingsResetEnableStatus => "Reset Avail",
+        DevicePropertyCode::SdkControlMode => "SDK Mode",
+        DevicePropertyCode::BodyKeyLock => "Key Lock",
+        // FTP (non-Movie category FTP properties)
+        DevicePropertyCode::FTPConnectionStatus => "FTP Status",
+        DevicePropertyCode::FTPConnectionErrorInfo => "FTP Error",
+        DevicePropertyCode::FTPAutoTransferTarget => "FTP Auto Target",
+        DevicePropertyCode::FTPAutoTransferTargetStillImage => "FTP Auto (Still)",
+        DevicePropertyCode::FTPTransferTarget => "FTP Target",
+        DevicePropertyCode::FTPTransferStillImageQualitySize => "FTP Quality",
+        DevicePropertyCode::FTPServerSettingOperationEnableStatus => "FTP Server Edit",
+        DevicePropertyCode::FTPServerSettingVersion => "FTP Server Ver",
+        DevicePropertyCode::FTPTransferSettingReadOperationEnableStatus => "FTP Read Avail",
+        DevicePropertyCode::FTPTransferSettingSaveOperationEnableStatus => "FTP Save Avail",
+        DevicePropertyCode::FTPTransferSettingSaveReadState => "FTP Settings",
+        DevicePropertyCode::FTPJobListDataVersion => "FTP Job Ver",
+        DevicePropertyCode::SelectFTPServer => "FTP Server",
+        DevicePropertyCode::SelectFTPServerID => "FTP Server ID",
+        DevicePropertyCode::ProtectImageInFTPTransfer => "FTP Protect",
+        // Subject recognition
+        DevicePropertyCode::SubjectRecognitionAF => "Subject Rec AF",
+        DevicePropertyCode::SubjectRecognitionInAF => "Subject In AF",
+        DevicePropertyCode::SubjectRecognitionAnimalBirdPriority => "Animal/Bird Pri",
+        DevicePropertyCode::SubjectRecognitionAnimalBirdDetectionParts => "Animal/Bird Parts",
+        DevicePropertyCode::SubjectRecognitionAnimalDetectionParts => "Animal Parts",
+        DevicePropertyCode::SubjectRecognitionAnimalDetectionSensitivity => "Animal Sens",
+        DevicePropertyCode::SubjectRecognitionAnimalTrackingSensitivity => "Animal Track",
+        DevicePropertyCode::SubjectRecognitionAnimalTrackingSubjectShiftRange => "Animal Shift",
+        DevicePropertyCode::SubjectRecognitionBirdDetectionParts => "Bird Parts",
+        DevicePropertyCode::SubjectRecognitionBirdDetectionSensitivity => "Bird Sens",
+        DevicePropertyCode::SubjectRecognitionBirdTrackingSensitivity => "Bird Track",
+        DevicePropertyCode::SubjectRecognitionBirdTrackingSubjectShiftRange => "Bird Shift",
+        DevicePropertyCode::SubjectRecognitionInsectDetectionSensitivity => "Insect Sens",
+        DevicePropertyCode::SubjectRecognitionInsectTrackingSensitivity => "Insect Track",
+        DevicePropertyCode::SubjectRecognitionInsectTrackingSubjectShiftRange => "Insect Shift",
+        DevicePropertyCode::SubjectRecognitionCarTrainDetectionSensitivity => "Vehicle Sens",
+        DevicePropertyCode::SubjectRecognitionCarTrainTrackingSensitivity => "Vehicle Track",
+        DevicePropertyCode::SubjectRecognitionCarTrainTrackingSubjectShiftRange => "Vehicle Shift",
+        DevicePropertyCode::SubjectRecognitionPlaneDetectionSensitivity => "Plane Sens",
+        DevicePropertyCode::SubjectRecognitionPlaneTrackingSensitivity => "Plane Track",
+        DevicePropertyCode::SubjectRecognitionPlaneTrackingSubjectShiftRange => "Plane Shift",
+        DevicePropertyCode::SubjectRecognitionPersonTrackingSubjectShiftRange => "Person Shift",
+        DevicePropertyCode::SubjectRecognitionPriorityOnRegisteredFace => "Reg Face Priority",
         _ => code.name(),
     }
 }
