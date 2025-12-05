@@ -332,6 +332,53 @@ fn common_value_type(code: DevicePropertyCode) -> PropertyValueType {
         | DevicePropertyCode::ButtonAssignmentAssignable11
         | DevicePropertyCode::ButtonAssignmentLensAssignable1 => PropertyValueType::Integer,
 
+        // Picture Profile
+        DevicePropertyCode::PictureProfile
+        | DevicePropertyCode::PictureProfileGamma
+        | DevicePropertyCode::PictureProfileColorMode
+        | DevicePropertyCode::PictureProfileSaturation
+        | DevicePropertyCode::PictureProfileBlackLevel
+        | DevicePropertyCode::PictureProfileBlackGammaLevel
+        | DevicePropertyCode::PictureProfileBlackGammaRange
+        | DevicePropertyCode::PictureProfileKneeMode
+        | DevicePropertyCode::PictureProfileKneeAutoSetMaxPoint
+        | DevicePropertyCode::PictureProfileKneeAutoSetSensitivity
+        | DevicePropertyCode::PictureProfileKneeManualSetPoint
+        | DevicePropertyCode::PictureProfileKneeManualSetSlope
+        | DevicePropertyCode::PictureProfileDetailLevel
+        | DevicePropertyCode::PictureProfileDetailAdjustMode
+        | DevicePropertyCode::PictureProfileDetailAdjustVHBalance
+        | DevicePropertyCode::PictureProfileDetailAdjustBWBalance
+        | DevicePropertyCode::PictureProfileDetailAdjustLimit
+        | DevicePropertyCode::PictureProfileDetailAdjustCrispening
+        | DevicePropertyCode::PictureProfileDetailAdjustHiLightDetail
+        | DevicePropertyCode::PictureProfileColorPhase
+        | DevicePropertyCode::PictureProfileColorDepthRed
+        | DevicePropertyCode::PictureProfileColorDepthGreen
+        | DevicePropertyCode::PictureProfileColorDepthBlue
+        | DevicePropertyCode::PictureProfileColorDepthCyan
+        | DevicePropertyCode::PictureProfileColorDepthMagenta
+        | DevicePropertyCode::PictureProfileColorDepthYellow
+        | DevicePropertyCode::PictureProfileCopy
+        | DevicePropertyCode::PictureProfileResetEnableStatus
+        | DevicePropertyCode::CreativeLook
+        | DevicePropertyCode::CreativeLookContrast
+        | DevicePropertyCode::CreativeLookHighlights
+        | DevicePropertyCode::CreativeLookShadows
+        | DevicePropertyCode::CreativeLookSaturation
+        | DevicePropertyCode::CreativeLookSharpness
+        | DevicePropertyCode::CreativeLookSharpnessRange
+        | DevicePropertyCode::CreativeLookClarity
+        | DevicePropertyCode::CreativeLookFade
+        | DevicePropertyCode::CreativeLookCustomLook
+        | DevicePropertyCode::CreativeLookResetEnableStatus
+        | DevicePropertyCode::GammaDisplayAssist
+        | DevicePropertyCode::GammaDisplayAssistType
+        | DevicePropertyCode::BaseLookValue
+        | DevicePropertyCode::BaseLookAppliedofPlayback
+        | DevicePropertyCode::BaseLookNameofPlayback
+        | DevicePropertyCode::BaseLookImportOperationEnableStatus => PropertyValueType::Integer,
+
         _ => PropertyValueType::Unknown,
     }
 }
@@ -840,11 +887,84 @@ fn picture_profile_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::PictureProfile => {
             "Preset color, gamma, and detail settings for video. PP1-PP10 are customizable. Off uses standard processing."
         }
+        DevicePropertyCode::PictureProfileGamma
+        | DevicePropertyCode::PictureProfileBlackGammaLevel
+        | DevicePropertyCode::PictureProfileBlackGammaRange => {
+            "Gamma curve settings. Controls how brightness values are mapped for different contrast and dynamic range."
+        }
+        DevicePropertyCode::PictureProfileColorMode => {
+            "Color processing mode. Different modes optimize for various shooting scenarios."
+        }
+        DevicePropertyCode::PictureProfileSaturation
+        | DevicePropertyCode::PictureProfileColorPhase => {
+            "Color saturation and hue adjustments for the picture profile."
+        }
+        DevicePropertyCode::PictureProfileBlackLevel => {
+            "Adjusts the level of black in the image. Affects shadow detail and contrast."
+        }
+        DevicePropertyCode::PictureProfileKneeMode
+        | DevicePropertyCode::PictureProfileKneeAutoSetMaxPoint
+        | DevicePropertyCode::PictureProfileKneeAutoSetSensitivity
+        | DevicePropertyCode::PictureProfileKneeManualSetPoint
+        | DevicePropertyCode::PictureProfileKneeManualSetSlope => {
+            "Knee settings control highlight compression. Prevents clipping in bright areas."
+        }
+        DevicePropertyCode::PictureProfileDetailLevel
+        | DevicePropertyCode::PictureProfileDetailAdjustMode
+        | DevicePropertyCode::PictureProfileDetailAdjustVHBalance
+        | DevicePropertyCode::PictureProfileDetailAdjustBWBalance
+        | DevicePropertyCode::PictureProfileDetailAdjustLimit
+        | DevicePropertyCode::PictureProfileDetailAdjustCrispening
+        | DevicePropertyCode::PictureProfileDetailAdjustHiLightDetail => {
+            "Detail/sharpening settings. Controls edge enhancement and texture rendering."
+        }
+        DevicePropertyCode::PictureProfileColorDepthRed
+        | DevicePropertyCode::PictureProfileColorDepthGreen
+        | DevicePropertyCode::PictureProfileColorDepthBlue
+        | DevicePropertyCode::PictureProfileColorDepthCyan
+        | DevicePropertyCode::PictureProfileColorDepthMagenta
+        | DevicePropertyCode::PictureProfileColorDepthYellow => {
+            "Per-color saturation adjustments. Fine-tune individual color channels."
+        }
+        DevicePropertyCode::PictureProfileCopy => {
+            "Copies picture profile settings to another profile slot."
+        }
+        DevicePropertyCode::PictureProfileResetEnableStatus => {
+            "Indicates whether the picture profile can be reset to defaults."
+        }
         DevicePropertyCode::CreativeLook => {
             "Camera-designed color looks for stills and video. Each style (ST, PT, NT, etc.) has a distinct aesthetic."
         }
+        DevicePropertyCode::CreativeLookContrast
+        | DevicePropertyCode::CreativeLookHighlights
+        | DevicePropertyCode::CreativeLookShadows
+        | DevicePropertyCode::CreativeLookSaturation
+        | DevicePropertyCode::CreativeLookSharpness
+        | DevicePropertyCode::CreativeLookSharpnessRange
+        | DevicePropertyCode::CreativeLookClarity
+        | DevicePropertyCode::CreativeLookFade => {
+            "Fine-tuning parameter for the creative look. Adjusts the overall style characteristics."
+        }
+        DevicePropertyCode::CreativeLookCustomLook => {
+            "Custom creative look that can be loaded from a file."
+        }
+        DevicePropertyCode::CreativeLookResetEnableStatus => {
+            "Indicates whether the creative look can be reset to defaults."
+        }
         DevicePropertyCode::GammaDisplayAssist => {
             "Shows a preview of how log footage will look after color grading. Helps expose correctly without flat-looking preview."
+        }
+        DevicePropertyCode::GammaDisplayAssistType => {
+            "Type of gamma assist preview. Different LUT presets for various color workflows."
+        }
+        DevicePropertyCode::BaseLookValue | DevicePropertyCode::BaseLookAppliedofPlayback => {
+            "Base look setting that defines the fundamental color characteristics before other adjustments."
+        }
+        DevicePropertyCode::BaseLookNameofPlayback => {
+            "Name of the base look applied during playback."
+        }
+        DevicePropertyCode::BaseLookImportOperationEnableStatus => {
+            "Indicates whether base look import is available."
         }
         DevicePropertyCode::PictureEffect => {
             "Creative filters applied to images in-camera. Includes toy camera, posterization, etc."
@@ -855,26 +975,51 @@ fn picture_profile_description(code: DevicePropertyCode) -> &'static str {
 
 fn picture_profile_display_name(code: DevicePropertyCode) -> &'static str {
     match code {
-        DevicePropertyCode::PictureProfile => "Picture Profile",
+        DevicePropertyCode::PictureProfile => "Pict. Profile",
         DevicePropertyCode::PictureProfileGamma => "PP Gamma",
         DevicePropertyCode::PictureProfileColorMode => "PP Color Mode",
         DevicePropertyCode::PictureProfileSaturation => "PP Saturation",
         DevicePropertyCode::PictureProfileBlackLevel => "PP Black Level",
         DevicePropertyCode::PictureProfileBlackGammaLevel => "PP Black Gamma",
-        DevicePropertyCode::PictureProfileBlackGammaRange => "PP Black Gamma Range",
+        DevicePropertyCode::PictureProfileBlackGammaRange => "PP BG Range",
         DevicePropertyCode::PictureProfileKneeMode => "PP Knee Mode",
+        DevicePropertyCode::PictureProfileKneeAutoSetMaxPoint => "PP Knee Auto Max",
+        DevicePropertyCode::PictureProfileKneeAutoSetSensitivity => "PP Knee Auto Sens",
+        DevicePropertyCode::PictureProfileKneeManualSetPoint => "PP Knee Point",
+        DevicePropertyCode::PictureProfileKneeManualSetSlope => "PP Knee Slope",
         DevicePropertyCode::PictureProfileDetailLevel => "PP Detail Level",
-        DevicePropertyCode::CreativeLook => "Creative Look",
-        DevicePropertyCode::CreativeLookContrast => "Creative Look: Contrast",
-        DevicePropertyCode::CreativeLookHighlights => "Creative Look: Highlights",
-        DevicePropertyCode::CreativeLookShadows => "Creative Look: Shadows",
-        DevicePropertyCode::CreativeLookSaturation => "Creative Look: Saturation",
-        DevicePropertyCode::CreativeLookSharpness => "Creative Look: Sharpness",
-        DevicePropertyCode::CreativeLookSharpnessRange => "Creative Look: Sharpness Range",
-        DevicePropertyCode::CreativeLookClarity => "Creative Look: Clarity",
-        DevicePropertyCode::CreativeLookFade => "Creative Look: Fade",
-        DevicePropertyCode::GammaDisplayAssist => "Gamma Display Assist",
+        DevicePropertyCode::PictureProfileDetailAdjustMode => "PP Detail Mode",
+        DevicePropertyCode::PictureProfileDetailAdjustVHBalance => "PP Detail V/H",
+        DevicePropertyCode::PictureProfileDetailAdjustBWBalance => "PP Detail B/W",
+        DevicePropertyCode::PictureProfileDetailAdjustLimit => "PP Detail Limit",
+        DevicePropertyCode::PictureProfileDetailAdjustCrispening => "PP Crisp",
+        DevicePropertyCode::PictureProfileDetailAdjustHiLightDetail => "PP HiLight Detail",
+        DevicePropertyCode::PictureProfileColorPhase => "PP Color Phase",
+        DevicePropertyCode::PictureProfileColorDepthRed => "PP Depth: Red",
+        DevicePropertyCode::PictureProfileColorDepthGreen => "PP Depth: Green",
+        DevicePropertyCode::PictureProfileColorDepthBlue => "PP Depth: Blue",
+        DevicePropertyCode::PictureProfileColorDepthCyan => "PP Depth: Cyan",
+        DevicePropertyCode::PictureProfileColorDepthMagenta => "PP Depth: Magenta",
+        DevicePropertyCode::PictureProfileColorDepthYellow => "PP Depth: Yellow",
+        DevicePropertyCode::PictureProfileCopy => "PP Copy",
+        DevicePropertyCode::PictureProfileResetEnableStatus => "PP Reset Avail",
+        DevicePropertyCode::CreativeLook => "Creat. Look",
+        DevicePropertyCode::CreativeLookContrast => "CL: Contrast",
+        DevicePropertyCode::CreativeLookHighlights => "CL: Highlights",
+        DevicePropertyCode::CreativeLookShadows => "CL: Shadows",
+        DevicePropertyCode::CreativeLookSaturation => "CL: Saturation",
+        DevicePropertyCode::CreativeLookSharpness => "CL: Sharpness",
+        DevicePropertyCode::CreativeLookSharpnessRange => "CL: Sharp Range",
+        DevicePropertyCode::CreativeLookClarity => "CL: Clarity",
+        DevicePropertyCode::CreativeLookFade => "CL: Fade",
+        DevicePropertyCode::CreativeLookCustomLook => "CL: Custom",
+        DevicePropertyCode::CreativeLookResetEnableStatus => "CL Reset Avail",
+        DevicePropertyCode::GammaDisplayAssist => "Gamma Assist",
         DevicePropertyCode::GammaDisplayAssistType => "Gamma Assist Type",
+        DevicePropertyCode::BaseLookValue => "Base Look",
+        DevicePropertyCode::BaseLookAppliedofPlayback => "Base Look (Play)",
+        DevicePropertyCode::BaseLookNameofPlayback => "Base Look Name",
+        DevicePropertyCode::BaseLookImportOperationEnableStatus => "Base Look Import",
         DevicePropertyCode::PictureEffect => "Pict. Effect",
         _ => code.name(),
     }
@@ -1112,6 +1257,16 @@ fn other_description(code: DevicePropertyCode) -> &'static str {
         | DevicePropertyCode::ButtonAssignmentLensAssignable1 => {
             "The function currently assigned to this custom button."
         }
+        // BaseLook properties route to Other
+        DevicePropertyCode::BaseLookValue | DevicePropertyCode::BaseLookAppliedofPlayback => {
+            "Base look setting that defines the fundamental color characteristics before other adjustments."
+        }
+        DevicePropertyCode::BaseLookNameofPlayback => {
+            "Name of the base look applied during playback."
+        }
+        DevicePropertyCode::BaseLookImportOperationEnableStatus => {
+            "Indicates whether base look import is available."
+        }
         _ => "",
     }
 }
@@ -1186,6 +1341,11 @@ fn other_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::AspectRatio => "Aspect",
         DevicePropertyCode::SoftSkinEffect => "Soft Skin",
         DevicePropertyCode::RecorderMainStatus => "Main Rec Status",
+        // BaseLook properties route to Other
+        DevicePropertyCode::BaseLookValue => "Base Look",
+        DevicePropertyCode::BaseLookAppliedofPlayback => "Base Look (Play)",
+        DevicePropertyCode::BaseLookNameofPlayback => "Base Look Name",
+        DevicePropertyCode::BaseLookImportOperationEnableStatus => "Base Look Import",
         _ => code.name(),
     }
 }

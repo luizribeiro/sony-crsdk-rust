@@ -217,6 +217,10 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::AWB => {
             "Auto white balance status. Shows the current automatically determined color temperature."
         }
+        // Routes here due to "bw" in name
+        DevicePropertyCode::PictureProfileDetailAdjustBWBalance => {
+            "Detail/sharpening settings. Controls edge enhancement and texture rendering."
+        }
         _ => "",
     }
 }
@@ -250,6 +254,8 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::CustomWBSizeSetting => "Custom WB Size",
         DevicePropertyCode::WhiteBalanceOffsetColorTempATW => "WB Offset ATW (K)",
         DevicePropertyCode::WhiteBalanceOffsetTintATW => "WB Offset ATW (Tint)",
+        // Routes here due to "bw" in name
+        DevicePropertyCode::PictureProfileDetailAdjustBWBalance => "PP Detail B/W",
         _ => code.name(),
     }
 }
@@ -285,7 +291,9 @@ pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
         | DevicePropertyCode::WhiteBalanceOffsetSetting
         | DevicePropertyCode::CustomWBCapture
         | DevicePropertyCode::CustomWBCaptureOperation
-        | DevicePropertyCode::CustomWBCaptureStandbyCancel => V::Integer,
+        | DevicePropertyCode::CustomWBCaptureStandbyCancel
+        // Routes here due to "bw" in name
+        | DevicePropertyCode::PictureProfileDetailAdjustBWBalance => V::Integer,
         _ => return None,
     })
 }

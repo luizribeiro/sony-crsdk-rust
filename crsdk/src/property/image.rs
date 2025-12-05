@@ -231,6 +231,54 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::SoftSkinEffect => {
             "Smooths skin tones in portraits. Higher settings provide more smoothing."
         }
+        // Picture Profile properties route to Image category
+        DevicePropertyCode::PictureProfile => {
+            "Preset color, gamma, and detail settings for video. PP1-PP10 are customizable. Off uses standard processing."
+        }
+        DevicePropertyCode::PictureProfileGamma
+        | DevicePropertyCode::PictureProfileBlackGammaLevel
+        | DevicePropertyCode::PictureProfileBlackGammaRange => {
+            "Gamma curve settings. Controls how brightness values are mapped for different contrast and dynamic range."
+        }
+        DevicePropertyCode::PictureProfileColorMode => {
+            "Color processing mode. Different modes optimize for various shooting scenarios."
+        }
+        DevicePropertyCode::PictureProfileSaturation | DevicePropertyCode::PictureProfileColorPhase => {
+            "Color saturation and hue adjustments for the picture profile."
+        }
+        DevicePropertyCode::PictureProfileBlackLevel => {
+            "Adjusts the level of black in the image. Affects shadow detail and contrast."
+        }
+        DevicePropertyCode::PictureProfileKneeMode
+        | DevicePropertyCode::PictureProfileKneeAutoSetMaxPoint
+        | DevicePropertyCode::PictureProfileKneeAutoSetSensitivity
+        | DevicePropertyCode::PictureProfileKneeManualSetPoint
+        | DevicePropertyCode::PictureProfileKneeManualSetSlope => {
+            "Knee settings control highlight compression. Prevents clipping in bright areas."
+        }
+        DevicePropertyCode::PictureProfileDetailLevel
+        | DevicePropertyCode::PictureProfileDetailAdjustMode
+        | DevicePropertyCode::PictureProfileDetailAdjustVHBalance
+        | DevicePropertyCode::PictureProfileDetailAdjustBWBalance
+        | DevicePropertyCode::PictureProfileDetailAdjustLimit
+        | DevicePropertyCode::PictureProfileDetailAdjustCrispening
+        | DevicePropertyCode::PictureProfileDetailAdjustHiLightDetail => {
+            "Detail/sharpening settings. Controls edge enhancement and texture rendering."
+        }
+        DevicePropertyCode::PictureProfileColorDepthRed
+        | DevicePropertyCode::PictureProfileColorDepthGreen
+        | DevicePropertyCode::PictureProfileColorDepthBlue
+        | DevicePropertyCode::PictureProfileColorDepthCyan
+        | DevicePropertyCode::PictureProfileColorDepthMagenta
+        | DevicePropertyCode::PictureProfileColorDepthYellow => {
+            "Per-color saturation adjustments. Fine-tune individual color channels."
+        }
+        DevicePropertyCode::PictureProfileCopy => {
+            "Copies picture profile settings to another profile slot."
+        }
+        DevicePropertyCode::PictureProfileResetEnableStatus => {
+            "Indicates whether the picture profile can be reset to defaults."
+        }
         _ => "",
     }
 }
@@ -260,6 +308,35 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::MediaSLOT1RAWFileCompressionType => "Slot 1 RAW Comp",
         DevicePropertyCode::MediaSLOT2RAWFileCompressionType => "Slot 2 RAW Comp",
         DevicePropertyCode::RemoteSaveImageSize => "Remote Save Size",
+        // Picture Profile properties route to Image category
+        DevicePropertyCode::PictureProfile => "Pict. Profile",
+        DevicePropertyCode::PictureProfileGamma => "PP Gamma",
+        DevicePropertyCode::PictureProfileColorMode => "PP Color Mode",
+        DevicePropertyCode::PictureProfileSaturation => "PP Saturation",
+        DevicePropertyCode::PictureProfileBlackLevel => "PP Black Level",
+        DevicePropertyCode::PictureProfileBlackGammaLevel => "PP Black Gamma",
+        DevicePropertyCode::PictureProfileBlackGammaRange => "PP BG Range",
+        DevicePropertyCode::PictureProfileKneeMode => "PP Knee Mode",
+        DevicePropertyCode::PictureProfileKneeAutoSetMaxPoint => "PP Knee Auto Max",
+        DevicePropertyCode::PictureProfileKneeAutoSetSensitivity => "PP Knee Sens",
+        DevicePropertyCode::PictureProfileKneeManualSetPoint => "PP Knee Point",
+        DevicePropertyCode::PictureProfileKneeManualSetSlope => "PP Knee Slope",
+        DevicePropertyCode::PictureProfileDetailLevel => "PP Detail Level",
+        DevicePropertyCode::PictureProfileDetailAdjustMode => "PP Detail Mode",
+        DevicePropertyCode::PictureProfileDetailAdjustVHBalance => "PP Detail V/H",
+        DevicePropertyCode::PictureProfileDetailAdjustBWBalance => "PP Detail B/W",
+        DevicePropertyCode::PictureProfileDetailAdjustLimit => "PP Detail Limit",
+        DevicePropertyCode::PictureProfileDetailAdjustCrispening => "PP Crisp",
+        DevicePropertyCode::PictureProfileDetailAdjustHiLightDetail => "PP HiLight",
+        DevicePropertyCode::PictureProfileColorPhase => "PP Color Phase",
+        DevicePropertyCode::PictureProfileColorDepthRed => "PP Red",
+        DevicePropertyCode::PictureProfileColorDepthGreen => "PP Green",
+        DevicePropertyCode::PictureProfileColorDepthBlue => "PP Blue",
+        DevicePropertyCode::PictureProfileColorDepthCyan => "PP Cyan",
+        DevicePropertyCode::PictureProfileColorDepthMagenta => "PP Magenta",
+        DevicePropertyCode::PictureProfileColorDepthYellow => "PP Yellow",
+        DevicePropertyCode::PictureProfileCopy => "PP Copy",
+        DevicePropertyCode::PictureProfileResetEnableStatus => "PP Reset Avail",
         _ => code.name(),
     }
 }
@@ -290,7 +367,36 @@ pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
         | DevicePropertyCode::LongExposureNR
         | DevicePropertyCode::HLGStillImage
         | DevicePropertyCode::PictureEffect
-        | DevicePropertyCode::SoftSkinEffect => V::Integer,
+        | DevicePropertyCode::SoftSkinEffect
+        // Picture Profile properties route to Image category
+        | DevicePropertyCode::PictureProfile
+        | DevicePropertyCode::PictureProfileGamma
+        | DevicePropertyCode::PictureProfileColorMode
+        | DevicePropertyCode::PictureProfileSaturation
+        | DevicePropertyCode::PictureProfileBlackLevel
+        | DevicePropertyCode::PictureProfileBlackGammaLevel
+        | DevicePropertyCode::PictureProfileBlackGammaRange
+        | DevicePropertyCode::PictureProfileKneeMode
+        | DevicePropertyCode::PictureProfileKneeAutoSetMaxPoint
+        | DevicePropertyCode::PictureProfileKneeAutoSetSensitivity
+        | DevicePropertyCode::PictureProfileKneeManualSetPoint
+        | DevicePropertyCode::PictureProfileKneeManualSetSlope
+        | DevicePropertyCode::PictureProfileDetailLevel
+        | DevicePropertyCode::PictureProfileDetailAdjustMode
+        | DevicePropertyCode::PictureProfileDetailAdjustVHBalance
+        | DevicePropertyCode::PictureProfileDetailAdjustBWBalance
+        | DevicePropertyCode::PictureProfileDetailAdjustLimit
+        | DevicePropertyCode::PictureProfileDetailAdjustCrispening
+        | DevicePropertyCode::PictureProfileDetailAdjustHiLightDetail
+        | DevicePropertyCode::PictureProfileColorPhase
+        | DevicePropertyCode::PictureProfileColorDepthRed
+        | DevicePropertyCode::PictureProfileColorDepthGreen
+        | DevicePropertyCode::PictureProfileColorDepthBlue
+        | DevicePropertyCode::PictureProfileColorDepthCyan
+        | DevicePropertyCode::PictureProfileColorDepthMagenta
+        | DevicePropertyCode::PictureProfileColorDepthYellow
+        | DevicePropertyCode::PictureProfileCopy
+        | DevicePropertyCode::PictureProfileResetEnableStatus => V::Integer,
         _ => return None,
     })
 }
