@@ -521,6 +521,24 @@ fn media_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::SimulRecSetting => {
             "Records to both card slots simultaneously. Provides instant backup of every shot."
         }
+        DevicePropertyCode::MediaSLOT1FileType => {
+            "File type (RAW/JPEG/etc.) saved to memory card slot 1."
+        }
+        DevicePropertyCode::MediaSLOT2FileType => {
+            "File type (RAW/JPEG/etc.) saved to memory card slot 2."
+        }
+        DevicePropertyCode::MediaSLOT1ImageSize => {
+            "Image resolution for files saved to slot 1."
+        }
+        DevicePropertyCode::MediaSLOT2ImageSize => {
+            "Image resolution for files saved to slot 2."
+        }
+        DevicePropertyCode::MediaSLOT1RAWFileCompressionType => {
+            "RAW file compression type for slot 1."
+        }
+        DevicePropertyCode::MediaSLOT2RAWFileCompressionType => {
+            "RAW file compression type for slot 2."
+        }
         _ => "",
     }
 }
@@ -535,10 +553,14 @@ fn media_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::MediaSLOT1RemainingTime => "Slot 1 Time Left",
         DevicePropertyCode::MediaSLOT2RemainingTime => "Slot 2 Time Left",
         DevicePropertyCode::MediaSLOT3RemainingTime => "Slot 3 Time Left",
-        DevicePropertyCode::MediaSLOT1FileType => "Slot 1 File Type",
-        DevicePropertyCode::MediaSLOT2FileType => "Slot 2 File Type",
-        DevicePropertyCode::MediaSLOT1ImageQuality => "Slot 1 Image Quality",
-        DevicePropertyCode::MediaSLOT2ImageQuality => "Slot 2 Image Quality",
+        DevicePropertyCode::MediaSLOT1FileType => "Slot 1 Format",
+        DevicePropertyCode::MediaSLOT2FileType => "Slot 2 Format",
+        DevicePropertyCode::MediaSLOT1ImageQuality => "Slot 1 Quality",
+        DevicePropertyCode::MediaSLOT2ImageQuality => "Slot 2 Quality",
+        DevicePropertyCode::MediaSLOT1ImageSize => "Slot 1 Size",
+        DevicePropertyCode::MediaSLOT2ImageSize => "Slot 2 Size",
+        DevicePropertyCode::MediaSLOT1RAWFileCompressionType => "Slot 1 RAW Comp",
+        DevicePropertyCode::MediaSLOT2RAWFileCompressionType => "Slot 2 RAW Comp",
         DevicePropertyCode::MediaSLOT1QuickFormatEnableStatus => "Slot 1 Quick Format",
         DevicePropertyCode::MediaSLOT2QuickFormatEnableStatus => "Slot 2 Quick Format",
         DevicePropertyCode::AutoSwitchMedia => "Auto Switch Media",
@@ -687,6 +709,9 @@ fn picture_profile_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::GammaDisplayAssist => {
             "Shows a preview of how log footage will look after color grading. Helps expose correctly without flat-looking preview."
         }
+        DevicePropertyCode::PictureEffect => {
+            "Creative filters applied to images in-camera. Includes toy camera, posterization, etc."
+        }
         _ => "",
     }
 }
@@ -713,6 +738,7 @@ fn picture_profile_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::CreativeLookFade => "Creative Look: Fade",
         DevicePropertyCode::GammaDisplayAssist => "Gamma Display Assist",
         DevicePropertyCode::GammaDisplayAssistType => "Gamma Assist Type",
+        DevicePropertyCode::PictureEffect => "Pict. Effect",
         _ => code.name(),
     }
 }
@@ -871,6 +897,12 @@ fn other_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::ContinuousShootingSpotBoostEnableStatus => {
             "Indicates whether the spot boost feature can be enabled in the current shooting mode."
         }
+        DevicePropertyCode::AspectRatio => {
+            "Image shape. 3:2 is standard for full-frame. 16:9 is widescreen. 1:1 is square. 4:3 matches micro four-thirds sensors."
+        }
+        DevicePropertyCode::SoftSkinEffect => {
+            "Smooths skin tones in portraits. Higher settings provide more smoothing."
+        }
         _ => "",
     }
 }
@@ -913,6 +945,8 @@ fn other_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::ContinuousShootingSpotBoostStatus => "Burst Boost",
         DevicePropertyCode::ContinuousShootingSpotBoostFrameSpeed => "Burst Boost FPS",
         DevicePropertyCode::ContinuousShootingSpotBoostEnableStatus => "Burst Boost Avail",
+        DevicePropertyCode::AspectRatio => "Aspect",
+        DevicePropertyCode::SoftSkinEffect => "Soft Skin",
         _ => code.name(),
     }
 }
