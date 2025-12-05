@@ -2118,6 +2118,117 @@ impl std::fmt::Display for ShutterMode {
     }
 }
 
+/// Exposure control type (P/A/S/M vs Flexible Exposure).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ExposureCtrlType {
+    Pasm = 1,
+    FlexibleExposure = 2,
+}
+
+impl ExposureCtrlType {
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    pub fn from_raw(value: u64) -> Option<Self> {
+        Some(match value as u8 {
+            1 => Self::Pasm,
+            2 => Self::FlexibleExposure,
+            _ => return None,
+        })
+    }
+}
+
+impl std::fmt::Display for ExposureCtrlType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Pasm => "P/A/S/M",
+                Self::FlexibleExposure => "Flexible Exp",
+            }
+        )
+    }
+}
+
+/// Shutter type for interval recording (timelapse).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum IntervalRecShutterType {
+    Auto = 1,
+    Mechanical = 2,
+    Electronic = 3,
+}
+
+impl IntervalRecShutterType {
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    pub fn from_raw(value: u64) -> Option<Self> {
+        Some(match value as u8 {
+            1 => Self::Auto,
+            2 => Self::Mechanical,
+            3 => Self::Electronic,
+            _ => return None,
+        })
+    }
+}
+
+impl std::fmt::Display for IntervalRecShutterType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Auto => "Auto",
+                Self::Mechanical => "Mechanical",
+                Self::Electronic => "Electronic",
+            }
+        )
+    }
+}
+
+/// Aperture drive behavior in silent mode during AF.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum SilentModeApertureDrive {
+    NotTarget = 1,
+    Standard = 2,
+    SilentPriority = 3,
+}
+
+impl SilentModeApertureDrive {
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    pub fn from_raw(value: u64) -> Option<Self> {
+        Some(match value as u8 {
+            1 => Self::NotTarget,
+            2 => Self::Standard,
+            3 => Self::SilentPriority,
+            _ => return None,
+        })
+    }
+}
+
+impl std::fmt::Display for SilentModeApertureDrive {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::NotTarget => "Not Target",
+                Self::Standard => "Standard",
+                Self::SilentPriority => "Silent Priority",
+            }
+        )
+    }
+}
+
 /// Format movie recording quality/bitrate setting to display string
 pub fn format_movie_quality(value: u64) -> String {
     match value as u16 {

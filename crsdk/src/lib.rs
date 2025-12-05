@@ -76,9 +76,9 @@ pub use error::{Error, Result};
 pub use event::{warning_code_name, warning_param_description, CameraEvent};
 pub use property::{
     format_movie_quality, AspectRatio, AutoManual, DataType, DeviceProperty, DriveMode, EnableFlag,
-    ExposureProgram, FileType, FlashMode, FocusArea, FocusMode, ImageQuality, ImageSize,
-    LiveViewDisplayEffect, MeteringMode, MovieFileFormat, OnOff, PropertyCode, ShutterMode,
-    ShutterModeStatus, Switch, WhiteBalance,
+    ExposureCtrlType, ExposureProgram, FileType, FlashMode, FocusArea, FocusMode, ImageQuality,
+    ImageSize, IntervalRecShutterType, LiveViewDisplayEffect, MeteringMode, MovieFileFormat, OnOff,
+    PropertyCode, ShutterMode, ShutterModeStatus, SilentModeApertureDrive, Switch, WhiteBalance,
 };
 pub use sdk::Sdk;
 pub use types::{CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, MacAddr};
