@@ -186,16 +186,61 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::StillImageStoreDestination => {
             "Which memory card slot to save still images to. Slot 1, Slot 2, or both slots for simultaneous backup."
         }
+        DevicePropertyCode::FileSettingsCameraId => {
+            "Camera identifier embedded in file metadata. Useful for multi-camera shoots."
+        }
+        DevicePropertyCode::FileSettingsCameraPosition => {
+            "Camera position identifier for multi-camera workflows."
+        }
+        DevicePropertyCode::FileSettingsReelNumber => {
+            "Reel number for organizing footage. Auto-increments or can be set manually."
+        }
+        DevicePropertyCode::FileSettingsTitleNameSettings => {
+            "Custom title name prefix for files. Helps identify footage from different shoots."
+        }
+        DevicePropertyCode::CompressionFileFormatStill => {
+            "File format used for compressed still images."
+        }
+        DevicePropertyCode::MediaSLOT1FileType => {
+            "File type (RAW/JPEG/etc.) saved to memory card slot 1."
+        }
+        DevicePropertyCode::MediaSLOT2FileType => {
+            "File type (RAW/JPEG/etc.) saved to memory card slot 2."
+        }
+        DevicePropertyCode::MediaSLOT1ImageSize => {
+            "Image resolution for files saved to slot 1."
+        }
+        DevicePropertyCode::MediaSLOT2ImageSize => {
+            "Image resolution for files saved to slot 2."
+        }
+        DevicePropertyCode::MediaSLOT1RAWFileCompressionType => {
+            "RAW file compression type for slot 1."
+        }
+        DevicePropertyCode::MediaSLOT2RAWFileCompressionType => {
+            "RAW file compression type for slot 2."
+        }
+        DevicePropertyCode::RemoteSaveImageSize => {
+            "Image resolution when saving to a remote destination."
+        }
+        DevicePropertyCode::HLGStillImage => {
+            "Enables HLG (Hybrid Log-Gamma) for still images. Provides HDR-compatible captures."
+        }
+        DevicePropertyCode::PictureEffect => {
+            "Creative filters applied to images in-camera. Includes toy camera, posterization, etc."
+        }
+        DevicePropertyCode::SoftSkinEffect => {
+            "Smooths skin tones in portraits. Higher settings provide more smoothing."
+        }
         _ => "",
     }
 }
 
 pub fn display_name(code: DevicePropertyCode) -> &'static str {
     match code {
-        DevicePropertyCode::FileType => "File Type",
+        DevicePropertyCode::FileType => "File Format",
         DevicePropertyCode::StillImageQuality => "JPEG Quality",
-        DevicePropertyCode::ImageSize => "Image Size",
-        DevicePropertyCode::AspectRatio => "Aspect Ratio",
+        DevicePropertyCode::ImageSize => "Size",
+        DevicePropertyCode::AspectRatio => "Aspect",
         DevicePropertyCode::StillImageStoreDestination => "Save Destination",
         DevicePropertyCode::RAWFileCompressionType => "RAW Compression",
         DevicePropertyCode::CompressionFileFormatStill => "Compression Format",
@@ -204,6 +249,17 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::HLGStillImage => "HLG Still Image",
         DevicePropertyCode::PictureEffect => "Picture Effect",
         DevicePropertyCode::SoftSkinEffect => "Soft Skin Effect",
+        DevicePropertyCode::FileSettingsCameraId => "Camera ID",
+        DevicePropertyCode::FileSettingsCameraPosition => "Camera Position",
+        DevicePropertyCode::FileSettingsReelNumber => "Reel Number",
+        DevicePropertyCode::FileSettingsTitleNameSettings => "Title Name",
+        DevicePropertyCode::MediaSLOT1FileType => "Slot 1 File Type",
+        DevicePropertyCode::MediaSLOT2FileType => "Slot 2 File Type",
+        DevicePropertyCode::MediaSLOT1ImageSize => "Slot 1 Image Size",
+        DevicePropertyCode::MediaSLOT2ImageSize => "Slot 2 Image Size",
+        DevicePropertyCode::MediaSLOT1RAWFileCompressionType => "Slot 1 RAW Comp",
+        DevicePropertyCode::MediaSLOT2RAWFileCompressionType => "Slot 2 RAW Comp",
+        DevicePropertyCode::RemoteSaveImageSize => "Remote Save Size",
         _ => code.name(),
     }
 }
@@ -212,10 +268,29 @@ pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
     use PropertyValueType as V;
 
     Some(match code {
-        DevicePropertyCode::StillImageStoreDestination => V::FileType,
+        DevicePropertyCode::FileType
+        | DevicePropertyCode::MediaSLOT1FileType
+        | DevicePropertyCode::MediaSLOT2FileType
+        | DevicePropertyCode::StillImageStoreDestination => V::FileType,
         DevicePropertyCode::StillImageQuality => V::ImageQuality,
         DevicePropertyCode::AspectRatio => V::AspectRatio,
-        DevicePropertyCode::ImageSize => V::ImageSize,
+        DevicePropertyCode::ImageSize
+        | DevicePropertyCode::MediaSLOT1ImageSize
+        | DevicePropertyCode::MediaSLOT2ImageSize
+        | DevicePropertyCode::RemoteSaveImageSize => V::ImageSize,
+        DevicePropertyCode::RAWFileCompressionType
+        | DevicePropertyCode::MediaSLOT1RAWFileCompressionType
+        | DevicePropertyCode::MediaSLOT2RAWFileCompressionType
+        | DevicePropertyCode::CompressionFileFormatStill
+        | DevicePropertyCode::FileSettingsCameraId
+        | DevicePropertyCode::FileSettingsCameraPosition
+        | DevicePropertyCode::FileSettingsReelNumber
+        | DevicePropertyCode::FileSettingsTitleNameSettings
+        | DevicePropertyCode::HighIsoNR
+        | DevicePropertyCode::LongExposureNR
+        | DevicePropertyCode::HLGStillImage
+        | DevicePropertyCode::PictureEffect
+        | DevicePropertyCode::SoftSkinEffect => V::Integer,
         _ => return None,
     })
 }
