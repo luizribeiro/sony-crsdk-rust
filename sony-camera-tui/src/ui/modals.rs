@@ -9,7 +9,7 @@ use ratatui::{
 use crate::app::{
     ManualConnectionState, Modal, PropertySearchState, SshCredentialsState, SshFingerprintState,
 };
-use crsdk::CameraModel;
+use crsdk::{property_display_name, CameraModel};
 
 pub fn render(frame: &mut Frame, modal: &Modal) {
     match modal {
@@ -398,7 +398,7 @@ fn render_property_search_modal(frame: &mut Frame, state: &PropertySearchState) 
                         Style::default().fg(Color::DarkGray),
                     ),
                     Span::styled(" │ ", Style::default().fg(Color::Rgb(60, 60, 60))),
-                    Span::styled(code.name(), style),
+                    Span::styled(property_display_name(code), style),
                 ])
             })
             .collect();
