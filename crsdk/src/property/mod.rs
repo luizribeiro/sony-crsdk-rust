@@ -247,7 +247,16 @@ fn common_value_type(code: DevicePropertyCode) -> PropertyValueType {
         | DevicePropertyCode::MonitorBrightnessManual
         | DevicePropertyCode::SelectFinder
         | DevicePropertyCode::DisplayQualityFinder
-        | DevicePropertyCode::DisplayedMenuStatus => PropertyValueType::Integer,
+        | DevicePropertyCode::DisplayedMenuStatus
+        | DevicePropertyCode::GammaDisplayAssist
+        | DevicePropertyCode::GammaDisplayAssistType
+        | DevicePropertyCode::PlaybackContentsGammaType => PropertyValueType::Integer,
+
+        // Stabilization
+        DevicePropertyCode::ImageStabilizationSteadyShot
+        | DevicePropertyCode::ImageStabilizationSteadyShotAdjust
+        | DevicePropertyCode::ImageStabilizationSteadyShotFocalLength
+        | DevicePropertyCode::ImageStabilizationFramingStabilizer => PropertyValueType::Integer,
 
         // Audio
         DevicePropertyCode::AudioRecording => PropertyValueType::OnOff,
@@ -1339,35 +1348,6 @@ fn nd_filter_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::PushAutoNDFilter => {
             "Temporarily engages auto ND filter while button is pressed."
         }
-        DevicePropertyCode::WindNoiseReduct => {
-            "Reduces low-frequency wind noise in the built-in microphone. May slightly affect audio quality."
-        }
-        DevicePropertyCode::AssignableButtonIndicator1
-        | DevicePropertyCode::AssignableButtonIndicator2
-        | DevicePropertyCode::AssignableButtonIndicator3
-        | DevicePropertyCode::AssignableButtonIndicator4
-        | DevicePropertyCode::AssignableButtonIndicator5
-        | DevicePropertyCode::AssignableButtonIndicator6
-        | DevicePropertyCode::AssignableButtonIndicator7
-        | DevicePropertyCode::AssignableButtonIndicator8
-        | DevicePropertyCode::AssignableButtonIndicator9
-        | DevicePropertyCode::AssignableButtonIndicator10
-        | DevicePropertyCode::AssignableButtonIndicator11 => {
-            "Shows the current state of the assignable button indicator (active/inactive)."
-        }
-        DevicePropertyCode::DigitalExtenderMagnificationSetting => {
-            "Digital extender zoom factor. Crops and enlarges the image beyond optical zoom range."
-        }
-        DevicePropertyCode::SelectFinder => {
-            "Switch between LCD monitor and electronic viewfinder."
-        }
-        DevicePropertyCode::DispModeCandidate => {
-            "Available display modes for the current shooting mode."
-        }
-        // Routes here due to "train" containing "nd"
-        DevicePropertyCode::SubjectRecognitionCarTrainDetectionSensitivity => {
-            "Sensitivity for car/train detection."
-        }
         _ => "",
     }
 }
@@ -1388,23 +1368,6 @@ fn nd_filter_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::NDFilterPreset3Value => "ND Preset 3",
         DevicePropertyCode::ManualInputForNDFilterValue => "ND Manual Input",
         DevicePropertyCode::PushAutoNDFilter => "Push Auto ND",
-        DevicePropertyCode::WindNoiseReduct => "Wind Noise Reduct.",
-        DevicePropertyCode::AssignableButtonIndicator1 => "Btn Ind 1",
-        DevicePropertyCode::AssignableButtonIndicator2 => "Btn Ind 2",
-        DevicePropertyCode::AssignableButtonIndicator3 => "Btn Ind 3",
-        DevicePropertyCode::AssignableButtonIndicator4 => "Btn Ind 4",
-        DevicePropertyCode::AssignableButtonIndicator5 => "Btn Ind 5",
-        DevicePropertyCode::AssignableButtonIndicator6 => "Btn Ind 6",
-        DevicePropertyCode::AssignableButtonIndicator7 => "Btn Ind 7",
-        DevicePropertyCode::AssignableButtonIndicator8 => "Btn Ind 8",
-        DevicePropertyCode::AssignableButtonIndicator9 => "Btn Ind 9",
-        DevicePropertyCode::AssignableButtonIndicator10 => "Btn Ind 10",
-        DevicePropertyCode::AssignableButtonIndicator11 => "Btn Ind 11",
-        DevicePropertyCode::DigitalExtenderMagnificationSetting => "Digital Extender",
-        DevicePropertyCode::SelectFinder => "Finder Select",
-        DevicePropertyCode::DispModeCandidate => "Disp Mode Options",
-        // Routes here due to "train" containing "nd"
-        DevicePropertyCode::SubjectRecognitionCarTrainDetectionSensitivity => "Vehicle Sens",
         _ => code.name(),
     }
 }
@@ -1453,9 +1416,15 @@ fn display_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::DisplayedMenuStatus => {
             "Current menu display state."
         }
-        // Moved from NDFilter (was incorrectly categorized due to "nd" substring)
-        DevicePropertyCode::SelectFinder => "Switch between LCD monitor and electronic viewfinder.",
-        DevicePropertyCode::DispModeCandidate => "Available display modes for the current shooting mode.",
+        DevicePropertyCode::GammaDisplayAssist => {
+            "Applies a preview LUT to show how log footage will look after color grading. Does not affect recorded video."
+        }
+        DevicePropertyCode::GammaDisplayAssistType => {
+            "Type of display assist LUT to apply for preview."
+        }
+        DevicePropertyCode::PlaybackContentsGammaType => {
+            "Gamma curve type of the content being played back."
+        }
         _ => "",
     }
 }
@@ -1471,9 +1440,12 @@ fn display_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::MonitorBrightnessType => "Monitor Bright.",
         DevicePropertyCode::MonitorBrightnessManual => "Monitor Bright. (M)",
         DevicePropertyCode::DisplayedMenuStatus => "Menu Status",
-        // Moved from NDFilter (was incorrectly categorized due to "nd" substring)
         DevicePropertyCode::SelectFinder => "Finder Select",
         DevicePropertyCode::DispModeCandidate => "Disp Mode Options",
+        DevicePropertyCode::GammaDisplayAssist => "Gamma Disp Assist",
+        DevicePropertyCode::GammaDisplayAssistType => "Gamma Assist Type",
+        DevicePropertyCode::DisplayQualityFinder => "Finder Quality",
+        DevicePropertyCode::PlaybackContentsGammaType => "Playback Gamma",
         _ => code.name(),
     }
 }
@@ -1486,6 +1458,15 @@ fn stabilization_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::MovieImageStabilizationSteadyShot => {
             "Stabilization mode for video. Active mode is more aggressive but slightly crops the image."
         }
+        DevicePropertyCode::ImageStabilizationSteadyShotAdjust => {
+            "Fine-tune IBIS correction strength for specific shooting conditions."
+        }
+        DevicePropertyCode::ImageStabilizationSteadyShotFocalLength => {
+            "Manual focal length input for SteadyShot. Set when using adapted lenses that don't report focal length."
+        }
+        DevicePropertyCode::ImageStabilizationFramingStabilizer => {
+            "Framing stabilizer maintains frame position during video. Reduces shifts between cuts."
+        }
         _ => "",
     }
 }
@@ -1497,6 +1478,7 @@ fn stabilization_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::MovieImageStabilizationLevel => "SteadyShot Level",
         DevicePropertyCode::ImageStabilizationSteadyShotAdjust => "SteadyShot Adjust",
         DevicePropertyCode::ImageStabilizationSteadyShotFocalLength => "SteadyShot Focal Length",
+        DevicePropertyCode::ImageStabilizationFramingStabilizer => "Framing Stabilizer",
         _ => code.name(),
     }
 }
