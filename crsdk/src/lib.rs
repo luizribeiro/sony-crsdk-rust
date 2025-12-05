@@ -75,9 +75,9 @@ pub use device::{discover_cameras, CameraDevice, CameraDeviceBuilder};
 pub use error::{Error, Result};
 pub use event::{warning_code_name, warning_param_description, CameraEvent};
 pub use property::{
-    format_movie_quality, DataType, DeviceProperty, DriveMode, EnableFlag, ExposureProgram,
-    FileType, FlashMode, FocusArea, FocusMode, ImageQuality, MeteringMode, MovieFileFormat, OnOff,
-    PropertyCode, Switch, WhiteBalance,
+    format_movie_quality, AutoManual, DataType, DeviceProperty, DriveMode, EnableFlag,
+    ExposureProgram, FileType, FlashMode, FocusArea, FocusMode, ImageQuality, MeteringMode,
+    MovieFileFormat, OnOff, PropertyCode, Switch, WhiteBalance,
 };
 pub use sdk::Sdk;
 pub use types::{CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, MacAddr};

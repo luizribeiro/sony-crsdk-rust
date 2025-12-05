@@ -1882,6 +1882,43 @@ impl std::fmt::Display for OnOff {
     }
 }
 
+/// Automatic/Manual mode setting (Automatic=1, Manual=2).
+///
+/// Used for IrisModeSetting, ShutterModeSetting, GainControlSetting, and NDFilterModeSetting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum AutoManual {
+    Automatic = 1,
+    Manual = 2,
+}
+
+impl AutoManual {
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    pub fn from_raw(value: u64) -> Option<Self> {
+        Some(match value as u8 {
+            1 => Self::Automatic,
+            2 => Self::Manual,
+            _ => return None,
+        })
+    }
+}
+
+impl std::fmt::Display for AutoManual {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Automatic => "Auto",
+                Self::Manual => "Manual",
+            }
+        )
+    }
+}
+
 /// Format movie recording quality/bitrate setting to display string
 pub fn format_movie_quality(value: u64) -> String {
     match value as u16 {
