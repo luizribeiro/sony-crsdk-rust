@@ -182,6 +182,9 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::LongExposureNR => {
             "Reduces hot pixels and noise in long exposures by taking a 'dark frame' subtraction. Doubles the capture time."
         }
+        DevicePropertyCode::StillImageStoreDestination => {
+            "Which memory card slot to save still images to. Slot 1, Slot 2, or both slots for simultaneous backup."
+        }
         _ => "",
     }
 }

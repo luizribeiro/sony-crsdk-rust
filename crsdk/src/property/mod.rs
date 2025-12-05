@@ -12,6 +12,8 @@ mod flash;
 mod focus;
 mod image;
 mod movie;
+#[cfg(test)]
+mod todo;
 mod white_balance;
 
 // Re-export all value enums
@@ -743,5 +745,81 @@ mod tests {
             possible_values: vec![],
         };
         assert!(prop_empty.is_valid_value(999));
+    }
+
+    use super::todo::{NEEDS_DESCRIPTION, NEEDS_DISPLAY_NAME};
+    use std::collections::HashSet;
+
+    #[test]
+    fn test_all_properties_have_custom_display_names() {
+        let expected: HashSet<_> = NEEDS_DISPLAY_NAME.iter().collect();
+        let mut actual_missing = Vec::new();
+
+        for code in DevicePropertyCode::ALL {
+            let display = property_display_name(*code);
+            let fallback = code.name();
+
+            if display == fallback {
+                actual_missing.push(*code);
+            }
+        }
+
+        let actual: HashSet<_> = actual_missing.iter().collect();
+
+        // Find properties that are missing but not in expected list (new regressions)
+        let unexpected: Vec<_> = actual.difference(&expected).collect();
+        assert!(
+            unexpected.is_empty(),
+            "New properties missing display names (add display name or add to NEEDS_DISPLAY_NAME in todo.rs): {:?}",
+            unexpected
+        );
+
+        // Find properties in expected list that now have display names (need to remove from list)
+        let fixed: Vec<_> = expected.difference(&actual).collect();
+        assert!(
+            fixed.is_empty(),
+            "Properties now have display names - remove from NEEDS_DISPLAY_NAME in todo.rs: {:?}",
+            fixed
+        );
+    }
+
+    #[test]
+    fn test_all_properties_have_descriptions() {
+        let expected: HashSet<_> = NEEDS_DESCRIPTION.iter().collect();
+        let mut actual_missing = Vec::new();
+
+        for code in DevicePropertyCode::ALL {
+            let desc = property_description(*code);
+            if desc.is_empty() {
+                actual_missing.push(*code);
+            }
+        }
+
+        let actual: HashSet<_> = actual_missing.iter().collect();
+
+        // Find properties that are missing but not in expected list (new regressions)
+        let unexpected: Vec<_> = actual.difference(&expected).collect();
+        assert!(
+            unexpected.is_empty(),
+            "New properties missing descriptions (add description or add to NEEDS_DESCRIPTION in todo.rs): {:?}",
+            unexpected
+        );
+
+        // Find properties in expected list that now have descriptions (need to remove from list)
+        let fixed: Vec<_> = expected.difference(&actual).collect();
+        assert!(
+            fixed.is_empty(),
+            "Properties now have descriptions - remove from NEEDS_DESCRIPTION in todo.rs: {:?}",
+            fixed
+        );
+    }
+
+    #[test]
+    fn test_all_properties_have_valid_categories() {
+        for code in DevicePropertyCode::ALL {
+            let category = code.category();
+            // Ensure category() doesn't panic and returns a valid category
+            let _ = format!("{:?}", category);
+        }
     }
 }
