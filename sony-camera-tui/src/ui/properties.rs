@@ -252,7 +252,7 @@ fn render_property_list(
                 Style::default()
             };
 
-            let lock_indicator = if !prop.writable { "🔒 " } else { "  " };
+            let lock_indicator = if !prop.writable { "🔒" } else { "  " };
             let lock_style = Style::default().fg(Color::Rgb(80, 80, 80));
 
             ListItem::new(Line::from(vec![
