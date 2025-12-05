@@ -4,6 +4,7 @@ use ratatui::{
     text::{Line, Span},
     widgets::{
         Block, Borders, List, ListItem, Paragraph, Scrollbar, ScrollbarOrientation, ScrollbarState,
+        Wrap,
     },
     Frame,
 };
@@ -27,19 +28,29 @@ fn scroll_offset_for_selection(
 }
 
 use crate::app::{App, ConnectedCamera, PropertyEditorFocus};
-use crsdk::property_display_name;
+use crsdk::{property_description, property_display_name};
 
 use super::header::{self, HeaderState};
 
 pub fn render(frame: &mut Frame, app: &App, camera: &Option<ConnectedCamera>) {
     let area = frame.area();
 
-    let layout = Layout::vertical([
-        Constraint::Length(1),
-        Constraint::Min(10),
-        Constraint::Length(1),
-    ])
-    .split(area);
+    let layout = if app.property_editor.show_info {
+        Layout::vertical([
+            Constraint::Length(1), // Header
+            Constraint::Min(10),   // Content
+            Constraint::Length(5), // Info panel
+            Constraint::Length(1), // Shortcuts
+        ])
+        .split(area)
+    } else {
+        Layout::vertical([
+            Constraint::Length(1), // Header
+            Constraint::Min(10),   // Content
+            Constraint::Length(1), // Shortcuts
+        ])
+        .split(area)
+    };
 
     let exposure_mode = app.properties.exposure_mode();
     let header_state = HeaderState {
@@ -54,7 +65,13 @@ pub fn render(frame: &mut Frame, app: &App, camera: &Option<ConnectedCamera>) {
     };
     header::render(frame, layout[0], &header_state);
     render_content(frame, layout[1], app);
-    render_shortcuts(frame, layout[2], app);
+
+    if app.property_editor.show_info {
+        render_info_panel(frame, layout[2], app);
+        render_shortcuts(frame, layout[3], app);
+    } else {
+        render_shortcuts(frame, layout[2], app);
+    }
 }
 
 fn render_content(frame: &mut Frame, area: Rect, app: &App) {
@@ -364,6 +381,39 @@ fn render_value_list(
     }
 }
 
+fn render_info_panel(frame: &mut Frame, area: Rect, app: &App) {
+    let categories = app.properties.available_categories();
+    let current_category = app.property_editor.current_category(&categories);
+    let properties = app.properties.properties_by_category(current_category);
+
+    let (title, description) =
+        if let Some(prop) = properties.get(app.property_editor.property_index) {
+            let name = property_display_name(prop.code);
+            let desc = property_description(prop.code);
+            (name, desc)
+        } else {
+            (
+                "No property selected",
+                "Select a property to see its description.",
+            )
+        };
+
+    let block = Block::default()
+        .title(Span::styled(
+            format!(" {} ", title),
+            Style::default().fg(Color::Cyan),
+        ))
+        .borders(Borders::ALL)
+        .border_style(Style::default().fg(Color::Rgb(60, 60, 60)));
+
+    let paragraph = Paragraph::new(description)
+        .style(Style::default().fg(Color::DarkGray))
+        .wrap(Wrap { trim: true })
+        .block(block);
+
+    frame.render_widget(paragraph, area);
+}
+
 fn render_shortcuts(frame: &mut Frame, area: Rect, app: &App) {
     let shortcuts = match app.property_editor.focus {
         PropertyEditorFocus::Categories | PropertyEditorFocus::Properties => Line::from(vec![
@@ -376,11 +426,11 @@ fn render_shortcuts(frame: &mut Frame, area: Rect, app: &App) {
             Span::styled(" o ", Style::default().fg(Color::Cyan)),
             Span::styled("Values", Style::default().fg(Color::DarkGray)),
             Span::raw("  "),
+            Span::styled(" i ", Style::default().fg(Color::Cyan)),
+            Span::styled("Info", Style::default().fg(Color::DarkGray)),
+            Span::raw("  "),
             Span::styled(" / ", Style::default().fg(Color::Cyan)),
             Span::styled("Search", Style::default().fg(Color::DarkGray)),
-            Span::raw("  "),
-            Span::styled(" Tab ", Style::default().fg(Color::Cyan)),
-            Span::styled("Category", Style::default().fg(Color::DarkGray)),
             Span::raw("  "),
             Span::styled(" * ", Style::default().fg(Color::Yellow)),
             Span::styled("Pin", Style::default().fg(Color::DarkGray)),
@@ -395,8 +445,8 @@ fn render_shortcuts(frame: &mut Frame, area: Rect, app: &App) {
             Span::styled(" Enter ", Style::default().fg(Color::Cyan)),
             Span::styled("Apply", Style::default().fg(Color::DarkGray)),
             Span::raw("  "),
-            Span::styled(" Tab ", Style::default().fg(Color::Cyan)),
-            Span::styled("Category", Style::default().fg(Color::DarkGray)),
+            Span::styled(" i ", Style::default().fg(Color::Cyan)),
+            Span::styled("Info", Style::default().fg(Color::DarkGray)),
             Span::raw("  "),
             Span::styled(" Esc ", Style::default().fg(Color::Cyan)),
             Span::styled("Cancel", Style::default().fg(Color::DarkGray)),

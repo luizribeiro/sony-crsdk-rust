@@ -163,6 +163,7 @@ pub struct PropertyEditorState {
     pub property_index: usize,
     pub focus: PropertyEditorFocus,
     pub value_preview_index: usize,
+    pub show_info: bool,
 }
 
 impl PropertyEditorState {
@@ -775,6 +776,9 @@ impl App {
                         self.properties.toggle_pin(code);
                     }
                 }
+            }
+            Action::TogglePropertyInfo => {
+                self.property_editor.show_info = !self.property_editor.show_info;
             }
             Action::ShowPropertySearch => {
                 let results = crate::property::search_properties(&self.properties, "");
