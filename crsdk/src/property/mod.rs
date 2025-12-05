@@ -542,6 +542,371 @@ fn common_value_type(code: DevicePropertyCode) -> PropertyValueType {
             PropertyValueType::Integer
         }
 
+        // Lens Compensation
+        DevicePropertyCode::LensCompensationBreathing
+        | DevicePropertyCode::LensCompensationChromaticAberration
+        | DevicePropertyCode::LensCompensationDistortion
+        | DevicePropertyCode::LensCompensationShading => PropertyValueType::OnOff,
+
+        // Flicker
+        DevicePropertyCode::FlickerLessShooting => PropertyValueType::OnOff,
+        DevicePropertyCode::FlickerLessShootingStatus
+        | DevicePropertyCode::FlickerScanEnableStatus
+        | DevicePropertyCode::FlickerScanStatus => PropertyValueType::Integer,
+
+        // E-framing
+        DevicePropertyCode::EframingAutoFraming
+        | DevicePropertyCode::EframingCommandVersion
+        | DevicePropertyCode::EframingHDMICrop
+        | DevicePropertyCode::EframingModeAuto
+        | DevicePropertyCode::EframingProductionEffect
+        | DevicePropertyCode::EframingRecordingImageCrop
+        | DevicePropertyCode::EframingScaleAuto
+        | DevicePropertyCode::EframingSpeedAuto
+        | DevicePropertyCode::EframingSpeedPTZ
+        | DevicePropertyCode::EframingTrackingStartMode
+        | DevicePropertyCode::EframingType => PropertyValueType::Integer,
+
+        // Cinematic Vlog
+        DevicePropertyCode::CinematicVlogAFTransitionSpeed
+        | DevicePropertyCode::CinematicVlogLook
+        | DevicePropertyCode::CinematicVlogMood
+        | DevicePropertyCode::CinematicVlogSetting => PropertyValueType::Integer,
+
+        // Focal Distance
+        DevicePropertyCode::FocalDistanceInFeet
+        | DevicePropertyCode::FocalDistanceInMeter
+        | DevicePropertyCode::FocalDistanceUnitSetting => PropertyValueType::Integer,
+
+        // Depth of Field
+        DevicePropertyCode::DepthOfFieldAdjustmentInterlockingMode
+        | DevicePropertyCode::DepthOfFieldAdjustmentMode => PropertyValueType::Integer,
+
+        // Content Transfer
+        DevicePropertyCode::ContentsTransferCancelEnableStatus
+        | DevicePropertyCode::ContentsTransferProgress
+        | DevicePropertyCode::ContentsTransferStatus => PropertyValueType::Integer,
+
+        // Monitoring
+        DevicePropertyCode::MonitoringAvailableFormat
+        | DevicePropertyCode::MonitoringDeliveringStatus
+        | DevicePropertyCode::MonitoringDeliveryTypeSupportInfo
+        | DevicePropertyCode::MonitoringFormatSupportInformation
+        | DevicePropertyCode::MonitoringIsDelivering
+        | DevicePropertyCode::MonitoringOutputDisplayHDMI
+        | DevicePropertyCode::MonitoringOutputDisplaySDI
+        | DevicePropertyCode::MonitoringOutputDisplaySetting1
+        | DevicePropertyCode::MonitoringOutputDisplaySetting2
+        | DevicePropertyCode::MonitoringOutputDisplaySettingDestAssign
+        | DevicePropertyCode::MonitoringOutputFormat
+        | DevicePropertyCode::MonitoringSettingVersion
+        | DevicePropertyCode::MonitoringTransportProtocol => PropertyValueType::Integer,
+
+        // Movie HDMI Output
+        DevicePropertyCode::MovieHDMIOutput4KSetting
+        | DevicePropertyCode::MovieHDMIOutputAudioCH
+        | DevicePropertyCode::MovieHDMIOutputColorGamutForRAWOut
+        | DevicePropertyCode::MovieHDMIOutputRAW
+        | DevicePropertyCode::MovieHDMIOutputRawSetting
+        | DevicePropertyCode::MovieHDMIOutputRecControl
+        | DevicePropertyCode::MovieHDMIOutputRecMedia
+        | DevicePropertyCode::MovieHDMIOutputResolution
+        | DevicePropertyCode::MovieHDMIOutputTimeCode => PropertyValueType::Integer,
+
+        // Movie Interval Recording
+        DevicePropertyCode::MovieIntervalRecCountDownIntervalTime
+        | DevicePropertyCode::MovieIntervalRecFrameRateSetting
+        | DevicePropertyCode::MovieIntervalRecFrames
+        | DevicePropertyCode::MovieIntervalRecIntervalTime
+        | DevicePropertyCode::MovieIntervalRecRecordingDuration
+        | DevicePropertyCode::MovieIntervalRecRecordingSetting => PropertyValueType::Integer,
+
+        // Movie Image Stabilization
+        DevicePropertyCode::MovieImageStabilizationLevel
+        | DevicePropertyCode::MovieImageStabilizationSteadyShot => PropertyValueType::Integer,
+
+        // Playback
+        DevicePropertyCode::PlaySetOfMultiMedia
+        | DevicePropertyCode::PlaybackContentsName
+        | DevicePropertyCode::PlaybackContentsNumber
+        | DevicePropertyCode::PlaybackContentsRecordingDateTime
+        | DevicePropertyCode::PlaybackContentsRecordingFileFormat
+        | DevicePropertyCode::PlaybackContentsRecordingFrameRate
+        | DevicePropertyCode::PlaybackContentsRecordingResolution
+        | DevicePropertyCode::PlaybackContentsTotalNumber
+        | DevicePropertyCode::PlaybackMedia
+        | DevicePropertyCode::PlaybackViewMode
+        | DevicePropertyCode::PlaybackVolumeSettings => PropertyValueType::Integer,
+
+        // Video Stream
+        DevicePropertyCode::VideoStreamAdaptiveRateControl
+        | DevicePropertyCode::VideoStreamBitRateCompressionMode
+        | DevicePropertyCode::VideoStreamBitRateVBRMode
+        | DevicePropertyCode::VideoStreamCodec
+        | DevicePropertyCode::VideoStreamMaxBitRate
+        | DevicePropertyCode::VideoStreamMovieRecPermission
+        | DevicePropertyCode::VideoStreamResolution
+        | DevicePropertyCode::VideoStreamResolutionMethod
+        | DevicePropertyCode::VideoStreamSelect
+        | DevicePropertyCode::VideoStreamSettingVersion => PropertyValueType::Integer,
+
+        // Time Shift
+        DevicePropertyCode::TimeShiftPreShootingTimeSetting
+        | DevicePropertyCode::TimeShiftShooting
+        | DevicePropertyCode::TimeShiftShootingStatus
+        | DevicePropertyCode::TimeShiftTriggerSetting => PropertyValueType::Integer,
+
+        // Pan/Tilt
+        DevicePropertyCode::PanLimitMode
+        | DevicePropertyCode::PanLimitRangeMaximum
+        | DevicePropertyCode::PanLimitRangeMinimum
+        | DevicePropertyCode::PanPositionCurrentValue
+        | DevicePropertyCode::PanPositionStatus
+        | DevicePropertyCode::PanTiltAccelerationRampCurve
+        | DevicePropertyCode::TiltLimitMode
+        | DevicePropertyCode::TiltLimitRangeMaximum
+        | DevicePropertyCode::TiltLimitRangeMinimum
+        | DevicePropertyCode::TiltPositionCurrentValue
+        | DevicePropertyCode::TiltPositionStatus => PropertyValueType::Integer,
+
+        // Picture Cache
+        DevicePropertyCode::PictureCacheRecSetting
+        | DevicePropertyCode::PictureCacheRecSizeAndTime => PropertyValueType::Integer,
+
+        // Paint Look
+        DevicePropertyCode::PaintLookAutoKnee
+        | DevicePropertyCode::PaintLookBBlack
+        | DevicePropertyCode::PaintLookDetailLevel
+        | DevicePropertyCode::PaintLookDetailSetting
+        | DevicePropertyCode::PaintLookKneePoint
+        | DevicePropertyCode::PaintLookKneeSetting
+        | DevicePropertyCode::PaintLookKneeSlope
+        | DevicePropertyCode::PaintLookMasterBlack
+        | DevicePropertyCode::PaintLookMultiMatrixAreaIndication
+        | DevicePropertyCode::PaintLookMultiMatrixAxis
+        | DevicePropertyCode::PaintLookMultiMatrixHue
+        | DevicePropertyCode::PaintLookMultiMatrixSaturation
+        | DevicePropertyCode::PaintLookMultiMatrixSetting
+        | DevicePropertyCode::PaintLookRBlack
+        | DevicePropertyCode::PaintLookUserMatrixBG
+        | DevicePropertyCode::PaintLookUserMatrixBR
+        | DevicePropertyCode::PaintLookUserMatrixGB
+        | DevicePropertyCode::PaintLookUserMatrixGR
+        | DevicePropertyCode::PaintLookUserMatrixLevel
+        | DevicePropertyCode::PaintLookUserMatrixPhase
+        | DevicePropertyCode::PaintLookUserMatrixRB
+        | DevicePropertyCode::PaintLookUserMatrixRG
+        | DevicePropertyCode::PaintLookUserMatrixSetting => PropertyValueType::Integer,
+
+        // User Bit/User Base Look
+        DevicePropertyCode::UserBitPreset
+        | DevicePropertyCode::UserBitPresetResetEnableStatus
+        | DevicePropertyCode::UserBitTimeRec
+        | DevicePropertyCode::UserBaseLookAELevelOffset
+        | DevicePropertyCode::UserBaseLookInput
+        | DevicePropertyCode::UserBaseLookOutput => PropertyValueType::Integer,
+
+        // Tally Lamp
+        DevicePropertyCode::TallyLampControlGreen
+        | DevicePropertyCode::TallyLampControlRed
+        | DevicePropertyCode::TallyLampControlYellow => PropertyValueType::Integer,
+
+        // Stream
+        DevicePropertyCode::StreamButtonEnableStatus
+        | DevicePropertyCode::StreamCipherType
+        | DevicePropertyCode::StreamDisplayName
+        | DevicePropertyCode::StreamLatency
+        | DevicePropertyCode::StreamModeSetting
+        | DevicePropertyCode::StreamSettingListOperationStatus
+        | DevicePropertyCode::StreamStatus
+        | DevicePropertyCode::StreamTTL
+        | DevicePropertyCode::TargetStreamingDestinationSelect => PropertyValueType::Integer,
+
+        // Scene File
+        DevicePropertyCode::SceneFileCommandVersion
+        | DevicePropertyCode::SceneFileDownloadOperationEnableStatus
+        | DevicePropertyCode::SceneFileIndex
+        | DevicePropertyCode::SceneFileIndexesAvailableForDownload
+        | DevicePropertyCode::SceneFileUploadOperationEnableStatus => PropertyValueType::Integer,
+
+        // Recorder
+        DevicePropertyCode::RecorderClipName
+        | DevicePropertyCode::RecorderControlMainSetting
+        | DevicePropertyCode::RecorderControlProxySetting
+        | DevicePropertyCode::RecorderExtRawStatus
+        | DevicePropertyCode::RecorderSaveDestination
+        | DevicePropertyCode::RecorderStartMain
+        | DevicePropertyCode::RecorderStartProxy
+        | DevicePropertyCode::RecordingFileNumber
+        | DevicePropertyCode::RecordingFolderFormat
+        | DevicePropertyCode::RecordingSettingFileName => PropertyValueType::Integer,
+
+        // Movie misc
+        DevicePropertyCode::MovieForwardButton
+        | DevicePropertyCode::MovieNextButton
+        | DevicePropertyCode::MoviePlayButton
+        | DevicePropertyCode::MoviePlayPauseButton
+        | DevicePropertyCode::MoviePlayStopButton
+        | DevicePropertyCode::MoviePrevButton
+        | DevicePropertyCode::MovieRewindButton
+        | DevicePropertyCode::MovieQualityFullAutoMode
+        | DevicePropertyCode::MovieRecButtonToggleEnableStatus
+        | DevicePropertyCode::MovieRecReviewButton
+        | DevicePropertyCode::MovieRecReviewPlayingState
+        | DevicePropertyCode::MovieRecordingFrameRateRTSPSetting
+        | DevicePropertyCode::MovieRecordingResolutionForRAW
+        | DevicePropertyCode::MovieRecordingResolutionForRTSP
+        | DevicePropertyCode::MovieShootingMode
+        | DevicePropertyCode::MovieShootingModeColorGamut
+        | DevicePropertyCode::MovieShootingModeTargetDisplay
+        | DevicePropertyCode::LogShootingMode
+        | DevicePropertyCode::LogShootingModeColorGamut => PropertyValueType::Integer,
+
+        // S&Q Mode
+        DevicePropertyCode::SQFrameRate
+        | DevicePropertyCode::SQModeSetting
+        | DevicePropertyCode::SQRecordingFrameRateSetting
+        | DevicePropertyCode::SQRecordingSetting => PropertyValueType::Integer,
+
+        // Various enables/misc
+        DevicePropertyCode::APSCOrFullSwitchingEnableStatus
+        | DevicePropertyCode::APSCOrFullSwitchingSetting
+        | DevicePropertyCode::APSCS35
+        | DevicePropertyCode::AmountOfDefocusSetting
+        | DevicePropertyCode::AntidustShutterWhenPowerOff
+        | DevicePropertyCode::ApertureDriveInAF
+        | DevicePropertyCode::AreaTimeZoneSettingVersion
+        | DevicePropertyCode::AutoPowerOffTemperature
+        | DevicePropertyCode::AutoRecognitionTargetCandidates
+        | DevicePropertyCode::AutoRecognitionTargetSetting
+        | DevicePropertyCode::BodySerialNumber
+        | DevicePropertyCode::CallSetting
+        | DevicePropertyCode::CameraButtonFunction
+        | DevicePropertyCode::CameraButtonFunctionMulti
+        | DevicePropertyCode::CameraButtonFunctionStatus
+        | DevicePropertyCode::CameraDialFunction
+        | DevicePropertyCode::CameraEframing
+        | DevicePropertyCode::CameraLeverFunction
+        | DevicePropertyCode::CameraSettingSaveReadState
+        | DevicePropertyCode::CancelMediaFormatEnableStatus
+        | DevicePropertyCode::CancelRemoteTouchOperationEnableStatus
+        | DevicePropertyCode::ColorSpace
+        | DevicePropertyCode::ControlForHDMI
+        | DevicePropertyCode::CreateNewFolder
+        | DevicePropertyCode::CreateNewFolderEnableStatus
+        | DevicePropertyCode::CurrentSceneFileEdited
+        | DevicePropertyCode::CustomGridLineFileCommandVersion
+        | DevicePropertyCode::DateTimeSettings
+        | DevicePropertyCode::DeSqueezeDisplayRatio
+        | DevicePropertyCode::DebugMode
+        | DevicePropertyCode::DeleteContentOperationEnableStatusSLOT1
+        | DevicePropertyCode::DeleteContentOperationEnableStatusSLOT2
+        | DevicePropertyCode::DeleteUserBaseLook
+        | DevicePropertyCode::DeviceOverheatingState
+        | DevicePropertyCode::DifferentSetForSQMovie
+        | DevicePropertyCode::ElectricFrontCurtainShutter
+        | DevicePropertyCode::EmbedLUTFile
+        | DevicePropertyCode::EnlargeScreenSetting
+        | DevicePropertyCode::EstimatePictureSize
+        | DevicePropertyCode::ExtendedInterfaceMode
+        | DevicePropertyCode::FTPFunction
+        | DevicePropertyCode::FTPPowerSave
+        | DevicePropertyCode::FaceEyeDetectionAFStatus
+        | DevicePropertyCode::FirmwareUpdateCommandVersion
+        | DevicePropertyCode::ForcedFileNumberResetEnableStatus
+        | DevicePropertyCode::FullTimeDMF
+        | DevicePropertyCode::FunctionOfRemoteTouchOperation
+        | DevicePropertyCode::FunctionOfTouchOperation
+        | DevicePropertyCode::GetOnly
+        | DevicePropertyCode::GridLineDisplayPlayback
+        | DevicePropertyCode::HDMIResolutionStillPlay
+        | DevicePropertyCode::HighResolutionShutterSpeed
+        | DevicePropertyCode::HighResolutionShutterSpeedAdjust
+        | DevicePropertyCode::HighResolutionShutterSpeedAdjustInIntegralMultiples
+        | DevicePropertyCode::HighResolutionShutterSpeedSetting
+        | DevicePropertyCode::HomeMenuSetting
+        | DevicePropertyCode::IPSetupProtocolSetting
+        | DevicePropertyCode::IRRemoteSetting
+        | DevicePropertyCode::ImageIDNum
+        | DevicePropertyCode::ImageIDNumSetting
+        | DevicePropertyCode::ImageIDString
+        | DevicePropertyCode::ImagerScanMode
+        | DevicePropertyCode::LanguageSetting
+        | DevicePropertyCode::LensAssignableButtonIndicator1
+        | DevicePropertyCode::LensInformationEnableStatus
+        | DevicePropertyCode::LensModelName
+        | DevicePropertyCode::LensSerialNumber
+        | DevicePropertyCode::LensVersionNumber
+        | DevicePropertyCode::LiveViewArea
+        | DevicePropertyCode::LiveViewImageQualityByNumericalValue
+        | DevicePropertyCode::MaxVal
+        | DevicePropertyCode::MaximumNumberOfBytes
+        | DevicePropertyCode::MaximumSizeOfImageIDString
+        | DevicePropertyCode::MicrophoneDirectivity
+        | DevicePropertyCode::ModelName
+        | DevicePropertyCode::MonitorLUTSetting1
+        | DevicePropertyCode::MonitorLUTSetting2
+        | DevicePropertyCode::MonitorLUTSetting3
+        | DevicePropertyCode::MonitorLUTSettingOutputDestAssign
+        | DevicePropertyCode::OSDImageMode
+        | DevicePropertyCode::PixelMappingEnableStatus
+        | DevicePropertyCode::PostViewTransferResourceStatus
+        | DevicePropertyCode::PresetPTZFSlotNumber
+        | DevicePropertyCode::PriorityKeySettings
+        | DevicePropertyCode::ProductShowcaseSet
+        | DevicePropertyCode::ProgramShiftStatus
+        | DevicePropertyCode::ProxyRecordingSetting
+        | DevicePropertyCode::PushAFModeSetting
+        | DevicePropertyCode::PushAGC
+        | DevicePropertyCode::PushAutoIris
+        | DevicePropertyCode::RAWJPCSaveImage
+        | DevicePropertyCode::RecognitionTarget
+        | DevicePropertyCode::ReleaseWithoutCard
+        | DevicePropertyCode::ReleaseWithoutLens
+        | DevicePropertyCode::RemoteKeySLOTSelectButton
+        | DevicePropertyCode::RemoteKeyThumbnailButton
+        | DevicePropertyCode::RemoteTouchOperation
+        | DevicePropertyCode::RemoteTouchOperationEnableStatus
+        | DevicePropertyCode::RightLeftEyeSelect
+        | DevicePropertyCode::S1
+        | DevicePropertyCode::S2
+        | DevicePropertyCode::SelectIPTCMetadata
+        | DevicePropertyCode::SelectUserBaseLookToEdit
+        | DevicePropertyCode::SelectUserBaseLookToSetInPPLUT
+        | DevicePropertyCode::SensorCleaningEnableStatus
+        | DevicePropertyCode::SetCopyright
+        | DevicePropertyCode::SetPhotographer
+        | DevicePropertyCode::SetPresetPTZFBinaryVersion
+        | DevicePropertyCode::ShootingEnableSettingLicense
+        | DevicePropertyCode::ShootingTimingPreNotificationMode
+        | DevicePropertyCode::SilentModeAutoPixelMapping
+        | DevicePropertyCode::SilentModeShutterWhenPowerOff
+        | DevicePropertyCode::SimulRecSettingMovieRecButton
+        | DevicePropertyCode::SnapshotInfo
+        | DevicePropertyCode::SoftwareVersion
+        | DevicePropertyCode::StillImageTransSize
+        | DevicePropertyCode::SynchroterminalForcedOutput
+        | DevicePropertyCode::SystemErrorCautionStatus
+        | DevicePropertyCode::TCUBDisplaySetting
+        | DevicePropertyCode::TNumber
+        | DevicePropertyCode::TimeCodePresetResetEnableStatus
+        | DevicePropertyCode::TopOfTheGroupShootingMarkSetting
+        | DevicePropertyCode::TotalBatteryLevel
+        | DevicePropertyCode::TouchFunctionInMF
+        | DevicePropertyCode::TouchOperation
+        | DevicePropertyCode::TrackingOnAndAFOnEnableStatus
+        | DevicePropertyCode::USBPowerSupply
+        | DevicePropertyCode::UpdateBodyStatus
+        | DevicePropertyCode::UploadDatasetVersion
+        | DevicePropertyCode::ValidRecordingVideoFormat
+        | DevicePropertyCode::VideoRecordingFormatBitrateSetting
+        | DevicePropertyCode::VideoRecordingFormatQuality
+        | DevicePropertyCode::WakeOnLAN
+        | DevicePropertyCode::WriteCopyrightInfo
+        | DevicePropertyCode::ZoomDistance
+        | DevicePropertyCode::ZoomSetting
+        | DevicePropertyCode::ZoomSpeedRange => PropertyValueType::Integer,
+
         _ => PropertyValueType::Unknown,
     }
 }
@@ -1024,8 +1389,10 @@ fn zoom_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::ZoomTypeStatus => "Zoom Type",
         DevicePropertyCode::DigitalZoomScale => "Digital Zoom",
         DevicePropertyCode::RemoconZoomSpeedType => "Remote Zoom Speed",
-        // ZoomSetting, ZoomSpeedRange, ZoomDistance, ZoomDistanceUnitSetting
-        // use generated names (approved in DISPLAY_NAME_OK_AS_IS)
+        DevicePropertyCode::ZoomSetting => "Zoom Setting",
+        DevicePropertyCode::ZoomSpeedRange => "Zoom Speed Range",
+        DevicePropertyCode::ZoomDistance => "Zoom Distance",
+        DevicePropertyCode::ZoomDistanceUnitSetting => "Zoom Distance Unit",
         _ => code.name(),
     }
 }
@@ -1856,6 +2223,333 @@ fn other_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::DigitalExtenderMagnificationSetting => {
             "Digital extender zoom factor. Crops and enlarges the image beyond optical zoom range."
         }
+        // Paint Look settings (professional video color control)
+        DevicePropertyCode::PaintLookAutoKnee => {
+            "Automatic knee point adjustment. Compresses highlights to prevent clipping."
+        }
+        DevicePropertyCode::PaintLookBBlack => "Blue channel black level adjustment.",
+        DevicePropertyCode::PaintLookRBlack => "Red channel black level adjustment.",
+        DevicePropertyCode::PaintLookMasterBlack => {
+            "Overall black level adjustment. Affects all color channels equally."
+        }
+        DevicePropertyCode::PaintLookDetailLevel => {
+            "Amount of detail/sharpening applied to the image."
+        }
+        DevicePropertyCode::PaintLookDetailSetting => "Detail enhancement settings and options.",
+        DevicePropertyCode::PaintLookKneePoint => {
+            "Highlight compression threshold. Point at which highlights begin to be compressed."
+        }
+        DevicePropertyCode::PaintLookKneeSetting => {
+            "Knee compression mode and settings for highlight handling."
+        }
+        DevicePropertyCode::PaintLookKneeSlope => {
+            "Rate of highlight compression above the knee point."
+        }
+        DevicePropertyCode::PaintLookMultiMatrixAreaIndication => {
+            "Display indicator for multi-matrix color correction areas."
+        }
+        DevicePropertyCode::PaintLookMultiMatrixAxis => {
+            "Color axis selection for multi-matrix adjustments."
+        }
+        DevicePropertyCode::PaintLookMultiMatrixHue => {
+            "Hue adjustment for selected multi-matrix color axis."
+        }
+        DevicePropertyCode::PaintLookMultiMatrixSaturation => {
+            "Saturation adjustment for selected multi-matrix color axis."
+        }
+        DevicePropertyCode::PaintLookMultiMatrixSetting => "Multi-matrix color correction settings.",
+        DevicePropertyCode::PaintLookUserMatrixBG => "User matrix blue-green cross-coupling.",
+        DevicePropertyCode::PaintLookUserMatrixBR => "User matrix blue-red cross-coupling.",
+        DevicePropertyCode::PaintLookUserMatrixGB => "User matrix green-blue cross-coupling.",
+        DevicePropertyCode::PaintLookUserMatrixGR => "User matrix green-red cross-coupling.",
+        DevicePropertyCode::PaintLookUserMatrixRB => "User matrix red-blue cross-coupling.",
+        DevicePropertyCode::PaintLookUserMatrixRG => "User matrix red-green cross-coupling.",
+        DevicePropertyCode::PaintLookUserMatrixLevel => "Overall level of user matrix adjustment.",
+        DevicePropertyCode::PaintLookUserMatrixPhase => "Phase adjustment for user color matrix.",
+        DevicePropertyCode::PaintLookUserMatrixSetting => "User-defined color matrix settings.",
+        // Pan/Tilt (PTZ camera control)
+        DevicePropertyCode::PanLimitMode => "Mode for pan movement limits.",
+        DevicePropertyCode::PanLimitRangeMaximum => "Maximum pan angle limit.",
+        DevicePropertyCode::PanLimitRangeMinimum => "Minimum pan angle limit.",
+        DevicePropertyCode::PanPositionCurrentValue => "Current pan position of the camera head.",
+        DevicePropertyCode::PanPositionStatus => "Status of pan position control.",
+        DevicePropertyCode::PanTiltAccelerationRampCurve => {
+            "Acceleration curve for pan/tilt movements. Smoother curves for cinematic motion."
+        }
+        DevicePropertyCode::TiltLimitMode => "Mode for tilt movement limits.",
+        DevicePropertyCode::TiltLimitRangeMaximum => "Maximum tilt angle limit.",
+        DevicePropertyCode::TiltLimitRangeMinimum => "Minimum tilt angle limit.",
+        DevicePropertyCode::TiltPositionCurrentValue => "Current tilt position of the camera head.",
+        DevicePropertyCode::TiltPositionStatus => "Status of tilt position control.",
+        // Monitoring and stream settings
+        DevicePropertyCode::MonitoringAvailableFormat => {
+            "Available video formats for external monitoring output."
+        }
+        DevicePropertyCode::MonitoringDeliveringStatus => "Current monitoring stream delivery status.",
+        DevicePropertyCode::MonitoringDeliveryTypeSupportInfo => {
+            "Supported monitoring delivery protocols and types."
+        }
+        DevicePropertyCode::MonitoringFormatSupportInformation => {
+            "Supported formats for monitoring output."
+        }
+        DevicePropertyCode::MonitoringIsDelivering => "Whether monitoring stream is currently active.",
+        DevicePropertyCode::MonitoringOutputDisplayHDMI => "HDMI monitoring output display settings.",
+        DevicePropertyCode::MonitoringOutputDisplaySDI => "SDI monitoring output display settings.",
+        DevicePropertyCode::MonitoringOutputDisplaySetting1 => "Primary monitoring display settings.",
+        DevicePropertyCode::MonitoringOutputDisplaySetting2 => "Secondary monitoring display settings.",
+        DevicePropertyCode::MonitoringOutputDisplaySettingDestAssign => {
+            "Assignment of monitoring display settings to outputs."
+        }
+        DevicePropertyCode::MonitoringOutputFormat => "Video format for monitoring output.",
+        DevicePropertyCode::MonitoringSettingVersion => "Version of monitoring settings format.",
+        DevicePropertyCode::MonitoringTransportProtocol => "Network protocol for monitoring stream.",
+        DevicePropertyCode::MonitorLUTSetting1 => "First LUT slot for monitoring output.",
+        DevicePropertyCode::MonitorLUTSetting2 => "Second LUT slot for monitoring output.",
+        DevicePropertyCode::MonitorLUTSetting3 => "Third LUT slot for monitoring output.",
+        DevicePropertyCode::MonitorLUTSettingOutputDestAssign => {
+            "LUT assignment to monitoring outputs."
+        }
+        // Stream settings
+        DevicePropertyCode::StreamButtonEnableStatus => {
+            "Whether stream start button is enabled."
+        }
+        DevicePropertyCode::StreamCipherType => "Encryption type for secure streaming.",
+        DevicePropertyCode::StreamDisplayName => "Display name for the stream.",
+        DevicePropertyCode::StreamLatency => "Stream latency mode (low, normal, etc.).",
+        DevicePropertyCode::StreamSettingListOperationStatus => {
+            "Status of stream settings list operations."
+        }
+        DevicePropertyCode::StreamStatus => "Current streaming status.",
+        DevicePropertyCode::StreamTTL => "Time-to-live for stream packets.",
+        DevicePropertyCode::TargetStreamingDestinationSelect => {
+            "Select target destination for streaming."
+        }
+        // Playback properties
+        DevicePropertyCode::PlaySetOfMultiMedia => "Select media set for multi-media playback.",
+        DevicePropertyCode::PlaybackContentsName => "Name of currently playing content.",
+        DevicePropertyCode::PlaybackContentsNumber => "Number/index of current playback content.",
+        DevicePropertyCode::PlaybackContentsRecordingDateTime => {
+            "Recording date and time of current playback content."
+        }
+        DevicePropertyCode::PlaybackContentsRecordingFileFormat => {
+            "File format of current playback content."
+        }
+        DevicePropertyCode::PlaybackContentsRecordingFrameRate => {
+            "Frame rate of current playback content."
+        }
+        DevicePropertyCode::PlaybackContentsRecordingResolution => {
+            "Resolution of current playback content."
+        }
+        DevicePropertyCode::PlaybackContentsTotalNumber => "Total number of playback contents.",
+        DevicePropertyCode::PlaybackMedia => "Media slot used for playback.",
+        DevicePropertyCode::PlaybackViewMode => "View mode for playback (single, thumbnail, etc.).",
+        DevicePropertyCode::PlaybackVolumeSettings => "Audio volume settings for playback.",
+        DevicePropertyCode::GridLineDisplayPlayback => "Show grid lines during playback.",
+        DevicePropertyCode::HDMIResolutionStillPlay => {
+            "HDMI output resolution during still image playback."
+        }
+        // Time Shift recording
+        DevicePropertyCode::TimeShiftPreShootingTimeSetting => {
+            "Buffer time before trigger in time shift recording."
+        }
+        DevicePropertyCode::TimeShiftShooting => "Time shift recording mode setting.",
+        DevicePropertyCode::TimeShiftShootingStatus => "Current time shift recording status.",
+        DevicePropertyCode::TimeShiftTriggerSetting => "Trigger setting for time shift recording.",
+        // Tally lamp
+        DevicePropertyCode::TallyLampControlGreen => "Green tally lamp control.",
+        DevicePropertyCode::TallyLampControlRed => "Red tally lamp control.",
+        DevicePropertyCode::TallyLampControlYellow => "Yellow tally lamp control.",
+        // User Bit settings (video metadata)
+        DevicePropertyCode::UserBitPreset => "Preset value for user bit metadata in video.",
+        DevicePropertyCode::UserBitPresetResetEnableStatus => {
+            "Whether user bit reset is available."
+        }
+        DevicePropertyCode::UserBitTimeRec => "User bit time recording mode.",
+        DevicePropertyCode::TCUBDisplaySetting => "Timecode/User Bit display settings.",
+        DevicePropertyCode::TimeCodePresetResetEnableStatus => {
+            "Whether timecode preset reset is available."
+        }
+        // User Base Look
+        DevicePropertyCode::UserBaseLookAELevelOffset => {
+            "Auto-exposure level offset for user base look."
+        }
+        DevicePropertyCode::UserBaseLookInput => "Input setting for user base look.",
+        DevicePropertyCode::UserBaseLookOutput => "Output setting for user base look.",
+        DevicePropertyCode::SelectUserBaseLookToEdit => "Select user base look to edit.",
+        DevicePropertyCode::SelectUserBaseLookToSetInPPLUT => {
+            "Select user base look to set in picture profile LUT."
+        }
+        // Video Stream settings
+        DevicePropertyCode::VideoStreamAdaptiveRateControl => {
+            "Adaptive bitrate control for video streaming."
+        }
+        DevicePropertyCode::VideoStreamBitRateCompressionMode => {
+            "Bitrate compression mode (CBR, VBR, etc.)."
+        }
+        DevicePropertyCode::VideoStreamBitRateVBRMode => "VBR mode settings for video stream.",
+        DevicePropertyCode::VideoStreamCodec => "Video codec used for streaming.",
+        DevicePropertyCode::VideoStreamMaxBitRate => "Maximum bitrate for video streaming.",
+        DevicePropertyCode::VideoStreamMovieRecPermission => {
+            "Permission for movie recording during streaming."
+        }
+        DevicePropertyCode::VideoStreamResolution => "Resolution for video streaming.",
+        DevicePropertyCode::VideoStreamResolutionMethod => {
+            "Method for determining stream resolution."
+        }
+        DevicePropertyCode::VideoStreamSelect => "Select video stream configuration.",
+        DevicePropertyCode::VideoStreamSettingVersion => "Version of video stream settings.",
+        DevicePropertyCode::VideoRecordingFormatBitrateSetting => {
+            "Bitrate setting for video recording format."
+        }
+        DevicePropertyCode::VideoRecordingFormatQuality => "Quality level for video recording.",
+        DevicePropertyCode::ValidRecordingVideoFormat => {
+            "List of valid video formats for recording."
+        }
+        // Scene file settings
+        DevicePropertyCode::SceneFileCommandVersion => "Scene file command protocol version.",
+        DevicePropertyCode::SceneFileDownloadOperationEnableStatus => {
+            "Whether scene file download is available."
+        }
+        DevicePropertyCode::SceneFileIndex => "Index of current scene file.",
+        DevicePropertyCode::SceneFileIndexesAvailableForDownload => {
+            "Scene file indexes available for download."
+        }
+        DevicePropertyCode::SceneFileUploadOperationEnableStatus => {
+            "Whether scene file upload is available."
+        }
+        // Miscellaneous camera settings
+        DevicePropertyCode::AmountOfDefocusSetting => {
+            "Amount of intentional defocus for creative effects."
+        }
+        DevicePropertyCode::AntidustShutterWhenPowerOff => {
+            "Closes shutter when powering off to protect sensor from dust."
+        }
+        DevicePropertyCode::ApertureDriveInAF => "Aperture behavior during autofocus.",
+        DevicePropertyCode::CameraButtonFunction => "Function assigned to camera button.",
+        DevicePropertyCode::CameraButtonFunctionMulti => "Multi-function camera button settings.",
+        DevicePropertyCode::CameraButtonFunctionStatus => "Current camera button function status.",
+        DevicePropertyCode::CameraDialFunction => "Function assigned to camera dial.",
+        DevicePropertyCode::CameraSettingSaveReadState => "State of camera setting save/read.",
+        DevicePropertyCode::CancelMediaFormatEnableStatus => {
+            "Whether media format can be cancelled."
+        }
+        DevicePropertyCode::ColorSpace => "Color space setting (sRGB, Adobe RGB, etc.).",
+        DevicePropertyCode::DateTimeSettings => "Camera date and time settings.",
+        DevicePropertyCode::ElectricFrontCurtainShutter => {
+            "Uses electronic shutter for first curtain. Reduces shutter shock."
+        }
+        DevicePropertyCode::FEL => "Flash Exposure Lock. Locks flash output level.",
+        DevicePropertyCode::FirmwareUpdateCommandVersion => "Firmware update protocol version.",
+        DevicePropertyCode::FunctionOfTouchOperation => "Function assigned to touch operation.",
+        DevicePropertyCode::HighResolutionShutterSpeed => "High-resolution shutter speed value.",
+        DevicePropertyCode::HighResolutionShutterSpeedAdjust => {
+            "Fine adjustment for high-resolution shutter speed."
+        }
+        DevicePropertyCode::HighResolutionShutterSpeedAdjustInIntegralMultiples => {
+            "Shutter speed adjustment in integral multiples."
+        }
+        DevicePropertyCode::HighResolutionShutterSpeedSetting => {
+            "Settings for high-resolution shutter speed mode."
+        }
+        DevicePropertyCode::HomeMenuSetting => "Home menu configuration.",
+        DevicePropertyCode::IRRemoteSetting => "Infrared remote control settings.",
+        DevicePropertyCode::IPSetupProtocolSetting => "IP address setup protocol (DHCP, static).",
+        DevicePropertyCode::ImageIDNum => "Numeric image identifier.",
+        DevicePropertyCode::ImageIDNumSetting => "Image ID number setting.",
+        DevicePropertyCode::ImageIDString => "String image identifier.",
+        DevicePropertyCode::ImagerScanMode => "Image sensor scanning mode.",
+        DevicePropertyCode::LanguageSetting => "Camera menu language setting.",
+        DevicePropertyCode::LensAssignableButtonIndicator1 => {
+            "Indicator for lens assignable button."
+        }
+        DevicePropertyCode::LensCompensationBreathing => {
+            "Compensates for focus breathing (focal length shift during focusing)."
+        }
+        DevicePropertyCode::LensInformationEnableStatus => {
+            "Whether lens information is available."
+        }
+        DevicePropertyCode::LensSerialNumber => "Lens serial number.",
+        DevicePropertyCode::LensVersionNumber => "Lens firmware version.",
+        DevicePropertyCode::LiveViewArea => "Area of the frame shown in live view.",
+        DevicePropertyCode::LiveViewImageQualityByNumericalValue => {
+            "Live view image quality as numeric value."
+        }
+        DevicePropertyCode::MaxVal => "Maximum value property.",
+        DevicePropertyCode::MaximumNumberOfBytes => "Maximum bytes for data transfer.",
+        DevicePropertyCode::MaximumSizeOfImageIDString => "Maximum length of image ID string.",
+        DevicePropertyCode::MicrophoneDirectivity => {
+            "Microphone pickup pattern (omni, directional, etc.)."
+        }
+        DevicePropertyCode::OSDImageMode => "On-screen display image mode.",
+        DevicePropertyCode::PictureCacheRecSetting => "Picture cache recording settings.",
+        DevicePropertyCode::PictureCacheRecSizeAndTime => {
+            "Size and time settings for picture cache recording."
+        }
+        DevicePropertyCode::PixelMappingEnableStatus => "Whether pixel mapping is available.",
+        DevicePropertyCode::PostViewTransferResourceStatus => {
+            "Status of post-view image transfer resources."
+        }
+        DevicePropertyCode::PresetPTZFSlotNumber => "PTZ preset slot number.",
+        DevicePropertyCode::PriorityKeySettings => "Priority key configuration.",
+        DevicePropertyCode::ProductShowcaseSet => "Product showcase mode settings.",
+        DevicePropertyCode::ProgramShiftStatus => "Status of program shift in P mode.",
+        DevicePropertyCode::PushAGC => "Push automatic gain control.",
+        DevicePropertyCode::PushAutoIris => "Push automatic iris control.",
+        DevicePropertyCode::RAWJPCSaveImage => "Save both RAW and JPEG together.",
+        DevicePropertyCode::RecognitionTarget => "Target type for subject recognition.",
+        DevicePropertyCode::RedEyeReduction => "Reduces red-eye effect in flash photos.",
+        DevicePropertyCode::ReleaseWithoutCard => "Allow shutter release without memory card.",
+        DevicePropertyCode::ReleaseWithoutLens => "Allow shutter release without lens attached.",
+        DevicePropertyCode::RemoteKeySLOTSelectButton => "Remote key slot select button.",
+        DevicePropertyCode::RemoteKeyThumbnailButton => "Remote key thumbnail button.",
+        DevicePropertyCode::RemoteTouchOperation => "Remote touch operation mode.",
+        DevicePropertyCode::RemoteTouchOperationEnableStatus => {
+            "Whether remote touch operation is available."
+        }
+        DevicePropertyCode::RightLeftEyeSelect => "Select left or right eye for eye AF.",
+        DevicePropertyCode::S1 => "S1 shutter button half-press action.",
+        DevicePropertyCode::S2 => "S2 shutter button full-press action.",
+        DevicePropertyCode::SensorCleaningEnableStatus => "Whether sensor cleaning is available.",
+        DevicePropertyCode::SetCopyright => "Set copyright information in image metadata.",
+        DevicePropertyCode::SetPhotographer => "Set photographer name in image metadata.",
+        DevicePropertyCode::SetPresetPTZFBinaryVersion => "PTZ preset binary version.",
+        DevicePropertyCode::ShootingEnableSettingLicense => "Shooting license settings.",
+        DevicePropertyCode::ShootingTimingPreNotificationMode => {
+            "Pre-notification mode for shooting timing."
+        }
+        DevicePropertyCode::SilentModeApertureDriveInAF => {
+            "Silent aperture drive during autofocus."
+        }
+        DevicePropertyCode::SilentModeAutoPixelMapping => {
+            "Silent mode for automatic pixel mapping."
+        }
+        DevicePropertyCode::SilentModeShutterWhenPowerOff => {
+            "Silent shutter operation when powering off."
+        }
+        DevicePropertyCode::SimulRecSettingMovieRecButton => {
+            "Movie record button behavior for simultaneous recording."
+        }
+        DevicePropertyCode::SnapshotInfo => "Snapshot information.",
+        DevicePropertyCode::StillImageTransSize => "Transfer size for still images.",
+        DevicePropertyCode::SynchroterminalForcedOutput => {
+            "Forced output through sync terminal."
+        }
+        DevicePropertyCode::SystemErrorCautionStatus => "System error and caution status.",
+        DevicePropertyCode::TNumber => "T-number (transmission-based f-number).",
+        DevicePropertyCode::TopOfTheGroupShootingMarkSetting => {
+            "Marks first shot of each burst group."
+        }
+        DevicePropertyCode::TouchFunctionInMF => "Touch function in manual focus mode.",
+        DevicePropertyCode::TouchOperation => "Touch screen operation mode.",
+        DevicePropertyCode::TrackingOnAndAFOnEnableStatus => {
+            "Whether tracking and AF-On can be combined."
+        }
+        DevicePropertyCode::USBPowerSupply => "USB power supply settings.",
+        DevicePropertyCode::Undefined => "Undefined property.",
+        DevicePropertyCode::UpdateBodyStatus => "Camera body update status.",
+        DevicePropertyCode::UploadDatasetVersion => "Upload dataset version.",
+        DevicePropertyCode::WriteCopyrightInfo => "Write copyright information to files.",
+        DevicePropertyCode::SelectIPTCMetadata => "Select IPTC metadata preset.",
         _ => "",
     }
 }
@@ -2118,23 +2812,15 @@ mod tests {
         assert!(prop_empty.is_valid_value(999));
     }
 
-    use super::todo::{
-        DISPLAY_NAME_OK_AS_IS, NEEDS_DESCRIPTION, NEEDS_DISPLAY_NAME, NEEDS_VALUE_TYPE,
-    };
+    use super::todo::{NEEDS_DESCRIPTION, NEEDS_DISPLAY_NAME, NEEDS_VALUE_TYPE};
     use std::collections::HashSet;
 
     #[test]
     fn test_all_properties_have_custom_display_names() {
         let expected: HashSet<_> = NEEDS_DISPLAY_NAME.iter().collect();
-        let ok_as_is: HashSet<_> = DISPLAY_NAME_OK_AS_IS.iter().collect();
         let mut actual_missing = Vec::new();
 
         for code in DevicePropertyCode::ALL {
-            // Skip properties that are explicitly approved to use generated name
-            if ok_as_is.contains(code) {
-                continue;
-            }
-
             let display = property_display_name(*code);
             let fallback = code.name();
 
@@ -2149,7 +2835,7 @@ mod tests {
         let unexpected: Vec<_> = actual.difference(&expected).collect();
         assert!(
             unexpected.is_empty(),
-            "New properties missing display names (add display name, add to NEEDS_DISPLAY_NAME, or add to DISPLAY_NAME_OK_AS_IS in todo.rs): {:?}",
+            "New properties missing display names (add display name or add to NEEDS_DISPLAY_NAME in todo.rs): {:?}",
             unexpected
         );
 

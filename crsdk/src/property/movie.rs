@@ -253,6 +253,153 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::MovieFTPTransferTarget => {
             "Target files for manual FTP transfer of movie recordings."
         }
+        DevicePropertyCode::MovieHDMIOutput4KSetting => {
+            "Controls 4K output over HDMI during movie recording. Enables external monitors or recorders to receive 4K signal."
+        }
+        DevicePropertyCode::MovieHDMIOutputAudioCH => {
+            "Number of audio channels output over HDMI. Typically 2 for stereo or more for professional multi-channel setups."
+        }
+        DevicePropertyCode::MovieHDMIOutputColorGamutForRAWOut => {
+            "Color gamut used when outputting RAW video over HDMI. Affects color space for external recorders."
+        }
+        DevicePropertyCode::MovieHDMIOutputRAW => {
+            "Enables RAW video output over HDMI for external recording with maximum quality and flexibility."
+        }
+        DevicePropertyCode::MovieHDMIOutputRawSetting => {
+            "Configuration for RAW HDMI output including bit depth and compression settings."
+        }
+        DevicePropertyCode::MovieHDMIOutputRecControl => {
+            "Allows camera to control recording on external HDMI recorders. Syncs start/stop between devices."
+        }
+        DevicePropertyCode::MovieHDMIOutputRecMedia => {
+            "Specifies which media slot is used when recording via HDMI output."
+        }
+        DevicePropertyCode::MovieHDMIOutputResolution => {
+            "Resolution of the HDMI video output. Can be set to match recording or downscaled for monitoring."
+        }
+        DevicePropertyCode::MovieHDMIOutputTimeCode => {
+            "Embeds timecode in HDMI output signal. Essential for syncing with external recorders in multi-camera setups."
+        }
+        DevicePropertyCode::MovieImageStabilizationLevel => {
+            "Intensity of in-body image stabilization for video. Higher values reduce shake but may cause warping artifacts."
+        }
+        DevicePropertyCode::MovieImageStabilizationSteadyShot => {
+            "SteadyShot stabilization mode for movie recording. Active mode provides stronger stabilization with slight crop."
+        }
+        DevicePropertyCode::MovieIntervalRecCountDownIntervalTime => {
+            "Countdown time displayed before interval recording starts. Gives time to prepare for first frame capture."
+        }
+        DevicePropertyCode::MovieIntervalRecFrameRateSetting => {
+            "Frame rate for interval recording playback. Determines how fast the time-lapse plays back."
+        }
+        DevicePropertyCode::MovieIntervalRecFrames => {
+            "Total number of frames to capture in interval recording. Combined with interval determines total recording time."
+        }
+        DevicePropertyCode::MovieIntervalRecIntervalTime => {
+            "Time between each frame capture in interval recording. Longer intervals compress more time into the final video."
+        }
+        DevicePropertyCode::MovieIntervalRecRecordingDuration => {
+            "Total duration of the resulting interval recording video at the playback frame rate."
+        }
+        DevicePropertyCode::MovieIntervalRecRecordingSetting => {
+            "Overall settings for interval recording mode including quality and format options."
+        }
+        DevicePropertyCode::MovieForwardButton => {
+            "Fast forward button control for movie playback. Skips ahead in recorded video."
+        }
+        DevicePropertyCode::MovieNextButton => {
+            "Next button control for movie playback. Jumps to the next recorded clip."
+        }
+        DevicePropertyCode::MoviePlayButton => {
+            "Play button control for movie playback. Starts playing the current video clip."
+        }
+        DevicePropertyCode::MoviePlayPauseButton => {
+            "Play/Pause toggle for movie playback. Alternates between playing and paused states."
+        }
+        DevicePropertyCode::MoviePlayStopButton => {
+            "Stop button control for movie playback. Stops playback and returns to beginning."
+        }
+        DevicePropertyCode::MoviePrevButton => {
+            "Previous button control for movie playback. Jumps to the previous recorded clip."
+        }
+        DevicePropertyCode::MovieRewindButton => {
+            "Rewind button control for movie playback. Plays video in reverse."
+        }
+        DevicePropertyCode::MovieQualityFullAutoMode => {
+            "Allows camera to automatically select movie quality settings in full auto mode."
+        }
+        DevicePropertyCode::MovieRecButtonToggleEnableStatus => {
+            "Indicates whether the movie record button toggle mode is available."
+        }
+        DevicePropertyCode::MovieRecReviewButton => {
+            "Button to review the most recently recorded movie clip."
+        }
+        DevicePropertyCode::MovieRecReviewPlayingState => {
+            "Current state of movie review playback. Shows if review is playing, paused, or stopped."
+        }
+        DevicePropertyCode::MovieRecordingFrameRateRTSPSetting => {
+            "Frame rate for RTSP streaming output. Affects bandwidth and stream quality."
+        }
+        DevicePropertyCode::MovieRecordingResolutionForRAW => {
+            "Resolution when recording RAW video internally. Higher resolutions require faster media."
+        }
+        DevicePropertyCode::MovieRecordingResolutionForRTSP => {
+            "Resolution for RTSP streaming output. Lower resolutions reduce bandwidth requirements."
+        }
+        DevicePropertyCode::MovieShootingMode => {
+            "Movie-specific shooting mode. Determines exposure behavior and available settings for video recording."
+        }
+        DevicePropertyCode::MovieShootingModeColorGamut => {
+            "Color gamut used in movie shooting mode. Options include standard, wide gamut, and cinema color spaces."
+        }
+        DevicePropertyCode::MovieShootingModeTargetDisplay => {
+            "Target display type for movie color settings. Optimizes output for specific monitor types."
+        }
+        DevicePropertyCode::LogShootingMode => {
+            "Enables log gamma curves (S-Log2, S-Log3) for maximum dynamic range. Requires color grading in post."
+        }
+        DevicePropertyCode::LogShootingModeColorGamut => {
+            "Color gamut used with log shooting. S-Gamut3 and S-Gamut3.Cine offer different color space options."
+        }
+        DevicePropertyCode::SQFrameRate => {
+            "Playback frame rate for Slow & Quick motion. Determines how fast or slow the footage plays."
+        }
+        DevicePropertyCode::SQModeSetting => {
+            "Slow & Quick mode settings. Enables high frame rate capture for slow motion effects."
+        }
+        DevicePropertyCode::SQRecordingFrameRateSetting => {
+            "Recording frame rate for S&Q mode. Higher rates enable more dramatic slow motion."
+        }
+        DevicePropertyCode::RecorderClipName => {
+            "Naming format for recorded movie clips. Customizes how files are named on the memory card."
+        }
+        DevicePropertyCode::RecorderControlMainSetting => {
+            "Main recorder control settings. Configures primary recording behavior and triggers."
+        }
+        DevicePropertyCode::RecorderControlProxySetting => {
+            "Proxy recorder control settings. Configures secondary low-res recording for editing."
+        }
+        DevicePropertyCode::RecorderExtRawStatus => {
+            "Status of external RAW recorder. Shows if external recorder is connected and recording."
+        }
+        DevicePropertyCode::RecorderSaveDestination => {
+            "Destination for recorded files. Selects memory card slot or external device."
+        }
+        DevicePropertyCode::RecorderStartMain => {
+            "Triggers main recorder to start or stop recording."
+        }
+        DevicePropertyCode::RecorderStartProxy => {
+            "Triggers proxy recorder to start or stop recording."
+        }
+        DevicePropertyCode::RecordingFileNumber => {
+            "Current file number for recordings. Auto-increments with each new file."
+        }
+        DevicePropertyCode::RecordingFolderFormat => {
+            "Folder naming format for recorded files. Organizes media by date or custom scheme."
+        }
+        DevicePropertyCode::RecordingSettingFileName => {
+            "File naming settings for recordings. Customizes how files are named."
+        }
         _ => "",
     }
 }
@@ -334,7 +481,8 @@ pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
         | DevicePropertyCode::MoviePlayingSpeed
         | DevicePropertyCode::MediaSLOT1RecordingAvailableType
         | DevicePropertyCode::MediaSLOT2RecordingAvailableType
-        | DevicePropertyCode::MediaSLOT3RecordingAvailableType => V::Integer,
+        | DevicePropertyCode::MediaSLOT3RecordingAvailableType
+        | DevicePropertyCode::MovieRecordingFrameRateSetting => V::Integer,
         _ => return None,
     })
 }

@@ -245,6 +245,15 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::AFAssist => {
             "Emits a beam or pattern to help autofocus in dark conditions. Useful indoors but may be distracting for subjects."
         }
+        DevicePropertyCode::AFIlluminator => {
+            "Enables an infrared or visible light beam to help autofocus in dark conditions. Useful indoors but may be blocked by obstacles."
+        }
+        DevicePropertyCode::AFSubjShiftSens => {
+            "Adjusts how quickly AF tracking responds when the subject moves laterally. Higher sensitivity tracks erratic movement but may lose lock more easily."
+        }
+        DevicePropertyCode::AFTrackForSpeedChange => {
+            "Controls how AF responds when a subject suddenly speeds up or slows down. Optimizes focus tracking for different movement patterns."
+        }
         DevicePropertyCode::PreAF => {
             "Camera continuously adjusts focus even before half-pressing the shutter. Faster initial focus but uses more battery."
         }
@@ -274,6 +283,12 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         }
         DevicePropertyCode::FaceEyeFrameDisplay => {
             "Shows or hides the frame overlay around detected faces and eyes. Useful visual feedback for subject tracking."
+        }
+        DevicePropertyCode::FaceEyeDetectionAFStatus => {
+            "Shows current status of face/eye detection. Indicates whether faces or eyes are currently detected and being tracked."
+        }
+        DevicePropertyCode::PushAFModeSetting => {
+            "Configures behavior of Push AF button. Can be set to focus once, focus hold, or other AF trigger modes."
         }
         DevicePropertyCode::FocusBracketExposureLock1stImg => {
             "When enabled, locks exposure from the first shot in a focus bracket sequence. Prevents exposure variation across the stack."
@@ -503,7 +518,11 @@ pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
         | DevicePropertyCode::AFFreeSizeAndPositionSetting
         | DevicePropertyCode::DefaultAFFreeSizeAndPositionSetting
         | DevicePropertyCode::FocusBracketRecordingFolder
-        | DevicePropertyCode::FocusMagnifierSetting => V::Integer,
+        | DevicePropertyCode::FocusMagnifierSetting
+        | DevicePropertyCode::FaceEyeDetectionAFStatus
+        | DevicePropertyCode::AFSubjShiftSens
+        | DevicePropertyCode::AFTrackForSpeedChange => V::Integer,
+        DevicePropertyCode::AFIlluminator => V::OnOff,
         _ => return None,
     })
 }
