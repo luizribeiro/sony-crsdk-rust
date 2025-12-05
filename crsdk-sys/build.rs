@@ -190,6 +190,7 @@ fn categorize_property(name: &str) -> &'static str {
         || lower.contains("af_")
         || lower.starts_with("af")
         || lower.contains("nearfar")
+        || lower.contains("affree")
     {
         "Focus"
     } else if lower.contains("movie")
