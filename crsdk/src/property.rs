@@ -92,6 +92,10 @@ pub enum PropertyCode {
     /// Device overheating state (0=normal, 1=pre-overheating, 2=overheating)
     DeviceOverheatingState =
         crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_DeviceOverheatingState,
+
+    // White balance settings
+    /// Priority set in AWB (Standard/Ambience/White)
+    PrioritySetInAWB = crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_PrioritySetInAWB,
 }
 
 impl PropertyCode {
@@ -153,6 +157,7 @@ impl PropertyCode {
             CrDevicePropertyCode_CrDeviceProperty_DeviceOverheatingState => {
                 Self::DeviceOverheatingState
             }
+            CrDevicePropertyCode_CrDeviceProperty_PrioritySetInAWB => Self::PrioritySetInAWB,
             _ => return None,
         })
     }
