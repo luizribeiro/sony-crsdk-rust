@@ -69,8 +69,29 @@ pub fn property_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::SubjectRecognitionInAF => {
             "Enables AI-powered detection of eyes, faces, animals, birds, vehicles, etc. The camera automatically prioritizes these subjects for focus."
         }
+        DevicePropertyCode::SubjectRecognitionAF => {
+            "Controls how subject recognition affects autofocus. Off disables recognition. Only AF detects but doesn't prioritize. Priority AF both detects and prioritizes recognized subjects."
+        }
         DevicePropertyCode::AFTransitionSpeed => {
             "How smoothly focus changes between subjects in video. Slower transitions look more cinematic. Faster is better for action."
+        }
+        DevicePropertyCode::PrioritySetInAFS => {
+            "What takes priority in AF-S mode. AF waits for focus lock before shooting. Release fires immediately. Balanced tries to achieve focus but won't delay too long."
+        }
+        DevicePropertyCode::PrioritySetInAFC => {
+            "What takes priority in AF-C mode. AF waits for focus lock before shooting. Release fires immediately. Balanced tries to achieve focus but won't delay too long."
+        }
+        DevicePropertyCode::FocusTrackingStatus => {
+            "Current state of focus tracking. Off means tracking is disabled. Focusing means actively searching. Tracking means actively following a subject."
+        }
+        DevicePropertyCode::FocusModeSetting => {
+            "Choose between automatic or manual focus mode control. Automatic lets the camera manage focus mode. Manual gives you direct control."
+        }
+        DevicePropertyCode::AFWithShutter => {
+            "When enabled, half-pressing the shutter activates autofocus. Disable to separate focus from shutter for back-button focus workflows."
+        }
+        DevicePropertyCode::FaceEyeFrameDisplay => {
+            "Shows or hides the frame overlay around detected faces and eyes. Useful visual feedback for subject tracking."
         }
 
         // === White Balance ===
