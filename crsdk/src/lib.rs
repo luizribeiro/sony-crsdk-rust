@@ -64,9 +64,7 @@ mod error;
 mod event;
 mod event_sender;
 pub mod format;
-mod property;
-mod property_description;
-mod property_display;
+pub mod property;
 mod sdk;
 mod types;
 
@@ -79,16 +77,15 @@ pub use property::{
     ExposureCtrlType, ExposureProgram, FileType, FlashMode, FocusArea, FocusMode,
     FocusTrackingStatus, ImageQuality, ImageSize, IntervalRecShutterType, LiveViewDisplayEffect,
     LockIndicator, MeteringMode, MovieFileFormat, OnOff, PrioritySetInAF, PrioritySetInAWB,
-    PropertyCode, ShutterMode, ShutterModeStatus, SilentModeApertureDrive, SubjectRecognitionAF,
-    Switch, WhiteBalance,
+    ShutterMode, ShutterModeStatus, SilentModeApertureDrive, SubjectRecognitionAF, Switch,
+    WhiteBalance,
 };
 pub use sdk::Sdk;
 pub use types::{CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, MacAddr};
 
 // Re-export generated property codes (complete SDK coverage)
 pub use crsdk_sys::{DevicePropertyCode, PropertyCategory};
-pub use property_description::property_description;
-pub use property_display::property_display_name;
+pub use property::{property_description, property_display_name};
 
 #[cfg(test)]
 mod tests {

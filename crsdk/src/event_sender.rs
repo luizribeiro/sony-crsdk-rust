@@ -11,7 +11,7 @@
 //! after calling `EventSender::from_raw()` to reclaim it.
 
 use crate::event::CameraEvent;
-use crate::property::PropertyCode;
+use crsdk_sys::DevicePropertyCode;
 use std::ffi::c_void;
 use tokio::sync::mpsc::UnboundedSender;
 
@@ -102,7 +102,7 @@ pub extern "C" fn crsdk_event_property_changed(ctx: *mut c_void, num: u32, codes
         let slice = unsafe { std::slice::from_raw_parts(codes, num as usize) };
         slice
             .iter()
-            .filter_map(|&code| PropertyCode::from_raw(code))
+            .filter_map(|&code| DevicePropertyCode::from_raw(code))
             .collect()
     };
 
@@ -366,8 +366,8 @@ mod tests {
         let event = rx.try_recv().unwrap();
         if let CameraEvent::PropertyChanged { codes } = event {
             assert_eq!(codes.len(), 2);
-            assert_eq!(codes[0], PropertyCode::FNumber);
-            assert_eq!(codes[1], PropertyCode::IsoSensitivity);
+            assert_eq!(codes[0], DevicePropertyCode::FNumber);
+            assert_eq!(codes[1], DevicePropertyCode::IsoSensitivity);
         } else {
             panic!("Expected PropertyChanged event");
         }
