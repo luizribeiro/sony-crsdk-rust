@@ -2229,6 +2229,117 @@ impl std::fmt::Display for SilentModeApertureDrive {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum SubjectRecognitionAF {
+    Off = 1,
+    OnlyAF = 2,
+    PriorityAF = 3,
+}
+
+impl SubjectRecognitionAF {
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    pub fn from_raw(value: u64) -> Option<Self> {
+        Some(match value as u8 {
+            1 => Self::Off,
+            2 => Self::OnlyAF,
+            3 => Self::PriorityAF,
+            _ => return None,
+        })
+    }
+}
+
+impl std::fmt::Display for SubjectRecognitionAF {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Off => "Off",
+                Self::OnlyAF => "Only AF",
+                Self::PriorityAF => "Priority AF",
+            }
+        )
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum PrioritySetInAF {
+    AF = 1,
+    Release = 2,
+    BalancedEmphasis = 3,
+}
+
+impl PrioritySetInAF {
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    pub fn from_raw(value: u64) -> Option<Self> {
+        Some(match value as u8 {
+            1 => Self::AF,
+            2 => Self::Release,
+            3 => Self::BalancedEmphasis,
+            _ => return None,
+        })
+    }
+}
+
+impl std::fmt::Display for PrioritySetInAF {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::AF => "AF",
+                Self::Release => "Release",
+                Self::BalancedEmphasis => "Balanced",
+            }
+        )
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum FocusTrackingStatus {
+    Off = 1,
+    Focusing = 2,
+    Tracking = 3,
+}
+
+impl FocusTrackingStatus {
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    pub fn from_raw(value: u64) -> Option<Self> {
+        Some(match value as u8 {
+            1 => Self::Off,
+            2 => Self::Focusing,
+            3 => Self::Tracking,
+            _ => return None,
+        })
+    }
+}
+
+impl std::fmt::Display for FocusTrackingStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Off => "Off",
+                Self::Focusing => "Focusing",
+                Self::Tracking => "Tracking",
+            }
+        )
+    }
+}
+
 /// Format movie recording quality/bitrate setting to display string
 pub fn format_movie_quality(value: u64) -> String {
     match value as u16 {

@@ -7,9 +7,9 @@ use crsdk::{
     },
     format_movie_quality, property_display_name, AspectRatio, AutoManual, DevicePropertyCode,
     DriveMode, ExposureCtrlType, ExposureProgram, FileType, FlashMode, FocusArea, FocusMode,
-    ImageQuality, ImageSize, IntervalRecShutterType, LiveViewDisplayEffect, MeteringMode,
-    MovieFileFormat, OnOff, PropertyCategory, ShutterMode, ShutterModeStatus,
-    SilentModeApertureDrive, Switch, WhiteBalance,
+    FocusTrackingStatus, ImageQuality, ImageSize, IntervalRecShutterType, LiveViewDisplayEffect,
+    MeteringMode, MovieFileFormat, OnOff, PrioritySetInAF, PropertyCategory, ShutterMode,
+    ShutterModeStatus, SilentModeApertureDrive, SubjectRecognitionAF, Switch, WhiteBalance,
 };
 
 #[derive(Debug, Clone)]
@@ -305,7 +305,12 @@ pub fn format_sdk_value(code: DevicePropertyCode, raw: u64) -> String {
         | DevicePropertyCode::NDFilter
         | DevicePropertyCode::ShutterSetting
         | DevicePropertyCode::ShutterECSSetting
-        | DevicePropertyCode::ShutterSlow => Switch::from_raw(raw)
+        | DevicePropertyCode::ShutterSlow
+        | DevicePropertyCode::AFAssist
+        | DevicePropertyCode::PreAF
+        | DevicePropertyCode::AFWithShutter
+        | DevicePropertyCode::SubjectRecognitionInAF
+        | DevicePropertyCode::FaceEyeFrameDisplay => Switch::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("{}", raw)),
         DevicePropertyCode::RedEyeReduction | DevicePropertyCode::AudioRecording => {
@@ -316,7 +321,8 @@ pub fn format_sdk_value(code: DevicePropertyCode, raw: u64) -> String {
         DevicePropertyCode::IrisModeSetting
         | DevicePropertyCode::ShutterModeSetting
         | DevicePropertyCode::GainControlSetting
-        | DevicePropertyCode::NDFilterModeSetting => AutoManual::from_raw(raw)
+        | DevicePropertyCode::NDFilterModeSetting
+        | DevicePropertyCode::FocusModeSetting => AutoManual::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("{}", raw)),
         DevicePropertyCode::AspectRatio => AspectRatio::from_raw(raw)
@@ -341,6 +347,17 @@ pub fn format_sdk_value(code: DevicePropertyCode, raw: u64) -> String {
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("{}", raw)),
         DevicePropertyCode::SilentModeApertureDriveInAF => SilentModeApertureDrive::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("{}", raw)),
+        DevicePropertyCode::SubjectRecognitionAF => SubjectRecognitionAF::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("{}", raw)),
+        DevicePropertyCode::PrioritySetInAFS | DevicePropertyCode::PrioritySetInAFC => {
+            PrioritySetInAF::from_raw(raw)
+                .map(|v| v.to_string())
+                .unwrap_or_else(|| format!("{}", raw))
+        }
+        DevicePropertyCode::FocusTrackingStatus => FocusTrackingStatus::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("{}", raw)),
         _ => format!("{}", raw),

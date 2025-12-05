@@ -74,8 +74,10 @@ pub fn property_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::FocusBracketShotNumber => "Focus Bracket Shots",
         DevicePropertyCode::FocusBracketFocusRange => "Focus Bracket Range",
         DevicePropertyCode::SubjectRecognitionInAF => "Subject Recognition",
+        DevicePropertyCode::SubjectRecognitionAF => "Subject Recognition AF",
         DevicePropertyCode::FaceEyeDetectionAFStatus => "Face/Eye Detection Status",
         DevicePropertyCode::FaceEyeFrameDisplay => "Face/Eye Frame Display",
+        DevicePropertyCode::FocusTrackingStatus => "Focus Tracking Status",
 
         // === White Balance ===
         DevicePropertyCode::WhiteBalance => "White Balance",
