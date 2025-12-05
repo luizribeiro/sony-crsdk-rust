@@ -2083,6 +2083,41 @@ impl std::fmt::Display for ShutterModeStatus {
     }
 }
 
+/// Shutter mode selection (Speed vs Angle).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ShutterMode {
+    Speed = 1,
+    Angle = 2,
+}
+
+impl ShutterMode {
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    pub fn from_raw(value: u64) -> Option<Self> {
+        Some(match value as u8 {
+            1 => Self::Speed,
+            2 => Self::Angle,
+            _ => return None,
+        })
+    }
+}
+
+impl std::fmt::Display for ShutterMode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Speed => "Speed",
+                Self::Angle => "Angle",
+            }
+        )
+    }
+}
+
 /// Format movie recording quality/bitrate setting to display string
 pub fn format_movie_quality(value: u64) -> String {
     match value as u16 {
