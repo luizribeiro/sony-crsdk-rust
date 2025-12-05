@@ -1919,6 +1919,47 @@ impl std::fmt::Display for AutoManual {
     }
 }
 
+/// Aspect ratio settings for still images.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum AspectRatio {
+    Ratio3x2 = 1,
+    Ratio16x9 = 2,
+    Ratio4x3 = 3,
+    Ratio1x1 = 4,
+}
+
+impl AspectRatio {
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    pub fn from_raw(value: u64) -> Option<Self> {
+        Some(match value as u8 {
+            1 => Self::Ratio3x2,
+            2 => Self::Ratio16x9,
+            3 => Self::Ratio4x3,
+            4 => Self::Ratio1x1,
+            _ => return None,
+        })
+    }
+}
+
+impl std::fmt::Display for AspectRatio {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Ratio3x2 => "3:2",
+                Self::Ratio16x9 => "16:9",
+                Self::Ratio4x3 => "4:3",
+                Self::Ratio1x1 => "1:1",
+            }
+        )
+    }
+}
+
 /// Format movie recording quality/bitrate setting to display string
 pub fn format_movie_quality(value: u64) -> String {
     match value as u16 {
