@@ -235,6 +235,19 @@ fn common_value_type(code: DevicePropertyCode) -> PropertyValueType {
         // Display
         DevicePropertyCode::LiveViewDisplayEffect => PropertyValueType::LiveViewDisplayEffect,
         DevicePropertyCode::GridLineDisplay => PropertyValueType::Switch,
+        DevicePropertyCode::GridLineType
+        | DevicePropertyCode::LiveViewStatus
+        | DevicePropertyCode::LiveViewImageQuality
+        | DevicePropertyCode::LiveViewProtocol
+        | DevicePropertyCode::DispMode
+        | DevicePropertyCode::DispModeSetting
+        | DevicePropertyCode::DispModeCandidate
+        | DevicePropertyCode::MonitorLUTSetting
+        | DevicePropertyCode::MonitorBrightnessType
+        | DevicePropertyCode::MonitorBrightnessManual
+        | DevicePropertyCode::SelectFinder
+        | DevicePropertyCode::DisplayQualityFinder
+        | DevicePropertyCode::DisplayedMenuStatus => PropertyValueType::Integer,
 
         // Audio
         DevicePropertyCode::AudioRecording => PropertyValueType::OnOff,
@@ -903,20 +916,18 @@ fn zoom_description(code: DevicePropertyCode) -> &'static str {
 fn zoom_display_name(code: DevicePropertyCode) -> &'static str {
     match code {
         DevicePropertyCode::ZoomScale => "Zoom",
-        DevicePropertyCode::ZoomSetting => "Zoom Mode",
         DevicePropertyCode::ZoomOperation => "Zoom Op",
         DevicePropertyCode::ZoomOperationWithInt16 => "Zoom Op (16-bit)",
         DevicePropertyCode::ZoomOperationStatus => "Zoom Op Status",
         DevicePropertyCode::ZoomPositionSetting => "Zoom Position",
         DevicePropertyCode::ZoomPositionCurrentValue => "Zoom Pos (Current)",
         DevicePropertyCode::ZoomDrivingStatus => "Zoom Drive Status",
-        DevicePropertyCode::ZoomSpeedRange => "Zoom Speed",
-        DevicePropertyCode::ZoomDistance => "Zoom Dist",
-        DevicePropertyCode::ZoomDistanceUnitSetting => "Zoom Dist Unit",
         DevicePropertyCode::ZoomBarInformation => "Zoom Bar Info",
         DevicePropertyCode::ZoomTypeStatus => "Zoom Type",
         DevicePropertyCode::DigitalZoomScale => "Digital Zoom",
         DevicePropertyCode::RemoconZoomSpeedType => "Remote Zoom Speed",
+        // ZoomSetting, ZoomSpeedRange, ZoomDistance, ZoomDistanceUnitSetting
+        // use generated names (approved in DISPLAY_NAME_OK_AS_IS)
         _ => code.name(),
     }
 }
@@ -1258,6 +1269,12 @@ fn nd_filter_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::DigitalExtenderMagnificationSetting => {
             "Digital extender zoom factor. Crops and enlarges the image beyond optical zoom range."
         }
+        DevicePropertyCode::SelectFinder => {
+            "Switch between LCD monitor and electronic viewfinder."
+        }
+        DevicePropertyCode::DispModeCandidate => {
+            "Available display modes for the current shooting mode."
+        }
         _ => "",
     }
 }
@@ -1291,6 +1308,8 @@ fn nd_filter_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::AssignableButtonIndicator10 => "Btn Ind 10",
         DevicePropertyCode::AssignableButtonIndicator11 => "Btn Ind 11",
         DevicePropertyCode::DigitalExtenderMagnificationSetting => "Digital Extender",
+        DevicePropertyCode::SelectFinder => "Finder Select",
+        DevicePropertyCode::DispModeCandidate => "Disp Mode Options",
         _ => code.name(),
     }
 }
@@ -1303,8 +1322,41 @@ fn display_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::GridLineDisplay => {
             "Overlays composition guides on the screen. Rule of thirds, square grid, or diagonal lines help frame shots."
         }
+        DevicePropertyCode::GridLineType => {
+            "Choose grid pattern type: rule of thirds, square grid, diagonal lines, etc."
+        }
         DevicePropertyCode::MonitorBrightnessType => {
             "Screen brightness setting. Manual sets a fixed level. Auto adjusts based on ambient light. Sunny Weather boosts for outdoors."
+        }
+        DevicePropertyCode::MonitorBrightnessManual => {
+            "Manual brightness level for the LCD monitor."
+        }
+        DevicePropertyCode::LiveViewStatus => {
+            "Current state of live view output. Shows if preview is active."
+        }
+        DevicePropertyCode::LiveViewImageQuality => {
+            "Quality setting for live view stream. Higher quality uses more bandwidth."
+        }
+        DevicePropertyCode::LiveViewProtocol => {
+            "Protocol used for live view streaming (USB, network, etc.)."
+        }
+        DevicePropertyCode::DispMode | DevicePropertyCode::DispModeSetting => {
+            "Display mode configuration for screen layout and information overlays."
+        }
+        DevicePropertyCode::DispModeCandidate => {
+            "Available display modes for the current shooting mode."
+        }
+        DevicePropertyCode::SelectFinder => {
+            "Switch between LCD monitor and electronic viewfinder."
+        }
+        DevicePropertyCode::DisplayQualityFinder => {
+            "Display quality setting for the electronic viewfinder."
+        }
+        DevicePropertyCode::MonitorLUTSetting => {
+            "LUT applied to monitor output for color preview."
+        }
+        DevicePropertyCode::DisplayedMenuStatus => {
+            "Current menu display state."
         }
         _ => "",
     }
@@ -1312,19 +1364,15 @@ fn display_description(code: DevicePropertyCode) -> &'static str {
 
 fn display_display_name(code: DevicePropertyCode) -> &'static str {
     match code {
-        DevicePropertyCode::LiveViewDisplayEffect => "Live View Display Effect",
-        DevicePropertyCode::LiveViewStatus => "Live View Status",
-        DevicePropertyCode::LiveViewImageQuality => "Live View Quality",
-        DevicePropertyCode::LiveViewProtocol => "Live View Protocol",
-        DevicePropertyCode::DispMode => "Display Mode",
-        DevicePropertyCode::DispModeSetting => "Display Mode Setting",
+        DevicePropertyCode::LiveViewDisplayEffect => "LV Effect",
+        DevicePropertyCode::LiveViewStatus => "LV Status",
+        DevicePropertyCode::DispMode => "Display",
+        DevicePropertyCode::DispModeSetting => "Display Setting",
         DevicePropertyCode::MonitorLUTSetting => "Monitor LUT",
-        DevicePropertyCode::GridLineDisplay => "Grid Line Display",
-        DevicePropertyCode::GridLineType => "Grid Line Type",
-        DevicePropertyCode::MonitorBrightnessType => "Monitor Brightness",
-        DevicePropertyCode::MonitorBrightnessManual => "Monitor Brightness (Manual)",
-        DevicePropertyCode::SelectFinder => "Select Finder",
-        DevicePropertyCode::DisplayQualityFinder => "Finder Display Quality",
+        DevicePropertyCode::GridLineDisplay => "Grid Lines",
+        DevicePropertyCode::MonitorBrightnessType => "Monitor Bright.",
+        DevicePropertyCode::MonitorBrightnessManual => "Monitor Bright. (M)",
+        DevicePropertyCode::DisplayedMenuStatus => "Menu Status",
         _ => code.name(),
     }
 }
@@ -1492,6 +1540,15 @@ fn other_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::SimulRecSetting => {
             "Records to both card slots simultaneously. Provides instant backup of every shot."
         }
+        DevicePropertyCode::GridLineType => {
+            "Choose grid pattern type: rule of thirds, square grid, diagonal lines, etc."
+        }
+        DevicePropertyCode::LiveViewStatus => {
+            "Current state of live view output. Shows if preview is active."
+        }
+        DevicePropertyCode::LiveViewProtocol => {
+            "Protocol used for live view streaming (USB, network, etc.)."
+        }
         _ => "",
     }
 }
@@ -1573,6 +1630,9 @@ fn other_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::BaseLookImportOperationEnableStatus => "Base Look Import",
         DevicePropertyCode::TeleWideLeverValueCapability => "Tele/Wide Lever",
         DevicePropertyCode::SimulRecSetting => "Simul. Rec",
+        DevicePropertyCode::GridLineType => "Grid Type",
+        DevicePropertyCode::LiveViewStatus => "LV Status",
+        DevicePropertyCode::LiveViewProtocol => "LV Protocol",
         _ => code.name(),
     }
 }
@@ -1618,15 +1678,23 @@ mod tests {
         assert!(prop_empty.is_valid_value(999));
     }
 
-    use super::todo::{NEEDS_DESCRIPTION, NEEDS_DISPLAY_NAME, NEEDS_VALUE_TYPE};
+    use super::todo::{
+        DISPLAY_NAME_OK_AS_IS, NEEDS_DESCRIPTION, NEEDS_DISPLAY_NAME, NEEDS_VALUE_TYPE,
+    };
     use std::collections::HashSet;
 
     #[test]
     fn test_all_properties_have_custom_display_names() {
         let expected: HashSet<_> = NEEDS_DISPLAY_NAME.iter().collect();
+        let ok_as_is: HashSet<_> = DISPLAY_NAME_OK_AS_IS.iter().collect();
         let mut actual_missing = Vec::new();
 
         for code in DevicePropertyCode::ALL {
+            // Skip properties that are explicitly approved to use generated name
+            if ok_as_is.contains(code) {
+                continue;
+            }
+
             let display = property_display_name(*code);
             let fallback = code.name();
 
@@ -1641,7 +1709,7 @@ mod tests {
         let unexpected: Vec<_> = actual.difference(&expected).collect();
         assert!(
             unexpected.is_empty(),
-            "New properties missing display names (add display name or add to NEEDS_DISPLAY_NAME in todo.rs): {:?}",
+            "New properties missing display names (add display name, add to NEEDS_DISPLAY_NAME, or add to DISPLAY_NAME_OK_AS_IS in todo.rs): {:?}",
             unexpected
         );
 
