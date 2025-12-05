@@ -7,7 +7,7 @@ use crsdk::{
     },
     format_movie_quality, property_display_name, AspectRatio, AutoManual, DevicePropertyCode,
     DriveMode, ExposureProgram, FileType, FlashMode, FocusArea, FocusMode, ImageQuality, ImageSize,
-    LiveViewDisplayEffect, MeteringMode, MovieFileFormat, OnOff, PropertyCategory,
+    LiveViewDisplayEffect, MeteringMode, MovieFileFormat, OnOff, PropertyCategory, ShutterMode,
     ShutterModeStatus, Switch, WhiteBalance,
 };
 
@@ -301,7 +301,9 @@ pub fn format_sdk_value(code: DevicePropertyCode, raw: u64) -> String {
         DevicePropertyCode::MovieRecordingSetting => format_movie_quality(raw),
         DevicePropertyCode::AutoSlowShutter
         | DevicePropertyCode::SilentMode
-        | DevicePropertyCode::NDFilter => Switch::from_raw(raw)
+        | DevicePropertyCode::NDFilter
+        | DevicePropertyCode::ShutterSetting
+        | DevicePropertyCode::ShutterECSSetting => Switch::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("{}", raw)),
         DevicePropertyCode::RedEyeReduction | DevicePropertyCode::AudioRecording => {
@@ -325,6 +327,9 @@ pub fn format_sdk_value(code: DevicePropertyCode, raw: u64) -> String {
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("{}", raw)),
         DevicePropertyCode::ShutterModeStatus => ShutterModeStatus::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("{}", raw)),
+        DevicePropertyCode::ShutterMode => ShutterMode::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("{}", raw)),
         _ => format!("{}", raw),
