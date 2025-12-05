@@ -365,6 +365,90 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::IrisModeSetting => {
             "Aperture control mode. Auto lets the camera adjust. Manual gives full control for consistent exposure."
         }
+        DevicePropertyCode::IrisDisplayUnit => {
+            "How aperture values are displayed. F-stop (f/2.8) is standard. T-stop accounts for light transmission loss in the lens."
+        }
+        DevicePropertyCode::IrisCloseSetting => {
+            "Allows closing the iris completely. Used for sensor protection or specific exposure effects."
+        }
+        DevicePropertyCode::ExposureStep => {
+            "Granularity of exposure adjustments. 1/3 EV gives finer control, 1/2 EV gives larger steps."
+        }
+        DevicePropertyCode::BulbExposureTimeSetting => {
+            "Sets the exposure time for bulb mode. Allows precise long exposures without holding the shutter button."
+        }
+        DevicePropertyCode::ExtendedShutterSpeed => {
+            "Enables shutter speeds beyond the standard range. Allows very long exposures for night photography or creative effects."
+        }
+        DevicePropertyCode::HighIsoNR => {
+            "Noise reduction applied at high ISO values. Reduces grain but may soften fine details."
+        }
+        DevicePropertyCode::LongExposureNR => {
+            "Noise reduction for long exposures. Takes a dark frame to subtract hot pixels. Doubles exposure time."
+        }
+        DevicePropertyCode::IsoAutoMinShutterSpeedMode => {
+            "How minimum shutter speed is determined in Auto ISO. Faster keeps shutter quick, Slower prioritizes low ISO."
+        }
+        DevicePropertyCode::IsoAutoMinShutterSpeedManual => {
+            "Manual minimum shutter speed when using Auto ISO. Camera won't go slower than this value."
+        }
+        DevicePropertyCode::IsoAutoMinShutterSpeedPreset => {
+            "Preset minimum shutter speed based on focal length. Helps prevent motion blur from camera shake."
+        }
+        DevicePropertyCode::IsoAutoRangeLimitMin => {
+            "Minimum ISO when using Auto ISO. Keeps images clean in good light by preventing unnecessary sensitivity boost."
+        }
+        DevicePropertyCode::IsoAutoRangeLimitMax => {
+            "Maximum ISO when using Auto ISO. Limits noise by capping how high sensitivity can go."
+        }
+        DevicePropertyCode::IsoCurrentSensitivity => {
+            "Current effective ISO value. May differ from set ISO due to Auto ISO or exposure compensation."
+        }
+        DevicePropertyCode::ShutterSpeedValue => {
+            "Numeric shutter speed value. Upper bits are numerator, lower bits are denominator of the fraction."
+        }
+        DevicePropertyCode::ShutterSpeedCurrentValue => {
+            "Current effective shutter speed. May differ from set value in auto modes or with exposure compensation."
+        }
+        DevicePropertyCode::ShutterType => {
+            "Mechanical vs electronic shutter. Electronic is silent and faster but may cause rolling shutter artifacts."
+        }
+        DevicePropertyCode::ShutterSelectMode => {
+            "Chooses between shutter types. Auto selects based on conditions, Manual lets you force a specific type."
+        }
+        DevicePropertyCode::ShutterReleaseTimeLagControl => {
+            "Controls shutter release delay. Standard mode optimizes image quality, Speed mode minimizes delay."
+        }
+        DevicePropertyCode::BaseISOSwitchEI => {
+            "Switches between base ISO sensitivities on dual-ISO sensors. Each base has optimal dynamic range."
+        }
+        DevicePropertyCode::GainUnitSetting => {
+            "Display gain as ISO values or decibels (dB). dB is common in video workflows."
+        }
+        DevicePropertyCode::GaindBCurrentValue => {
+            "Current gain level in decibels. 0dB is base sensitivity."
+        }
+        DevicePropertyCode::FacePriorityInMultiMetering => {
+            "Prioritizes detected faces when metering exposure. Ensures faces are properly exposed even in challenging lighting."
+        }
+        DevicePropertyCode::MeteredManualLevel => {
+            "Exposure meter reading in manual mode. Shows how current settings compare to metered exposure."
+        }
+        DevicePropertyCode::IntervalRecShutterType => {
+            "Shutter type for interval shooting. Auto selects automatically. Mechanical uses the physical shutter. Electronic is silent but may cause rolling shutter."
+        }
+        DevicePropertyCode::ShutterECSNumber => {
+            "Extended Clear Scan number setting. Fine-tunes the ECS frequency for eliminating banding on specific displays."
+        }
+        DevicePropertyCode::ShutterECSNumberStep => {
+            "Step size for ECS number adjustments. Smaller steps allow more precise tuning."
+        }
+        DevicePropertyCode::ShutterECSFrequency => {
+            "Extended Clear Scan frequency. Match this to your display's refresh rate to eliminate banding."
+        }
+        DevicePropertyCode::GainBaseSensitivity => {
+            "Base sensor sensitivity for cinema cameras. Determines the native ISO/gain starting point."
+        }
         _ => "",
     }
 }
@@ -378,12 +462,12 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::ExposureProgramMode => "Exposure Mode",
         DevicePropertyCode::ExposureIndex => "Exposure Index (EI)",
         DevicePropertyCode::ExposureCtrlType => "Exposure Control Type",
-        DevicePropertyCode::ExposureStep => "Exposure Step",
+        DevicePropertyCode::ExposureStep => "EV Step Size",
         DevicePropertyCode::AutoSlowShutter => "Auto Slow Shutter",
         DevicePropertyCode::ShutterModeSetting => "Shutter Control",
         DevicePropertyCode::ShutterModeStatus => "Shutter Mode",
         DevicePropertyCode::ShutterMode => "Shutter Unit",
-        DevicePropertyCode::ShutterAngle => "Shutter Angle",
+        DevicePropertyCode::ShutterAngle => "Shutter Angle (°)",
         DevicePropertyCode::ShutterSetting => "Shutter",
         DevicePropertyCode::ShutterSlow => "Slow Shutter",
         DevicePropertyCode::ShutterSlowFrames => "Slow Shutter Frames",
@@ -398,12 +482,29 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::GaindBCurrentValue => "Gain (dB)",
         DevicePropertyCode::GaindBValue => "Gain Value (dB)",
         DevicePropertyCode::IrisModeSetting => "Iris Mode",
-        DevicePropertyCode::IrisDisplayUnit => "Iris Display Unit",
+        DevicePropertyCode::IrisDisplayUnit => "Iris Unit (F/T)",
         DevicePropertyCode::IrisCloseSetting => "Iris Close Enable",
         DevicePropertyCode::BaseISOSwitchEI => "Base ISO (EI)",
         DevicePropertyCode::DRO => "D-Range Optimizer",
         DevicePropertyCode::MeteringMode => "Metering Mode",
-        DevicePropertyCode::MeteredManualLevel => "Metered Manual Level",
+        DevicePropertyCode::MeteredManualLevel => "Meter Level (M)",
+        DevicePropertyCode::FacePriorityInMultiMetering => "Face Priority Metering",
+        DevicePropertyCode::BulbExposureTimeSetting => "Bulb Exposure Time",
+        DevicePropertyCode::ExtendedShutterSpeed => "Extended SS",
+        DevicePropertyCode::HighIsoNR => "High ISO NR",
+        DevicePropertyCode::LongExposureNR => "Long Exp NR",
+        DevicePropertyCode::IsoAutoMinShutterSpeedMode => "ISO Auto Min SS Mode",
+        DevicePropertyCode::IsoAutoMinShutterSpeedManual => "ISO Auto Min SS (Manual)",
+        DevicePropertyCode::IsoAutoMinShutterSpeedPreset => "ISO Auto Min SS (Preset)",
+        DevicePropertyCode::IsoAutoRangeLimitMin => "ISO Auto Range Min",
+        DevicePropertyCode::IsoAutoRangeLimitMax => "ISO Auto Range Max",
+        DevicePropertyCode::IsoCurrentSensitivity => "ISO (Current)",
+        DevicePropertyCode::ShutterSpeedValue => "SS Value",
+        DevicePropertyCode::ShutterSpeedCurrentValue => "SS (Current)",
+        DevicePropertyCode::ShutterType => "Shutter (Mech/Elec)",
+        DevicePropertyCode::ShutterSelectMode => "Shutter Selection",
+        DevicePropertyCode::ShutterReleaseTimeLagControl => "Shutter Release Lag",
+        DevicePropertyCode::IntervalRecShutterType => "Interval Shutter",
         _ => code.name(),
     }
 }
@@ -430,6 +531,39 @@ pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
         DevicePropertyCode::IrisModeSetting
         | DevicePropertyCode::ShutterModeSetting
         | DevicePropertyCode::GainControlSetting => V::AutoManual,
+        DevicePropertyCode::ShutterSpeedValue => V::ShutterSpeed,
+        DevicePropertyCode::IsoCurrentSensitivity
+        | DevicePropertyCode::IsoAutoRangeLimitMin
+        | DevicePropertyCode::IsoAutoRangeLimitMax
+        | DevicePropertyCode::ExposureIndex
+        | DevicePropertyCode::GainBaseIsoSensitivity
+        | DevicePropertyCode::BaseISOSwitchEI => V::Iso,
+        DevicePropertyCode::ShutterAngle => V::Integer,
+        DevicePropertyCode::ShutterSlowFrames
+        | DevicePropertyCode::ShutterECSFrequency
+        | DevicePropertyCode::ShutterECSNumber
+        | DevicePropertyCode::ShutterECSNumberStep
+        | DevicePropertyCode::BulbExposureTimeSetting
+        | DevicePropertyCode::MeteredManualLevel
+        | DevicePropertyCode::GaindBValue
+        | DevicePropertyCode::ExposureStep => V::Integer,
+        DevicePropertyCode::HighIsoNR
+        | DevicePropertyCode::LongExposureNR
+        | DevicePropertyCode::ExtendedShutterSpeed
+        | DevicePropertyCode::FacePriorityInMultiMetering
+        | DevicePropertyCode::DRO => V::Switch,
+        DevicePropertyCode::IsoAutoMinShutterSpeedMode
+        | DevicePropertyCode::ShutterSelectMode
+        | DevicePropertyCode::ShutterType
+        | DevicePropertyCode::ShutterReleaseTimeLagControl
+        | DevicePropertyCode::IrisDisplayUnit
+        | DevicePropertyCode::GainUnitSetting
+        | DevicePropertyCode::GainBaseSensitivity
+        | DevicePropertyCode::IrisCloseSetting => V::Integer,
+        DevicePropertyCode::IsoAutoMinShutterSpeedManual
+        | DevicePropertyCode::IsoAutoMinShutterSpeedPreset => V::ShutterSpeed,
+        DevicePropertyCode::IntervalRecShutterType => V::IntervalRecShutterType,
+        DevicePropertyCode::GaindBCurrentValue => V::Integer,
         _ => return None,
     })
 }

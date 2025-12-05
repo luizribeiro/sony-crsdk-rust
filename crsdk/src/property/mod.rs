@@ -807,6 +807,12 @@ fn silent_display_name(code: DevicePropertyCode) -> &'static str {
 
 fn other_description(code: DevicePropertyCode) -> &'static str {
     match code {
+        DevicePropertyCode::DRO => {
+            "Dynamic Range Optimizer. Automatically adjusts shadows and highlights to preserve detail in high-contrast scenes."
+        }
+        DevicePropertyCode::MeteredManualLevel => {
+            "Exposure meter reading in manual mode. Shows how current settings compare to metered exposure."
+        }
         DevicePropertyCode::StreamModeSetting => {
             "Configures the camera for live streaming output. Sets up video format and connection type for streaming platforms."
         }
@@ -827,6 +833,8 @@ fn other_description(code: DevicePropertyCode) -> &'static str {
 
 fn other_display_name(code: DevicePropertyCode) -> &'static str {
     match code {
+        DevicePropertyCode::DRO => "D-Range Optimizer",
+        DevicePropertyCode::MeteredManualLevel => "Meter Level (M)",
         DevicePropertyCode::StreamStatus => "Stream Status",
         DevicePropertyCode::StreamModeSetting => "Stream Mode",
         DevicePropertyCode::StreamDisplayName => "Stream Display Name",
