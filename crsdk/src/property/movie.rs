@@ -242,6 +242,11 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::MoviePlayingSpeed => {
             "Current playback speed. Can be slowed down or sped up for review."
         }
+        DevicePropertyCode::MediaSLOT1RecordingAvailableType
+        | DevicePropertyCode::MediaSLOT2RecordingAvailableType
+        | DevicePropertyCode::MediaSLOT3RecordingAvailableType => {
+            "Types of recordings supported by the card in this slot (photo, video, etc.)."
+        }
         _ => "",
     }
 }
@@ -284,6 +289,9 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::MovieRecordingFileNumber => "Movie File #",
         DevicePropertyCode::MoviePlayingState => "Playback State",
         DevicePropertyCode::MoviePlayingSpeed => "Playback Speed",
+        DevicePropertyCode::MediaSLOT1RecordingAvailableType => "Slot 1 Rec Type",
+        DevicePropertyCode::MediaSLOT2RecordingAvailableType => "Slot 2 Rec Type",
+        DevicePropertyCode::MediaSLOT3RecordingAvailableType => "Slot 3 Rec Type",
         _ => code.name(),
     }
 }
@@ -315,7 +323,10 @@ pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
         | DevicePropertyCode::TimeCodeRun
         | DevicePropertyCode::MovieRecordingFileNumber
         | DevicePropertyCode::MoviePlayingState
-        | DevicePropertyCode::MoviePlayingSpeed => V::Integer,
+        | DevicePropertyCode::MoviePlayingSpeed
+        | DevicePropertyCode::MediaSLOT1RecordingAvailableType
+        | DevicePropertyCode::MediaSLOT2RecordingAvailableType
+        | DevicePropertyCode::MediaSLOT3RecordingAvailableType => V::Integer,
         _ => return None,
     })
 }

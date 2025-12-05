@@ -398,6 +398,44 @@ fn common_value_type(code: DevicePropertyCode) -> PropertyValueType {
         | DevicePropertyCode::TeleWideLeverValueCapability
         | DevicePropertyCode::RemoconZoomSpeedType => PropertyValueType::Integer,
 
+        // Media
+        DevicePropertyCode::MediaSLOT1Status
+        | DevicePropertyCode::MediaSLOT2Status
+        | DevicePropertyCode::MediaSLOT3Status
+        | DevicePropertyCode::MediaSLOT1RemainingNumber
+        | DevicePropertyCode::MediaSLOT2RemainingNumber
+        | DevicePropertyCode::MediaSLOT1RemainingTime
+        | DevicePropertyCode::MediaSLOT2RemainingTime
+        | DevicePropertyCode::MediaSLOT3RemainingTime
+        | DevicePropertyCode::MediaSLOT1FileType
+        | DevicePropertyCode::MediaSLOT2FileType
+        | DevicePropertyCode::MediaSLOT1ImageQuality
+        | DevicePropertyCode::MediaSLOT2ImageQuality
+        | DevicePropertyCode::MediaSLOT1ImageSize
+        | DevicePropertyCode::MediaSLOT2ImageSize
+        | DevicePropertyCode::MediaSLOT1RAWFileCompressionType
+        | DevicePropertyCode::MediaSLOT2RAWFileCompressionType
+        | DevicePropertyCode::MediaSLOT1QuickFormatEnableStatus
+        | DevicePropertyCode::MediaSLOT2QuickFormatEnableStatus
+        | DevicePropertyCode::MediaSLOT1FormatEnableStatus
+        | DevicePropertyCode::MediaSLOT2FormatEnableStatus
+        | DevicePropertyCode::MediaSLOT1WritingState
+        | DevicePropertyCode::MediaSLOT2WritingState
+        | DevicePropertyCode::MediaSLOT1Player
+        | DevicePropertyCode::MediaSLOT2Player
+        | DevicePropertyCode::MediaSLOT1RecordingAvailableType
+        | DevicePropertyCode::MediaSLOT2RecordingAvailableType
+        | DevicePropertyCode::MediaSLOT3RecordingAvailableType
+        | DevicePropertyCode::MediaSLOT1ContentsInfoListEnableStatus
+        | DevicePropertyCode::MediaSLOT2ContentsInfoListEnableStatus
+        | DevicePropertyCode::MediaSLOT1ContentsInfoListUpdateTime
+        | DevicePropertyCode::MediaSLOT2ContentsInfoListUpdateTime
+        | DevicePropertyCode::MediaSLOT1ContentsInfoListRegenerateUpdateTime
+        | DevicePropertyCode::MediaSLOT2ContentsInfoListRegenerateUpdateTime
+        | DevicePropertyCode::MediaFormatProgressRate
+        | DevicePropertyCode::AutoSwitchMedia
+        | DevicePropertyCode::SimulRecSetting => PropertyValueType::Integer,
+
         _ => PropertyValueType::Unknown,
     }
 }
@@ -646,6 +684,9 @@ fn media_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::MediaSLOT2Status => {
             "Status of memory card in slot 2. Shows if a card is inserted, its capacity, and any errors."
         }
+        DevicePropertyCode::MediaSLOT3Status => {
+            "Status of memory card in slot 3. Shows if a card is inserted, its capacity, and any errors."
+        }
         DevicePropertyCode::AutoSwitchMedia => {
             "Automatically switches to the other card slot when the current card fills up. Prevents missed shots."
         }
@@ -658,17 +699,57 @@ fn media_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::MediaSLOT2FileType => {
             "File type (RAW/JPEG/etc.) saved to memory card slot 2."
         }
-        DevicePropertyCode::MediaSLOT1ImageSize => {
-            "Image resolution for files saved to slot 1."
+        DevicePropertyCode::MediaSLOT1ImageSize | DevicePropertyCode::MediaSLOT2ImageSize => {
+            "Image resolution for files saved to this slot."
         }
-        DevicePropertyCode::MediaSLOT2ImageSize => {
-            "Image resolution for files saved to slot 2."
+        DevicePropertyCode::MediaSLOT1ImageQuality | DevicePropertyCode::MediaSLOT2ImageQuality => {
+            "JPEG compression quality for files saved to this slot."
         }
-        DevicePropertyCode::MediaSLOT1RAWFileCompressionType => {
-            "RAW file compression type for slot 1."
+        DevicePropertyCode::MediaSLOT1RAWFileCompressionType
+        | DevicePropertyCode::MediaSLOT2RAWFileCompressionType => {
+            "RAW file compression type. Uncompressed preserves all data. Lossless/lossy compressed saves space."
         }
-        DevicePropertyCode::MediaSLOT2RAWFileCompressionType => {
-            "RAW file compression type for slot 2."
+        DevicePropertyCode::MediaSLOT1RemainingNumber | DevicePropertyCode::MediaSLOT2RemainingNumber => {
+            "Estimated number of photos remaining at current settings."
+        }
+        DevicePropertyCode::MediaSLOT1RemainingTime
+        | DevicePropertyCode::MediaSLOT2RemainingTime
+        | DevicePropertyCode::MediaSLOT3RemainingTime => {
+            "Estimated recording time remaining at current video settings."
+        }
+        DevicePropertyCode::MediaSLOT1FormatEnableStatus
+        | DevicePropertyCode::MediaSLOT2FormatEnableStatus => {
+            "Whether the card in this slot can be formatted."
+        }
+        DevicePropertyCode::MediaSLOT1QuickFormatEnableStatus
+        | DevicePropertyCode::MediaSLOT2QuickFormatEnableStatus => {
+            "Whether quick format is available for the card in this slot."
+        }
+        DevicePropertyCode::MediaSLOT1WritingState | DevicePropertyCode::MediaSLOT2WritingState => {
+            "Current write status of the card. Shows if data is being written."
+        }
+        DevicePropertyCode::MediaSLOT1Player | DevicePropertyCode::MediaSLOT2Player => {
+            "Playback source selection for this card slot."
+        }
+        DevicePropertyCode::MediaSLOT1RecordingAvailableType
+        | DevicePropertyCode::MediaSLOT2RecordingAvailableType
+        | DevicePropertyCode::MediaSLOT3RecordingAvailableType => {
+            "Types of recordings supported by the card in this slot (photo, video, etc.)."
+        }
+        DevicePropertyCode::MediaSLOT1ContentsInfoListEnableStatus
+        | DevicePropertyCode::MediaSLOT2ContentsInfoListEnableStatus => {
+            "Whether the content list for this slot is available for reading."
+        }
+        DevicePropertyCode::MediaSLOT1ContentsInfoListUpdateTime
+        | DevicePropertyCode::MediaSLOT2ContentsInfoListUpdateTime => {
+            "Last update timestamp of the content info list."
+        }
+        DevicePropertyCode::MediaSLOT1ContentsInfoListRegenerateUpdateTime
+        | DevicePropertyCode::MediaSLOT2ContentsInfoListRegenerateUpdateTime => {
+            "Timestamp when the content list was regenerated."
+        }
+        DevicePropertyCode::MediaFormatProgressRate => {
+            "Progress percentage of current format operation."
         }
         _ => "",
     }
@@ -679,23 +760,39 @@ fn media_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::MediaSLOT1Status => "Slot 1 Status",
         DevicePropertyCode::MediaSLOT2Status => "Slot 2 Status",
         DevicePropertyCode::MediaSLOT3Status => "Slot 3 Status",
-        DevicePropertyCode::MediaSLOT1RemainingNumber => "Slot 1 Remaining",
-        DevicePropertyCode::MediaSLOT2RemainingNumber => "Slot 2 Remaining",
-        DevicePropertyCode::MediaSLOT1RemainingTime => "Slot 1 Time Left",
-        DevicePropertyCode::MediaSLOT2RemainingTime => "Slot 2 Time Left",
-        DevicePropertyCode::MediaSLOT3RemainingTime => "Slot 3 Time Left",
-        DevicePropertyCode::MediaSLOT1FileType => "Slot 1 Format",
-        DevicePropertyCode::MediaSLOT2FileType => "Slot 2 Format",
+        DevicePropertyCode::MediaSLOT1RemainingNumber => "Slot 1 Remain #",
+        DevicePropertyCode::MediaSLOT2RemainingNumber => "Slot 2 Remain #",
+        DevicePropertyCode::MediaSLOT1RemainingTime => "Slot 1 Time",
+        DevicePropertyCode::MediaSLOT2RemainingTime => "Slot 2 Time",
+        DevicePropertyCode::MediaSLOT3RemainingTime => "Slot 3 Time",
+        DevicePropertyCode::MediaSLOT1FileType => "Slot 1 File Type",
+        DevicePropertyCode::MediaSLOT2FileType => "Slot 2 File Type",
         DevicePropertyCode::MediaSLOT1ImageQuality => "Slot 1 Quality",
         DevicePropertyCode::MediaSLOT2ImageQuality => "Slot 2 Quality",
         DevicePropertyCode::MediaSLOT1ImageSize => "Slot 1 Size",
         DevicePropertyCode::MediaSLOT2ImageSize => "Slot 2 Size",
         DevicePropertyCode::MediaSLOT1RAWFileCompressionType => "Slot 1 RAW Comp",
         DevicePropertyCode::MediaSLOT2RAWFileCompressionType => "Slot 2 RAW Comp",
-        DevicePropertyCode::MediaSLOT1QuickFormatEnableStatus => "Slot 1 Quick Format",
-        DevicePropertyCode::MediaSLOT2QuickFormatEnableStatus => "Slot 2 Quick Format",
-        DevicePropertyCode::AutoSwitchMedia => "Auto Switch Media",
-        DevicePropertyCode::SimulRecSetting => "Simultaneous Recording",
+        DevicePropertyCode::MediaSLOT1QuickFormatEnableStatus => "Slot 1 Quick Fmt",
+        DevicePropertyCode::MediaSLOT2QuickFormatEnableStatus => "Slot 2 Quick Fmt",
+        DevicePropertyCode::MediaSLOT1FormatEnableStatus => "Slot 1 Format",
+        DevicePropertyCode::MediaSLOT2FormatEnableStatus => "Slot 2 Format",
+        DevicePropertyCode::MediaSLOT1WritingState => "Slot 1 Writing",
+        DevicePropertyCode::MediaSLOT2WritingState => "Slot 2 Writing",
+        DevicePropertyCode::MediaSLOT1Player => "Slot 1 Player",
+        DevicePropertyCode::MediaSLOT2Player => "Slot 2 Player",
+        DevicePropertyCode::MediaSLOT1RecordingAvailableType => "Slot 1 Rec Type",
+        DevicePropertyCode::MediaSLOT2RecordingAvailableType => "Slot 2 Rec Type",
+        DevicePropertyCode::MediaSLOT3RecordingAvailableType => "Slot 3 Rec Type",
+        DevicePropertyCode::MediaSLOT1ContentsInfoListEnableStatus => "Slot 1 Content",
+        DevicePropertyCode::MediaSLOT2ContentsInfoListEnableStatus => "Slot 2 Content",
+        DevicePropertyCode::MediaSLOT1ContentsInfoListUpdateTime => "Slot 1 Updated",
+        DevicePropertyCode::MediaSLOT2ContentsInfoListUpdateTime => "Slot 2 Updated",
+        DevicePropertyCode::MediaSLOT1ContentsInfoListRegenerateUpdateTime => "Slot 1 Regen",
+        DevicePropertyCode::MediaSLOT2ContentsInfoListRegenerateUpdateTime => "Slot 2 Regen",
+        DevicePropertyCode::MediaFormatProgressRate => "Format Progress",
+        DevicePropertyCode::AutoSwitchMedia => "Auto Switch",
+        DevicePropertyCode::SimulRecSetting => "Simul. Rec",
         _ => code.name(),
     }
 }
@@ -1339,6 +1436,9 @@ fn other_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::TeleWideLeverValueCapability => {
             "Range of values supported by the tele/wide zoom lever."
         }
+        DevicePropertyCode::SimulRecSetting => {
+            "Records to both card slots simultaneously. Provides instant backup of every shot."
+        }
         _ => "",
     }
 }
@@ -1419,6 +1519,7 @@ fn other_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::BaseLookNameofPlayback => "Base Look Name",
         DevicePropertyCode::BaseLookImportOperationEnableStatus => "Base Look Import",
         DevicePropertyCode::TeleWideLeverValueCapability => "Tele/Wide Lever",
+        DevicePropertyCode::SimulRecSetting => "Simul. Rec",
         _ => code.name(),
     }
 }
