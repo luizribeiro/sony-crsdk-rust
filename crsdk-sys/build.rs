@@ -499,11 +499,8 @@ fn generate_enum_code(properties: &[(String, String, u32)]) -> String {
 }
 
 fn humanize_property_name(name: &str) -> String {
-    // Convert SDK property name to human-readable format
-    // e.g., "Movie_Recording_Setting" -> "Movie Recording Setting"
-    // e.g., "FNumber" -> "F-Number"
-    // e.g., "IsoSensitivity" -> "ISO Sensitivity"
-
+    // Basic conversion: just replace underscores with spaces and add spaces for camelCase
+    // Human-readable display names are provided by crsdk, not crsdk-sys
     let mut result = String::new();
     let mut prev_was_upper = false;
     let mut prev_was_underscore = true;
@@ -527,25 +524,5 @@ fn humanize_property_name(name: &str) -> String {
         }
     }
 
-    // Fix common abbreviations
-    result
-        .replace("F Number", "F-Number")
-        .replace("Iso ", "ISO ")
-        .replace(" Iso", " ISO")
-        .replace("Af ", "AF ")
-        .replace(" Af", " AF")
-        .replace("Wb ", "WB ")
-        .replace(" Wb", " WB")
-        .replace("Awb", "AWB")
-        .replace("Dro", "DRO")
-        .replace("Nd ", "ND ")
-        .replace(" Nd", " ND")
-        .replace("Hdmi", "HDMI")
-        .replace("Usb", "USB")
-        .replace("Ftp", "FTP")
-        .replace("Lut", "LUT")
-        .replace("Sq ", "S&Q ")
-        .replace("Ecs", "ECS")
-        .replace("Ptz", "PTZ")
-        .replace(" Id", " ID")
+    result.trim().to_string()
 }

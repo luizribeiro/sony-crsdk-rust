@@ -5,9 +5,9 @@ use crsdk::{
         format_aperture, format_exposure_comp, format_iso_compact, format_shutter_speed,
         parse_aperture, parse_exposure_comp, parse_iso, parse_shutter_speed,
     },
-    format_movie_quality, DevicePropertyCode, DriveMode, ExposureProgram, FileType, FlashMode,
-    FocusArea, FocusMode, ImageQuality, MeteringMode, MovieFileFormat, PropertyCategory,
-    WhiteBalance,
+    format_movie_quality, property_display_name, DevicePropertyCode, DriveMode, ExposureProgram,
+    FileType, FlashMode, FocusArea, FocusMode, ImageQuality, MeteringMode, MovieFileFormat,
+    PropertyCategory, WhiteBalance,
 };
 
 #[derive(Debug, Clone)]
@@ -368,12 +368,12 @@ pub fn search_properties(store: &PropertyStore, query: &str) -> Vec<DeviceProper
         .properties
         .keys()
         .filter_map(|&code| {
-            let name = code.name();
+            let display_name = property_display_name(code);
             let category_name = code.category().to_string();
-            let full_name = format!("{}: {}", category_name, name);
+            let full_name = format!("{}: {}", category_name, display_name);
 
-            let score =
-                fuzzy_match_score(query, name).or_else(|| fuzzy_match_score(query, &full_name));
+            let score = fuzzy_match_score(query, display_name)
+                .or_else(|| fuzzy_match_score(query, &full_name));
 
             score.map(|s| (code, s))
         })

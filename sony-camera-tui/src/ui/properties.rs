@@ -27,6 +27,7 @@ fn scroll_offset_for_selection(
 }
 
 use crate::app::{App, ConnectedCamera, PropertyEditorFocus};
+use crsdk::property_display_name;
 
 use super::header::{self, HeaderState};
 
@@ -244,7 +245,11 @@ fn render_property_list(
                 Span::styled(prefix, name_style),
                 Span::styled(pin_indicator, pin_style),
                 Span::styled(
-                    format!("{:width$}", prop.code.name(), width = NAME_WIDTH),
+                    format!(
+                        "{:width$}",
+                        property_display_name(prop.code),
+                        width = NAME_WIDTH
+                    ),
                     name_style,
                 ),
                 Span::styled(prop.current_value(), value_style),

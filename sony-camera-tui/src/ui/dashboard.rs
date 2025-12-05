@@ -28,7 +28,7 @@ fn scroll_offset_for_selection(
 
 use crate::app::{App, ConnectedCamera, DashboardState, EventsLogState, MediaSlotInfo};
 use crate::property::Property;
-use crsdk::PropertyCategory;
+use crsdk::{property_display_name, PropertyCategory};
 
 use super::header::{self, HeaderState};
 
@@ -315,7 +315,7 @@ fn render_property_line(
     is_in_flight: bool,
 ) -> Line<'static> {
     const NAME_WIDTH: usize = 28;
-    let name = prop.code.name().to_string();
+    let name = property_display_name(prop.code).to_string();
     let value = prop.current_value().to_string();
     let is_disabled = !prop.writable;
 

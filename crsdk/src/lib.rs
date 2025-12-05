@@ -65,6 +65,7 @@ mod event;
 mod event_sender;
 pub mod format;
 mod property;
+mod property_display;
 mod sdk;
 mod types;
 
@@ -82,6 +83,7 @@ pub use types::{CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, M
 
 // Re-export generated property codes (complete SDK coverage)
 pub use crsdk_sys::{DevicePropertyCode, PropertyCategory};
+pub use property_display::property_display_name;
 
 #[cfg(test)]
 mod tests {
