@@ -1745,6 +1745,73 @@ fn other_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::SubjectRecognitionPriorityOnRegisteredFace => {
             "Prioritize registered faces over other subjects."
         }
+        // APS-C and sensor mode
+        DevicePropertyCode::APSCOrFullSwitchingEnableStatus => {
+            "Whether switching between APS-C and full-frame crop is available."
+        }
+        DevicePropertyCode::APSCOrFullSwitchingSetting => {
+            "Choose between full-frame or APS-C crop mode. APS-C extends reach but reduces resolution."
+        }
+        DevicePropertyCode::APSCS35 => {
+            "APS-C/Super 35mm mode. Crops to APS-C size sensor area for extra reach or to use APS-C lenses."
+        }
+        // Auto review and preview
+        DevicePropertyCode::AutoReview => {
+            "Shows captured image briefly after shooting. Set duration or disable to maximize shooting speed."
+        }
+        // Cinematic Vlog settings
+        DevicePropertyCode::CinematicVlogSetting => "Cinematic vlog video style preset.",
+        DevicePropertyCode::CinematicVlogLook => "Visual look/style for cinematic vlog mode.",
+        DevicePropertyCode::CinematicVlogMood => "Color mood preset for cinematic vlog.",
+        DevicePropertyCode::CinematicVlogAFTransitionSpeed => {
+            "How quickly focus transitions in cinematic vlog mode. Slower is more cinematic."
+        }
+        // Contents transfer
+        DevicePropertyCode::ContentsTransferStatus => "Current state of file transfer operation.",
+        DevicePropertyCode::ContentsTransferProgress => "Progress percentage of current file transfer.",
+        DevicePropertyCode::ContentsTransferCancelEnableStatus => {
+            "Whether the current file transfer can be cancelled."
+        }
+        // Grid and display
+        DevicePropertyCode::CreateNewFolder => "Creates a new folder on the memory card.",
+        DevicePropertyCode::CreateNewFolderEnableStatus => "Whether new folder creation is available.",
+        DevicePropertyCode::CurrentSceneFileEdited => "Indicates if current scene file has unsaved changes.",
+        DevicePropertyCode::CustomGridLineFileCommandVersion => "Version of custom grid line file format.",
+        // Depth of field settings
+        DevicePropertyCode::DepthOfFieldAdjustmentMode => {
+            "Mode for adjusting depth of field preview during shooting."
+        }
+        DevicePropertyCode::DepthOfFieldAdjustmentInterlockingMode => {
+            "Links depth of field preview to other camera settings."
+        }
+        // De-squeeze display
+        DevicePropertyCode::DeSqueezeDisplayRatio => {
+            "Display aspect correction for anamorphic lenses. Shows unsqueezed preview."
+        }
+        // Difference settings
+        DevicePropertyCode::DifferentSetForSQMovie => {
+            "Use different settings for S&Q (slow & quick) movie mode than regular video."
+        }
+        // Eframing (auto-framing) settings
+        DevicePropertyCode::EframingAutoFraming => "Automatic subject framing using AI detection.",
+        DevicePropertyCode::EframingModeAuto => "Automatic mode selection for eframing feature.",
+        DevicePropertyCode::EframingProductionEffect => "Production effects applied during auto-framing.",
+        DevicePropertyCode::EframingHDMICrop => "HDMI output crop settings for eframing.",
+        DevicePropertyCode::EframingRecordingImageCrop => "Image crop settings for eframing recording.",
+        DevicePropertyCode::EframingScaleAuto => "Automatic scaling for auto-framing.",
+        DevicePropertyCode::EframingSpeedAuto => "Automatic speed adjustment for framing transitions.",
+        DevicePropertyCode::EframingSpeedPTZ => "Pan-tilt-zoom speed for eframing movements.",
+        DevicePropertyCode::EframingTrackingStartMode => "How auto-framing begins tracking subjects.",
+        DevicePropertyCode::EframingType => "Type of auto-framing behavior.",
+        DevicePropertyCode::EframingCommandVersion => "Eframing protocol version.",
+        // Extended features
+        DevicePropertyCode::ExtendedInterfaceMode => "Extended interface mode for advanced control.",
+        DevicePropertyCode::EmbedLUTFile => "Embeds LUT file data in recorded video.",
+        DevicePropertyCode::EnlargeScreenSetting => "Settings for enlarged screen view.",
+        DevicePropertyCode::EstimatePictureSize => "Estimated file size for current image settings.",
+        // Model and identification
+        DevicePropertyCode::AreaTimeZoneSettingVersion => "Version of timezone settings format.",
+        DevicePropertyCode::CallSetting => "Quick recall of saved camera settings.",
         _ => "",
     }
 }
@@ -1879,6 +1946,53 @@ fn other_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::SubjectRecognitionPlaneTrackingSubjectShiftRange => "Plane Shift",
         DevicePropertyCode::SubjectRecognitionPersonTrackingSubjectShiftRange => "Person Shift",
         DevicePropertyCode::SubjectRecognitionPriorityOnRegisteredFace => "Reg Face Priority",
+        // APS-C and sensor mode
+        DevicePropertyCode::APSCOrFullSwitchingEnableStatus => "APS-C/Full Avail",
+        DevicePropertyCode::APSCOrFullSwitchingSetting => "APS-C/Full Mode",
+        DevicePropertyCode::APSCS35 => "APS-C/S35",
+        // Auto review
+        DevicePropertyCode::AutoReview => "Auto Review",
+        // Cinematic Vlog
+        DevicePropertyCode::CinematicVlogSetting => "Cine Vlog",
+        DevicePropertyCode::CinematicVlogLook => "Cine Vlog Look",
+        DevicePropertyCode::CinematicVlogMood => "Cine Vlog Mood",
+        DevicePropertyCode::CinematicVlogAFTransitionSpeed => "Cine Vlog AF",
+        // Contents transfer
+        DevicePropertyCode::ContentsTransferStatus => "Transfer Status",
+        DevicePropertyCode::ContentsTransferProgress => "Transfer Progress",
+        DevicePropertyCode::ContentsTransferCancelEnableStatus => "Transfer Cancel",
+        // Folder and scene
+        DevicePropertyCode::CreateNewFolder => "New Folder",
+        DevicePropertyCode::CreateNewFolderEnableStatus => "New Folder Avail",
+        DevicePropertyCode::CurrentSceneFileEdited => "Scene Edited",
+        DevicePropertyCode::CustomGridLineFileCommandVersion => "Custom Grid Ver",
+        // Depth of field
+        DevicePropertyCode::DepthOfFieldAdjustmentMode => "DoF Adjust Mode",
+        DevicePropertyCode::DepthOfFieldAdjustmentInterlockingMode => "DoF Interlock",
+        // De-squeeze
+        DevicePropertyCode::DeSqueezeDisplayRatio => "Desqueeze Ratio",
+        // S&Q difference
+        DevicePropertyCode::DifferentSetForSQMovie => "S&Q Diff Set",
+        // Eframing
+        DevicePropertyCode::EframingAutoFraming => "Auto Framing",
+        DevicePropertyCode::EframingModeAuto => "E-Frame Auto",
+        DevicePropertyCode::EframingProductionEffect => "E-Frame Effect",
+        DevicePropertyCode::EframingHDMICrop => "E-Frame HDMI",
+        DevicePropertyCode::EframingRecordingImageCrop => "E-Frame Rec Crop",
+        DevicePropertyCode::EframingScaleAuto => "E-Frame Scale",
+        DevicePropertyCode::EframingSpeedAuto => "E-Frame Speed",
+        DevicePropertyCode::EframingSpeedPTZ => "E-Frame PTZ",
+        DevicePropertyCode::EframingTrackingStartMode => "E-Frame Start",
+        DevicePropertyCode::EframingType => "E-Frame Type",
+        DevicePropertyCode::EframingCommandVersion => "E-Frame Ver",
+        // Extended features
+        DevicePropertyCode::ExtendedInterfaceMode => "Ext Interface",
+        DevicePropertyCode::EmbedLUTFile => "Embed LUT",
+        DevicePropertyCode::EnlargeScreenSetting => "Enlarge Screen",
+        DevicePropertyCode::EstimatePictureSize => "Est. File Size",
+        // Model and settings
+        DevicePropertyCode::AreaTimeZoneSettingVersion => "Timezone Ver",
+        DevicePropertyCode::CallSetting => "Recall Settings",
         _ => code.name(),
     }
 }
