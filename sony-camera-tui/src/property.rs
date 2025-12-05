@@ -7,7 +7,7 @@ use crsdk::{
     },
     format_movie_quality, property_display_name, DevicePropertyCode, DriveMode, ExposureProgram,
     FileType, FlashMode, FocusArea, FocusMode, ImageQuality, MeteringMode, MovieFileFormat,
-    PropertyCategory, WhiteBalance,
+    PropertyCategory, Switch, WhiteBalance,
 };
 
 #[derive(Debug, Clone)]
@@ -298,6 +298,11 @@ pub fn format_sdk_value(code: DevicePropertyCode, raw: u64) -> String {
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("0x{:X}", raw)),
         DevicePropertyCode::MovieRecordingSetting => format_movie_quality(raw),
+        DevicePropertyCode::AutoSlowShutter
+        | DevicePropertyCode::SilentMode
+        | DevicePropertyCode::NDFilter => Switch::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("{}", raw)),
         _ => format!("{}", raw),
     }
 }
