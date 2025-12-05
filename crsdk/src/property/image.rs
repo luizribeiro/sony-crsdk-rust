@@ -279,6 +279,12 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::PictureProfileResetEnableStatus => {
             "Indicates whether the picture profile can be reset to defaults."
         }
+        DevicePropertyCode::DisplayQualityFinder => {
+            "Display quality setting for the electronic viewfinder."
+        }
+        DevicePropertyCode::LiveViewImageQuality => {
+            "Quality setting for live view stream. Higher quality uses more bandwidth."
+        }
         _ => "",
     }
 }
@@ -337,6 +343,8 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::PictureProfileColorDepthYellow => "PP Yellow",
         DevicePropertyCode::PictureProfileCopy => "PP Copy",
         DevicePropertyCode::PictureProfileResetEnableStatus => "PP Reset Avail",
+        DevicePropertyCode::DisplayQualityFinder => "Finder Quality",
+        DevicePropertyCode::LiveViewImageQuality => "LV Quality",
         _ => code.name(),
     }
 }
@@ -396,7 +404,9 @@ pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
         | DevicePropertyCode::PictureProfileColorDepthMagenta
         | DevicePropertyCode::PictureProfileColorDepthYellow
         | DevicePropertyCode::PictureProfileCopy
-        | DevicePropertyCode::PictureProfileResetEnableStatus => V::Integer,
+        | DevicePropertyCode::PictureProfileResetEnableStatus
+        | DevicePropertyCode::DisplayQualityFinder
+        | DevicePropertyCode::LiveViewImageQuality => V::Integer,
         _ => return None,
     })
 }
