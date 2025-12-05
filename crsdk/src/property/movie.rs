@@ -200,6 +200,45 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::RecordingSelfTimerStatus => {
             "Current state of the self-timer countdown. Shows whether the timer is active and counting down."
         }
+        DevicePropertyCode::MovieRecordingResolutionForMain => {
+            "Video resolution for the main recording. Higher resolutions have more detail but larger file sizes."
+        }
+        DevicePropertyCode::MovieRecordingResolutionForProxy => {
+            "Video resolution for proxy recordings. Lower resolution copies for faster editing."
+        }
+        DevicePropertyCode::MovieRecordingFrameRateProxySetting => {
+            "Frame rate setting for proxy video recordings."
+        }
+        DevicePropertyCode::MovieProxyFileFormat => {
+            "File format for proxy video recordings. Typically a smaller, more edit-friendly format."
+        }
+        DevicePropertyCode::RecordingMedia => {
+            "Which memory card slot is used for recording."
+        }
+        DevicePropertyCode::MovieRecordingMedia => {
+            "Memory card slot for movie recordings. Can differ from still image storage."
+        }
+        DevicePropertyCode::RecorderProxyStatus => {
+            "Current status of the proxy video recorder. Shows if proxy recording is active."
+        }
+        DevicePropertyCode::TimeCodeMake => {
+            "How timecode is generated. Preset uses manual settings. Free Run continues counting even when not recording."
+        }
+        DevicePropertyCode::TimeCodePreset => {
+            "Starting timecode value. Set to match other cameras or continue from previous recordings."
+        }
+        DevicePropertyCode::TimeCodeRun => {
+            "Timecode behavior. Rec Run only advances during recording. Free Run advances continuously."
+        }
+        DevicePropertyCode::MovieRecordingFileNumber => {
+            "Current file number for movie recordings. Auto-increments with each new recording."
+        }
+        DevicePropertyCode::MoviePlayingState => {
+            "Current playback status. Shows if video is playing, paused, or stopped."
+        }
+        DevicePropertyCode::MoviePlayingSpeed => {
+            "Current playback speed. Can be slowed down or sped up for review."
+        }
         _ => "",
     }
 }
@@ -213,19 +252,19 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::MovieRecordingResolutionForProxy => "Proxy Resolution",
         DevicePropertyCode::MovieShootingMode => "Movie Shooting Mode",
         DevicePropertyCode::MovieShootingModeColorGamut => "Movie Color Gamut",
-        DevicePropertyCode::RecordingState => "Recording State",
-        DevicePropertyCode::RecordingMedia => "Recording Media",
+        DevicePropertyCode::RecordingState => "Rec State",
+        DevicePropertyCode::RecordingMedia => "Rec Media",
         DevicePropertyCode::ProxyRecordingSetting => "Proxy Recording",
-        DevicePropertyCode::RecordingSettingFileName => "Recording File Name",
-        DevicePropertyCode::MovieRecordingMedia => "Movie Recording Media",
-        DevicePropertyCode::TimeCodeFormat => "Timecode Format",
-        DevicePropertyCode::TimeCodeMake => "Timecode Make",
-        DevicePropertyCode::TimeCodePreset => "Timecode Preset",
-        DevicePropertyCode::TimeCodeRun => "Timecode Run",
-        DevicePropertyCode::RecorderMainStatus => "Recorder Status",
-        DevicePropertyCode::RecorderProxyStatus => "Proxy Recorder Status",
-        DevicePropertyCode::RecorderStartMain => "Start Recording",
-        DevicePropertyCode::RecorderStartProxy => "Start Proxy Recording",
+        DevicePropertyCode::RecordingSettingFileName => "Rec File Name",
+        DevicePropertyCode::MovieRecordingMedia => "Movie Rec Media",
+        DevicePropertyCode::TimeCodeFormat => "TC Format",
+        DevicePropertyCode::TimeCodeMake => "TC Make",
+        DevicePropertyCode::TimeCodePreset => "TC Preset",
+        DevicePropertyCode::TimeCodeRun => "TC Run",
+        DevicePropertyCode::RecorderMainStatus => "Main Rec Status",
+        DevicePropertyCode::RecorderProxyStatus => "Proxy Rec Status",
+        DevicePropertyCode::RecorderStartMain => "Start Rec",
+        DevicePropertyCode::RecorderStartProxy => "Start Proxy Rec",
         DevicePropertyCode::SQModeSetting => "S&Q Mode",
         DevicePropertyCode::SQRecordingSetting => "S&Q Recording",
         DevicePropertyCode::SQRecordingFrameRateSetting => "S&Q Frame Rate",
@@ -236,6 +275,11 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::RecordingSelfTimerContinuous => "Self-Timer Cont.",
         DevicePropertyCode::RecordingSelfTimerCountTime => "Self-Timer Time",
         DevicePropertyCode::RecordingSelfTimerStatus => "Self-Timer State",
+        DevicePropertyCode::MovieRecordingFrameRateProxySetting => "Proxy Frame Rate",
+        DevicePropertyCode::MovieProxyFileFormat => "Proxy Format",
+        DevicePropertyCode::MovieRecordingFileNumber => "Movie File #",
+        DevicePropertyCode::MoviePlayingState => "Playback State",
+        DevicePropertyCode::MoviePlayingSpeed => "Playback Speed",
         _ => code.name(),
     }
 }
@@ -245,11 +289,28 @@ pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
 
     Some(match code {
         DevicePropertyCode::MovieRecordingSetting => V::MovieQuality,
-        DevicePropertyCode::MovieFileFormat => V::MovieFileFormat,
-        DevicePropertyCode::RecordingSelfTimer => V::Integer,
-        DevicePropertyCode::RecordingSelfTimerContinuous => V::Integer,
-        DevicePropertyCode::RecordingSelfTimerCountTime => V::Integer,
-        DevicePropertyCode::RecordingSelfTimerStatus => V::Integer,
+        DevicePropertyCode::MovieFileFormat | DevicePropertyCode::MovieProxyFileFormat => {
+            V::MovieFileFormat
+        }
+        DevicePropertyCode::RecordingSelfTimer
+        | DevicePropertyCode::RecordingSelfTimerContinuous
+        | DevicePropertyCode::RecordingSelfTimerCountTime
+        | DevicePropertyCode::RecordingSelfTimerStatus
+        | DevicePropertyCode::MovieRecordingResolutionForMain
+        | DevicePropertyCode::MovieRecordingResolutionForProxy
+        | DevicePropertyCode::MovieRecordingFrameRateProxySetting
+        | DevicePropertyCode::RecordingMedia
+        | DevicePropertyCode::MovieRecordingMedia
+        | DevicePropertyCode::RecordingState
+        | DevicePropertyCode::RecorderMainStatus
+        | DevicePropertyCode::RecorderProxyStatus
+        | DevicePropertyCode::TimeCodeFormat
+        | DevicePropertyCode::TimeCodeMake
+        | DevicePropertyCode::TimeCodePreset
+        | DevicePropertyCode::TimeCodeRun
+        | DevicePropertyCode::MovieRecordingFileNumber
+        | DevicePropertyCode::MoviePlayingState
+        | DevicePropertyCode::MoviePlayingSpeed => V::Integer,
         _ => return None,
     })
 }
