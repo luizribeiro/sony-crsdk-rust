@@ -156,6 +156,7 @@ impl EventHandler {
             KeyCode::Char('h') | KeyCode::Left => Some(Action::PropertyEditorValuePrev),
             KeyCode::Char('l') | KeyCode::Right => Some(Action::PropertyEditorValueNext),
             KeyCode::Char('*') => Some(Action::TogglePropertyPin),
+            KeyCode::Char('i') => Some(Action::TogglePropertyInfo),
             KeyCode::Char('o') | KeyCode::Enter => match focus {
                 PropertyEditorFocus::Properties => Some(Action::PropertyEditorOpenValues),
                 PropertyEditorFocus::Values => Some(Action::PropertyEditorApplyValue),
