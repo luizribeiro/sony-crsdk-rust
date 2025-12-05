@@ -197,13 +197,24 @@ fn render_property_values(frame: &mut Frame, area: Rect, app: &App) {
     render_value_list(frame, columns[1], app, &properties);
 }
 
+fn truncate_to_width(s: &str, max_width: usize) -> String {
+    if s.chars().count() <= max_width {
+        format!("{:width$}", s, width = max_width)
+    } else {
+        let truncated: String = s.chars().take(max_width.saturating_sub(1)).collect();
+        format!("{}…", truncated)
+    }
+}
+
 fn render_property_list(
     frame: &mut Frame,
     area: Rect,
     app: &App,
     properties: &[&crate::property::Property],
 ) {
-    const NAME_WIDTH: usize = 34;
+    // Layout: prefix(2) + pin(2) + name + lock(2) + value
+    // Leave ~20 chars for value display, cap name at 35
+    let max_name_width = (area.width as usize).saturating_sub(26).min(35);
     let props_focused = app.property_editor.focus == PropertyEditorFocus::Properties;
     let visible_height = area.height as usize;
     let scroll_offset = scroll_offset_for_selection(
@@ -259,11 +270,7 @@ fn render_property_list(
                 Span::styled(prefix, name_style),
                 Span::styled(pin_indicator, pin_style),
                 Span::styled(
-                    format!(
-                        "{:width$}",
-                        property_display_name(prop.code),
-                        width = NAME_WIDTH
-                    ),
+                    truncate_to_width(property_display_name(prop.code), max_name_width),
                     name_style,
                 ),
                 Span::styled(lock_indicator, lock_style),
