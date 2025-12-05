@@ -151,6 +151,7 @@ pub fn property_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::IntervalRecShootingInterval => "Interval Time",
         DevicePropertyCode::IntervalRecStatus => "Interval Status",
         DevicePropertyCode::IntervalRecMode => "Interval Mode",
+        DevicePropertyCode::IntervalRecShutterType => "Interval Shutter Type",
         DevicePropertyCode::ContinuousShootingSpotBoostStatus => "Burst Boost Status",
         DevicePropertyCode::ContinuousShootingSpotBoostFrameSpeed => "Burst Boost Speed",
 

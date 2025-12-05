@@ -6,9 +6,10 @@ use crsdk::{
         parse_aperture, parse_exposure_comp, parse_iso, parse_shutter_speed,
     },
     format_movie_quality, property_display_name, AspectRatio, AutoManual, DevicePropertyCode,
-    DriveMode, ExposureProgram, FileType, FlashMode, FocusArea, FocusMode, ImageQuality, ImageSize,
-    LiveViewDisplayEffect, MeteringMode, MovieFileFormat, OnOff, PropertyCategory, ShutterMode,
-    ShutterModeStatus, Switch, WhiteBalance,
+    DriveMode, ExposureCtrlType, ExposureProgram, FileType, FlashMode, FocusArea, FocusMode,
+    ImageQuality, ImageSize, IntervalRecShutterType, LiveViewDisplayEffect, MeteringMode,
+    MovieFileFormat, OnOff, PropertyCategory, ShutterMode, ShutterModeStatus,
+    SilentModeApertureDrive, Switch, WhiteBalance,
 };
 
 #[derive(Debug, Clone)]
@@ -303,7 +304,8 @@ pub fn format_sdk_value(code: DevicePropertyCode, raw: u64) -> String {
         | DevicePropertyCode::SilentMode
         | DevicePropertyCode::NDFilter
         | DevicePropertyCode::ShutterSetting
-        | DevicePropertyCode::ShutterECSSetting => Switch::from_raw(raw)
+        | DevicePropertyCode::ShutterECSSetting
+        | DevicePropertyCode::ShutterSlow => Switch::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("{}", raw)),
         DevicePropertyCode::RedEyeReduction | DevicePropertyCode::AudioRecording => {
@@ -330,6 +332,15 @@ pub fn format_sdk_value(code: DevicePropertyCode, raw: u64) -> String {
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("{}", raw)),
         DevicePropertyCode::ShutterMode => ShutterMode::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("{}", raw)),
+        DevicePropertyCode::ExposureCtrlType => ExposureCtrlType::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("{}", raw)),
+        DevicePropertyCode::IntervalRecShutterType => IntervalRecShutterType::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("{}", raw)),
+        DevicePropertyCode::SilentModeApertureDriveInAF => SilentModeApertureDrive::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("{}", raw)),
         _ => format!("{}", raw),

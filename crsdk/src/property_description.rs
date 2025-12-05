@@ -37,6 +37,15 @@ pub fn property_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::DRO => {
             "Dynamic Range Optimizer. Automatically adjusts shadows and highlights to preserve detail in high-contrast scenes. Works on JPEGs only."
         }
+        DevicePropertyCode::ExposureCtrlType => {
+            "P/A/S/M uses traditional exposure modes. Flexible Exposure allows independent control of aperture, shutter, and ISO regardless of the selected mode."
+        }
+        DevicePropertyCode::ShutterSlow => {
+            "Enables extended slow shutter speeds for long exposures. Useful for light trails, smooth water, or low-light photography with a tripod."
+        }
+        DevicePropertyCode::ShutterSlowFrames => {
+            "Number of frames to accumulate when using slow shutter. Higher values create longer effective exposures for creative effects."
+        }
 
         // === Focus ===
         DevicePropertyCode::FocusMode => {
@@ -139,6 +148,9 @@ pub fn property_description(code: DevicePropertyCode) -> &'static str {
         }
         DevicePropertyCode::IntervalRecMode => {
             "Captures images at set intervals for time-lapse photography. The camera can optionally compile them into a video."
+        }
+        DevicePropertyCode::IntervalRecShutterType => {
+            "Shutter type for interval shooting. Auto selects automatically. Mechanical uses the physical shutter. Electronic is silent but may cause rolling shutter with moving subjects."
         }
 
         // === Media ===
@@ -260,6 +272,9 @@ pub fn property_description(code: DevicePropertyCode) -> &'static str {
         // === Silent Mode ===
         DevicePropertyCode::SilentMode => {
             "Disables all mechanical sounds and lights. Uses electronic shutter and turns off AF illuminator and flash. Essential for weddings, wildlife, and theaters."
+        }
+        DevicePropertyCode::SilentModeApertureDriveInAF => {
+            "Controls aperture motor noise during AF in silent mode. Not Target ignores this setting. Standard balances speed and noise. Silent Priority minimizes noise but may slow AF."
         }
 
         // === Streaming ===
