@@ -7,7 +7,8 @@ use crsdk::{
     },
     format_movie_quality, property_display_name, AspectRatio, AutoManual, DevicePropertyCode,
     DriveMode, ExposureProgram, FileType, FlashMode, FocusArea, FocusMode, ImageQuality, ImageSize,
-    MeteringMode, MovieFileFormat, OnOff, PropertyCategory, Switch, WhiteBalance,
+    LiveViewDisplayEffect, MeteringMode, MovieFileFormat, OnOff, PropertyCategory,
+    ShutterModeStatus, Switch, WhiteBalance,
 };
 
 #[derive(Debug, Clone)]
@@ -318,6 +319,12 @@ pub fn format_sdk_value(code: DevicePropertyCode, raw: u64) -> String {
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("{}", raw)),
         DevicePropertyCode::ImageSize => ImageSize::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("{}", raw)),
+        DevicePropertyCode::LiveViewDisplayEffect => LiveViewDisplayEffect::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("{}", raw)),
+        DevicePropertyCode::ShutterModeStatus => ShutterModeStatus::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("{}", raw)),
         _ => format!("{}", raw),

@@ -2001,6 +2001,88 @@ impl std::fmt::Display for ImageSize {
     }
 }
 
+/// Live view display effect setting (Unknown=0, On=1, Off=2).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum LiveViewDisplayEffect {
+    Unknown = 0,
+    On = 1,
+    Off = 2,
+}
+
+impl LiveViewDisplayEffect {
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    pub fn from_raw(value: u64) -> Option<Self> {
+        Some(match value as u8 {
+            0 => Self::Unknown,
+            1 => Self::On,
+            2 => Self::Off,
+            _ => return None,
+        })
+    }
+}
+
+impl std::fmt::Display for LiveViewDisplayEffect {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Unknown => "Unknown",
+                Self::On => "On",
+                Self::Off => "Off",
+            }
+        )
+    }
+}
+
+/// Shutter mode status for cinema cameras.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ShutterModeStatus {
+    Off = 1,
+    Speed = 2,
+    Angle = 3,
+    Ecs = 4,
+    Auto = 5,
+}
+
+impl ShutterModeStatus {
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    pub fn from_raw(value: u64) -> Option<Self> {
+        Some(match value as u8 {
+            1 => Self::Off,
+            2 => Self::Speed,
+            3 => Self::Angle,
+            4 => Self::Ecs,
+            5 => Self::Auto,
+            _ => return None,
+        })
+    }
+}
+
+impl std::fmt::Display for ShutterModeStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Off => "Off",
+                Self::Speed => "Speed",
+                Self::Angle => "Angle",
+                Self::Ecs => "ECS",
+                Self::Auto => "Auto",
+            }
+        )
+    }
+}
+
 /// Format movie recording quality/bitrate setting to display string
 pub fn format_movie_quality(value: u64) -> String {
     match value as u16 {
