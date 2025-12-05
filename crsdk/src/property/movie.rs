@@ -188,6 +188,9 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::LogShootingMode => {
             "Enables log gamma curves (S-Log2, S-Log3) for maximum dynamic range. Requires color grading in post-production."
         }
+        DevicePropertyCode::IntervalRecShutterType => {
+            "Shutter type for interval shooting. Auto selects automatically. Mechanical uses the physical shutter. Electronic is silent but may cause rolling shutter."
+        }
         _ => "",
     }
 }
@@ -220,6 +223,7 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::SQFrameRate => "S&Q Playback Rate",
         DevicePropertyCode::LogShootingMode => "Log Shooting Mode",
         DevicePropertyCode::LogShootingModeColorGamut => "Log Color Gamut",
+        DevicePropertyCode::IntervalRecShutterType => "Interval Shutter",
         _ => code.name(),
     }
 }
@@ -230,6 +234,7 @@ pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
     Some(match code {
         DevicePropertyCode::MovieRecordingSetting => V::MovieQuality,
         DevicePropertyCode::MovieFileFormat => V::MovieFileFormat,
+        DevicePropertyCode::IntervalRecShutterType => V::IntervalRecShutterType,
         _ => return None,
     })
 }
