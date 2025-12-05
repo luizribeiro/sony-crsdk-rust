@@ -1845,6 +1845,43 @@ impl std::fmt::Display for Switch {
     }
 }
 
+/// A generic on/off toggle (Off=0, On=1).
+///
+/// Used for properties like RedEyeReduction and AudioRecording.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum OnOff {
+    Off = 0,
+    On = 1,
+}
+
+impl OnOff {
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    pub fn from_raw(value: u64) -> Option<Self> {
+        Some(match value as u8 {
+            0 => Self::Off,
+            1 => Self::On,
+            _ => return None,
+        })
+    }
+}
+
+impl std::fmt::Display for OnOff {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Off => "Off",
+                Self::On => "On",
+            }
+        )
+    }
+}
+
 /// Format movie recording quality/bitrate setting to display string
 pub fn format_movie_quality(value: u64) -> String {
     match value as u16 {

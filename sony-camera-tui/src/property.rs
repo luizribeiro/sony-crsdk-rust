@@ -6,7 +6,7 @@ use crsdk::{
         parse_aperture, parse_exposure_comp, parse_iso, parse_shutter_speed,
     },
     format_movie_quality, property_display_name, DevicePropertyCode, DriveMode, ExposureProgram,
-    FileType, FlashMode, FocusArea, FocusMode, ImageQuality, MeteringMode, MovieFileFormat,
+    FileType, FlashMode, FocusArea, FocusMode, ImageQuality, MeteringMode, MovieFileFormat, OnOff,
     PropertyCategory, Switch, WhiteBalance,
 };
 
@@ -303,6 +303,11 @@ pub fn format_sdk_value(code: DevicePropertyCode, raw: u64) -> String {
         | DevicePropertyCode::NDFilter => Switch::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("{}", raw)),
+        DevicePropertyCode::RedEyeReduction | DevicePropertyCode::AudioRecording => {
+            OnOff::from_raw(raw)
+                .map(|v| v.to_string())
+                .unwrap_or_else(|| format!("{}", raw))
+        }
         _ => format!("{}", raw),
     }
 }
