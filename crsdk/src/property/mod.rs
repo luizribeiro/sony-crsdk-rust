@@ -295,6 +295,43 @@ fn common_value_type(code: DevicePropertyCode) -> PropertyValueType {
         | DevicePropertyCode::ContinuousShootingSpotBoostFrameSpeed
         | DevicePropertyCode::ContinuousShootingSpotBoostEnableStatus => PropertyValueType::Integer,
 
+        // Custom Buttons
+        DevicePropertyCode::AssignableButton1
+        | DevicePropertyCode::AssignableButton2
+        | DevicePropertyCode::AssignableButton3
+        | DevicePropertyCode::AssignableButton4
+        | DevicePropertyCode::AssignableButton5
+        | DevicePropertyCode::AssignableButton6
+        | DevicePropertyCode::AssignableButton7
+        | DevicePropertyCode::AssignableButton8
+        | DevicePropertyCode::AssignableButton9
+        | DevicePropertyCode::AssignableButton10
+        | DevicePropertyCode::AssignableButton11
+        | DevicePropertyCode::LensAssignableButton1
+        | DevicePropertyCode::AssignableButtonIndicator1
+        | DevicePropertyCode::AssignableButtonIndicator2
+        | DevicePropertyCode::AssignableButtonIndicator3
+        | DevicePropertyCode::AssignableButtonIndicator4
+        | DevicePropertyCode::AssignableButtonIndicator5
+        | DevicePropertyCode::AssignableButtonIndicator6
+        | DevicePropertyCode::AssignableButtonIndicator7
+        | DevicePropertyCode::AssignableButtonIndicator8
+        | DevicePropertyCode::AssignableButtonIndicator9
+        | DevicePropertyCode::AssignableButtonIndicator10
+        | DevicePropertyCode::AssignableButtonIndicator11
+        | DevicePropertyCode::ButtonAssignmentAssignable1
+        | DevicePropertyCode::ButtonAssignmentAssignable2
+        | DevicePropertyCode::ButtonAssignmentAssignable3
+        | DevicePropertyCode::ButtonAssignmentAssignable4
+        | DevicePropertyCode::ButtonAssignmentAssignable5
+        | DevicePropertyCode::ButtonAssignmentAssignable6
+        | DevicePropertyCode::ButtonAssignmentAssignable7
+        | DevicePropertyCode::ButtonAssignmentAssignable8
+        | DevicePropertyCode::ButtonAssignmentAssignable9
+        | DevicePropertyCode::ButtonAssignmentAssignable10
+        | DevicePropertyCode::ButtonAssignmentAssignable11
+        | DevicePropertyCode::ButtonAssignmentLensAssignable1 => PropertyValueType::Integer,
+
         _ => PropertyValueType::Unknown,
     }
 }
@@ -677,6 +714,12 @@ fn lens_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::LensCompensationDistortion => {
             "Corrects barrel or pincushion distortion. Makes straight lines appear straight, especially with wide-angle lenses."
         }
+        DevicePropertyCode::LensAssignableButton1 => {
+            "Custom button on the lens that can be assigned to frequently used functions."
+        }
+        DevicePropertyCode::ButtonAssignmentLensAssignable1 => {
+            "The function currently assigned to the lens assignable button."
+        }
         _ => "",
     }
 }
@@ -691,6 +734,8 @@ fn lens_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::FocalDistanceInMeter => "Focal Distance (m)",
         DevicePropertyCode::FocalDistanceInFeet => "Focal Distance (ft)",
         DevicePropertyCode::FocalDistanceUnitSetting => "Focal Distance Unit",
+        DevicePropertyCode::LensAssignableButton1 => "Lens Btn",
+        DevicePropertyCode::ButtonAssignmentLensAssignable1 => "Assign Lens Btn",
         _ => code.name(),
     }
 }
@@ -846,6 +891,19 @@ fn nd_filter_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::WindNoiseReduct => {
             "Reduces low-frequency wind noise in the built-in microphone. May slightly affect audio quality."
         }
+        DevicePropertyCode::AssignableButtonIndicator1
+        | DevicePropertyCode::AssignableButtonIndicator2
+        | DevicePropertyCode::AssignableButtonIndicator3
+        | DevicePropertyCode::AssignableButtonIndicator4
+        | DevicePropertyCode::AssignableButtonIndicator5
+        | DevicePropertyCode::AssignableButtonIndicator6
+        | DevicePropertyCode::AssignableButtonIndicator7
+        | DevicePropertyCode::AssignableButtonIndicator8
+        | DevicePropertyCode::AssignableButtonIndicator9
+        | DevicePropertyCode::AssignableButtonIndicator10
+        | DevicePropertyCode::AssignableButtonIndicator11 => {
+            "Shows the current state of the assignable button indicator (active/inactive)."
+        }
         _ => "",
     }
 }
@@ -858,6 +916,17 @@ fn nd_filter_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::NDFilterValue => "ND Filter Value",
         DevicePropertyCode::NDFilterSwitchingSetting => "ND Switching",
         DevicePropertyCode::WindNoiseReduct => "Wind Noise Reduct.",
+        DevicePropertyCode::AssignableButtonIndicator1 => "Btn Ind 1",
+        DevicePropertyCode::AssignableButtonIndicator2 => "Btn Ind 2",
+        DevicePropertyCode::AssignableButtonIndicator3 => "Btn Ind 3",
+        DevicePropertyCode::AssignableButtonIndicator4 => "Btn Ind 4",
+        DevicePropertyCode::AssignableButtonIndicator5 => "Btn Ind 5",
+        DevicePropertyCode::AssignableButtonIndicator6 => "Btn Ind 6",
+        DevicePropertyCode::AssignableButtonIndicator7 => "Btn Ind 7",
+        DevicePropertyCode::AssignableButtonIndicator8 => "Btn Ind 8",
+        DevicePropertyCode::AssignableButtonIndicator9 => "Btn Ind 9",
+        DevicePropertyCode::AssignableButtonIndicator10 => "Btn Ind 10",
+        DevicePropertyCode::AssignableButtonIndicator11 => "Btn Ind 11",
         _ => code.name(),
     }
 }
@@ -1002,6 +1071,47 @@ fn other_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::RecorderMainStatus => {
             "Current status of the main video recorder. Shows if recording is active, paused, or stopped."
         }
+        DevicePropertyCode::AssignableButton1
+        | DevicePropertyCode::AssignableButton2
+        | DevicePropertyCode::AssignableButton3
+        | DevicePropertyCode::AssignableButton4
+        | DevicePropertyCode::AssignableButton5
+        | DevicePropertyCode::AssignableButton6
+        | DevicePropertyCode::AssignableButton7
+        | DevicePropertyCode::AssignableButton8
+        | DevicePropertyCode::AssignableButton9
+        | DevicePropertyCode::AssignableButton10
+        | DevicePropertyCode::AssignableButton11
+        | DevicePropertyCode::LensAssignableButton1 => {
+            "Custom button on the camera body that can be assigned to frequently used functions."
+        }
+        DevicePropertyCode::AssignableButtonIndicator1
+        | DevicePropertyCode::AssignableButtonIndicator2
+        | DevicePropertyCode::AssignableButtonIndicator3
+        | DevicePropertyCode::AssignableButtonIndicator4
+        | DevicePropertyCode::AssignableButtonIndicator5
+        | DevicePropertyCode::AssignableButtonIndicator6
+        | DevicePropertyCode::AssignableButtonIndicator7
+        | DevicePropertyCode::AssignableButtonIndicator8
+        | DevicePropertyCode::AssignableButtonIndicator9
+        | DevicePropertyCode::AssignableButtonIndicator10
+        | DevicePropertyCode::AssignableButtonIndicator11 => {
+            "Shows the current state of the assignable button indicator (active/inactive)."
+        }
+        DevicePropertyCode::ButtonAssignmentAssignable1
+        | DevicePropertyCode::ButtonAssignmentAssignable2
+        | DevicePropertyCode::ButtonAssignmentAssignable3
+        | DevicePropertyCode::ButtonAssignmentAssignable4
+        | DevicePropertyCode::ButtonAssignmentAssignable5
+        | DevicePropertyCode::ButtonAssignmentAssignable6
+        | DevicePropertyCode::ButtonAssignmentAssignable7
+        | DevicePropertyCode::ButtonAssignmentAssignable8
+        | DevicePropertyCode::ButtonAssignmentAssignable9
+        | DevicePropertyCode::ButtonAssignmentAssignable10
+        | DevicePropertyCode::ButtonAssignmentAssignable11
+        | DevicePropertyCode::ButtonAssignmentLensAssignable1 => {
+            "The function currently assigned to this custom button."
+        }
         _ => "",
     }
 }
@@ -1019,14 +1129,43 @@ fn other_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::FTPConnectionStatus => "FTP Connection Status",
         DevicePropertyCode::WakeOnLAN => "Wake on LAN",
         DevicePropertyCode::IPSetupProtocolSetting => "IP Setup Protocol",
-        DevicePropertyCode::AssignableButton1 => "Assignable Button 1",
-        DevicePropertyCode::AssignableButton2 => "Assignable Button 2",
-        DevicePropertyCode::AssignableButton3 => "Assignable Button 3",
-        DevicePropertyCode::AssignableButton4 => "Assignable Button 4",
-        DevicePropertyCode::AssignableButton5 => "Assignable Button 5",
-        DevicePropertyCode::LensAssignableButton1 => "Lens Assignable Button",
+        DevicePropertyCode::AssignableButton1 => "Btn C1",
+        DevicePropertyCode::AssignableButton2 => "Btn C2",
+        DevicePropertyCode::AssignableButton3 => "Btn C3",
+        DevicePropertyCode::AssignableButton4 => "Btn C4",
+        DevicePropertyCode::AssignableButton5 => "Btn C5",
+        DevicePropertyCode::AssignableButton6 => "Btn C6",
+        DevicePropertyCode::AssignableButton7 => "Btn C7",
+        DevicePropertyCode::AssignableButton8 => "Btn C8",
+        DevicePropertyCode::AssignableButton9 => "Btn C9",
+        DevicePropertyCode::AssignableButton10 => "Btn C10",
+        DevicePropertyCode::AssignableButton11 => "Btn C11",
+        DevicePropertyCode::AssignableButtonIndicator1 => "Btn Ind 1",
+        DevicePropertyCode::AssignableButtonIndicator2 => "Btn Ind 2",
+        DevicePropertyCode::AssignableButtonIndicator3 => "Btn Ind 3",
+        DevicePropertyCode::AssignableButtonIndicator4 => "Btn Ind 4",
+        DevicePropertyCode::AssignableButtonIndicator5 => "Btn Ind 5",
+        DevicePropertyCode::AssignableButtonIndicator6 => "Btn Ind 6",
+        DevicePropertyCode::AssignableButtonIndicator7 => "Btn Ind 7",
+        DevicePropertyCode::AssignableButtonIndicator8 => "Btn Ind 8",
+        DevicePropertyCode::AssignableButtonIndicator9 => "Btn Ind 9",
+        DevicePropertyCode::AssignableButtonIndicator10 => "Btn Ind 10",
+        DevicePropertyCode::AssignableButtonIndicator11 => "Btn Ind 11",
+        DevicePropertyCode::ButtonAssignmentAssignable1 => "Assign C1",
+        DevicePropertyCode::ButtonAssignmentAssignable2 => "Assign C2",
+        DevicePropertyCode::ButtonAssignmentAssignable3 => "Assign C3",
+        DevicePropertyCode::ButtonAssignmentAssignable4 => "Assign C4",
+        DevicePropertyCode::ButtonAssignmentAssignable5 => "Assign C5",
+        DevicePropertyCode::ButtonAssignmentAssignable6 => "Assign C6",
+        DevicePropertyCode::ButtonAssignmentAssignable7 => "Assign C7",
+        DevicePropertyCode::ButtonAssignmentAssignable8 => "Assign C8",
+        DevicePropertyCode::ButtonAssignmentAssignable9 => "Assign C9",
+        DevicePropertyCode::ButtonAssignmentAssignable10 => "Assign C10",
+        DevicePropertyCode::ButtonAssignmentAssignable11 => "Assign C11",
+        DevicePropertyCode::ButtonAssignmentLensAssignable1 => "Assign Lens",
+        DevicePropertyCode::LensAssignableButton1 => "Lens Btn",
         DevicePropertyCode::FunctionOfTouchOperation => "Touch Function",
-        DevicePropertyCode::TouchFunctionInMF => "Touch Function (MF)",
+        DevicePropertyCode::TouchFunctionInMF => "Touch Fn (MF)",
         DevicePropertyCode::ModelName => "Camera Model",
         DevicePropertyCode::BodySerialNumber => "Serial Number",
         DevicePropertyCode::SoftwareVersion => "Firmware Version",
