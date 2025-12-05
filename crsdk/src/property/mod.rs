@@ -1812,6 +1812,55 @@ fn other_description(code: DevicePropertyCode) -> &'static str {
         // Model and identification
         DevicePropertyCode::AreaTimeZoneSettingVersion => "Version of timezone settings format.",
         DevicePropertyCode::CallSetting => "Quick recall of saved camera settings.",
+        // AEL and exposure lock
+        DevicePropertyCode::AEL => "Auto Exposure Lock. Locks the current exposure settings.",
+        // Auto recognition
+        DevicePropertyCode::AutoRecognitionTargetCandidates => {
+            "Available targets for automatic subject recognition."
+        }
+        DevicePropertyCode::AutoRecognitionTargetSetting => {
+            "Selected target type for automatic subject recognition."
+        }
+        // Camera lever
+        DevicePropertyCode::CameraEframing => "Camera electronic framing mode setting.",
+        DevicePropertyCode::CameraLeverFunction => "Function assigned to the camera's lever control.",
+        // Content operations
+        DevicePropertyCode::DeleteContentOperationEnableStatusSLOT1 => {
+            "Whether content deletion is available for slot 1."
+        }
+        DevicePropertyCode::DeleteContentOperationEnableStatusSLOT2 => {
+            "Whether content deletion is available for slot 2."
+        }
+        DevicePropertyCode::DeleteUserBaseLook => "Delete a user-created base look preset.",
+        // Control and interface
+        DevicePropertyCode::ControlForHDMI => "HDMI control settings (HDMI-CEC).",
+        DevicePropertyCode::DebugMode => "Debug mode for troubleshooting.",
+        // Touch and remote
+        DevicePropertyCode::CancelRemoteTouchOperationEnableStatus => {
+            "Whether remote touch operations can be cancelled."
+        }
+        DevicePropertyCode::FunctionOfRemoteTouchOperation => "Function activated by remote touch.",
+        // Flicker
+        DevicePropertyCode::FlickerLessShooting => {
+            "Reduces banding from flickering artificial light sources."
+        }
+        DevicePropertyCode::FlickerLessShootingStatus => "Current flicker reduction status.",
+        DevicePropertyCode::FlickerScanEnableStatus => "Whether flicker scan is available.",
+        DevicePropertyCode::FlickerScanStatus => "Current flicker scan detection status.",
+        // Focal distance display
+        DevicePropertyCode::FocalDistanceInFeet => "Shows focus distance in feet.",
+        DevicePropertyCode::FocalDistanceInMeter => "Shows focus distance in meters.",
+        DevicePropertyCode::FocalDistanceUnitSetting => "Unit for displaying focus distance.",
+        // File numbering
+        DevicePropertyCode::ForcedFileNumberResetEnableStatus => {
+            "Whether file number reset is available."
+        }
+        // Focus assist
+        DevicePropertyCode::FullTimeDMF => {
+            "Direct Manual Focus always available even in AF mode."
+        }
+        // Get only (read-only flag)
+        DevicePropertyCode::GetOnly => "Read-only property flag.",
         _ => "",
     }
 }
@@ -1993,6 +2042,39 @@ fn other_display_name(code: DevicePropertyCode) -> &'static str {
         // Model and settings
         DevicePropertyCode::AreaTimeZoneSettingVersion => "Timezone Ver",
         DevicePropertyCode::CallSetting => "Recall Settings",
+        // AEL
+        DevicePropertyCode::AEL => "AE Lock",
+        // Auto recognition
+        DevicePropertyCode::AutoRecognitionTargetCandidates => "Rec Target Options",
+        DevicePropertyCode::AutoRecognitionTargetSetting => "Rec Target",
+        // Camera lever
+        DevicePropertyCode::CameraEframing => "Camera E-Frame",
+        DevicePropertyCode::CameraLeverFunction => "Lever Function",
+        // Content operations
+        DevicePropertyCode::DeleteContentOperationEnableStatusSLOT1 => "Delete Slot 1",
+        DevicePropertyCode::DeleteContentOperationEnableStatusSLOT2 => "Delete Slot 2",
+        DevicePropertyCode::DeleteUserBaseLook => "Del User Look",
+        // Control and interface
+        DevicePropertyCode::ControlForHDMI => "HDMI Control",
+        DevicePropertyCode::DebugMode => "Debug",
+        // Touch and remote
+        DevicePropertyCode::CancelRemoteTouchOperationEnableStatus => "Cancel Remote",
+        DevicePropertyCode::FunctionOfRemoteTouchOperation => "Remote Touch Fn",
+        // Flicker
+        DevicePropertyCode::FlickerLessShooting => "Flicker Reduce",
+        DevicePropertyCode::FlickerLessShootingStatus => "Flicker Status",
+        DevicePropertyCode::FlickerScanEnableStatus => "Flicker Scan Avail",
+        DevicePropertyCode::FlickerScanStatus => "Flicker Scan",
+        // Focal distance
+        DevicePropertyCode::FocalDistanceInFeet => "Focus Dist (ft)",
+        DevicePropertyCode::FocalDistanceInMeter => "Focus Dist (m)",
+        DevicePropertyCode::FocalDistanceUnitSetting => "Focus Dist Unit",
+        // File numbering
+        DevicePropertyCode::ForcedFileNumberResetEnableStatus => "File # Reset",
+        // Focus assist
+        DevicePropertyCode::FullTimeDMF => "Full-time DMF",
+        // Read-only flag
+        DevicePropertyCode::GetOnly => "Read Only",
         _ => code.name(),
     }
 }
