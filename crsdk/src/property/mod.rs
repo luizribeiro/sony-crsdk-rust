@@ -253,6 +253,20 @@ fn common_value_type(code: DevicePropertyCode) -> PropertyValueType {
         DevicePropertyCode::AEL | DevicePropertyCode::FEL => PropertyValueType::LockIndicator,
         DevicePropertyCode::AutoReview => PropertyValueType::Switch,
 
+        // Interval Recording
+        DevicePropertyCode::IntervalRecMode => PropertyValueType::OnOff,
+        DevicePropertyCode::IntervalRecNumberOfShots
+        | DevicePropertyCode::IntervalRecShootingInterval
+        | DevicePropertyCode::IntervalRecShootingStartTime
+        | DevicePropertyCode::IntervalRecStatus => PropertyValueType::Integer,
+        DevicePropertyCode::IntervalRecShootIntervalPriority => PropertyValueType::OnOff,
+        DevicePropertyCode::IntervalRecAETrackingSensitivity => PropertyValueType::Integer,
+
+        // Continuous Shooting
+        DevicePropertyCode::ContinuousShootingSpotBoostStatus
+        | DevicePropertyCode::ContinuousShootingSpotBoostFrameSpeed
+        | DevicePropertyCode::ContinuousShootingSpotBoostEnableStatus => PropertyValueType::Integer,
+
         _ => PropertyValueType::Unknown,
     }
 }
@@ -827,6 +841,36 @@ fn other_description(code: DevicePropertyCode) -> &'static str {
             "Unique camera serial number. Important for registration, insurance, and tracking ownership."
         }
         DevicePropertyCode::SoftwareVersion => "Current firmware version. Check for updates to get new features and bug fixes.",
+        DevicePropertyCode::IntervalRecMode => {
+            "Captures images at set intervals for time-lapse photography. The camera can optionally compile them into a video."
+        }
+        DevicePropertyCode::IntervalRecNumberOfShots => {
+            "Total number of shots to capture during interval shooting. Set to 0 or unlimited for continuous capture until stopped."
+        }
+        DevicePropertyCode::IntervalRecShootingInterval => {
+            "Time between each shot in interval shooting. Shorter intervals capture faster motion; longer intervals for slow changes."
+        }
+        DevicePropertyCode::IntervalRecShootingStartTime => {
+            "Delay before interval shooting begins. Allows time to leave the scene or wait for a specific moment."
+        }
+        DevicePropertyCode::IntervalRecStatus => {
+            "Current state of interval recording. Shows if shooting is active, paused, or complete."
+        }
+        DevicePropertyCode::IntervalRecShootIntervalPriority => {
+            "When enabled, prioritizes maintaining the interval timing even if it requires shorter exposures."
+        }
+        DevicePropertyCode::IntervalRecAETrackingSensitivity => {
+            "How quickly exposure adjusts between interval shots. Low for gradual changes like sunsets. High for faster changes."
+        }
+        DevicePropertyCode::ContinuousShootingSpotBoostStatus => {
+            "Shows if continuous shooting speed boost is active for the current focus area."
+        }
+        DevicePropertyCode::ContinuousShootingSpotBoostFrameSpeed => {
+            "The boosted frame rate when spot boost is active. Higher speeds capture more frames per second."
+        }
+        DevicePropertyCode::ContinuousShootingSpotBoostEnableStatus => {
+            "Indicates whether the spot boost feature can be enabled in the current shooting mode."
+        }
         _ => "",
     }
 }
@@ -859,6 +903,16 @@ fn other_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::LanguageSetting => "Language",
         DevicePropertyCode::CameraOperatingMode => "Operating Mode",
         DevicePropertyCode::CameraSettingSaveReadState => "Settings State",
+        DevicePropertyCode::IntervalRecMode => "Interval Rec",
+        DevicePropertyCode::IntervalRecNumberOfShots => "Interval #",
+        DevicePropertyCode::IntervalRecShootingInterval => "Interval Time",
+        DevicePropertyCode::IntervalRecShootingStartTime => "Interval Start",
+        DevicePropertyCode::IntervalRecStatus => "Interval State",
+        DevicePropertyCode::IntervalRecShootIntervalPriority => "Interval Priority",
+        DevicePropertyCode::IntervalRecAETrackingSensitivity => "Interval AE Track",
+        DevicePropertyCode::ContinuousShootingSpotBoostStatus => "Burst Boost",
+        DevicePropertyCode::ContinuousShootingSpotBoostFrameSpeed => "Burst Boost FPS",
+        DevicePropertyCode::ContinuousShootingSpotBoostEnableStatus => "Burst Boost Avail",
         _ => code.name(),
     }
 }

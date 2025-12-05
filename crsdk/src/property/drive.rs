@@ -526,14 +526,11 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::BracketOrder => {
             "Sequence of bracketed exposures. 0/−/+ starts with normal exposure. −/0/+ starts with underexposed."
         }
-        DevicePropertyCode::RecordingSelfTimer => {
-            "Delay before the shutter fires. Useful for self-portraits or to avoid camera shake from pressing the button."
+        DevicePropertyCode::BulbTimerSetting => {
+            "Sets a fixed exposure time for bulb mode, allowing long exposures without holding the shutter button."
         }
-        DevicePropertyCode::IntervalRecMode => {
-            "Captures images at set intervals for time-lapse photography. The camera can optionally compile them into a video."
-        }
-        DevicePropertyCode::IntervalRecShutterType => {
-            "Shutter type for interval shooting. Auto selects automatically. Mechanical uses the physical shutter. Electronic is silent but may cause rolling shutter with moving subjects."
+        DevicePropertyCode::ShootingSelfTimerStatus => {
+            "Indicates whether a self-timer shot is currently in progress or pending."
         }
         _ => "",
     }
@@ -541,18 +538,10 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
 
 pub fn display_name(code: DevicePropertyCode) -> &'static str {
     match code {
-        DevicePropertyCode::DriveMode => "Drive Mode",
-        DevicePropertyCode::BracketOrder => "Bracket Order",
-        DevicePropertyCode::RecordingSelfTimer => "Self Timer",
-        DevicePropertyCode::RecordingSelfTimerCountTime => "Self Timer Duration",
-        DevicePropertyCode::RecordingSelfTimerStatus => "Self Timer Status",
-        DevicePropertyCode::IntervalRecNumberOfShots => "Interval Shots",
-        DevicePropertyCode::IntervalRecShootingInterval => "Interval Time",
-        DevicePropertyCode::IntervalRecStatus => "Interval Status",
-        DevicePropertyCode::IntervalRecMode => "Interval Mode",
-        DevicePropertyCode::IntervalRecShutterType => "Interval Shutter Type",
-        DevicePropertyCode::ContinuousShootingSpotBoostStatus => "Burst Boost Status",
-        DevicePropertyCode::ContinuousShootingSpotBoostFrameSpeed => "Burst Boost Speed",
+        DevicePropertyCode::DriveMode => "Drive",
+        DevicePropertyCode::BracketOrder => "Bracket Seq",
+        DevicePropertyCode::BulbTimerSetting => "Bulb Timer",
+        DevicePropertyCode::ShootingSelfTimerStatus => "Timer Active",
         _ => code.name(),
     }
 }
@@ -562,7 +551,9 @@ pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
 
     Some(match code {
         DevicePropertyCode::DriveMode => V::DriveMode,
-        DevicePropertyCode::IntervalRecShutterType => V::IntervalRecShutterType,
+        DevicePropertyCode::BracketOrder => V::Integer,
+        DevicePropertyCode::BulbTimerSetting => V::Integer,
+        DevicePropertyCode::ShootingSelfTimerStatus => V::Integer,
         _ => return None,
     })
 }

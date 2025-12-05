@@ -188,8 +188,17 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::LogShootingMode => {
             "Enables log gamma curves (S-Log2, S-Log3) for maximum dynamic range. Requires color grading in post-production."
         }
-        DevicePropertyCode::IntervalRecShutterType => {
-            "Shutter type for interval shooting. Auto selects automatically. Mechanical uses the physical shutter. Electronic is silent but may cause rolling shutter."
+        DevicePropertyCode::RecordingSelfTimer => {
+            "Delay before the shutter fires. Useful for self-portraits or to avoid camera shake from pressing the button."
+        }
+        DevicePropertyCode::RecordingSelfTimerContinuous => {
+            "Number of shots to take after the self-timer countdown. Useful for taking multiple self-portraits in succession."
+        }
+        DevicePropertyCode::RecordingSelfTimerCountTime => {
+            "Duration of the self-timer countdown in seconds before the shutter fires."
+        }
+        DevicePropertyCode::RecordingSelfTimerStatus => {
+            "Current state of the self-timer countdown. Shows whether the timer is active and counting down."
         }
         _ => "",
     }
@@ -223,7 +232,10 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::SQFrameRate => "S&Q Playback Rate",
         DevicePropertyCode::LogShootingMode => "Log Shooting Mode",
         DevicePropertyCode::LogShootingModeColorGamut => "Log Color Gamut",
-        DevicePropertyCode::IntervalRecShutterType => "Interval Shutter",
+        DevicePropertyCode::RecordingSelfTimer => "Self-Timer",
+        DevicePropertyCode::RecordingSelfTimerContinuous => "Self-Timer Cont.",
+        DevicePropertyCode::RecordingSelfTimerCountTime => "Self-Timer Time",
+        DevicePropertyCode::RecordingSelfTimerStatus => "Self-Timer State",
         _ => code.name(),
     }
 }
@@ -234,7 +246,10 @@ pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
     Some(match code {
         DevicePropertyCode::MovieRecordingSetting => V::MovieQuality,
         DevicePropertyCode::MovieFileFormat => V::MovieFileFormat,
-        DevicePropertyCode::IntervalRecShutterType => V::IntervalRecShutterType,
+        DevicePropertyCode::RecordingSelfTimer => V::Integer,
+        DevicePropertyCode::RecordingSelfTimerContinuous => V::Integer,
+        DevicePropertyCode::RecordingSelfTimerCountTime => V::Integer,
+        DevicePropertyCode::RecordingSelfTimerStatus => V::Integer,
         _ => return None,
     })
 }
