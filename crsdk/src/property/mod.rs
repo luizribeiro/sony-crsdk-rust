@@ -1453,6 +1453,9 @@ fn display_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::DisplayedMenuStatus => {
             "Current menu display state."
         }
+        // Moved from NDFilter (was incorrectly categorized due to "nd" substring)
+        DevicePropertyCode::SelectFinder => "Switch between LCD monitor and electronic viewfinder.",
+        DevicePropertyCode::DispModeCandidate => "Available display modes for the current shooting mode.",
         _ => "",
     }
 }
@@ -1468,6 +1471,9 @@ fn display_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::MonitorBrightnessType => "Monitor Bright.",
         DevicePropertyCode::MonitorBrightnessManual => "Monitor Bright. (M)",
         DevicePropertyCode::DisplayedMenuStatus => "Menu Status",
+        // Moved from NDFilter (was incorrectly categorized due to "nd" substring)
+        DevicePropertyCode::SelectFinder => "Finder Select",
+        DevicePropertyCode::DispModeCandidate => "Disp Mode Options",
         _ => code.name(),
     }
 }
@@ -1861,6 +1867,13 @@ fn other_description(code: DevicePropertyCode) -> &'static str {
         }
         // Get only (read-only flag)
         DevicePropertyCode::GetOnly => "Read-only property flag.",
+        // Moved from NDFilter (was incorrectly categorized due to "nd" substring)
+        DevicePropertyCode::WindNoiseReduct => {
+            "Reduces low-frequency wind noise in the built-in microphone. May slightly affect audio quality."
+        }
+        DevicePropertyCode::DigitalExtenderMagnificationSetting => {
+            "Digital extender zoom factor. Crops and enlarges the image beyond optical zoom range."
+        }
         _ => "",
     }
 }
@@ -2075,6 +2088,9 @@ fn other_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::FullTimeDMF => "Full-time DMF",
         // Read-only flag
         DevicePropertyCode::GetOnly => "Read Only",
+        // Moved from NDFilter (was incorrectly categorized due to "nd" substring)
+        DevicePropertyCode::WindNoiseReduct => "Wind Noise Reduct.",
+        DevicePropertyCode::DigitalExtenderMagnificationSetting => "Digital Extender",
         _ => code.name(),
     }
 }

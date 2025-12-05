@@ -249,7 +249,7 @@ fn categorize_property(name: &str) -> &'static str {
         || lower.contains("color")
     {
         "PictureProfile"
-    } else if lower.contains("nd") || lower.contains("filter") {
+    } else if lower.contains("ndfilter") {
         "NDFilter"
     } else if lower.contains("button") || lower.contains("dial") || lower.contains("assignable") {
         "CustomButtons"
