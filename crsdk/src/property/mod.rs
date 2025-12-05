@@ -276,6 +276,18 @@ fn common_value_type(code: DevicePropertyCode) -> PropertyValueType {
         // ND Filter
         DevicePropertyCode::NDFilter => PropertyValueType::Switch,
         DevicePropertyCode::NDFilterModeSetting => PropertyValueType::AutoManual,
+        DevicePropertyCode::NDFilterMode
+        | DevicePropertyCode::NDFilterValue
+        | DevicePropertyCode::NDFilterSwitchingSetting
+        | DevicePropertyCode::NDFilterPositionSetting
+        | DevicePropertyCode::NDFilterOpticalDensityValue
+        | DevicePropertyCode::NDFilterUnitSetting
+        | DevicePropertyCode::NDFilterPresetSelect
+        | DevicePropertyCode::NDFilterPreset1Value
+        | DevicePropertyCode::NDFilterPreset2Value
+        | DevicePropertyCode::NDFilterPreset3Value
+        | DevicePropertyCode::ManualInputForNDFilterValue
+        | DevicePropertyCode::PushAutoNDFilter => PropertyValueType::Integer,
 
         // Other/Misc
         DevicePropertyCode::AEL | DevicePropertyCode::FEL => PropertyValueType::LockIndicator,
@@ -1195,6 +1207,38 @@ fn nd_filter_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::NDFilterMode => {
             "ND filter behavior. Auto engages as needed. Manual gives direct control. Variable ND allows smooth adjustment."
         }
+        DevicePropertyCode::NDFilterModeSetting => {
+            "Setting for ND filter mode. Auto, manual, or variable ND options."
+        }
+        DevicePropertyCode::NDFilterValue => {
+            "Current ND filter value/strength. Higher values block more light."
+        }
+        DevicePropertyCode::NDFilterSwitchingSetting => {
+            "Controls how the ND filter switches between states."
+        }
+        DevicePropertyCode::NDFilterPositionSetting => {
+            "Position of the variable ND filter. Adjusts the amount of light reduction."
+        }
+        DevicePropertyCode::NDFilterOpticalDensityValue => {
+            "Optical density of the ND filter. Measured in stops of light reduction."
+        }
+        DevicePropertyCode::NDFilterUnitSetting => {
+            "Display unit for ND filter values (stops, optical density, etc.)."
+        }
+        DevicePropertyCode::NDFilterPresetSelect => {
+            "Selects which ND filter preset to use (1, 2, or 3)."
+        }
+        DevicePropertyCode::NDFilterPreset1Value
+        | DevicePropertyCode::NDFilterPreset2Value
+        | DevicePropertyCode::NDFilterPreset3Value => {
+            "Stored ND filter value for quick recall."
+        }
+        DevicePropertyCode::ManualInputForNDFilterValue => {
+            "Manual entry of a specific ND filter value."
+        }
+        DevicePropertyCode::PushAutoNDFilter => {
+            "Temporarily engages auto ND filter while button is pressed."
+        }
         DevicePropertyCode::WindNoiseReduct => {
             "Reduces low-frequency wind noise in the built-in microphone. May slightly affect audio quality."
         }
@@ -1221,10 +1265,19 @@ fn nd_filter_description(code: DevicePropertyCode) -> &'static str {
 fn nd_filter_display_name(code: DevicePropertyCode) -> &'static str {
     match code {
         DevicePropertyCode::NDFilter => "ND Filter",
-        DevicePropertyCode::NDFilterMode => "ND Filter Mode",
+        DevicePropertyCode::NDFilterMode => "ND Mode",
         DevicePropertyCode::NDFilterModeSetting => "ND Mode Setting",
-        DevicePropertyCode::NDFilterValue => "ND Filter Value",
+        DevicePropertyCode::NDFilterValue => "ND Value",
         DevicePropertyCode::NDFilterSwitchingSetting => "ND Switching",
+        DevicePropertyCode::NDFilterPositionSetting => "ND Position",
+        DevicePropertyCode::NDFilterOpticalDensityValue => "ND Density",
+        DevicePropertyCode::NDFilterUnitSetting => "ND Unit",
+        DevicePropertyCode::NDFilterPresetSelect => "ND Preset",
+        DevicePropertyCode::NDFilterPreset1Value => "ND Preset 1",
+        DevicePropertyCode::NDFilterPreset2Value => "ND Preset 2",
+        DevicePropertyCode::NDFilterPreset3Value => "ND Preset 3",
+        DevicePropertyCode::ManualInputForNDFilterValue => "ND Manual Input",
+        DevicePropertyCode::PushAutoNDFilter => "Push Auto ND",
         DevicePropertyCode::WindNoiseReduct => "Wind Noise Reduct.",
         DevicePropertyCode::AssignableButtonIndicator1 => "Btn Ind 1",
         DevicePropertyCode::AssignableButtonIndicator2 => "Btn Ind 2",
