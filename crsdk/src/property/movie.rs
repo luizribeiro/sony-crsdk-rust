@@ -1,5 +1,6 @@
 //! Movie/video recording property types and metadata.
 
+use super::PropertyValueType;
 use crsdk_sys::DevicePropertyCode;
 
 /// Movie file format
@@ -221,4 +222,14 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::LogShootingModeColorGamut => "Log Color Gamut",
         _ => code.name(),
     }
+}
+
+pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
+    use PropertyValueType as V;
+
+    Some(match code {
+        DevicePropertyCode::MovieRecordingSetting => V::MovieQuality,
+        DevicePropertyCode::MovieFileFormat => V::MovieFileFormat,
+        _ => return None,
+    })
 }

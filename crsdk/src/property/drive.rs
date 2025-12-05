@@ -1,5 +1,6 @@
 //! Drive mode property types and metadata.
 
+use super::PropertyValueType;
 use crsdk_sys::DevicePropertyCode;
 
 /// Drive mode / shooting mode settings
@@ -554,4 +555,14 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::ContinuousShootingSpotBoostFrameSpeed => "Burst Boost Speed",
         _ => code.name(),
     }
+}
+
+pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
+    use PropertyValueType as V;
+
+    Some(match code {
+        DevicePropertyCode::DriveMode => V::DriveMode,
+        DevicePropertyCode::IntervalRecShutterType => V::IntervalRecShutterType,
+        _ => return None,
+    })
 }

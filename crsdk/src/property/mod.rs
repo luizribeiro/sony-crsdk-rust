@@ -108,6 +108,155 @@ impl EnableFlag {
     }
 }
 
+/// How to interpret and format a property's raw value.
+///
+/// This enum defines the semantic type of a property value, allowing type-safe
+/// formatting and parsing. Use [`property_value_type`] to get the type for a property code.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum PropertyValueType {
+    // Formatted numeric values (special encoding)
+    /// Aperture f-number (raw value / 100, e.g., 280 → f/2.8)
+    Aperture,
+    /// Shutter speed (upper 16 bits = numerator, lower 16 = denominator)
+    ShutterSpeed,
+    /// ISO sensitivity (raw value is ISO number)
+    Iso,
+    /// Exposure compensation (raw value in 1/3 EV steps)
+    ExposureCompensation,
+    /// Color temperature in Kelvin
+    ColorTemperature,
+    /// Movie recording quality/bitrate
+    MovieQuality,
+
+    // Enum value types
+    /// Exposure program mode (P, A, S, M, etc.)
+    ExposureProgram,
+    /// Metering mode
+    MeteringMode,
+    /// Focus mode (AF-S, AF-C, MF, etc.)
+    FocusMode,
+    /// Focus area
+    FocusArea,
+    /// Subject recognition for AF
+    SubjectRecognitionAF,
+    /// AF priority setting
+    PrioritySetInAF,
+    /// Focus tracking status
+    FocusTrackingStatus,
+    /// White balance preset
+    WhiteBalance,
+    /// AWB priority setting
+    PrioritySetInAWB,
+    /// Drive mode (single, continuous, bracket, timer)
+    DriveMode,
+    /// Interval recording shutter type
+    IntervalRecShutterType,
+    /// Flash mode
+    FlashMode,
+    /// File type (slot assignment)
+    FileType,
+    /// Still image quality (RAW, JPEG, etc.)
+    ImageQuality,
+    /// Aspect ratio
+    AspectRatio,
+    /// Image size
+    ImageSize,
+    /// Movie file format (XAVC, etc.)
+    MovieFileFormat,
+    /// Shutter mode status
+    ShutterModeStatus,
+    /// Shutter mode
+    ShutterMode,
+    /// Exposure control type
+    ExposureCtrlType,
+    /// Live view display effect
+    LiveViewDisplayEffect,
+    /// Silent mode aperture drive
+    SilentModeApertureDrive,
+
+    // Generic toggle types
+    /// On/Off toggle (0=Off, 1=On)
+    OnOff,
+    /// Switch toggle (1=Off, 2=On)
+    Switch,
+    /// Auto/Manual toggle
+    AutoManual,
+    /// Lock indicator (unlocked/locked)
+    LockIndicator,
+
+    // Raw value types
+    /// Percentage (0-100)
+    Percentage,
+    /// Plain integer value
+    Integer,
+    /// Unknown/untyped value (display as raw hex)
+    Unknown,
+}
+
+/// Get the value type for a property code.
+///
+/// This determines how to format and parse the raw SDK value for display.
+/// Checks all subsystem modules for type mappings, with fallback to common types.
+pub fn property_value_type(code: DevicePropertyCode) -> PropertyValueType {
+    // Try subsystem-specific value types first
+    if let Some(vt) = exposure::value_type(code) {
+        return vt;
+    }
+    if let Some(vt) = focus::value_type(code) {
+        return vt;
+    }
+    if let Some(vt) = white_balance::value_type(code) {
+        return vt;
+    }
+    if let Some(vt) = drive::value_type(code) {
+        return vt;
+    }
+    if let Some(vt) = flash::value_type(code) {
+        return vt;
+    }
+    if let Some(vt) = image::value_type(code) {
+        return vt;
+    }
+    if let Some(vt) = movie::value_type(code) {
+        return vt;
+    }
+
+    // Fallback to common value types for categories without dedicated modules
+    common_value_type(code)
+}
+
+fn common_value_type(code: DevicePropertyCode) -> PropertyValueType {
+    match code {
+        // Power
+        DevicePropertyCode::BatteryRemain | DevicePropertyCode::BatteryLevel => {
+            PropertyValueType::Percentage
+        }
+
+        // Display
+        DevicePropertyCode::LiveViewDisplayEffect => PropertyValueType::LiveViewDisplayEffect,
+        DevicePropertyCode::GridLineDisplay => PropertyValueType::Switch,
+
+        // Audio
+        DevicePropertyCode::AudioRecording => PropertyValueType::OnOff,
+
+        // Silent
+        DevicePropertyCode::SilentMode => PropertyValueType::Switch,
+        DevicePropertyCode::SilentModeApertureDriveInAF => {
+            PropertyValueType::SilentModeApertureDrive
+        }
+
+        // ND Filter
+        DevicePropertyCode::NDFilter => PropertyValueType::Switch,
+        DevicePropertyCode::NDFilterModeSetting => PropertyValueType::AutoManual,
+
+        // Other/Misc
+        DevicePropertyCode::AEL | DevicePropertyCode::FEL => PropertyValueType::LockIndicator,
+        DevicePropertyCode::AutoReview => PropertyValueType::Switch,
+
+        _ => PropertyValueType::Unknown,
+    }
+}
+
 /// A camera property with its current value and metadata
 #[derive(Debug, Clone)]
 pub struct DeviceProperty {
@@ -747,7 +896,7 @@ mod tests {
         assert!(prop_empty.is_valid_value(999));
     }
 
-    use super::todo::{NEEDS_DESCRIPTION, NEEDS_DISPLAY_NAME};
+    use super::todo::{NEEDS_DESCRIPTION, NEEDS_DISPLAY_NAME, NEEDS_VALUE_TYPE};
     use std::collections::HashSet;
 
     #[test]
@@ -815,11 +964,111 @@ mod tests {
     }
 
     #[test]
+    fn test_all_properties_have_value_types() {
+        let expected: HashSet<_> = NEEDS_VALUE_TYPE.iter().collect();
+        let mut actual_missing = Vec::new();
+
+        for code in DevicePropertyCode::ALL {
+            if property_value_type(*code) == PropertyValueType::Unknown {
+                actual_missing.push(*code);
+            }
+        }
+
+        let actual: HashSet<_> = actual_missing.iter().collect();
+
+        // Find properties that are missing but not in expected list (new regressions)
+        let unexpected: Vec<_> = actual.difference(&expected).collect();
+        assert!(
+            unexpected.is_empty(),
+            "New properties missing value types (add value type or add to NEEDS_VALUE_TYPE in todo.rs): {:?}",
+            unexpected
+        );
+
+        // Find properties in expected list that now have value types (need to remove from list)
+        let fixed: Vec<_> = expected.difference(&actual).collect();
+        assert!(
+            fixed.is_empty(),
+            "Properties now have value types - remove from NEEDS_VALUE_TYPE in todo.rs: {:?}",
+            fixed
+        );
+    }
+
+    #[test]
     fn test_all_properties_have_valid_categories() {
         for code in DevicePropertyCode::ALL {
             let category = code.category();
             // Ensure category() doesn't panic and returns a valid category
             let _ = format!("{:?}", category);
+        }
+    }
+
+    #[test]
+    fn test_property_value_type_mapping() {
+        use PropertyValueType::*;
+
+        // Formatted numeric values
+        assert_eq!(property_value_type(DevicePropertyCode::FNumber), Aperture);
+        assert_eq!(
+            property_value_type(DevicePropertyCode::ShutterSpeed),
+            ShutterSpeed
+        );
+        assert_eq!(property_value_type(DevicePropertyCode::IsoSensitivity), Iso);
+        assert_eq!(
+            property_value_type(DevicePropertyCode::ExposureBiasCompensation),
+            ExposureCompensation
+        );
+        assert_eq!(
+            property_value_type(DevicePropertyCode::Colortemp),
+            ColorTemperature
+        );
+
+        // Enum types
+        assert_eq!(
+            property_value_type(DevicePropertyCode::ExposureProgramMode),
+            ExposureProgram
+        );
+        assert_eq!(
+            property_value_type(DevicePropertyCode::FocusMode),
+            FocusMode
+        );
+        assert_eq!(
+            property_value_type(DevicePropertyCode::WhiteBalance),
+            WhiteBalance
+        );
+        assert_eq!(
+            property_value_type(DevicePropertyCode::DriveMode),
+            DriveMode
+        );
+
+        // Toggle types
+        assert_eq!(
+            property_value_type(DevicePropertyCode::AutoSlowShutter),
+            Switch
+        );
+        assert_eq!(
+            property_value_type(DevicePropertyCode::RedEyeReduction),
+            OnOff
+        );
+        assert_eq!(
+            property_value_type(DevicePropertyCode::IrisModeSetting),
+            AutoManual
+        );
+
+        // Percentage
+        assert_eq!(
+            property_value_type(DevicePropertyCode::BatteryRemain),
+            Percentage
+        );
+
+        // Unknown falls through
+        assert_eq!(property_value_type(DevicePropertyCode::Undefined), Unknown);
+    }
+
+    #[test]
+    fn test_all_properties_have_valid_value_types() {
+        // Ensure property_value_type doesn't panic for any property
+        for code in DevicePropertyCode::ALL {
+            let _ = property_value_type(*code);
         }
     }
 }

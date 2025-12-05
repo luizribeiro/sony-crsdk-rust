@@ -1,5 +1,6 @@
 //! Flash-related property types and metadata.
 
+use super::PropertyValueType;
 use crsdk_sys::DevicePropertyCode;
 
 /// Flash mode settings
@@ -56,4 +57,15 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::RedEyeReduction => "Red Eye Reduction",
         _ => code.name(),
     }
+}
+
+pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
+    use PropertyValueType as V;
+
+    Some(match code {
+        DevicePropertyCode::FlashMode => V::FlashMode,
+        DevicePropertyCode::FlashCompensation => V::ExposureCompensation,
+        DevicePropertyCode::RedEyeReduction => V::OnOff,
+        _ => return None,
+    })
 }

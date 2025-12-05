@@ -1,5 +1,6 @@
 //! Focus-related property types and metadata.
 
+use super::PropertyValueType;
 use crsdk_sys::DevicePropertyCode;
 
 /// Focus mode settings
@@ -313,4 +314,25 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::FocusTrackingStatus => "Focus Tracking Status",
         _ => code.name(),
     }
+}
+
+pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
+    use PropertyValueType as V;
+
+    Some(match code {
+        DevicePropertyCode::FocusMode | DevicePropertyCode::FocusModeSetting => V::FocusMode,
+        DevicePropertyCode::FocusArea => V::FocusArea,
+        DevicePropertyCode::SubjectRecognitionAF | DevicePropertyCode::SubjectRecognitionInAF => {
+            V::SubjectRecognitionAF
+        }
+        DevicePropertyCode::PrioritySetInAFS | DevicePropertyCode::PrioritySetInAFC => {
+            V::PrioritySetInAF
+        }
+        DevicePropertyCode::FocusTrackingStatus => V::FocusTrackingStatus,
+        DevicePropertyCode::AFAssist
+        | DevicePropertyCode::PreAF
+        | DevicePropertyCode::AFWithShutter
+        | DevicePropertyCode::FaceEyeFrameDisplay => V::Switch,
+        _ => return None,
+    })
 }

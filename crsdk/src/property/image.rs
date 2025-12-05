@@ -1,5 +1,6 @@
 //! Still image quality property types and metadata.
 
+use super::PropertyValueType;
 use crsdk_sys::DevicePropertyCode;
 
 /// File type for still images (RAW vs JPEG)
@@ -205,4 +206,16 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::SoftSkinEffect => "Soft Skin Effect",
         _ => code.name(),
     }
+}
+
+pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
+    use PropertyValueType as V;
+
+    Some(match code {
+        DevicePropertyCode::StillImageStoreDestination => V::FileType,
+        DevicePropertyCode::StillImageQuality => V::ImageQuality,
+        DevicePropertyCode::AspectRatio => V::AspectRatio,
+        DevicePropertyCode::ImageSize => V::ImageSize,
+        _ => return None,
+    })
 }
