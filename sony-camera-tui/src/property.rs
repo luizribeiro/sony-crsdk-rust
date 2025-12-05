@@ -5,9 +5,9 @@ use crsdk::{
         format_aperture, format_exposure_comp, format_iso_compact, format_shutter_speed,
         parse_aperture, parse_exposure_comp, parse_iso, parse_shutter_speed,
     },
-    format_movie_quality, property_display_name, AutoManual, DevicePropertyCode, DriveMode,
-    ExposureProgram, FileType, FlashMode, FocusArea, FocusMode, ImageQuality, MeteringMode,
-    MovieFileFormat, OnOff, PropertyCategory, Switch, WhiteBalance,
+    format_movie_quality, property_display_name, AspectRatio, AutoManual, DevicePropertyCode,
+    DriveMode, ExposureProgram, FileType, FlashMode, FocusArea, FocusMode, ImageQuality,
+    MeteringMode, MovieFileFormat, OnOff, PropertyCategory, Switch, WhiteBalance,
 };
 
 #[derive(Debug, Clone)]
@@ -312,6 +312,9 @@ pub fn format_sdk_value(code: DevicePropertyCode, raw: u64) -> String {
         | DevicePropertyCode::ShutterModeSetting
         | DevicePropertyCode::GainControlSetting
         | DevicePropertyCode::NDFilterModeSetting => AutoManual::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("{}", raw)),
+        DevicePropertyCode::AspectRatio => AspectRatio::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("{}", raw)),
         _ => format!("{}", raw),
