@@ -107,6 +107,12 @@ pub fn property_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::ColorTuningGM => {
             "Fine-tunes white balance on the green-magenta axis. Adjusts for fluorescent lighting or creative color effects."
         }
+        DevicePropertyCode::AWBL => {
+            "Locks the current auto white balance setting. Useful when you want consistent color across multiple shots in changing light."
+        }
+        DevicePropertyCode::PrioritySetInAWB => {
+            "Controls AWB color bias. Standard is neutral. Ambience preserves warm/cool feeling of the light source. White makes whites appear more neutral."
+        }
 
         // === Image Quality ===
         DevicePropertyCode::FileType => {

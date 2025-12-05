@@ -2340,6 +2340,80 @@ impl std::fmt::Display for FocusTrackingStatus {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum LockIndicator {
+    Unknown = 0,
+    Unlocked = 1,
+    Locked = 2,
+}
+
+impl LockIndicator {
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    pub fn from_raw(value: u64) -> Option<Self> {
+        Some(match value as u16 {
+            0 => Self::Unknown,
+            1 => Self::Unlocked,
+            2 => Self::Locked,
+            _ => return None,
+        })
+    }
+}
+
+impl std::fmt::Display for LockIndicator {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Unknown => "Unknown",
+                Self::Unlocked => "Unlocked",
+                Self::Locked => "Locked",
+            }
+        )
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum PrioritySetInAWB {
+    Standard = 1,
+    Ambience = 2,
+    White = 3,
+}
+
+impl PrioritySetInAWB {
+    pub fn as_raw(self) -> u64 {
+        self as u64
+    }
+
+    pub fn from_raw(value: u64) -> Option<Self> {
+        Some(match value as u8 {
+            1 => Self::Standard,
+            2 => Self::Ambience,
+            3 => Self::White,
+            _ => return None,
+        })
+    }
+}
+
+impl std::fmt::Display for PrioritySetInAWB {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Standard => "Standard",
+                Self::Ambience => "Ambience",
+                Self::White => "White",
+            }
+        )
+    }
+}
+
 /// Format movie recording quality/bitrate setting to display string
 pub fn format_movie_quality(value: u64) -> String {
     match value as u16 {
