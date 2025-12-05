@@ -180,9 +180,28 @@ fn to_pascal_case(s: &str) -> String {
 fn categorize_property(name: &str) -> &'static str {
     let lower = name.to_lowercase();
 
-    // WhiteBalance check first - "white" and "customwb" properties should not be caught
+    // Specific prefix checks first to prevent false positives from substring matches:
+    // - "pictureprofile" contains "file" (from "proFILE") - don't let Image catch it
+    // - "imagestabilization" contains "image" - should go to Stabilization, not Image
+    // - "gammadisplayassist" contains "gamma" - should go to Display, not PictureProfile
+    // - "picturecache" contains "picture" - should go to Movie (it's cache recording)
+    // - "userbittime" contains "timer" - should go to Movie (it's timecode), not Drive
+    // - "displayquality" contains "quality" - should go to Display, not Image
+    // - "playbackcontentsgammatype" contains "gamma" - should go to Display, not PictureProfile
+    if lower.starts_with("pictureprofile") {
+        "PictureProfile"
+    } else if lower.starts_with("imagestabilization") {
+        "Stabilization"
+    } else if lower.starts_with("gammadisplayassist")
+        || lower.starts_with("displayquality")
+        || lower.starts_with("playbackcontentsgammatype")
+    {
+        "Display"
+    } else if lower.starts_with("picturecache") || lower.starts_with("userbittime") {
+        "Movie"
+    // WhiteBalance check - "white" and "customwb" properties should not be caught
     // by "temperature" (Power) or "gain" (Exposure) checks
-    if lower.starts_with("whitebalance")
+    } else if lower.starts_with("whitebalance")
         || lower.starts_with("customwb")
         || lower.starts_with("colortemp")
         || lower.starts_with("colortuning")
