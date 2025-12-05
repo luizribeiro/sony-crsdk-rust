@@ -302,7 +302,19 @@ pub fn property_description(code: DevicePropertyCode) -> &'static str {
             "Shutter timing expressed as an angle (45°-360°). 180° is cinematic standard, giving natural motion blur at 24fps."
         }
         DevicePropertyCode::ShutterModeSetting => {
-            "Choose between shutter speed, shutter angle, or ECS (Extended Clear Scan) modes depending on workflow."
+            "Auto lets the camera control shutter timing. Manual gives you direct control over shutter speed or angle."
+        }
+        DevicePropertyCode::ShutterModeStatus => {
+            "Shows the current shutter mode: Off, Speed (time-based), Angle (degree-based), ECS (Extended Clear Scan), or Auto."
+        }
+        DevicePropertyCode::ShutterMode => {
+            "Choose how shutter is measured: Speed uses time fractions (1/100s), Angle uses degrees (180°) for consistent motion blur across frame rates."
+        }
+        DevicePropertyCode::ShutterSetting => {
+            "Enables or disables manual shutter control. When Off, the camera handles shutter automatically."
+        }
+        DevicePropertyCode::ShutterECSSetting => {
+            "Extended Clear Scan reduces banding when filming monitors and LED screens by syncing shutter to the display's refresh rate."
         }
 
         // === Iris (Cinema) ===
