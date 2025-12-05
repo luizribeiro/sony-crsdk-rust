@@ -45,16 +45,19 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::RedEyeReduction => {
             "Fires pre-flashes to constrict subjects' pupils, reducing the red-eye effect in portraits."
         }
+        DevicePropertyCode::WirelessFlash => {
+            "Controls wireless flash units. When enabled, triggers compatible wireless flash units remotely."
+        }
         _ => "",
     }
 }
 
 pub fn display_name(code: DevicePropertyCode) -> &'static str {
     match code {
-        DevicePropertyCode::FlashMode => "Flash Mode",
-        DevicePropertyCode::FlashCompensation => "Flash Compensation",
-        DevicePropertyCode::WirelessFlash => "Wireless Flash",
-        DevicePropertyCode::RedEyeReduction => "Red Eye Reduction",
+        DevicePropertyCode::FlashMode => "Flash",
+        DevicePropertyCode::FlashCompensation => "Flash ±",
+        DevicePropertyCode::WirelessFlash => "Wireless Flsh",
+        DevicePropertyCode::RedEyeReduction => "Red-Eye Reduc",
         _ => code.name(),
     }
 }
@@ -66,6 +69,7 @@ pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
         DevicePropertyCode::FlashMode => V::FlashMode,
         DevicePropertyCode::FlashCompensation => V::ExposureCompensation,
         DevicePropertyCode::RedEyeReduction => V::OnOff,
+        DevicePropertyCode::WirelessFlash => V::OnOff,
         _ => return None,
     })
 }

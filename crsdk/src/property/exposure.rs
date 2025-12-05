@@ -449,6 +449,18 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::GainBaseSensitivity => {
             "Base sensor sensitivity for cinema cameras. Determines the native ISO/gain starting point."
         }
+        DevicePropertyCode::ContinuousShootingSpeedInElectricShutterHi => {
+            "Frames per second for Hi continuous mode with electronic shutter."
+        }
+        DevicePropertyCode::ContinuousShootingSpeedInElectricShutterHiPlus => {
+            "Frames per second for Hi+ continuous mode with electronic shutter. Fastest burst speed."
+        }
+        DevicePropertyCode::ContinuousShootingSpeedInElectricShutterMid => {
+            "Frames per second for Mid continuous mode with electronic shutter."
+        }
+        DevicePropertyCode::ContinuousShootingSpeedInElectricShutterLo => {
+            "Frames per second for Lo continuous mode with electronic shutter."
+        }
         _ => "",
     }
 }
@@ -505,6 +517,10 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::ShutterSelectMode => "Shutter Selection",
         DevicePropertyCode::ShutterReleaseTimeLagControl => "Shutter Release Lag",
         DevicePropertyCode::IntervalRecShutterType => "Interval Shutter",
+        DevicePropertyCode::ContinuousShootingSpeedInElectricShutterHi => "Cont. Hi FPS (E)",
+        DevicePropertyCode::ContinuousShootingSpeedInElectricShutterHiPlus => "Cont. Hi+ FPS (E)",
+        DevicePropertyCode::ContinuousShootingSpeedInElectricShutterMid => "Cont. Mid FPS (E)",
+        DevicePropertyCode::ContinuousShootingSpeedInElectricShutterLo => "Cont. Lo FPS (E)",
         _ => code.name(),
     }
 }
@@ -564,6 +580,10 @@ pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
         | DevicePropertyCode::IsoAutoMinShutterSpeedPreset => V::ShutterSpeed,
         DevicePropertyCode::IntervalRecShutterType => V::IntervalRecShutterType,
         DevicePropertyCode::GaindBCurrentValue => V::Integer,
+        DevicePropertyCode::ContinuousShootingSpeedInElectricShutterHi
+        | DevicePropertyCode::ContinuousShootingSpeedInElectricShutterHiPlus
+        | DevicePropertyCode::ContinuousShootingSpeedInElectricShutterMid
+        | DevicePropertyCode::ContinuousShootingSpeedInElectricShutterLo => V::Integer,
         _ => return None,
     })
 }
