@@ -379,6 +379,25 @@ fn common_value_type(code: DevicePropertyCode) -> PropertyValueType {
         | DevicePropertyCode::BaseLookNameofPlayback
         | DevicePropertyCode::BaseLookImportOperationEnableStatus => PropertyValueType::Integer,
 
+        // Zoom
+        DevicePropertyCode::ZoomScale
+        | DevicePropertyCode::ZoomSetting
+        | DevicePropertyCode::ZoomOperation
+        | DevicePropertyCode::ZoomOperationWithInt16
+        | DevicePropertyCode::ZoomOperationStatus
+        | DevicePropertyCode::ZoomPositionSetting
+        | DevicePropertyCode::ZoomPositionCurrentValue
+        | DevicePropertyCode::ZoomDrivingStatus
+        | DevicePropertyCode::ZoomSpeedRange
+        | DevicePropertyCode::ZoomDistance
+        | DevicePropertyCode::ZoomDistanceUnitSetting
+        | DevicePropertyCode::ZoomBarInformation
+        | DevicePropertyCode::ZoomTypeStatus
+        | DevicePropertyCode::DigitalZoomScale
+        | DevicePropertyCode::DigitalExtenderMagnificationSetting
+        | DevicePropertyCode::TeleWideLeverValueCapability
+        | DevicePropertyCode::RemoconZoomSpeedType => PropertyValueType::Integer,
+
         _ => PropertyValueType::Unknown,
     }
 }
@@ -726,23 +745,69 @@ fn zoom_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::DigitalZoomScale => {
             "Digital zoom magnification. Extends beyond optical zoom but reduces image quality as it crops and enlarges."
         }
+        DevicePropertyCode::ZoomOperation => {
+            "Controls zoom movement. Use to zoom in or out programmatically."
+        }
+        DevicePropertyCode::ZoomOperationWithInt16 => {
+            "Zoom control with 16-bit precision. Allows finer control over zoom speed and position."
+        }
+        DevicePropertyCode::ZoomOperationStatus => {
+            "Current zoom motor status. Shows if zoom is moving, stopped, or at a limit."
+        }
+        DevicePropertyCode::ZoomPositionSetting => {
+            "Target zoom position. Set a specific zoom level for the lens to move to."
+        }
+        DevicePropertyCode::ZoomPositionCurrentValue => {
+            "Current zoom lens position. Shows the exact position of the zoom element."
+        }
+        DevicePropertyCode::ZoomDrivingStatus => {
+            "Zoom motor driving state. Indicates if zoom is actively moving."
+        }
+        DevicePropertyCode::ZoomSpeedRange => {
+            "Available zoom speed range. Defines minimum and maximum zoom motor speeds."
+        }
+        DevicePropertyCode::ZoomDistance => {
+            "Focal length distance. Shows the current effective focal length of the zoom lens."
+        }
+        DevicePropertyCode::ZoomDistanceUnitSetting => {
+            "Unit for displaying zoom distance. Choose between millimeters or other units."
+        }
+        DevicePropertyCode::ZoomBarInformation => {
+            "Visual zoom bar indicator data. Used to display zoom position on screen."
+        }
+        DevicePropertyCode::ZoomTypeStatus => {
+            "Type of zoom being used. Indicates optical, digital, or combined zoom mode."
+        }
+        DevicePropertyCode::DigitalExtenderMagnificationSetting => {
+            "Digital extender zoom factor. Crops and enlarges the image beyond optical zoom range."
+        }
+        DevicePropertyCode::TeleWideLeverValueCapability => {
+            "Range of values supported by the tele/wide zoom lever."
+        }
+        DevicePropertyCode::RemoconZoomSpeedType => {
+            "Zoom speed setting for remote control. Adjusts how fast the zoom responds to remote input."
+        }
         _ => "",
     }
 }
 
 fn zoom_display_name(code: DevicePropertyCode) -> &'static str {
     match code {
-        DevicePropertyCode::ZoomScale => "Zoom Scale",
-        DevicePropertyCode::ZoomSetting => "Zoom Setting",
-        DevicePropertyCode::ZoomOperation => "Zoom Operation",
+        DevicePropertyCode::ZoomScale => "Zoom",
+        DevicePropertyCode::ZoomSetting => "Zoom Mode",
+        DevicePropertyCode::ZoomOperation => "Zoom Op",
+        DevicePropertyCode::ZoomOperationWithInt16 => "Zoom Op (16-bit)",
+        DevicePropertyCode::ZoomOperationStatus => "Zoom Op Status",
         DevicePropertyCode::ZoomPositionSetting => "Zoom Position",
-        DevicePropertyCode::ZoomPositionCurrentValue => "Zoom Position (Current)",
-        DevicePropertyCode::ZoomDrivingStatus => "Zoom Status",
-        DevicePropertyCode::ZoomSpeedRange => "Zoom Speed Range",
-        DevicePropertyCode::ZoomDistance => "Zoom Distance",
-        DevicePropertyCode::ZoomDistanceUnitSetting => "Zoom Distance Unit",
-        DevicePropertyCode::DigitalZoomScale => "Digital Zoom Scale",
-        DevicePropertyCode::DigitalExtenderMagnificationSetting => "Digital Extender",
+        DevicePropertyCode::ZoomPositionCurrentValue => "Zoom Pos (Current)",
+        DevicePropertyCode::ZoomDrivingStatus => "Zoom Drive Status",
+        DevicePropertyCode::ZoomSpeedRange => "Zoom Speed",
+        DevicePropertyCode::ZoomDistance => "Zoom Dist",
+        DevicePropertyCode::ZoomDistanceUnitSetting => "Zoom Dist Unit",
+        DevicePropertyCode::ZoomBarInformation => "Zoom Bar Info",
+        DevicePropertyCode::ZoomTypeStatus => "Zoom Type",
+        DevicePropertyCode::DigitalZoomScale => "Digital Zoom",
+        DevicePropertyCode::RemoconZoomSpeedType => "Remote Zoom Speed",
         _ => code.name(),
     }
 }
@@ -1049,6 +1114,9 @@ fn nd_filter_description(code: DevicePropertyCode) -> &'static str {
         | DevicePropertyCode::AssignableButtonIndicator11 => {
             "Shows the current state of the assignable button indicator (active/inactive)."
         }
+        DevicePropertyCode::DigitalExtenderMagnificationSetting => {
+            "Digital extender zoom factor. Crops and enlarges the image beyond optical zoom range."
+        }
         _ => "",
     }
 }
@@ -1072,6 +1140,7 @@ fn nd_filter_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::AssignableButtonIndicator9 => "Btn Ind 9",
         DevicePropertyCode::AssignableButtonIndicator10 => "Btn Ind 10",
         DevicePropertyCode::AssignableButtonIndicator11 => "Btn Ind 11",
+        DevicePropertyCode::DigitalExtenderMagnificationSetting => "Digital Extender",
         _ => code.name(),
     }
 }
@@ -1267,6 +1336,9 @@ fn other_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::BaseLookImportOperationEnableStatus => {
             "Indicates whether base look import is available."
         }
+        DevicePropertyCode::TeleWideLeverValueCapability => {
+            "Range of values supported by the tele/wide zoom lever."
+        }
         _ => "",
     }
 }
@@ -1346,6 +1418,7 @@ fn other_display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::BaseLookAppliedofPlayback => "Base Look (Play)",
         DevicePropertyCode::BaseLookNameofPlayback => "Base Look Name",
         DevicePropertyCode::BaseLookImportOperationEnableStatus => "Base Look Import",
+        DevicePropertyCode::TeleWideLeverValueCapability => "Tele/Wide Lever",
         _ => code.name(),
     }
 }
