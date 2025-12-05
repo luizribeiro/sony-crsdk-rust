@@ -78,8 +78,9 @@ pub use property::{
     format_movie_quality, AspectRatio, AutoManual, DataType, DeviceProperty, DriveMode, EnableFlag,
     ExposureCtrlType, ExposureProgram, FileType, FlashMode, FocusArea, FocusMode,
     FocusTrackingStatus, ImageQuality, ImageSize, IntervalRecShutterType, LiveViewDisplayEffect,
-    MeteringMode, MovieFileFormat, OnOff, PrioritySetInAF, PropertyCode, ShutterMode,
-    ShutterModeStatus, SilentModeApertureDrive, SubjectRecognitionAF, Switch, WhiteBalance,
+    LockIndicator, MeteringMode, MovieFileFormat, OnOff, PrioritySetInAF, PrioritySetInAWB,
+    PropertyCode, ShutterMode, ShutterModeStatus, SilentModeApertureDrive, SubjectRecognitionAF,
+    Switch, WhiteBalance,
 };
 pub use sdk::Sdk;
 pub use types::{CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, MacAddr};

@@ -8,8 +8,9 @@ use crsdk::{
     format_movie_quality, property_display_name, AspectRatio, AutoManual, DevicePropertyCode,
     DriveMode, ExposureCtrlType, ExposureProgram, FileType, FlashMode, FocusArea, FocusMode,
     FocusTrackingStatus, ImageQuality, ImageSize, IntervalRecShutterType, LiveViewDisplayEffect,
-    MeteringMode, MovieFileFormat, OnOff, PrioritySetInAF, PropertyCategory, ShutterMode,
-    ShutterModeStatus, SilentModeApertureDrive, SubjectRecognitionAF, Switch, WhiteBalance,
+    LockIndicator, MeteringMode, MovieFileFormat, OnOff, PrioritySetInAF, PrioritySetInAWB,
+    PropertyCategory, ShutterMode, ShutterModeStatus, SilentModeApertureDrive,
+    SubjectRecognitionAF, Switch, WhiteBalance,
 };
 
 #[derive(Debug, Clone)]
@@ -358,6 +359,14 @@ pub fn format_sdk_value(code: DevicePropertyCode, raw: u64) -> String {
                 .unwrap_or_else(|| format!("{}", raw))
         }
         DevicePropertyCode::FocusTrackingStatus => FocusTrackingStatus::from_raw(raw)
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| format!("{}", raw)),
+        DevicePropertyCode::AWBL | DevicePropertyCode::AEL | DevicePropertyCode::FEL => {
+            LockIndicator::from_raw(raw)
+                .map(|v| v.to_string())
+                .unwrap_or_else(|| format!("{}", raw))
+        }
+        DevicePropertyCode::PrioritySetInAWB => PrioritySetInAWB::from_raw(raw)
             .map(|v| v.to_string())
             .unwrap_or_else(|| format!("{}", raw)),
         _ => format!("{}", raw),
