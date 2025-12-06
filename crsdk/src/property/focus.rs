@@ -404,6 +404,9 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::DefaultAFFreeSizeAndPositionSetting => {
             "Default size and position for custom AF areas. Sets the initial AF area when creating new flexible spots."
         }
+        DevicePropertyCode::AmountOfDefocusSetting => {
+            "Amount of defocus/blur to apply. Controls background blur intensity for creative effects."
+        }
         _ => "",
     }
 }

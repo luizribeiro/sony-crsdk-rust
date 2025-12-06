@@ -400,6 +400,57 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::RecordingSettingFileName => {
             "File naming settings for recordings. Customizes how files are named."
         }
+        DevicePropertyCode::DifferentSetForSQMovie => {
+            "Enables different settings for Slow & Quick movie recording. Allows separate quality settings from normal video."
+        }
+        DevicePropertyCode::PictureCacheRecSetting => {
+            "Picture cache recording settings. Captures frames before the record button is pressed for pre-roll."
+        }
+        DevicePropertyCode::PictureCacheRecSizeAndTime => {
+            "Size and duration of the picture cache buffer. Determines how many seconds of pre-roll are captured."
+        }
+        DevicePropertyCode::PlaybackContentsRecordingDateTime => {
+            "Date and time the currently playing content was recorded."
+        }
+        DevicePropertyCode::PlaybackContentsRecordingFileFormat => {
+            "File format of the currently playing content (XAVC, AVCHD, etc.)."
+        }
+        DevicePropertyCode::PlaybackContentsRecordingFrameRate => {
+            "Frame rate at which the currently playing content was recorded."
+        }
+        DevicePropertyCode::PlaybackContentsRecordingResolution => {
+            "Resolution of the currently playing content (4K, HD, etc.)."
+        }
+        DevicePropertyCode::PlaybackMedia => {
+            "Memory card slot or media source for playback. Selects which card to browse."
+        }
+        DevicePropertyCode::PlaySetOfMultiMedia => {
+            "Configuration for playing content from multiple media sources or cards."
+        }
+        DevicePropertyCode::SimulRecSettingMovieRecButton => {
+            "Simultaneous recording settings when pressing the movie record button. Records to multiple destinations."
+        }
+        DevicePropertyCode::ValidRecordingVideoFormat => {
+            "Lists video formats supported by the current camera and card configuration."
+        }
+        DevicePropertyCode::VideoRecordingFormatBitrateSetting => {
+            "Bitrate setting for the selected video recording format. Higher bitrates provide better quality."
+        }
+        DevicePropertyCode::VideoRecordingFormatQuality => {
+            "Quality level for video recording. Affects detail and file size."
+        }
+        DevicePropertyCode::VideoStreamMovieRecPermission => {
+            "Allows or restricts movie recording during video streaming. May be limited by bandwidth or heat."
+        }
+        DevicePropertyCode::EframingRecordingImageCrop => {
+            "Image crop settings for electronic framing recording."
+        }
+        DevicePropertyCode::TimeCodePresetResetEnableStatus => {
+            "Whether timecode preset can be reset to default."
+        }
+        DevicePropertyCode::UserBitTimeRec => {
+            "User bit time recording mode for video metadata."
+        }
         _ => "",
     }
 }

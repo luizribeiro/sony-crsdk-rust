@@ -294,6 +294,63 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::ProtectImageInFTPTransfer => {
             "Protects images from deletion after FTP transfer."
         }
+        DevicePropertyCode::SceneFileDownloadOperationEnableStatus => {
+            "Whether scene file download is available."
+        }
+        DevicePropertyCode::HDMIResolutionStillPlay => {
+            "HDMI output resolution when playing back still images."
+        }
+        DevicePropertyCode::SceneFileIndex => {
+            "Currently selected scene file index for recall or editing."
+        }
+        DevicePropertyCode::SceneFileIndexesAvailableForDownload => {
+            "List of scene file indexes that can be downloaded."
+        }
+        DevicePropertyCode::SceneFileUploadOperationEnableStatus => {
+            "Whether scene file upload is available."
+        }
+        DevicePropertyCode::CustomGridLineFileCommandVersion => {
+            "Version of custom grid line file format."
+        }
+        DevicePropertyCode::MaximumSizeOfImageIDString => {
+            "Maximum character length allowed for image ID strings."
+        }
+        DevicePropertyCode::ForcedFileNumberResetEnableStatus => {
+            "Whether file number reset is available."
+        }
+        DevicePropertyCode::RAWJPCSaveImage => {
+            "Selects which image to save: RAW only, JPEG only, or both."
+        }
+        DevicePropertyCode::ImageIDNum | DevicePropertyCode::ImageIDNumSetting => {
+            "Numeric identifier embedded in image metadata."
+        }
+        DevicePropertyCode::ImageIDString => {
+            "String identifier embedded in image metadata for organization."
+        }
+        DevicePropertyCode::CurrentSceneFileEdited => {
+            "Indicates if current scene file has unsaved changes."
+        }
+        DevicePropertyCode::SceneFileCommandVersion => {
+            "Version of scene file command format for compatibility."
+        }
+        DevicePropertyCode::StillImageTransSize => {
+            "Transfer size setting for still images over network."
+        }
+        DevicePropertyCode::OSDImageMode => {
+            "On-screen display image mode configuration."
+        }
+        DevicePropertyCode::RecorderExtRawStatus => {
+            "Status of external RAW recorder connection."
+        }
+        DevicePropertyCode::EmbedLUTFile => {
+            "Embeds a LUT file in video metadata for color grading reference."
+        }
+        DevicePropertyCode::LiveViewImageQualityByNumericalValue => {
+            "Specific quality value for live view streaming. Higher values provide clearer preview."
+        }
+        DevicePropertyCode::ImagerScanMode => {
+            "Sensor readout mode. Affects rolling shutter behavior and video quality."
+        }
         _ => "",
     }
 }

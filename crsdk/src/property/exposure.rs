@@ -494,6 +494,15 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::EstimatePictureSize => {
             "Displays estimated file size before capture based on current settings. Helps monitor remaining card space."
         }
+        DevicePropertyCode::SilentModeShutterWhenPowerOff => {
+            "Controls shutter blade behavior when powering off in silent mode. Close keeps sensor protected from dust."
+        }
+        DevicePropertyCode::AntidustShutterWhenPowerOff => {
+            "Closes shutter when powering off to protect sensor from dust. Keeps sensor clean during lens changes."
+        }
+        DevicePropertyCode::PushAutoIris => {
+            "Temporarily engages auto iris while button is pressed. Useful for quick exposure checks."
+        }
         _ => "",
     }
 }

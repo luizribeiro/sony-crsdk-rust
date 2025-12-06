@@ -1222,6 +1222,27 @@ fn media_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::MediaFormatProgressRate => {
             "Progress percentage of current format operation."
         }
+        DevicePropertyCode::PresetPTZFSlotNumber => {
+            "Preset slot for Pan/Tilt/Zoom/Focus position recall."
+        }
+        DevicePropertyCode::PlaySetOfMultiMedia => {
+            "Configuration for playing content from multiple media sources."
+        }
+        DevicePropertyCode::PlaybackMedia => {
+            "Memory card slot or media source for playback. Selects which card to browse."
+        }
+        DevicePropertyCode::RemoteKeySLOTSelectButton => {
+            "Remote control button to select memory card slot."
+        }
+        DevicePropertyCode::CancelMediaFormatEnableStatus => {
+            "Whether media format operation can be cancelled."
+        }
+        DevicePropertyCode::DeleteContentOperationEnableStatusSLOT1 => {
+            "Whether content deletion is available for slot 1."
+        }
+        DevicePropertyCode::DeleteContentOperationEnableStatusSLOT2 => {
+            "Whether content deletion is available for slot 2."
+        }
         _ => "",
     }
 }
@@ -1292,6 +1313,15 @@ fn power_description(code: DevicePropertyCode) -> &'static str {
         }
         DevicePropertyCode::FTPPowerSave => "Power saving mode when using FTP transfer.",
         DevicePropertyCode::CameraPowerStatus => "Current power state of the camera.",
+        DevicePropertyCode::SilentModeShutterWhenPowerOff => {
+            "Controls shutter blade behavior when powering off in silent mode. Close keeps sensor protected from dust."
+        }
+        DevicePropertyCode::AntidustShutterWhenPowerOff => {
+            "Closes shutter when powering off to protect sensor from dust. Keeps sensor clean during lens changes."
+        }
+        DevicePropertyCode::USBPowerSupply => {
+            "USB power supply settings for connected devices. Controls power delivery over USB."
+        }
         _ => "",
     }
 }
@@ -1416,6 +1446,24 @@ fn lens_description(code: DevicePropertyCode) -> &'static str {
         }
         DevicePropertyCode::ButtonAssignmentLensAssignable1 => {
             "The function currently assigned to the lens assignable button."
+        }
+        DevicePropertyCode::LensSerialNumber => {
+            "Serial number of the attached lens. Useful for metadata and tracking equipment."
+        }
+        DevicePropertyCode::LensVersionNumber => {
+            "Firmware version of the attached lens. Check for updates to fix bugs or add features."
+        }
+        DevicePropertyCode::LensAssignableButtonIndicator1 => {
+            "Status indicator showing the current function assigned to lens button 1."
+        }
+        DevicePropertyCode::LensInformationEnableStatus => {
+            "Whether lens information (model, focal length, etc.) is available from the attached lens."
+        }
+        DevicePropertyCode::ReleaseWithoutLens => {
+            "Allows shutter release without a lens attached. Enable for adapted lenses without electronic contacts."
+        }
+        DevicePropertyCode::LensCompensationBreathing => {
+            "Compensates for focus breathing where focal length shifts during focusing. Keeps framing consistent when pulling focus in video."
         }
         _ => "",
     }
@@ -1619,6 +1667,15 @@ fn picture_profile_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::PictureEffect => {
             "Creative filters applied to images in-camera. Includes toy camera, posterization, etc."
         }
+        DevicePropertyCode::LogShootingModeColorGamut => {
+            "Color gamut for log shooting. S-Gamut3 provides maximum color range for grading."
+        }
+        DevicePropertyCode::ColorSpace => {
+            "Color space for images. sRGB for web/print. AdobeRGB for wider gamut professional workflows."
+        }
+        DevicePropertyCode::EstimatePictureSize => {
+            "Estimated file size for the current image quality settings."
+        }
         _ => "",
     }
 }
@@ -1792,6 +1849,75 @@ fn display_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::PlaybackContentsGammaType => {
             "Gamma curve type of the content being played back."
         }
+        DevicePropertyCode::DeSqueezeDisplayRatio => {
+            "Stretches anamorphic footage horizontally for proper preview. Set to match your anamorphic lens squeeze factor (1.33x, 1.8x, 2x)."
+        }
+        DevicePropertyCode::GridLineDisplayPlayback => {
+            "Shows grid line overlays during image and video playback for composition review."
+        }
+        DevicePropertyCode::HDMIResolutionStillPlay => {
+            "HDMI output resolution when playing back still images. Match to your monitor for best quality."
+        }
+        DevicePropertyCode::LiveViewImageQualityByNumericalValue => {
+            "Specific quality value for live view streaming. Higher values provide clearer preview but use more bandwidth."
+        }
+        DevicePropertyCode::OSDImageMode => {
+            "On-screen display image mode. Controls overlay information shown on external monitors via HDMI/SDI."
+        }
+        DevicePropertyCode::TCUBDisplaySetting => {
+            "Timecode and user bit display configuration. Controls how TC/UB information appears on screen and outputs."
+        }
+        DevicePropertyCode::StreamDisplayName => {
+            "Display name shown for the stream on receiving devices."
+        }
+        DevicePropertyCode::MonitoringTransportProtocol => {
+            "Network protocol for monitoring delivery (NDI, SRT, etc.)."
+        }
+        DevicePropertyCode::MonitoringDeliveryTypeSupportInfo => {
+            "Supported delivery types for monitoring output."
+        }
+        DevicePropertyCode::MonitorLUTSetting1
+        | DevicePropertyCode::MonitorLUTSetting2
+        | DevicePropertyCode::MonitorLUTSetting3 => {
+            "LUT applied to this monitoring output for color preview."
+        }
+        DevicePropertyCode::MonitorLUTSettingOutputDestAssign => {
+            "Assigns LUT settings to monitoring output destinations."
+        }
+        DevicePropertyCode::MonitoringAvailableFormat => {
+            "Video formats available for monitoring output."
+        }
+        DevicePropertyCode::MonitoringOutputDisplaySettingDestAssign => {
+            "Assigns display settings to monitoring output destinations."
+        }
+        DevicePropertyCode::MonitoringOutputDisplayHDMI => {
+            "Display settings for HDMI monitoring output."
+        }
+        DevicePropertyCode::MonitoringOutputDisplaySDI => {
+            "Display settings for SDI monitoring output."
+        }
+        DevicePropertyCode::MonitoringOutputDisplaySetting1
+        | DevicePropertyCode::MonitoringOutputDisplaySetting2 => {
+            "Monitoring output display configuration preset."
+        }
+        DevicePropertyCode::MonitoringOutputFormat => {
+            "Output format for monitoring signal (resolution, frame rate)."
+        }
+        DevicePropertyCode::MonitoringIsDelivering => {
+            "Whether monitoring output is actively being delivered."
+        }
+        DevicePropertyCode::MonitoringDeliveringStatus => {
+            "Current status of monitoring delivery to external devices."
+        }
+        DevicePropertyCode::MonitoringFormatSupportInformation => {
+            "Detailed format support information for monitoring."
+        }
+        DevicePropertyCode::MonitoringSettingVersion => {
+            "Version of the monitoring settings format."
+        }
+        DevicePropertyCode::FaceEyeFrameDisplay => {
+            "Shows or hides the frame overlay around detected faces and eyes."
+        }
         _ => "",
     }
 }
@@ -1857,6 +1983,15 @@ fn silent_description(code: DevicePropertyCode) -> &'static str {
         }
         DevicePropertyCode::SilentModeApertureDriveInAF => {
             "Controls aperture motor noise during AF in silent mode. Not Target ignores this setting. Standard balances speed and noise. Silent Priority minimizes noise but may slow AF."
+        }
+        DevicePropertyCode::SilentModeAutoPixelMapping => {
+            "Controls automatic pixel mapping (hot pixel correction) behavior in silent mode. May be disabled to avoid mechanical noise."
+        }
+        DevicePropertyCode::SilentModeShutterWhenPowerOff => {
+            "Controls shutter blade behavior when powering off in silent mode. Close keeps sensor protected from dust."
+        }
+        DevicePropertyCode::AntidustShutterWhenPowerOff => {
+            "Closes shutter when powering off to protect sensor from dust. Keeps sensor clean during lens changes."
         }
         _ => "",
     }
@@ -2696,6 +2831,132 @@ fn other_description(code: DevicePropertyCode) -> &'static str {
         }
         DevicePropertyCode::EframingRecordingImageCrop => {
             "Image crop settings for electronic framing recording."
+        }
+        DevicePropertyCode::AmountOfDefocusSetting => {
+            "Amount of defocus/blur to apply. Controls background blur intensity for creative effects."
+        }
+        DevicePropertyCode::ColorSpace => {
+            "Color space for images. sRGB for web/print. AdobeRGB for wider gamut professional workflows."
+        }
+        DevicePropertyCode::EmbedLUTFile => {
+            "Embeds a LUT file in video metadata for later color grading reference."
+        }
+        DevicePropertyCode::EstimatePictureSize => {
+            "Estimated file size for the current image quality settings."
+        }
+        DevicePropertyCode::ImageIDNum | DevicePropertyCode::ImageIDNumSetting => {
+            "Numeric identifier embedded in image metadata. Used for tracking shots across cameras."
+        }
+        DevicePropertyCode::ImageIDString => {
+            "String identifier embedded in image metadata for organization."
+        }
+        DevicePropertyCode::ImagerScanMode => {
+            "Sensor readout mode. Affects rolling shutter behavior and video quality."
+        }
+        DevicePropertyCode::LogShootingModeColorGamut => {
+            "Color gamut for log shooting. S-Gamut3 provides maximum color range for grading."
+        }
+        DevicePropertyCode::MaximumSizeOfImageIDString => {
+            "Maximum character length allowed for image ID strings."
+        }
+        DevicePropertyCode::MonitoringAvailableFormat => {
+            "Video formats available for monitoring output."
+        }
+        DevicePropertyCode::MonitoringDeliveringStatus => {
+            "Current status of monitoring delivery to external devices."
+        }
+        DevicePropertyCode::MonitoringDeliveryTypeSupportInfo => {
+            "Supported delivery types for monitoring output."
+        }
+        DevicePropertyCode::MonitoringFormatSupportInformation => {
+            "Detailed format support information for monitoring."
+        }
+        DevicePropertyCode::MonitoringIsDelivering => {
+            "Whether monitoring output is actively being delivered."
+        }
+        DevicePropertyCode::MonitoringOutputDisplayHDMI => {
+            "Display settings for HDMI monitoring output."
+        }
+        DevicePropertyCode::MonitoringOutputDisplaySDI => {
+            "Display settings for SDI monitoring output."
+        }
+        DevicePropertyCode::MonitoringOutputDisplaySetting1
+        | DevicePropertyCode::MonitoringOutputDisplaySetting2 => {
+            "Monitoring output display configuration preset."
+        }
+        DevicePropertyCode::MonitoringOutputDisplaySettingDestAssign => {
+            "Assigns display settings to monitoring output destinations."
+        }
+        DevicePropertyCode::MonitoringOutputFormat => {
+            "Output format for monitoring signal (resolution, frame rate)."
+        }
+        DevicePropertyCode::MonitoringSettingVersion => {
+            "Version of the monitoring settings format."
+        }
+        DevicePropertyCode::MonitoringTransportProtocol => {
+            "Network protocol for monitoring delivery (NDI, SRT, etc.)."
+        }
+        DevicePropertyCode::MonitorLUTSetting1
+        | DevicePropertyCode::MonitorLUTSetting2
+        | DevicePropertyCode::MonitorLUTSetting3 => {
+            "LUT applied to this monitoring output for color preview."
+        }
+        DevicePropertyCode::MonitorLUTSettingOutputDestAssign => {
+            "Assigns LUT settings to monitoring output destinations."
+        }
+        DevicePropertyCode::PresetPTZFSlotNumber => {
+            "Preset slot for Pan/Tilt/Zoom/Focus position recall."
+        }
+        DevicePropertyCode::PushAutoIris => {
+            "Temporarily engages auto iris while button is pressed."
+        }
+        DevicePropertyCode::RAWJPCSaveImage => {
+            "Selects which image to save: RAW only, JPEG only, or both RAW+JPEG."
+        }
+        DevicePropertyCode::ReleaseWithoutLens => {
+            "Allows shutter release without a lens attached. Enable for adapted lenses without electronic contacts."
+        }
+        DevicePropertyCode::RemoteKeySLOTSelectButton => {
+            "Remote control button to select memory card slot."
+        }
+        DevicePropertyCode::SceneFileCommandVersion => {
+            "Version of scene file command format for compatibility."
+        }
+        DevicePropertyCode::SceneFileDownloadOperationEnableStatus => {
+            "Whether scene file download is available."
+        }
+        DevicePropertyCode::SceneFileIndex => {
+            "Currently selected scene file index for recall or editing."
+        }
+        DevicePropertyCode::SceneFileIndexesAvailableForDownload => {
+            "List of scene file indexes that can be downloaded."
+        }
+        DevicePropertyCode::SceneFileUploadOperationEnableStatus => {
+            "Whether scene file upload is available."
+        }
+        DevicePropertyCode::TimeCodePresetResetEnableStatus => {
+            "Whether timecode preset can be reset to default."
+        }
+        DevicePropertyCode::FaceEyeDetectionAFStatus => {
+            "Shows current status of face/eye detection. Indicates whether faces or eyes are currently detected."
+        }
+        DevicePropertyCode::PushAFModeSetting => {
+            "Configures behavior of Push AF button. Can be set to focus once, focus hold, or other modes."
+        }
+        DevicePropertyCode::PreAF => {
+            "Camera continuously adjusts focus even before half-pressing shutter. Faster initial focus but uses more battery."
+        }
+        DevicePropertyCode::RecorderStartMain => {
+            "Starts recording on the main recorder slot."
+        }
+        DevicePropertyCode::RecorderClipName => {
+            "Current clip name for the recording. Shows the filename being used."
+        }
+        DevicePropertyCode::RecorderControlMainSetting => {
+            "Recording control settings for the main recorder slot."
+        }
+        DevicePropertyCode::RecorderSaveDestination => {
+            "Destination for saving recorded footage. Selects memory card slot or external recorder."
         }
         _ => "",
     }
