@@ -2550,6 +2550,153 @@ fn other_description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::UploadDatasetVersion => "Upload dataset version.",
         DevicePropertyCode::WriteCopyrightInfo => "Write copyright information to files.",
         DevicePropertyCode::SelectIPTCMetadata => "Select IPTC metadata preset.",
+        // Monitoring properties
+        DevicePropertyCode::MonitoringAvailableFormat => {
+            "Available video formats for external monitoring output."
+        }
+        DevicePropertyCode::MonitoringDeliveringStatus => "Current monitoring stream delivery status.",
+        DevicePropertyCode::MonitoringDeliveryTypeSupportInfo => {
+            "Supported monitoring delivery protocols and types."
+        }
+        DevicePropertyCode::MonitoringFormatSupportInformation => {
+            "Supported formats for monitoring output."
+        }
+        DevicePropertyCode::MonitoringIsDelivering => "Whether monitoring stream is currently active.",
+        DevicePropertyCode::MonitoringOutputDisplayHDMI => "HDMI monitoring output display settings.",
+        DevicePropertyCode::MonitoringOutputDisplaySDI => "SDI monitoring output display settings.",
+        DevicePropertyCode::MonitoringOutputDisplaySetting1 => "Primary monitoring display settings.",
+        DevicePropertyCode::MonitoringOutputDisplaySetting2 => {
+            "Secondary monitoring display settings."
+        }
+        DevicePropertyCode::MonitoringOutputDisplaySettingDestAssign => {
+            "Assignment of monitoring display settings to outputs."
+        }
+        DevicePropertyCode::MonitoringOutputFormat => "Video format for monitoring output.",
+        DevicePropertyCode::MonitoringSettingVersion => "Version of monitoring settings format.",
+        DevicePropertyCode::MonitoringTransportProtocol => "Network protocol for monitoring stream.",
+        DevicePropertyCode::OSDImageMode => "On-screen display image mode setting.",
+        DevicePropertyCode::GridLineDisplayPlayback => "Show grid lines during playback.",
+        DevicePropertyCode::HDMIResolutionStillPlay => {
+            "HDMI output resolution during still image playback."
+        }
+        DevicePropertyCode::DeSqueezeDisplayRatio => {
+            "Display aspect correction for anamorphic lenses. Shows unsqueezed preview."
+        }
+        DevicePropertyCode::TCUBDisplaySetting => "Timecode/User Bit display settings.",
+        // Scene file properties
+        DevicePropertyCode::SceneFileCommandVersion => "Scene file command protocol version.",
+        DevicePropertyCode::SceneFileDownloadOperationEnableStatus => {
+            "Whether scene file download is available."
+        }
+        DevicePropertyCode::SceneFileUploadOperationEnableStatus => {
+            "Whether scene file upload is available."
+        }
+        DevicePropertyCode::SceneFileIndex => "Index of current scene file.",
+        DevicePropertyCode::SceneFileIndexesAvailableForDownload => {
+            "Scene file indexes available for download."
+        }
+        DevicePropertyCode::TimeCodePresetResetEnableStatus => {
+            "Whether timecode preset reset is available."
+        }
+        DevicePropertyCode::ValidRecordingVideoFormat => {
+            "List of valid video formats for recording."
+        }
+        DevicePropertyCode::VideoRecordingFormatBitrateSetting => {
+            "Bitrate setting for video recording format."
+        }
+        DevicePropertyCode::VideoRecordingFormatQuality => "Quality level for video recording.",
+        DevicePropertyCode::DifferentSetForSQMovie => {
+            "Allows different settings for S&Q (Slow & Quick) movie mode versus standard recording."
+        }
+        DevicePropertyCode::LogShootingMode => {
+            "Enables log gamma curves (S-Log2, S-Log3) for maximum dynamic range. Requires color grading."
+        }
+        DevicePropertyCode::LogShootingModeColorGamut => {
+            "Color gamut for log shooting. S-Gamut3 and S-Gamut3.Cine offer different color spaces."
+        }
+        // Lens properties
+        DevicePropertyCode::LensAssignableButtonIndicator1 => {
+            "Indicator state for lens assignable button."
+        }
+        DevicePropertyCode::LensInformationEnableStatus => {
+            "Whether lens information is available for display."
+        }
+        DevicePropertyCode::LensSerialNumber => "Lens serial number for identification.",
+        DevicePropertyCode::LensVersionNumber => "Lens firmware version number.",
+        // Image ID properties
+        DevicePropertyCode::ImageIDNum => "Numeric image identifier embedded in files.",
+        DevicePropertyCode::ImageIDNumSetting => "Image ID number assignment setting.",
+        DevicePropertyCode::ImageIDString => "String image identifier embedded in files.",
+        DevicePropertyCode::MaximumSizeOfImageIDString => "Maximum length of image ID string.",
+        // Live view and playback
+        DevicePropertyCode::ImagerScanMode => "Image sensor scanning mode for video capture.",
+        DevicePropertyCode::LiveViewImageQualityByNumericalValue => {
+            "Live view image quality as numeric value."
+        }
+        DevicePropertyCode::PlaybackContentsRecordingDateTime => {
+            "Recording date and time of current playback content."
+        }
+        DevicePropertyCode::PlaybackContentsRecordingFileFormat => {
+            "File format of current playback content."
+        }
+        DevicePropertyCode::PlaybackContentsRecordingFrameRate => {
+            "Frame rate of current playback content."
+        }
+        DevicePropertyCode::PlaybackContentsRecordingResolution => {
+            "Resolution of current playback content."
+        }
+        DevicePropertyCode::PlaybackMedia => "Media slot used for playback.",
+        DevicePropertyCode::PlaySetOfMultiMedia => "Select media set for multi-media playback.",
+        // PTZ and control
+        DevicePropertyCode::PresetPTZFSlotNumber => "PTZ preset slot number.",
+        DevicePropertyCode::PushAutoIris => "Push button for automatic iris adjustment.",
+        // Recording settings
+        DevicePropertyCode::RAWJPCSaveImage => "Save both RAW and JPEG together.",
+        DevicePropertyCode::ReleaseWithoutLens => "Allow shutter release without lens attached.",
+        DevicePropertyCode::RemoteKeySLOTSelectButton => "Remote key slot select button.",
+        DevicePropertyCode::SQModeSetting => {
+            "Slow & Quick mode settings. Enables high frame rate capture for slow motion effects."
+        }
+        // Silent mode
+        DevicePropertyCode::SilentModeAutoPixelMapping => {
+            "Silent mode for automatic pixel mapping to avoid noise during operation."
+        }
+        DevicePropertyCode::SilentModeShutterWhenPowerOff => {
+            "Silent shutter operation when powering off the camera."
+        }
+        DevicePropertyCode::SimulRecSettingMovieRecButton => {
+            "Movie record button behavior for simultaneous recording to multiple slots."
+        }
+        // Transfer and streaming
+        DevicePropertyCode::StillImageTransSize => "Transfer size setting for still images.",
+        DevicePropertyCode::StreamDisplayName => "Display name shown for the stream.",
+        DevicePropertyCode::USBPowerSupply => "USB power supply settings for connected devices.",
+        DevicePropertyCode::UserBitTimeRec => "User bit time recording mode for video metadata.",
+        DevicePropertyCode::VideoStreamMovieRecPermission => {
+            "Permission for movie recording during streaming."
+        }
+        // File management
+        DevicePropertyCode::CurrentSceneFileEdited => {
+            "Indicates if current scene file has unsaved changes."
+        }
+        DevicePropertyCode::CustomGridLineFileCommandVersion => {
+            "Version of custom grid line file format."
+        }
+        DevicePropertyCode::DeleteContentOperationEnableStatusSLOT1 => {
+            "Whether content deletion is available for slot 1."
+        }
+        DevicePropertyCode::DeleteContentOperationEnableStatusSLOT2 => {
+            "Whether content deletion is available for slot 2."
+        }
+        DevicePropertyCode::CancelMediaFormatEnableStatus => {
+            "Whether media format operation can be cancelled."
+        }
+        DevicePropertyCode::ForcedFileNumberResetEnableStatus => {
+            "Whether file number reset is available."
+        }
+        DevicePropertyCode::EframingRecordingImageCrop => {
+            "Image crop settings for electronic framing recording."
+        }
         _ => "",
     }
 }

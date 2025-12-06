@@ -290,6 +290,12 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::PushAFModeSetting => {
             "Configures behavior of Push AF button. Can be set to focus once, focus hold, or other AF trigger modes."
         }
+        DevicePropertyCode::PreAF => {
+            "Camera continuously adjusts focus even before half-pressing the shutter. Faster initial focus acquisition but uses more battery."
+        }
+        DevicePropertyCode::LensCompensationBreathing => {
+            "Compensates for focus breathing where focal length shifts during focusing. Keeps framing consistent when pulling focus in video."
+        }
         DevicePropertyCode::FocusBracketExposureLock1stImg => {
             "When enabled, locks exposure from the first shot in a focus bracket sequence. Prevents exposure variation across the stack."
         }

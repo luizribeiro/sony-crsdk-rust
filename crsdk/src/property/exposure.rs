@@ -461,6 +461,39 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::ContinuousShootingSpeedInElectricShutterLo => {
             "Frames per second for Lo continuous mode with electronic shutter."
         }
+        DevicePropertyCode::HighResolutionShutterSpeed => {
+            "Fine-tuned shutter speed beyond standard increments. Used to eliminate banding from flickering artificial light sources like LED and fluorescent."
+        }
+        DevicePropertyCode::HighResolutionShutterSpeedAdjust => {
+            "Fine-grained adjustment for high-resolution shutter speeds. Allows decimal values between standard stops to precisely match light source flicker frequency."
+        }
+        DevicePropertyCode::HighResolutionShutterSpeedAdjustInIntegralMultiples => {
+            "Constrains high-resolution shutter speed adjustments to integral multiples. Provides structured fine-tuning in proportional steps."
+        }
+        DevicePropertyCode::HighResolutionShutterSpeedSetting => {
+            "Master control for variable shutter speed functionality. When enabled, allows fine adjustments to counteract light source flickering."
+        }
+        DevicePropertyCode::ElectricFrontCurtainShutter => {
+            "Uses electronic sensor control instead of mechanical movement for the front shutter curtain. Reduces shutter shock and noise."
+        }
+        DevicePropertyCode::ApertureDriveInAF => {
+            "Controls aperture behavior during autofocus. Standard mode adjusts for focus speed, Focus Priority prioritizes tracking, Silent Priority minimizes noise."
+        }
+        DevicePropertyCode::SilentModeApertureDriveInAF => {
+            "Aperture drive behavior when Silent Mode is active. Balances silent operation with focusing performance."
+        }
+        DevicePropertyCode::AmountOfDefocusSetting => {
+            "Controls intensity of background defocus (bokeh). Adjusts blur applied to out-of-focus areas for artistic background separation."
+        }
+        DevicePropertyCode::ColorSpace => {
+            "Selects color gamut for image encoding. sRGB for standard use and web, Adobe RGB for print with wider color reproduction."
+        }
+        DevicePropertyCode::EmbedLUTFile => {
+            "Embeds a LUT file into video recordings for color grading reference. Ensures consistent color when imported into editing software."
+        }
+        DevicePropertyCode::EstimatePictureSize => {
+            "Displays estimated file size before capture based on current settings. Helps monitor remaining card space."
+        }
         _ => "",
     }
 }
