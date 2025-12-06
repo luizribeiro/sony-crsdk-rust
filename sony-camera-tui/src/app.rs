@@ -9,7 +9,7 @@ use crate::camera_service::{
     SlotInfo,
 };
 use crate::property::PropertyStore;
-use crsdk::{CameraModel, DevicePropertyCode, MacAddr, PropertyCategory};
+use crsdk::{property_category, CameraModel, DevicePropertyCode, MacAddr, PropertyCategory};
 
 const PROPERTY_DEBOUNCE_MS: u64 = 400;
 const IN_FLIGHT_TIMEOUT_MS: u64 = 2000;
@@ -823,7 +823,7 @@ impl App {
     }
 
     fn jump_to_property_in_editor(&mut self, code: DevicePropertyCode) {
-        let category = code.category();
+        let category = property_category(code);
         let categories = self.properties.available_categories();
         if let Some(cat_idx) = categories.iter().position(|&c| c == category) {
             self.property_editor.category_index = cat_idx;

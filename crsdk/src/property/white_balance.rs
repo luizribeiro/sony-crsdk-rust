@@ -227,7 +227,7 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
 
 pub fn display_name(code: DevicePropertyCode) -> &'static str {
     match code {
-        DevicePropertyCode::WhiteBalance => "White Balance",
+        DevicePropertyCode::WhiteBalance => "WB",
         DevicePropertyCode::WhiteBalanceModeSetting => "WB Mode",
         DevicePropertyCode::Colortemp => "Color Temperature",
         DevicePropertyCode::ColortempStep => "Color Temp Step",

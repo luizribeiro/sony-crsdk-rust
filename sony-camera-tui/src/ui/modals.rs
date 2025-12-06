@@ -9,7 +9,7 @@ use ratatui::{
 use crate::app::{
     ManualConnectionState, Modal, PropertySearchState, SshCredentialsState, SshFingerprintState,
 };
-use crsdk::{property_display_name, CameraModel};
+use crsdk::{property_category, property_display_name, CameraModel};
 
 pub fn render(frame: &mut Frame, modal: &Modal) {
     match modal {
@@ -384,7 +384,7 @@ fn render_property_search_modal(frame: &mut Frame, state: &PropertySearchState) 
                 };
 
                 // Truncate category to 14 chars max
-                let category_str = code.category().to_string();
+                let category_str = property_category(code).to_string();
                 let category_display = if category_str.len() > 14 {
                     format!("{}…", &category_str[..13])
                 } else {

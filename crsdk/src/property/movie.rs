@@ -355,12 +355,6 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::MovieShootingModeTargetDisplay => {
             "Target display type for movie color settings. Optimizes output for specific monitor types."
         }
-        DevicePropertyCode::LogShootingMode => {
-            "Enables log gamma curves (S-Log2, S-Log3) for maximum dynamic range. Requires color grading in post."
-        }
-        DevicePropertyCode::LogShootingModeColorGamut => {
-            "Color gamut used with log shooting. S-Gamut3 and S-Gamut3.Cine offer different color space options."
-        }
         DevicePropertyCode::SQFrameRate => {
             "Playback frame rate for Slow & Quick motion. Determines how fast or slow the footage plays."
         }
@@ -463,7 +457,7 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::MovieRecordingFrameRateSetting => "Movie Frame Rate",
         DevicePropertyCode::MovieRecordingResolutionForMain => "Movie Resolution",
         DevicePropertyCode::MovieRecordingResolutionForProxy => "Proxy Resolution",
-        DevicePropertyCode::MovieShootingMode => "Movie Shooting Mode",
+        DevicePropertyCode::MovieShootingMode => "Movie Mode",
         DevicePropertyCode::MovieShootingModeColorGamut => "Movie Color Gamut",
         DevicePropertyCode::RecordingState => "Rec State",
         DevicePropertyCode::RecordingMedia => "Rec Media",
@@ -473,7 +467,9 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::TimeCodeFormat => "TC Format",
         DevicePropertyCode::TimeCodeMake => "TC Make",
         DevicePropertyCode::TimeCodePreset => "TC Preset",
+        DevicePropertyCode::TimeCodePresetResetEnableStatus => "TC Reset Status",
         DevicePropertyCode::TimeCodeRun => "TC Run",
+        DevicePropertyCode::UserBitTimeRec => "UB Time",
         DevicePropertyCode::RecorderMainStatus => "Main Rec Status",
         DevicePropertyCode::RecorderProxyStatus => "Proxy Rec Status",
         DevicePropertyCode::RecorderStartMain => "Start Rec",
@@ -482,7 +478,7 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::SQRecordingSetting => "S&Q Recording",
         DevicePropertyCode::SQRecordingFrameRateSetting => "S&Q Frame Rate",
         DevicePropertyCode::SQFrameRate => "S&Q Playback Rate",
-        DevicePropertyCode::LogShootingMode => "Log Shooting Mode",
+        DevicePropertyCode::LogShootingMode => "Log Mode",
         DevicePropertyCode::LogShootingModeColorGamut => "Log Color Gamut",
         DevicePropertyCode::RecordingSelfTimer => "Self-Timer",
         DevicePropertyCode::RecordingSelfTimerContinuous => "Self-Timer Cont.",
@@ -498,6 +494,54 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::MediaSLOT3RecordingAvailableType => "Slot 3 Rec Type",
         DevicePropertyCode::MovieFTPAutoTransferTarget => "Movie FTP Auto",
         DevicePropertyCode::MovieFTPTransferTarget => "Movie FTP Target",
+        DevicePropertyCode::MovieForwardButton => "Forward Button",
+        DevicePropertyCode::MovieHDMIOutput4KSetting => "HDMI 4K Output",
+        DevicePropertyCode::MovieHDMIOutputAudioCH => "HDMI Audio Channels",
+        DevicePropertyCode::MovieHDMIOutputColorGamutForRAWOut => "HDMI RAW Color Gamut",
+        DevicePropertyCode::MovieHDMIOutputRAW => "HDMI RAW Output",
+        DevicePropertyCode::MovieHDMIOutputRawSetting => "HDMI RAW Setting",
+        DevicePropertyCode::MovieHDMIOutputRecControl => "HDMI Rec Control",
+        DevicePropertyCode::MovieHDMIOutputRecMedia => "HDMI Rec Media",
+        DevicePropertyCode::MovieHDMIOutputResolution => "HDMI Resolution",
+        DevicePropertyCode::MovieHDMIOutputTimeCode => "HDMI Timecode",
+        DevicePropertyCode::MovieImageStabilizationLevel => "Movie Stabilization Level",
+        DevicePropertyCode::MovieImageStabilizationSteadyShot => "Movie SteadyShot",
+        DevicePropertyCode::MovieIntervalRecCountDownIntervalTime => "Interval Countdown",
+        DevicePropertyCode::MovieIntervalRecFrameRateSetting => "Interval Frame Rate",
+        DevicePropertyCode::MovieIntervalRecFrames => "Interval Frames",
+        DevicePropertyCode::MovieIntervalRecIntervalTime => "Interval Time",
+        DevicePropertyCode::MovieIntervalRecRecordingDuration => "Interval Duration",
+        DevicePropertyCode::MovieIntervalRecRecordingSetting => "Interval Rec Setting",
+        DevicePropertyCode::MovieNextButton => "Next Button",
+        DevicePropertyCode::MoviePlayButton => "Play Button",
+        DevicePropertyCode::MoviePlayPauseButton => "Play/Pause Button",
+        DevicePropertyCode::MoviePlayStopButton => "Stop Button",
+        DevicePropertyCode::MoviePrevButton => "Previous Button",
+        DevicePropertyCode::MovieQualityFullAutoMode => "Full Auto Quality",
+        DevicePropertyCode::MovieRecButtonToggleEnableStatus => "Rec Button Toggle",
+        DevicePropertyCode::MovieRecReviewButton => "Rec Review Button",
+        DevicePropertyCode::MovieRecReviewPlayingState => "Rec Review State",
+        DevicePropertyCode::MovieRecordingFrameRateRTSPSetting => "RTSP Frame Rate",
+        DevicePropertyCode::MovieRecordingResolutionForRAW => "RAW Resolution",
+        DevicePropertyCode::MovieRecordingResolutionForRTSP => "RTSP Resolution",
+        DevicePropertyCode::MovieRewindButton => "Rewind Button",
+        DevicePropertyCode::MovieShootingModeTargetDisplay => "Target Display Mode",
+        DevicePropertyCode::VideoStreamMovieRecPermission => "Stream Rec Permission",
+        DevicePropertyCode::EframingRecordingImageCrop => "E-Framing Image Crop",
+        DevicePropertyCode::PictureCacheRecSetting => "Cache Rec",
+        DevicePropertyCode::PictureCacheRecSizeAndTime => "Cache Size/Time",
+        DevicePropertyCode::DifferentSetForSQMovie => "S&Q Movie Set",
+        DevicePropertyCode::PlaybackContentsRecordingDateTime => "Rec DateTime",
+        DevicePropertyCode::PlaybackContentsRecordingFileFormat => "Rec File Format",
+        DevicePropertyCode::PlaybackContentsRecordingFrameRate => "Rec FPS",
+        DevicePropertyCode::PlaybackContentsRecordingResolution => "Rec Res",
+        DevicePropertyCode::RecorderControlProxySetting => "Proxy Ctrl",
+        DevicePropertyCode::RecordingFileNumber => "File #",
+        DevicePropertyCode::RecordingFolderFormat => "Folder Fmt",
+        DevicePropertyCode::SimulRecSettingMovieRecButton => "Simul Rec Btn",
+        DevicePropertyCode::ValidRecordingVideoFormat => "Valid Rec Fmt",
+        DevicePropertyCode::VideoRecordingFormatBitrateSetting => "Bitrate Set",
+        DevicePropertyCode::VideoRecordingFormatQuality => "Quality Set",
         _ => code.name(),
     }
 }

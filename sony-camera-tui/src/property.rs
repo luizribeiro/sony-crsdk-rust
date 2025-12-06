@@ -5,8 +5,8 @@ use crsdk::{
         format_aperture, format_color_temp, format_exposure_comp, format_iso_compact,
         format_shutter_speed, parse_aperture, parse_exposure_comp, parse_iso, parse_shutter_speed,
     },
-    format_movie_quality, property_display_name, property_value_type, DevicePropertyCode,
-    PropertyCategory, PropertyValueType,
+    format_movie_quality, property_category, property_display_name, property_value_type,
+    DevicePropertyCode, PropertyCategory, PropertyValueType,
 };
 
 #[derive(Debug, Clone)]
@@ -120,13 +120,13 @@ impl PropertyStore {
     }
 
     fn insert_pinned_sorted(&mut self, code: DevicePropertyCode) {
-        let category = code.category();
+        let category = property_category(code);
         let category_order = category_sort_order(category);
 
         let insert_pos = self
             .pinned
             .iter()
-            .position(|&p| category_sort_order(p.category()) > category_order)
+            .position(|&p| category_sort_order(property_category(p)) > category_order)
             .unwrap_or(self.pinned.len());
 
         self.pinned.insert(insert_pos, code);
@@ -136,7 +136,7 @@ impl PropertyStore {
         let mut props: Vec<_> = self
             .properties
             .values()
-            .filter(|p| p.code.category() == category)
+            .filter(|p| property_category(p.code) == category)
             .collect();
         props.sort_by_key(|p| p.code.name());
         props
@@ -144,7 +144,12 @@ impl PropertyStore {
 
     pub fn all_properties_sorted(&self) -> Vec<&Property> {
         let mut props: Vec<_> = self.properties.values().collect();
-        props.sort_by_key(|p| (category_sort_order(p.code.category()), p.code.name()));
+        props.sort_by_key(|p| {
+            (
+                category_sort_order(property_category(p.code)),
+                p.code.name(),
+            )
+        });
         props
     }
 
@@ -152,7 +157,7 @@ impl PropertyStore {
         let mut categories: Vec<PropertyCategory> = self
             .properties
             .values()
-            .map(|p| p.code.category())
+            .map(|p| property_category(p.code))
             .collect();
         categories.sort_by_key(|c| category_sort_order(*c));
         categories.dedup();
@@ -428,7 +433,7 @@ pub fn search_properties(store: &PropertyStore, query: &str) -> Vec<DeviceProper
         .keys()
         .filter_map(|&code| {
             let display_name = property_display_name(code);
-            let category_name = code.category().to_string();
+            let category_name = property_category(code).to_string();
             let full_name = format!("{}: {}", category_name, display_name);
 
             let score = fuzzy_match_score(query, display_name)

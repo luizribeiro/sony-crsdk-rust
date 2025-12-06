@@ -510,14 +510,14 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
 pub fn display_name(code: DevicePropertyCode) -> &'static str {
     match code {
         DevicePropertyCode::FNumber => "Aperture (f-number)",
-        DevicePropertyCode::ShutterSpeed => "Shutter Speed",
+        DevicePropertyCode::ShutterSpeed => "Shutter",
         DevicePropertyCode::IsoSensitivity => "ISO",
         DevicePropertyCode::ExposureBiasCompensation => "Exposure Comp",
         DevicePropertyCode::ExposureProgramMode => "Exposure Mode",
         DevicePropertyCode::ExposureIndex => "Exposure Index (EI)",
         DevicePropertyCode::ExposureCtrlType => "Exposure Control Type",
         DevicePropertyCode::ExposureStep => "EV Step Size",
-        DevicePropertyCode::AutoSlowShutter => "Auto Slow Shutter",
+        DevicePropertyCode::AutoSlowShutter => "Slow Shutter Auto",
         DevicePropertyCode::ShutterModeSetting => "Shutter Control",
         DevicePropertyCode::ShutterModeStatus => "Shutter Mode",
         DevicePropertyCode::ShutterMode => "Shutter Unit",
@@ -540,7 +540,7 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::IrisCloseSetting => "Iris Close Enable",
         DevicePropertyCode::BaseISOSwitchEI => "Base ISO (EI)",
         DevicePropertyCode::DRO => "D-Range Optimizer",
-        DevicePropertyCode::MeteringMode => "Metering Mode",
+        DevicePropertyCode::MeteringMode => "Meter Mode",
         DevicePropertyCode::MeteredManualLevel => "Meter Level (M)",
         DevicePropertyCode::FacePriorityInMultiMetering => "Face Priority Metering",
         DevicePropertyCode::BulbExposureTimeSetting => "Bulb Exposure Time",
@@ -563,6 +563,16 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::ContinuousShootingSpeedInElectricShutterHiPlus => "Cont. Hi+ FPS (E)",
         DevicePropertyCode::ContinuousShootingSpeedInElectricShutterMid => "Cont. Mid FPS (E)",
         DevicePropertyCode::ContinuousShootingSpeedInElectricShutterLo => "Cont. Lo FPS (E)",
+        DevicePropertyCode::ApertureDriveInAF => "Aperture Drive in AF",
+        DevicePropertyCode::SilentModeApertureDriveInAF => "Silent Aperture Drive",
+        DevicePropertyCode::ElectricFrontCurtainShutter => "E-Front Curtain",
+        DevicePropertyCode::HighResolutionShutterSpeed => "High Res Shutter Speed",
+        DevicePropertyCode::HighResolutionShutterSpeedAdjust => "High Res Shutter Adjust",
+        DevicePropertyCode::HighResolutionShutterSpeedAdjustInIntegralMultiples => {
+            "High Res Shutter Multiples"
+        }
+        DevicePropertyCode::HighResolutionShutterSpeedSetting => "High Res Shutter Setting",
+        DevicePropertyCode::PushAutoIris => "Push Iris",
         _ => code.name(),
     }
 }
