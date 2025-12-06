@@ -7,12 +7,12 @@ use crsdk_sys::DevicePropertyCode;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u16)]
 pub enum FlashMode {
-    Auto = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_Auto as u16,
-    Off = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_Off as u16,
-    Fill = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_Fill as u16,
-    ExternalSync = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_ExternalSync as u16,
-    SlowSync = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_SlowSync as u16,
-    RearSync = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_RearSync as u16,
+    Auto = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_Auto,
+    Off = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_Off,
+    Fill = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_Fill,
+    ExternalSync = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_ExternalSync,
+    SlowSync = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_SlowSync,
+    RearSync = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_RearSync,
 }
 
 impl FlashMode {

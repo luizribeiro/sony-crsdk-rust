@@ -37,15 +37,25 @@ use crsdk_sys::DevicePropertyCode;
 /// SDK data type classification
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DataType {
+    /// 8-bit unsigned integer
     UInt8,
+    /// 16-bit unsigned integer
     UInt16,
+    /// 32-bit unsigned integer
     UInt32,
+    /// 64-bit unsigned integer
     UInt64,
+    /// 8-bit signed integer
     Int8,
+    /// 16-bit signed integer
     Int16,
+    /// 32-bit signed integer
     Int32,
+    /// 64-bit signed integer
     Int64,
+    /// String value
     String,
+    /// Unknown data type (raw SDK value)
     Unknown(u32),
 }
 
@@ -59,15 +69,15 @@ impl DataType {
         let base_type = value & !(ARRAY_BIT | RANGE_BIT);
 
         match base_type {
-            CrDataType_CrDataType_UInt8 => Self::UInt8,
-            CrDataType_CrDataType_UInt16 => Self::UInt16,
-            CrDataType_CrDataType_UInt32 => Self::UInt32,
-            CrDataType_CrDataType_UInt64 => Self::UInt64,
-            CrDataType_CrDataType_Int8 => Self::Int8,
-            CrDataType_CrDataType_Int16 => Self::Int16,
-            CrDataType_CrDataType_Int32 => Self::Int32,
-            CrDataType_CrDataType_Int64 => Self::Int64,
-            CrDataType_CrDataType_STR => Self::String,
+            x if x == CrDataType_CrDataType_UInt8 => Self::UInt8,
+            x if x == CrDataType_CrDataType_UInt16 => Self::UInt16,
+            x if x == CrDataType_CrDataType_UInt32 => Self::UInt32,
+            x if x == CrDataType_CrDataType_UInt64 => Self::UInt64,
+            x if x == CrDataType_CrDataType_Int8 => Self::Int8,
+            x if x == CrDataType_CrDataType_Int16 => Self::Int16,
+            x if x == CrDataType_CrDataType_Int32 => Self::Int32,
+            x if x == CrDataType_CrDataType_Int64 => Self::Int64,
+            x if x == CrDataType_CrDataType_STR => Self::String,
             _ => Self::Unknown(value),
         }
     }
@@ -92,11 +102,11 @@ impl EnableFlag {
     pub(crate) fn from_sdk(value: i16) -> Self {
         use crsdk_sys::SCRSDK::*;
         match value {
-            x if x == CrPropertyEnableFlag_CrEnableValue_NotSupported as i16 => Self::NotSupported,
-            x if x == CrPropertyEnableFlag_CrEnableValue_False as i16 => Self::Disabled,
-            x if x == CrPropertyEnableFlag_CrEnableValue_True as i16 => Self::ReadWrite,
-            x if x == CrPropertyEnableFlag_CrEnableValue_DisplayOnly as i16 => Self::ReadOnly,
-            x if x == CrPropertyEnableFlag_CrEnableValue_SetOnly as i16 => Self::WriteOnly,
+            x if x == CrPropertyEnableFlag_CrEnableValue_NotSupported => Self::NotSupported,
+            x if x == CrPropertyEnableFlag_CrEnableValue_False => Self::Disabled,
+            x if x == CrPropertyEnableFlag_CrEnableValue_True => Self::ReadWrite,
+            x if x == CrPropertyEnableFlag_CrEnableValue_DisplayOnly => Self::ReadOnly,
+            x if x == CrPropertyEnableFlag_CrEnableValue_SetOnly => Self::WriteOnly,
             _ => Self::NotSupported,
         }
     }

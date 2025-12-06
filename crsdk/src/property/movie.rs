@@ -87,7 +87,8 @@ impl std::fmt::Display for MovieFileFormat {
 
 /// Format movie recording quality/bitrate setting to display string
 pub fn format_movie_quality(value: u64) -> String {
-    match value as u16 {
+    let value = value as u16;
+    match value {
         0 => "--".to_string(),
         1 => "60p 50M".to_string(),
         2 => "30p 50M".to_string(),

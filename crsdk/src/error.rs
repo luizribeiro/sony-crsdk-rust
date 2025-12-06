@@ -73,7 +73,7 @@ impl Error {
     /// Create error from SDK error code
     pub fn from_sdk_error(code: u32) -> Self {
         match code {
-            0x0000 => return Self::Other("Success (not an error)".to_string()),
+            0x0000 => Self::Other("Success (not an error)".to_string()),
             0x8200..=0x82FF => Self::ConnectionFailed(format!("Error code: 0x{:X}", code)),
             0x8300..=0x83FF => Self::OutOfMemory,
             _ => Self::SdkError(code),

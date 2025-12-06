@@ -69,6 +69,7 @@ mod sdk;
 mod types;
 
 // Re-exports for async API (default)
+pub use command::{CommandId, CommandParam};
 pub use device::{discover_cameras, CameraDevice, CameraDeviceBuilder};
 pub use error::{Error, Result};
 pub use event::{warning_code_name, warning_param_description, CameraEvent};

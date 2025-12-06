@@ -253,7 +253,8 @@ impl DriveMode {
 
     pub fn from_raw(value: u64) -> Option<Self> {
         use crsdk_sys::SCRSDK::*;
-        Some(match value as u32 {
+        let value = value as u32;
+        Some(match value {
             CrDriveMode_CrDrive_Single => Self::Single,
             CrDriveMode_CrDrive_Continuous_Hi => Self::ContinuousHi,
             CrDriveMode_CrDrive_Continuous_Hi_Plus => Self::ContinuousHiPlus,

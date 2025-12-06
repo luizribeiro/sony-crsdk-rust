@@ -153,20 +153,19 @@ impl ExposureProgram {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u16)]
 pub enum MeteringMode {
-    Average = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Average as u16,
-    CenterWeightedAverage =
-        crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_CenterWeightedAverage as u16,
-    MultiSpot = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_MultiSpot as u16,
-    CenterSpot = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_CenterSpot as u16,
-    Multi = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Multi as u16,
-    CenterWeighted = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_CenterWeighted as u16,
-    EntireScreenAverage = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_EntireScreenAverage as u16,
-    SpotStandard = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Spot_Standard as u16,
-    SpotLarge = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Spot_Large as u16,
-    HighLightWeighted = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_HighLightWeighted as u16,
-    Standard = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Standard as u16,
-    Backlight = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Backlight as u16,
-    Spotlight = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Spotlight as u16,
+    Average = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Average,
+    CenterWeightedAverage = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_CenterWeightedAverage,
+    MultiSpot = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_MultiSpot,
+    CenterSpot = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_CenterSpot,
+    Multi = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Multi,
+    CenterWeighted = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_CenterWeighted,
+    EntireScreenAverage = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_EntireScreenAverage,
+    SpotStandard = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Spot_Standard,
+    SpotLarge = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Spot_Large,
+    HighLightWeighted = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_HighLightWeighted,
+    Standard = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Standard,
+    Backlight = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Backlight,
+    Spotlight = crsdk_sys::SCRSDK::CrMeteringMode_CrMetering_Spotlight,
 }
 
 impl MeteringMode {

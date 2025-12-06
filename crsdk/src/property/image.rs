@@ -21,7 +21,8 @@ impl FileType {
     }
 
     pub fn from_raw(value: u64) -> Option<Self> {
-        Some(match value as u16 {
+        let value = value as u16;
+        Some(match value {
             0 => Self::None,
             1 => Self::Jpeg,
             2 => Self::Raw,
@@ -63,7 +64,8 @@ impl ImageQuality {
     }
 
     pub fn from_raw(value: u64) -> Option<Self> {
-        Some(match value as u16 {
+        let value = value as u16;
+        Some(match value {
             0 => Self::Unknown,
             1 => Self::Light,
             2 => Self::Standard,
@@ -102,7 +104,8 @@ impl AspectRatio {
     }
 
     pub fn from_raw(value: u64) -> Option<Self> {
-        Some(match value as u8 {
+        let value = value as u8;
+        Some(match value {
             1 => Self::Ratio3x2,
             2 => Self::Ratio16x9,
             3 => Self::Ratio4x3,
@@ -139,7 +142,8 @@ impl ImageSize {
     }
 
     pub fn from_raw(value: u64) -> Option<Self> {
-        Some(match value as u8 {
+        let value = value as u8;
+        Some(match value {
             1 => Self::Large,
             2 => Self::Medium,
             3 => Self::Small,

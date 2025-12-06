@@ -4,13 +4,13 @@
 use asyncwrap::async_wrap;
 use asyncwrap::blocking_impl;
 
-use crate::command::{CommandId, CommandParam, LockIndicator};
+use crate::command::{CommandId, CommandParam};
 use crate::error::{Error, Result};
 use crate::event::CameraEvent;
 use crate::event_sender::EventSender;
 use crate::property::{
     device_property_from_sdk, device_property_from_sdk_debug, DeviceProperty, DriveMode,
-    ExposureProgram, FlashMode, FocusArea, FocusMode, MeteringMode, WhiteBalance,
+    ExposureProgram, FlashMode, FocusArea, FocusMode, LockIndicator, MeteringMode, WhiteBalance,
 };
 use crate::types::{
     ip_to_sdk_format, CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, MacAddr,
@@ -580,7 +580,7 @@ impl CameraDevice {
     fn set_s1_lock(&self, lock: LockIndicator) -> Result<()> {
         let mut sdk_prop = crsdk_sys::SCRSDK::CrDeviceProperty {
             code: crsdk_sys::SCRSDK::CrDevicePropertyCode_CrDeviceProperty_S1,
-            valueType: crsdk_sys::SCRSDK::CrDataType_CrDataType_UInt16 as u32,
+            valueType: crsdk_sys::SCRSDK::CrDataType_CrDataType_UInt16,
             enableFlag: 0,
             variableFlag: 0,
             currentValue: lock.as_raw(),

@@ -7,27 +7,27 @@ use crsdk_sys::DevicePropertyCode;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u16)]
 pub enum WhiteBalance {
-    Auto = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_AWB as u16,
-    Daylight = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Daylight as u16,
-    Shade = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Shadow as u16,
-    Cloudy = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Cloudy as u16,
-    Tungsten = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Tungsten as u16,
-    Fluorescent = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent as u16,
+    Auto = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_AWB,
+    Daylight = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Daylight,
+    Shade = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Shadow,
+    Cloudy = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Cloudy,
+    Tungsten = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Tungsten,
+    Fluorescent = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent,
     FluorescentWarmWhite =
-        crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_WarmWhite as u16,
+        crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_WarmWhite,
     FluorescentCoolWhite =
-        crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_CoolWhite as u16,
+        crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_CoolWhite,
     FluorescentDayWhite =
-        crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_DayWhite as u16,
+        crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_DayWhite,
     FluorescentDaylight =
-        crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_Daylight as u16,
-    Flash = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Flush as u16,
-    UnderwaterAuto = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Underwater_Auto as u16,
-    ColorTemp = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_ColorTemp as u16,
-    Custom1 = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Custom_1 as u16,
-    Custom2 = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Custom_2 as u16,
-    Custom3 = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Custom_3 as u16,
-    Custom = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Custom as u16,
+        crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_Daylight,
+    Flash = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Flush,
+    UnderwaterAuto = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Underwater_Auto,
+    ColorTemp = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_ColorTemp,
+    Custom1 = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Custom_1,
+    Custom2 = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Custom_2,
+    Custom3 = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Custom_3,
+    Custom = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Custom,
 }
 
 impl WhiteBalance {
@@ -37,32 +37,29 @@ impl WhiteBalance {
 
     pub fn from_raw(value: u64) -> Option<Self> {
         use crsdk_sys::SCRSDK::*;
-        Some(match value as u16 {
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_AWB => Self::Auto,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Daylight => Self::Daylight,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Shadow => Self::Shade,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Cloudy => Self::Cloudy,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Tungsten => Self::Tungsten,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent => Self::Fluorescent,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_WarmWhite => {
+        let value = value as u16;
+        Some(match value {
+            CrWhiteBalanceSetting_CrWhiteBalance_AWB => Self::Auto,
+            CrWhiteBalanceSetting_CrWhiteBalance_Daylight => Self::Daylight,
+            CrWhiteBalanceSetting_CrWhiteBalance_Shadow => Self::Shade,
+            CrWhiteBalanceSetting_CrWhiteBalance_Cloudy => Self::Cloudy,
+            CrWhiteBalanceSetting_CrWhiteBalance_Tungsten => Self::Tungsten,
+            CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent => Self::Fluorescent,
+            CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_WarmWhite => {
                 Self::FluorescentWarmWhite
             }
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_CoolWhite => {
+            CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_CoolWhite => {
                 Self::FluorescentCoolWhite
             }
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_DayWhite => {
-                Self::FluorescentDayWhite
-            }
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_Daylight => {
-                Self::FluorescentDaylight
-            }
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Flush => Self::Flash,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Underwater_Auto => Self::UnderwaterAuto,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_ColorTemp => Self::ColorTemp,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Custom_1 => Self::Custom1,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Custom_2 => Self::Custom2,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Custom_3 => Self::Custom3,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Custom => Self::Custom,
+            CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_DayWhite => Self::FluorescentDayWhite,
+            CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_Daylight => Self::FluorescentDaylight,
+            CrWhiteBalanceSetting_CrWhiteBalance_Flush => Self::Flash,
+            CrWhiteBalanceSetting_CrWhiteBalance_Underwater_Auto => Self::UnderwaterAuto,
+            CrWhiteBalanceSetting_CrWhiteBalance_ColorTemp => Self::ColorTemp,
+            CrWhiteBalanceSetting_CrWhiteBalance_Custom_1 => Self::Custom1,
+            CrWhiteBalanceSetting_CrWhiteBalance_Custom_2 => Self::Custom2,
+            CrWhiteBalanceSetting_CrWhiteBalance_Custom_3 => Self::Custom3,
+            CrWhiteBalanceSetting_CrWhiteBalance_Custom => Self::Custom,
             _ => return None,
         })
     }

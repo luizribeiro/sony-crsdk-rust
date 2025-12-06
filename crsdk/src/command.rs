@@ -32,34 +32,15 @@ impl CommandId {
 #[repr(u16)]
 pub enum CommandParam {
     /// Button released (up)
-    Up = crsdk_sys::SCRSDK::CrCommandParam_CrCommandParam_Up as u16,
+    Up = crsdk_sys::SCRSDK::CrCommandParam_CrCommandParam_Up,
     /// Button pressed (down)
-    Down = crsdk_sys::SCRSDK::CrCommandParam_CrCommandParam_Down as u16,
+    Down = crsdk_sys::SCRSDK::CrCommandParam_CrCommandParam_Down,
 }
 
 impl CommandParam {
     /// Get the raw SDK value
     pub fn as_raw(self) -> u32 {
         self as u32
-    }
-}
-
-/// Lock indicator for S1 (half-press) state
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[repr(u16)]
-pub enum LockIndicator {
-    /// Unknown state
-    Unknown = crsdk_sys::SCRSDK::CrLockIndicator_CrLockIndicator_Unknown as u16,
-    /// Unlocked (released)
-    Unlocked = crsdk_sys::SCRSDK::CrLockIndicator_CrLockIndicator_Unlocked as u16,
-    /// Locked (pressed)
-    Locked = crsdk_sys::SCRSDK::CrLockIndicator_CrLockIndicator_Locked as u16,
-}
-
-impl LockIndicator {
-    /// Get the raw SDK value
-    pub fn as_raw(self) -> u64 {
-        self as u64
     }
 }
 
@@ -71,6 +52,22 @@ mod tests {
     fn test_command_id_values() {
         assert_eq!(CommandId::Release.as_raw(), 0);
         assert_eq!(CommandId::MovieRecord.as_raw(), 1);
+        let all_commands = [
+            CommandId::Release,
+            CommandId::CancelShooting,
+            CommandId::MovieRecord,
+            CommandId::S1AndRelease,
+            CommandId::MovieRecButtonToggle,
+            CommandId::CancelFocusPosition,
+            CommandId::TrackingOnAndAfOn,
+        ];
+        for (i, cmd) in all_commands.iter().enumerate() {
+            for (j, other) in all_commands.iter().enumerate() {
+                if i != j {
+                    assert_ne!(cmd.as_raw(), other.as_raw());
+                }
+            }
+        }
     }
 
     #[test]

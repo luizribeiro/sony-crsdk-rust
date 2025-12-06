@@ -79,7 +79,7 @@ fn main() {
     generate_property_codes(&bindings_path, &out_path);
 }
 
-fn generate_property_codes(bindings_path: &PathBuf, out_path: &PathBuf) {
+fn generate_property_codes(bindings_path: &std::path::Path, out_path: &std::path::Path) {
     let content = fs::read_to_string(bindings_path).expect("Failed to read bindings.rs");
 
     // Parse property codes from bindings
