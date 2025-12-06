@@ -12,6 +12,12 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 #![allow(dead_code)]
+#![allow(improper_ctypes)]
+// Clippy lints for bindgen-generated code
+#![allow(clippy::useless_transmute)]
+#![allow(clippy::missing_safety_doc)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::too_many_arguments)]
 
 // Include the generated bindings
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));

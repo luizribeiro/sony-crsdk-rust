@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use crsdk::{
     format::{
         format_aperture, format_color_temp, format_exposure_comp, format_iso_compact,
-        format_shutter_speed, parse_aperture, parse_exposure_comp, parse_iso, parse_shutter_speed,
+        format_shutter_speed,
     },
     format_movie_quality, property_category, property_display_name, property_value_type,
     DevicePropertyCode, PropertyCategory, PropertyValueType,
@@ -82,25 +82,12 @@ impl PropertyStore {
         self.loaded = loaded;
     }
 
-    pub fn clear(&mut self) {
-        self.properties.clear();
-        self.pinned.clear();
-        self.loaded = false;
-    }
-
     pub fn get(&self, code: DevicePropertyCode) -> Option<&Property> {
         self.properties.get(&code)
     }
 
     pub fn get_mut(&mut self, code: DevicePropertyCode) -> Option<&mut Property> {
         self.properties.get_mut(&code)
-    }
-
-    pub fn pinned_properties(&self) -> Vec<&Property> {
-        self.pinned
-            .iter()
-            .filter_map(|code| self.properties.get(code))
-            .collect()
     }
 
     pub fn pinned_ids(&self) -> &[DevicePropertyCode] {
@@ -139,17 +126,6 @@ impl PropertyStore {
             .filter(|p| property_category(p.code) == category)
             .collect();
         props.sort_by_key(|p| p.code.name());
-        props
-    }
-
-    pub fn all_properties_sorted(&self) -> Vec<&Property> {
-        let mut props: Vec<_> = self.properties.values().collect();
-        props.sort_by_key(|p| {
-            (
-                category_sort_order(property_category(p.code)),
-                p.code.name(),
-            )
-        });
         props
     }
 
@@ -203,18 +179,6 @@ impl PropertyStore {
             prop.writable = writable;
         } else {
             self.add_property(code, current, available, writable);
-        }
-    }
-
-    pub fn update_value_only(
-        &mut self,
-        code: DevicePropertyCode,
-        current: &str,
-        available: Vec<String>,
-    ) {
-        if let Some(prop) = self.properties.get_mut(&code) {
-            prop.values = available;
-            prop.set_value(current);
         }
     }
 }
@@ -363,18 +327,6 @@ pub fn format_sdk_value(code: DevicePropertyCode, raw: u64) -> String {
         Percentage => format!("{}%", raw),
         Integer => format!("{}", raw),
         Unknown => format!("{}", raw),
-    }
-}
-
-pub fn parse_display_value(code: DevicePropertyCode, display: &str) -> Option<u64> {
-    match code {
-        DevicePropertyCode::FNumber => parse_aperture(display),
-        DevicePropertyCode::ShutterSpeed => parse_shutter_speed(display),
-        DevicePropertyCode::IsoSensitivity => parse_iso(display),
-        DevicePropertyCode::ExposureBiasCompensation => {
-            parse_exposure_comp(display).map(|v| v as u64)
-        }
-        _ => None,
     }
 }
 

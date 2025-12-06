@@ -7,32 +7,53 @@ use crsdk_sys::DevicePropertyCode;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
 pub enum MovieFileFormat {
+    /// AVCHD format
     Avchd = 0,
+    /// MP4 format
     Mp4 = 1,
+    /// XAVC S 4K format
     XavcS4k = 2,
+    /// XAVC S HD format
     XavcSHd = 3,
+    /// XAVC HS 8K format
     XavcHs8k = 4,
+    /// XAVC HS 4K format
     XavcHs4k = 5,
+    /// XAVC S-L 4K format
     XavcSL4k = 6,
+    /// XAVC S-L HD format
     XavcSLHd = 7,
+    /// XAVC S-I 4K format
     XavcSI4k = 8,
+    /// XAVC S-I HD format
     XavcSIHd = 9,
+    /// XAVC I format
     XavcI = 10,
+    /// XAVC L format
     XavcL = 11,
+    /// XAVC HS HD format
     XavcHsHd = 12,
+    /// XAVC S-I DCI 4K format
     XavcSIDci4k = 13,
+    /// XAVC H-I HQ format
     XavcHIHq = 14,
+    /// XAVC H-I SQ format
     XavcHISq = 15,
+    /// XAVC H-L format
     XavcHL = 16,
+    /// X-OCN XT format
     XOcnXt = 17,
+    /// X-OCN ST format
     XOcnSt = 18,
 }
 
 impl MovieFileFormat {
+    /// Converts the enum to its raw SDK value
     pub fn as_raw(self) -> u64 {
         self as u64
     }
 
+    /// Converts a raw SDK value to the enum
     pub fn from_raw(value: u64) -> Option<Self> {
         Some(match value as u8 {
             0 => Self::Avchd,

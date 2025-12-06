@@ -7,19 +7,27 @@ use crsdk_sys::DevicePropertyCode;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u16)]
 pub enum FileType {
+    /// No file type selected
     None = 0,
+    /// JPEG compressed image
     Jpeg = 1,
+    /// RAW uncompressed sensor data
     Raw = 2,
+    /// RAW and JPEG both saved
     RawJpeg = 3,
+    /// RAW and HEIF both saved
     RawHeif = 4,
+    /// HEIF compressed image
     Heif = 5,
 }
 
 impl FileType {
+    /// Converts the enum to its raw SDK value
     pub fn as_raw(self) -> u64 {
         self as u64
     }
 
+    /// Converts a raw SDK value to the enum
     pub fn from_raw(value: u64) -> Option<Self> {
         let value = value as u16;
         Some(match value {
@@ -51,18 +59,25 @@ impl std::fmt::Display for FileType {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u16)]
 pub enum ImageQuality {
+    /// Quality level unknown
     Unknown = 0,
+    /// Light compression (smaller file size)
     Light = 1,
+    /// Standard compression
     Standard = 2,
+    /// Fine compression (higher quality)
     Fine = 3,
+    /// Extra fine compression (best quality)
     ExFine = 4,
 }
 
 impl ImageQuality {
+    /// Converts the enum to its raw SDK value
     pub fn as_raw(self) -> u64 {
         self as u64
     }
 
+    /// Converts a raw SDK value to the enum
     pub fn from_raw(value: u64) -> Option<Self> {
         let value = value as u16;
         Some(match value {
@@ -92,17 +107,23 @@ impl std::fmt::Display for ImageQuality {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
 pub enum AspectRatio {
+    /// 3:2 aspect ratio (standard full-frame)
     Ratio3x2 = 1,
+    /// 16:9 aspect ratio (widescreen)
     Ratio16x9 = 2,
+    /// 4:3 aspect ratio (micro four-thirds)
     Ratio4x3 = 3,
+    /// 1:1 aspect ratio (square)
     Ratio1x1 = 4,
 }
 
 impl AspectRatio {
+    /// Converts the enum to its raw SDK value
     pub fn as_raw(self) -> u64 {
         self as u64
     }
 
+    /// Converts a raw SDK value to the enum
     pub fn from_raw(value: u64) -> Option<Self> {
         let value = value as u8;
         Some(match value {
@@ -130,17 +151,23 @@ impl std::fmt::Display for AspectRatio {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
 pub enum ImageSize {
+    /// Large (full resolution)
     Large = 1,
+    /// Medium resolution
     Medium = 2,
+    /// Small resolution
     Small = 3,
+    /// VGA resolution (640x480)
     Vga = 4,
 }
 
 impl ImageSize {
+    /// Converts the enum to its raw SDK value
     pub fn as_raw(self) -> u64 {
         self as u64
     }
 
+    /// Converts a raw SDK value to the enum
     pub fn from_raw(value: u64) -> Option<Self> {
         let value = value as u8;
         Some(match value {

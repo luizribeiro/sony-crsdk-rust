@@ -7,20 +7,29 @@ use crsdk_sys::DevicePropertyCode;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u16)]
 pub enum FocusMode {
+    /// Manual focus control
     Manual = crsdk_sys::SCRSDK::CrFocusMode_CrFocus_MF,
+    /// Single-shot autofocus - locks focus when achieved
     AfSingle = crsdk_sys::SCRSDK::CrFocusMode_CrFocus_AF_S,
+    /// Continuous autofocus - tracks moving subjects
     AfContinuous = crsdk_sys::SCRSDK::CrFocusMode_CrFocus_AF_C,
+    /// Camera chooses between single and continuous AF
     AfAutomatic = crsdk_sys::SCRSDK::CrFocusMode_CrFocus_AF_A,
+    /// Deep learning autofocus
     AfDeepLearning = crsdk_sys::SCRSDK::CrFocusMode_CrFocus_AF_D,
+    /// DMF - autofocus with manual override
     DirectManual = crsdk_sys::SCRSDK::CrFocusMode_CrFocus_DMF,
+    /// Preset focus mode
     PresetFocus = crsdk_sys::SCRSDK::CrFocusMode_CrFocus_PF,
 }
 
 impl FocusMode {
+    /// Converts the focus mode to its raw SDK value
     pub fn as_raw(self) -> u64 {
         self as u64
     }
 
+    /// Converts a raw SDK value to a focus mode
     pub fn from_raw(value: u64) -> Option<Self> {
         use crsdk_sys::SCRSDK::*;
         Some(match value as u16 {
@@ -40,80 +49,125 @@ impl FocusMode {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u16)]
 pub enum FocusArea {
+    /// Unknown focus area
     Unknown = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Unknown,
+    /// Uses entire frame for focus detection
     Wide = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Wide,
+    /// Focus detection in selected zone
     Zone = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Zone,
+    /// Focus on center point
     Center = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Center,
+    /// Small movable focus point
     FlexibleSpotS = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Flexible_Spot_S,
+    /// Medium movable focus point
     FlexibleSpotM = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Flexible_Spot_M,
+    /// Large movable focus point
     FlexibleSpotL = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Flexible_Spot_L,
+    /// Expanded flexible spot with surrounding points
     ExpandFlexibleSpot = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Expand_Flexible_Spot,
+    /// Standard movable focus point
     FlexibleSpot = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Flexible_Spot,
+    /// Subject tracking using entire frame
     TrackingWide = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Wide,
+    /// Subject tracking in selected zone
     TrackingZone = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Zone,
+    /// Subject tracking from center point
     TrackingCenter = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Center,
+    /// Subject tracking with small focus point
     TrackingFlexibleSpotS = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_S,
+    /// Subject tracking with medium focus point
     TrackingFlexibleSpotM = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_M,
+    /// Subject tracking with large focus point
     TrackingFlexibleSpotL = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_L,
+    /// Subject tracking with expanded flexible spot
     TrackingExpandFlexibleSpot =
         crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Expand_Flexible_Spot,
+    /// Subject tracking with standard focus point
     TrackingFlexibleSpot = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Flexible_Spot,
+    /// Extra small movable focus point
     FlexibleSpotXS = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Flexible_Spot_XS,
+    /// Extra large movable focus point
     FlexibleSpotXL = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Flexible_Spot_XL,
+    /// Custom size 1 movable focus point
     FlexibleSpotFreeSize1 = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Flexible_Spot_FreeSize1,
+    /// Custom size 2 movable focus point
     FlexibleSpotFreeSize2 = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Flexible_Spot_FreeSize2,
+    /// Custom size 3 movable focus point
     FlexibleSpotFreeSize3 = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Flexible_Spot_FreeSize3,
+    /// Subject tracking with extra small focus point
     TrackingFlexibleSpotXS = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_XS,
+    /// Subject tracking with extra large focus point
     TrackingFlexibleSpotXL = crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_XL,
+    /// Subject tracking with custom size 1 focus point
     TrackingFlexibleSpotFreeSize1 =
         crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_FreeSize1,
+    /// Subject tracking with custom size 2 focus point
     TrackingFlexibleSpotFreeSize2 =
         crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_FreeSize2,
+    /// Subject tracking with custom size 3 focus point
     TrackingFlexibleSpotFreeSize3 =
         crsdk_sys::SCRSDK::CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_FreeSize3,
 }
 
 impl FocusArea {
+    /// Converts the focus area to its raw SDK value
     pub fn as_raw(self) -> u64 {
         self as u64
     }
 
+    /// Converts a raw SDK value to a focus area
     pub fn from_raw(value: u64) -> Option<Self> {
         use crsdk_sys::SCRSDK::*;
         Some(match value as u16 {
-            CrFocusArea_CrFocusArea_Unknown => Self::Unknown,
-            CrFocusArea_CrFocusArea_Wide => Self::Wide,
-            CrFocusArea_CrFocusArea_Zone => Self::Zone,
-            CrFocusArea_CrFocusArea_Center => Self::Center,
-            CrFocusArea_CrFocusArea_Flexible_Spot_S => Self::FlexibleSpotS,
-            CrFocusArea_CrFocusArea_Flexible_Spot_M => Self::FlexibleSpotM,
-            CrFocusArea_CrFocusArea_Flexible_Spot_L => Self::FlexibleSpotL,
-            CrFocusArea_CrFocusArea_Expand_Flexible_Spot => Self::ExpandFlexibleSpot,
-            CrFocusArea_CrFocusArea_Flexible_Spot => Self::FlexibleSpot,
-            CrFocusArea_CrFocusArea_Tracking_Wide => Self::TrackingWide,
-            CrFocusArea_CrFocusArea_Tracking_Zone => Self::TrackingZone,
-            CrFocusArea_CrFocusArea_Tracking_Center => Self::TrackingCenter,
-            CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_S => Self::TrackingFlexibleSpotS,
-            CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_M => Self::TrackingFlexibleSpotM,
-            CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_L => Self::TrackingFlexibleSpotL,
-            CrFocusArea_CrFocusArea_Tracking_Expand_Flexible_Spot => {
+            x if x == CrFocusArea_CrFocusArea_Unknown => Self::Unknown,
+            x if x == CrFocusArea_CrFocusArea_Wide => Self::Wide,
+            x if x == CrFocusArea_CrFocusArea_Zone => Self::Zone,
+            x if x == CrFocusArea_CrFocusArea_Center => Self::Center,
+            x if x == CrFocusArea_CrFocusArea_Flexible_Spot_S => Self::FlexibleSpotS,
+            x if x == CrFocusArea_CrFocusArea_Flexible_Spot_M => Self::FlexibleSpotM,
+            x if x == CrFocusArea_CrFocusArea_Flexible_Spot_L => Self::FlexibleSpotL,
+            x if x == CrFocusArea_CrFocusArea_Expand_Flexible_Spot => Self::ExpandFlexibleSpot,
+            x if x == CrFocusArea_CrFocusArea_Flexible_Spot => Self::FlexibleSpot,
+            x if x == CrFocusArea_CrFocusArea_Tracking_Wide => Self::TrackingWide,
+            x if x == CrFocusArea_CrFocusArea_Tracking_Zone => Self::TrackingZone,
+            x if x == CrFocusArea_CrFocusArea_Tracking_Center => Self::TrackingCenter,
+            x if x == CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_S => {
+                Self::TrackingFlexibleSpotS
+            }
+            x if x == CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_M => {
+                Self::TrackingFlexibleSpotM
+            }
+            x if x == CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_L => {
+                Self::TrackingFlexibleSpotL
+            }
+            x if x == CrFocusArea_CrFocusArea_Tracking_Expand_Flexible_Spot => {
                 Self::TrackingExpandFlexibleSpot
             }
-            CrFocusArea_CrFocusArea_Tracking_Flexible_Spot => Self::TrackingFlexibleSpot,
-            CrFocusArea_CrFocusArea_Flexible_Spot_XS => Self::FlexibleSpotXS,
-            CrFocusArea_CrFocusArea_Flexible_Spot_XL => Self::FlexibleSpotXL,
-            CrFocusArea_CrFocusArea_Flexible_Spot_FreeSize1 => Self::FlexibleSpotFreeSize1,
-            CrFocusArea_CrFocusArea_Flexible_Spot_FreeSize2 => Self::FlexibleSpotFreeSize2,
-            CrFocusArea_CrFocusArea_Flexible_Spot_FreeSize3 => Self::FlexibleSpotFreeSize3,
-            CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_XS => Self::TrackingFlexibleSpotXS,
-            CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_XL => Self::TrackingFlexibleSpotXL,
-            CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_FreeSize1 => {
+            x if x == CrFocusArea_CrFocusArea_Tracking_Flexible_Spot => Self::TrackingFlexibleSpot,
+            x if x == CrFocusArea_CrFocusArea_Flexible_Spot_XS => Self::FlexibleSpotXS,
+            x if x == CrFocusArea_CrFocusArea_Flexible_Spot_XL => Self::FlexibleSpotXL,
+            x if x == CrFocusArea_CrFocusArea_Flexible_Spot_FreeSize1 => {
+                Self::FlexibleSpotFreeSize1
+            }
+            x if x == CrFocusArea_CrFocusArea_Flexible_Spot_FreeSize2 => {
+                Self::FlexibleSpotFreeSize2
+            }
+            x if x == CrFocusArea_CrFocusArea_Flexible_Spot_FreeSize3 => {
+                Self::FlexibleSpotFreeSize3
+            }
+            x if x == CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_XS => {
+                Self::TrackingFlexibleSpotXS
+            }
+            x if x == CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_XL => {
+                Self::TrackingFlexibleSpotXL
+            }
+            x if x == CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_FreeSize1 => {
                 Self::TrackingFlexibleSpotFreeSize1
             }
-            CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_FreeSize2 => {
+            x if x == CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_FreeSize2 => {
                 Self::TrackingFlexibleSpotFreeSize2
             }
-            CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_FreeSize3 => {
+            x if x == CrFocusArea_CrFocusArea_Tracking_Flexible_Spot_FreeSize3 => {
                 Self::TrackingFlexibleSpotFreeSize3
             }
             _ => return None,
@@ -121,19 +175,25 @@ impl FocusArea {
     }
 }
 
+/// Subject recognition autofocus settings
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
 pub enum SubjectRecognitionAF {
+    /// Subject recognition disabled
     Off = 1,
+    /// Subject detection enabled but does not affect AF priority
     OnlyAF = 2,
+    /// Subject detection enabled and prioritized for autofocus
     PriorityAF = 3,
 }
 
 impl SubjectRecognitionAF {
+    /// Converts the subject recognition AF setting to its raw SDK value
     pub fn as_raw(self) -> u64 {
         self as u64
     }
 
+    /// Converts a raw SDK value to a subject recognition AF setting
     pub fn from_raw(value: u64) -> Option<Self> {
         Some(match value as u8 {
             1 => Self::Off,
@@ -154,19 +214,25 @@ impl std::fmt::Display for SubjectRecognitionAF {
     }
 }
 
+/// AF/Release priority settings
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
 pub enum PrioritySetInAF {
+    /// Prioritize achieving focus before allowing shutter release
     AF = 1,
+    /// Allow shutter release immediately without waiting for focus lock
     Release = 2,
+    /// Balance between focus accuracy and shutter response
     BalancedEmphasis = 3,
 }
 
 impl PrioritySetInAF {
+    /// Converts the priority setting to its raw SDK value
     pub fn as_raw(self) -> u64 {
         self as u64
     }
 
+    /// Converts a raw SDK value to a priority setting
     pub fn from_raw(value: u64) -> Option<Self> {
         Some(match value as u8 {
             1 => Self::AF,
@@ -187,19 +253,25 @@ impl std::fmt::Display for PrioritySetInAF {
     }
 }
 
+/// Focus tracking status
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
 pub enum FocusTrackingStatus {
+    /// Focus tracking is disabled
     Off = 1,
+    /// Camera is actively searching for focus
     Focusing = 2,
+    /// Camera is actively tracking a subject
     Tracking = 3,
 }
 
 impl FocusTrackingStatus {
+    /// Converts the focus tracking status to its raw SDK value
     pub fn as_raw(self) -> u64 {
         self as u64
     }
 
+    /// Converts a raw SDK value to a focus tracking status
     pub fn from_raw(value: u64) -> Option<Self> {
         Some(match value as u8 {
             1 => Self::Off,
@@ -220,6 +292,7 @@ impl std::fmt::Display for FocusTrackingStatus {
     }
 }
 
+/// Returns a detailed description for a focus-related property code
 pub fn description(code: DevicePropertyCode) -> &'static str {
     match code {
         DevicePropertyCode::FocusMode => {
@@ -400,6 +473,7 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
     }
 }
 
+/// Returns a short display name for a focus-related property code
 pub fn display_name(code: DevicePropertyCode) -> &'static str {
     match code {
         DevicePropertyCode::FocusMode => "AF Mode",
@@ -462,6 +536,7 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
     }
 }
 
+/// Returns the value type for a focus-related property code
 pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
     use PropertyValueType as V;
 

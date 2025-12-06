@@ -17,7 +17,6 @@ pub fn render(frame: &mut Frame, modal: &Modal) {
         Modal::SshFingerprintConfirm(state) => render_fingerprint_modal(frame, state),
         Modal::ManualConnection(state) => render_manual_modal(frame, state),
         Modal::PropertySearch(state) => render_property_search_modal(frame, state),
-        Modal::Confirmation { message } => render_confirmation_modal(frame, message),
         Modal::Error { message } => render_error_modal(frame, message),
     }
 }
@@ -255,27 +254,6 @@ fn render_manual_modal(frame: &mut Frame, state: &ManualConnectionState) {
         Span::styled(" Cancel", Style::default().fg(Color::DarkGray)),
     ]);
     frame.render_widget(Paragraph::new(buttons), layout[4]);
-}
-
-fn render_confirmation_modal(frame: &mut Frame, message: &str) {
-    let inner = render_modal_frame(frame, 40, 7, " Confirm ", Color::Yellow);
-    let layout = Layout::vertical([
-        Constraint::Min(2),    // Message
-        Constraint::Length(2), // Buttons
-    ])
-    .split(inner);
-
-    let message_paragraph = Paragraph::new(format!("\n  {}", message));
-    frame.render_widget(message_paragraph, layout[0]);
-
-    let buttons = Line::from(vec![
-        Span::raw("  "),
-        Span::styled("Enter", Style::default().fg(Color::Green)),
-        Span::styled(" Confirm    ", Style::default().fg(Color::DarkGray)),
-        Span::styled("Esc", Style::default().fg(Color::Red)),
-        Span::styled(" Cancel", Style::default().fg(Color::DarkGray)),
-    ]);
-    frame.render_widget(Paragraph::new(buttons), layout[1]);
 }
 
 fn render_error_modal(frame: &mut Frame, message: &str) {

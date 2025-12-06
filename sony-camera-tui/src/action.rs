@@ -25,7 +25,6 @@ pub enum Action {
     AdjustPropertyDown,
     Capture,
     HalfPressShutter,
-    ReleaseShutter,
     StartRecording,
     StopRecording,
     ShowPropertyEditor,

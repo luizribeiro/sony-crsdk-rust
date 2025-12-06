@@ -30,7 +30,6 @@ pub enum Modal {
     SshFingerprintConfirm(SshFingerprintState),
     ManualConnection(ManualConnectionState),
     PropertySearch(PropertySearchState),
-    Confirmation { message: String },
     Error { message: String },
 }
 
@@ -453,10 +452,6 @@ impl App {
         while self.events_log.events.len() > MAX_EVENT_LOG_SIZE {
             self.events_log.events.pop_front();
         }
-    }
-
-    pub fn pinned_property_ids(&self) -> Vec<DevicePropertyCode> {
-        self.properties.pinned_ids().to_vec()
     }
 
     pub fn selected_pinned_property_id(&self) -> Option<DevicePropertyCode> {

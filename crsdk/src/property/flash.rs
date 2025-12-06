@@ -7,28 +7,36 @@ use crsdk_sys::DevicePropertyCode;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u16)]
 pub enum FlashMode {
+    /// Automatic flash (fires when needed)
     Auto = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_Auto,
+    /// Flash disabled
     Off = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_Off,
+    /// Fill flash (always fires)
     Fill = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_Fill,
+    /// External flash sync
     ExternalSync = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_ExternalSync,
+    /// Slow sync (long exposure with flash)
     SlowSync = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_SlowSync,
+    /// Rear curtain sync (flash at end of exposure)
     RearSync = crsdk_sys::SCRSDK::CrFlashMode_CrFlash_RearSync,
 }
 
 impl FlashMode {
+    /// Converts the enum to its raw SDK value
     pub fn as_raw(self) -> u64 {
         self as u64
     }
 
+    /// Converts a raw SDK value to the enum
     pub fn from_raw(value: u64) -> Option<Self> {
         use crsdk_sys::SCRSDK::*;
         Some(match value as u16 {
-            CrFlashMode_CrFlash_Auto => Self::Auto,
-            CrFlashMode_CrFlash_Off => Self::Off,
-            CrFlashMode_CrFlash_Fill => Self::Fill,
-            CrFlashMode_CrFlash_ExternalSync => Self::ExternalSync,
-            CrFlashMode_CrFlash_SlowSync => Self::SlowSync,
-            CrFlashMode_CrFlash_RearSync => Self::RearSync,
+            x if x == CrFlashMode_CrFlash_Auto => Self::Auto,
+            x if x == CrFlashMode_CrFlash_Off => Self::Off,
+            x if x == CrFlashMode_CrFlash_Fill => Self::Fill,
+            x if x == CrFlashMode_CrFlash_ExternalSync => Self::ExternalSync,
+            x if x == CrFlashMode_CrFlash_SlowSync => Self::SlowSync,
+            x if x == CrFlashMode_CrFlash_RearSync => Self::RearSync,
             _ => return None,
         })
     }

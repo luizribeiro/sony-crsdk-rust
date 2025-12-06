@@ -131,11 +131,6 @@ pub enum CameraCommand {
         code: DevicePropertyCode,
         value_index: usize,
     },
-    /// Set a property by raw value
-    SetPropertyRaw {
-        code: DevicePropertyCode,
-        value: u64,
-    },
     /// Capture a photo
     Capture,
     /// Start video recording
@@ -144,10 +139,6 @@ pub enum CameraCommand {
     StopRecording,
     /// Half-press shutter (autofocus)
     HalfPressShutter,
-    /// Release shutter button
-    ReleaseShutter,
-    /// Sync all properties (fetch current values)
-    SyncProperties,
 }
 
 /// Handle to communicate with the camera service
@@ -288,9 +279,6 @@ impl CameraService {
             CameraCommand::SetProperty { code, value_index } => {
                 self.handle_set_property(code, value_index).await;
             }
-            CameraCommand::SetPropertyRaw { code, value } => {
-                self.handle_set_property_raw(code, value).await;
-            }
             CameraCommand::Capture => {
                 self.handle_capture().await;
             }
@@ -302,12 +290,6 @@ impl CameraService {
             }
             CameraCommand::HalfPressShutter => {
                 self.handle_half_press().await;
-            }
-            CameraCommand::ReleaseShutter => {
-                self.handle_release_shutter().await;
-            }
-            CameraCommand::SyncProperties => {
-                self.sync_all_properties().await;
             }
         }
     }
@@ -841,16 +823,6 @@ impl CameraService {
             if let Err(e) = device.release_shutter().await {
                 tracing::debug!("Auto-release shutter failed: {}", e);
             }
-        }
-    }
-
-    async fn handle_release_shutter(&mut self) {
-        let Some(ref device) = self.device else {
-            return;
-        };
-
-        if let Err(e) = device.release_shutter().await {
-            tracing::debug!("Release shutter failed: {}", e);
         }
     }
 

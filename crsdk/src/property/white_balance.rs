@@ -7,77 +7,106 @@ use crsdk_sys::DevicePropertyCode;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u16)]
 pub enum WhiteBalance {
+    /// Automatic white balance
     Auto = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_AWB,
+    /// Daylight preset (5500K)
     Daylight = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Daylight,
+    /// Shade preset (7000K)
     Shade = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Shadow,
+    /// Cloudy preset (6000K)
     Cloudy = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Cloudy,
+    /// Tungsten/incandescent preset (3200K)
     Tungsten = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Tungsten,
+    /// Fluorescent preset (4000K)
     Fluorescent = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent,
+    /// Warm white fluorescent preset
     FluorescentWarmWhite =
         crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_WarmWhite,
+    /// Cool white fluorescent preset
     FluorescentCoolWhite =
         crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_CoolWhite,
+    /// Day white fluorescent preset
     FluorescentDayWhite =
         crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_DayWhite,
+    /// Daylight fluorescent preset
     FluorescentDaylight =
         crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_Daylight,
+    /// Flash preset (6000K)
     Flash = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Flush,
+    /// Underwater auto white balance
     UnderwaterAuto = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Underwater_Auto,
+    /// Manual color temperature in Kelvin
     ColorTemp = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_ColorTemp,
+    /// Custom white balance preset 1
     Custom1 = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Custom_1,
+    /// Custom white balance preset 2
     Custom2 = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Custom_2,
+    /// Custom white balance preset 3
     Custom3 = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Custom_3,
+    /// Custom white balance from captured reference
     Custom = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Custom,
 }
 
 impl WhiteBalance {
+    /// Converts the enum to its raw SDK value
     pub fn as_raw(self) -> u64 {
         self as u64
     }
 
+    /// Converts a raw SDK value to the enum
     pub fn from_raw(value: u64) -> Option<Self> {
         use crsdk_sys::SCRSDK::*;
         let value = value as u16;
         Some(match value {
-            CrWhiteBalanceSetting_CrWhiteBalance_AWB => Self::Auto,
-            CrWhiteBalanceSetting_CrWhiteBalance_Daylight => Self::Daylight,
-            CrWhiteBalanceSetting_CrWhiteBalance_Shadow => Self::Shade,
-            CrWhiteBalanceSetting_CrWhiteBalance_Cloudy => Self::Cloudy,
-            CrWhiteBalanceSetting_CrWhiteBalance_Tungsten => Self::Tungsten,
-            CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent => Self::Fluorescent,
-            CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_WarmWhite => {
+            x if x == CrWhiteBalanceSetting_CrWhiteBalance_AWB => Self::Auto,
+            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Daylight => Self::Daylight,
+            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Shadow => Self::Shade,
+            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Cloudy => Self::Cloudy,
+            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Tungsten => Self::Tungsten,
+            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent => Self::Fluorescent,
+            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_WarmWhite => {
                 Self::FluorescentWarmWhite
             }
-            CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_CoolWhite => {
+            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_CoolWhite => {
                 Self::FluorescentCoolWhite
             }
-            CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_DayWhite => Self::FluorescentDayWhite,
-            CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_Daylight => Self::FluorescentDaylight,
-            CrWhiteBalanceSetting_CrWhiteBalance_Flush => Self::Flash,
-            CrWhiteBalanceSetting_CrWhiteBalance_Underwater_Auto => Self::UnderwaterAuto,
-            CrWhiteBalanceSetting_CrWhiteBalance_ColorTemp => Self::ColorTemp,
-            CrWhiteBalanceSetting_CrWhiteBalance_Custom_1 => Self::Custom1,
-            CrWhiteBalanceSetting_CrWhiteBalance_Custom_2 => Self::Custom2,
-            CrWhiteBalanceSetting_CrWhiteBalance_Custom_3 => Self::Custom3,
-            CrWhiteBalanceSetting_CrWhiteBalance_Custom => Self::Custom,
+            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_DayWhite => {
+                Self::FluorescentDayWhite
+            }
+            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_Daylight => {
+                Self::FluorescentDaylight
+            }
+            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Flush => Self::Flash,
+            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Underwater_Auto => Self::UnderwaterAuto,
+            x if x == CrWhiteBalanceSetting_CrWhiteBalance_ColorTemp => Self::ColorTemp,
+            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Custom_1 => Self::Custom1,
+            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Custom_2 => Self::Custom2,
+            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Custom_3 => Self::Custom3,
+            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Custom => Self::Custom,
             _ => return None,
         })
     }
 }
 
+/// White balance lock indicator
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u16)]
 pub enum LockIndicator {
+    /// Lock status is unknown
     Unknown = 0,
+    /// White balance is not locked
     Unlocked = 1,
+    /// White balance is locked
     Locked = 2,
 }
 
 impl LockIndicator {
+    /// Converts the enum to its raw SDK value
     pub fn as_raw(self) -> u64 {
         self as u64
     }
 
+    /// Converts a raw SDK value to the enum
     pub fn from_raw(value: u64) -> Option<Self> {
         Some(match value as u16 {
             0 => Self::Unknown,
@@ -98,19 +127,25 @@ impl std::fmt::Display for LockIndicator {
     }
 }
 
+/// Priority setting for auto white balance
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
 pub enum PrioritySetInAWB {
+    /// Standard neutral white balance
     Standard = 1,
+    /// Preserve ambient light warmth/coolness
     Ambience = 2,
+    /// Prioritize neutral white tones
     White = 3,
 }
 
 impl PrioritySetInAWB {
+    /// Converts the enum to its raw SDK value
     pub fn as_raw(self) -> u64 {
         self as u64
     }
 
+    /// Converts a raw SDK value to the enum
     pub fn from_raw(value: u64) -> Option<Self> {
         Some(match value as u8 {
             1 => Self::Standard,

@@ -6,15 +6,19 @@
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
 pub enum Switch {
+    /// Switch is off
     Off = 1,
+    /// Switch is on
     On = 2,
 }
 
 impl Switch {
+    /// Converts the enum to its raw SDK value
     pub fn as_raw(self) -> u64 {
         self as u64
     }
 
+    /// Converts a raw SDK value to the enum
     pub fn from_raw(value: u64) -> Option<Self> {
         Some(match value as u8 {
             1 => Self::Off,
@@ -39,15 +43,19 @@ impl std::fmt::Display for Switch {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
 pub enum OnOff {
+    /// Feature is disabled
     Off = 0,
+    /// Feature is enabled
     On = 1,
 }
 
 impl OnOff {
+    /// Converts the enum to its raw SDK value
     pub fn as_raw(self) -> u64 {
         self as u64
     }
 
+    /// Converts a raw SDK value to the enum
     pub fn from_raw(value: u64) -> Option<Self> {
         Some(match value as u8 {
             0 => Self::Off,
@@ -72,15 +80,19 @@ impl std::fmt::Display for OnOff {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
 pub enum AutoManual {
+    /// Automatic mode
     Automatic = 1,
+    /// Manual mode
     Manual = 2,
 }
 
 impl AutoManual {
+    /// Converts the enum to its raw SDK value
     pub fn as_raw(self) -> u64 {
         self as u64
     }
 
+    /// Converts a raw SDK value to the enum
     pub fn from_raw(value: u64) -> Option<Self> {
         Some(match value as u8 {
             1 => Self::Automatic,
@@ -103,16 +115,21 @@ impl std::fmt::Display for AutoManual {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
 pub enum LiveViewDisplayEffect {
+    /// Display effect state is unknown
     Unknown = 0,
+    /// Display effects are enabled
     On = 1,
+    /// Display effects are disabled
     Off = 2,
 }
 
 impl LiveViewDisplayEffect {
+    /// Converts the enum to its raw SDK value
     pub fn as_raw(self) -> u64 {
         self as u64
     }
 
+    /// Converts a raw SDK value to the enum
     pub fn from_raw(value: u64) -> Option<Self> {
         Some(match value as u8 {
             0 => Self::Unknown,
@@ -137,16 +154,21 @@ impl std::fmt::Display for LiveViewDisplayEffect {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
 pub enum SilentModeApertureDrive {
+    /// Not a target for aperture drive
     NotTarget = 1,
+    /// Standard aperture drive behavior
     Standard = 2,
+    /// Silent priority mode (quieter operation)
     SilentPriority = 3,
 }
 
 impl SilentModeApertureDrive {
+    /// Converts the enum to its raw SDK value
     pub fn as_raw(self) -> u64 {
         self as u64
     }
 
+    /// Converts a raw SDK value to the enum
     pub fn from_raw(value: u64) -> Option<Self> {
         Some(match value as u8 {
             1 => Self::NotTarget,
