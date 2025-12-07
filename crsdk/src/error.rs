@@ -89,3 +89,14 @@ impl Error {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_error_from_sdk() {
+        let err = Error::from_sdk_error(0x8200);
+        assert!(matches!(err, Error::ConnectionFailed(_)));
+    }
+}

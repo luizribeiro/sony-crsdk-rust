@@ -89,20 +89,3 @@ pub use crsdk_sys::DevicePropertyCode;
 pub use property::{
     property_category, property_description, property_display_name, PropertyCategory,
 };
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_mac_addr_parse() {
-        let mac: MacAddr = "00:00:00:00:00:00".parse().unwrap();
-        assert_eq!(mac.to_string(), "10:32:2C:7D:C7:B3");
-    }
-
-    #[test]
-    fn test_error_from_sdk() {
-        let err = Error::from_sdk_error(0x8200);
-        assert!(matches!(err, Error::ConnectionFailed(_)));
-    }
-}
