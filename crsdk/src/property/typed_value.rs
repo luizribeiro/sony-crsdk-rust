@@ -7,7 +7,7 @@ use std::fmt;
 
 use crsdk_sys::DevicePropertyCode;
 
-use super::types::{
+use super::values::{
     Aperture, AspectRatio, AutoManual, BatteryLevel, ColorTemperature, ExposureComp,
     ExposureCtrlType, ExposureProgram, FileType, FlashMode, FocusArea, FocusMode,
     FocusTrackingStatus, ImageQuality, ImageSize, Integer, Iso, LiveViewDisplayEffect,

@@ -17,7 +17,7 @@ mod movie;
 mod todo;
 mod traits;
 mod typed_value;
-pub mod types;
+pub mod values;
 mod white_balance;
 
 // Re-export core trait and typed value
@@ -27,14 +27,14 @@ pub use typed_value::TypedValue;
 // Re-export category types
 pub use category::{property_category, PropertyCategory};
 
-// Re-export all value types from types/
-pub use types::{
+// Re-export all value types from values/
+pub use values::{
     AspectRatio, AutoManual, FileType, FlashMode, FocusArea, FocusMode, FocusTrackingStatus,
     ImageQuality, ImageSize, LiveViewDisplayEffect, LockIndicator, MeteringMode, OnOff,
     PrioritySetInAF, PrioritySetInAWB, ShutterMode, ShutterModeStatus, SilentModeApertureDrive,
     SubjectRecognitionAF, Switch, WhiteBalance,
 };
-pub use types::{ExposureCtrlType, ExposureProgram};
+pub use values::{ExposureCtrlType, ExposureProgram};
 
 // These types are still defined in old files (have metadata functions)
 pub use drive::{DriveMode, IntervalRecShutterType};
