@@ -18,5 +18,8 @@ Cargo.lock
 # Sony SDK Libraries (download separately from Sony)
 libs/
 
+# Environment variables (contains camera credentials)
+.env
+
 # misc
 *.log

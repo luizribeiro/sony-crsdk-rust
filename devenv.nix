@@ -1,6 +1,8 @@
 { pkgs, ... }:
 
 {
+  dotenv.enable = true;
+
   languages.rust.enable = true;
 
   git-hooks.hooks = {
