@@ -423,21 +423,25 @@ fn render_range_slider(
     )]));
     frame.render_widget(value_para, layout[0]);
 
-    // Gauge row: min | gauge | max
-    let min_str = format!(" {}", min);
-    let max_str = format!("{} ", max);
-    let min_width = min_str.len() as u16;
-    let max_width = max_str.len() as u16;
+    // Gauge row: min | gauge | max (with padding for readability)
+    let min_str = format!("{}", min);
+    let max_str = format!("{}", max);
+    let label_width = min_str.len().max(max_str.len()).max(4) as u16 + 2; // +2 for padding
 
     let gauge_row = Layout::horizontal([
-        Constraint::Length(min_width),
+        Constraint::Length(label_width),
         Constraint::Min(10),
-        Constraint::Length(max_width),
+        Constraint::Length(label_width),
     ])
     .split(layout[1]);
 
-    // Min label
-    let min_para = Paragraph::new(min_str).style(Style::default().fg(Color::DarkGray));
+    // Min label (right-aligned with trailing space)
+    let min_para = Paragraph::new(format!(
+        "{:>width$} ",
+        min,
+        width = label_width as usize - 2
+    ))
+    .style(Style::default().fg(Color::DarkGray));
     frame.render_widget(min_para, gauge_row[0]);
 
     // Gauge
@@ -447,10 +451,8 @@ fn render_range_slider(
         .use_unicode(true);
     frame.render_widget(gauge, gauge_row[1]);
 
-    // Max label
-    let max_para = Paragraph::new(max_str)
-        .style(Style::default().fg(Color::DarkGray))
-        .alignment(ratatui::layout::Alignment::Right);
+    // Max label (left-aligned with leading space)
+    let max_para = Paragraph::new(format!(" {}", max)).style(Style::default().fg(Color::DarkGray));
     frame.render_widget(max_para, gauge_row[2]);
 
     // Hints for navigation
