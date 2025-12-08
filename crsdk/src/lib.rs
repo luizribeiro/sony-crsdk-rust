@@ -79,7 +79,7 @@ pub use property::{
     FocusMode, FocusTrackingStatus, ImageQuality, ImageSize, IntervalRecShutterType,
     LiveViewDisplayEffect, LockIndicator, MeteringMode, MovieFileFormat, OnOff, PrioritySetInAF,
     PrioritySetInAWB, PropertyValueType, ShutterMode, ShutterModeStatus, SilentModeApertureDrive,
-    SubjectRecognitionAF, Switch, WhiteBalance,
+    SubjectRecognitionAF, Switch, ValueConstraint, WhiteBalance,
 };
 pub use sdk::Sdk;
 pub use types::{CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, MacAddr};

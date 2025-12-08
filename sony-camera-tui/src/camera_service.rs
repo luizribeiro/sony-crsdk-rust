@@ -9,10 +9,35 @@ use tokio::sync::mpsc;
 
 use crsdk::{
     warning_code_name, warning_param_description, CameraDevice, CameraEvent as SdkEvent,
-    DeviceProperty, DevicePropertyCode, MacAddr,
+    DeviceProperty, DevicePropertyCode, MacAddr, ValueConstraint,
 };
 
 use crate::property::format_sdk_value;
+
+/// Get available values from a property's constraint as formatted strings.
+/// For discrete values, formats each value. For ranges, expands if reasonable size,
+/// otherwise returns a range description.
+fn format_available_values(code: DevicePropertyCode, prop: &DeviceProperty) -> Vec<String> {
+    match &prop.constraint {
+        ValueConstraint::None => vec![],
+        ValueConstraint::Discrete(values) => {
+            values.iter().map(|&v| format_sdk_value(code, v)).collect()
+        }
+        ValueConstraint::Range { min, max, step } => {
+            if *step == 0 {
+                return vec![format!("{} to {}", min, max)];
+            }
+            let count = ((max - min) / step + 1) as usize;
+            if count <= 20 {
+                (0..count as i64)
+                    .map(|i| format_sdk_value(code, (min + i * step) as u64))
+                    .collect()
+            } else {
+                vec![format!("{} to {} (step {})", min, max, step)]
+            }
+        }
+    }
+}
 
 /// Messages from CameraService to App
 #[derive(Debug, Clone)]
@@ -477,19 +502,16 @@ impl CameraService {
 
                     if let Some(code) = DevicePropertyCode::from_raw(prop.code) {
                         let current = format_sdk_value(code, prop.current_value);
-                        let available: Vec<String> = prop
-                            .possible_values
-                            .iter()
-                            .map(|&v| format_sdk_value(code, v))
-                            .collect();
+                        let available = format_available_values(code, &prop);
                         let writable = prop.enable_flag.is_writable();
 
                         tracing::debug!(
-                            "Property {}: raw={} formatted='{}' writable={}",
+                            "Property {}: raw={} formatted='{}' writable={} constraint={:?}",
                             code.name(),
                             prop.current_value,
                             current,
-                            writable
+                            writable,
+                            prop.constraint
                         );
 
                         self.cached_properties.insert(code, prop);
@@ -669,12 +691,36 @@ impl CameraService {
             return;
         };
 
-        let Some(&value) = cached.possible_values.get(value_index) else {
-            self.send_update(CameraUpdate::Error {
-                message: format!("Invalid value index {} for {}", value_index, code.name()),
-            })
-            .await;
-            return;
+        let value = match &cached.constraint {
+            ValueConstraint::Discrete(values) => {
+                let Some(&v) = values.get(value_index) else {
+                    self.send_update(CameraUpdate::Error {
+                        message: format!("Invalid value index {} for {}", value_index, code.name()),
+                    })
+                    .await;
+                    return;
+                };
+                v
+            }
+            ValueConstraint::Range { min, max, step } => {
+                let step = if *step == 0 { 1 } else { *step };
+                let count = ((max - min) / step + 1) as usize;
+                if value_index >= count {
+                    self.send_update(CameraUpdate::Error {
+                        message: format!("Invalid value index {} for {}", value_index, code.name()),
+                    })
+                    .await;
+                    return;
+                }
+                (min + (value_index as i64) * step) as u64
+            }
+            ValueConstraint::None => {
+                self.send_update(CameraUpdate::Error {
+                    message: format!("Property {} has no selectable values", code.name()),
+                })
+                .await;
+                return;
+            }
         };
 
         self.handle_set_property_raw(code, value).await;
@@ -857,11 +903,7 @@ impl CameraService {
                                 }
 
                                 let current = format_sdk_value(code, prop.current_value);
-                                let available: Vec<String> = prop
-                                    .possible_values
-                                    .iter()
-                                    .map(|&v| format_sdk_value(code, v))
-                                    .collect();
+                                let available = format_available_values(code, &prop);
                                 let writable = prop.enable_flag.is_writable();
 
                                 self.cached_properties.insert(code, prop);
