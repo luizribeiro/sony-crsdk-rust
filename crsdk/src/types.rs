@@ -5,6 +5,16 @@ use std::fmt;
 use std::net::Ipv4Addr;
 use std::str::FromStr;
 
+/// Convert a Rust type to its CRSDK representation
+pub trait ToCrsdk<T> {
+    fn to_crsdk(&self) -> T;
+}
+
+/// Convert a CRSDK value to a Rust type (fallible)
+pub trait FromCrsdk<T>: Sized {
+    fn from_crsdk(raw: T) -> Result<Self>;
+}
+
 /// MAC address (6 bytes)
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct MacAddr(pub [u8; 6]);
