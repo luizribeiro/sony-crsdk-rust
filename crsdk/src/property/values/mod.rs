@@ -27,7 +27,7 @@ mod white_balance;
 
 pub use common::{
     AutoManual, Integer, LiveViewDisplayEffect, LockIndicator, OnOff, Percentage,
-    SilentModeApertureDrive, Switch,
+    PropertyValueType, SilentModeApertureDrive, Switch,
 };
 pub use drive::{DriveMode, IntervalRecShutterType};
 pub use exposure::{

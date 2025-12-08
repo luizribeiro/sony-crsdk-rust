@@ -4,6 +4,92 @@ use std::fmt;
 
 use super::super::traits::PropertyValue;
 
+/// How to interpret and format a property's raw value.
+///
+/// This enum defines the semantic type of a property value, allowing type-safe
+/// formatting and parsing. Use [`property_value_type`](super::super::property_value_type)
+/// to get the type for a property code.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum PropertyValueType {
+    // Formatted numeric values (special encoding)
+    /// Aperture f-number (raw value / 100, e.g., 280 → f/2.8)
+    Aperture,
+    /// Shutter speed (upper 16 bits = numerator, lower 16 = denominator)
+    ShutterSpeed,
+    /// ISO sensitivity (raw value is ISO number)
+    Iso,
+    /// Exposure compensation (raw value in 1/3 EV steps)
+    ExposureCompensation,
+    /// Color temperature in Kelvin
+    ColorTemperature,
+    /// Movie recording quality/bitrate
+    MovieQuality,
+
+    // Enum value types
+    /// Exposure program mode (P, A, S, M, etc.)
+    ExposureProgram,
+    /// Metering mode
+    MeteringMode,
+    /// Focus mode (AF-S, AF-C, MF, etc.)
+    FocusMode,
+    /// Focus area
+    FocusArea,
+    /// Subject recognition for AF
+    SubjectRecognitionAF,
+    /// AF priority setting
+    PrioritySetInAF,
+    /// Focus tracking status
+    FocusTrackingStatus,
+    /// White balance preset
+    WhiteBalance,
+    /// AWB priority setting
+    PrioritySetInAWB,
+    /// Drive mode (single, continuous, bracket, timer)
+    DriveMode,
+    /// Interval recording shutter type
+    IntervalRecShutterType,
+    /// Flash mode
+    FlashMode,
+    /// File type (slot assignment)
+    FileType,
+    /// Still image quality (RAW, JPEG, etc.)
+    ImageQuality,
+    /// Aspect ratio
+    AspectRatio,
+    /// Image size
+    ImageSize,
+    /// Movie file format (XAVC, etc.)
+    MovieFileFormat,
+    /// Shutter mode status
+    ShutterModeStatus,
+    /// Shutter mode
+    ShutterMode,
+    /// Exposure control type
+    ExposureCtrlType,
+    /// Live view display effect
+    LiveViewDisplayEffect,
+    /// Silent mode aperture drive
+    SilentModeApertureDrive,
+
+    // Generic toggle types
+    /// On/Off toggle (0=Off, 1=On)
+    OnOff,
+    /// Switch toggle (1=Off, 2=On)
+    Switch,
+    /// Auto/Manual toggle
+    AutoManual,
+    /// Lock indicator (unlocked/locked)
+    LockIndicator,
+
+    // Raw value types
+    /// Percentage (0-100)
+    Percentage,
+    /// Plain integer value
+    Integer,
+    /// Unknown/untyped value (display as raw hex)
+    Unknown,
+}
+
 /// A generic integer property value.
 ///
 /// Used for properties that represent raw numeric values without special formatting.
