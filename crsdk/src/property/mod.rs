@@ -7,7 +7,6 @@
 //! - The [`PropertyValue`] trait for type-safe value conversion
 
 mod category;
-mod drive;
 mod metadata;
 mod movie;
 #[cfg(test)]
@@ -32,9 +31,9 @@ pub use values::{
 };
 pub use values::{ExposureCtrlType, ExposureProgram};
 
-// These types are still defined in old files (have metadata functions)
-pub use drive::{DriveMode, IntervalRecShutterType};
+// Re-export drive types from values/
 pub use movie::{format_movie_quality, MovieFileFormat};
+pub use values::{DriveMode, IntervalRecShutterType};
 
 use crsdk_sys::DevicePropertyCode;
 
@@ -311,7 +310,7 @@ pub fn property_value_type(code: DevicePropertyCode) -> PropertyValueType {
     if let Some(vt) = metadata::white_balance::value_type(code) {
         return vt;
     }
-    if let Some(vt) = drive::value_type(code) {
+    if let Some(vt) = metadata::drive::value_type(code) {
         return vt;
     }
     if let Some(vt) = metadata::flash::value_type(code) {
@@ -1348,7 +1347,7 @@ pub fn property_description(code: DevicePropertyCode) -> &'static str {
         }
         PropertyCategory::Focus => metadata::focus::description(code),
         PropertyCategory::WhiteBalance => metadata::white_balance::description(code),
-        PropertyCategory::Drive => drive::description(code),
+        PropertyCategory::Drive => metadata::drive::description(code),
         PropertyCategory::Flash => metadata::flash::description(code),
         PropertyCategory::Image => metadata::image::description(code),
         PropertyCategory::Movie => movie::description(code),
@@ -1374,7 +1373,7 @@ pub fn property_display_name(code: DevicePropertyCode) -> &'static str {
         }
         PropertyCategory::Focus => metadata::focus::display_name(code),
         PropertyCategory::WhiteBalance => metadata::white_balance::display_name(code),
-        PropertyCategory::Drive => drive::display_name(code),
+        PropertyCategory::Drive => metadata::drive::display_name(code),
         PropertyCategory::Flash => metadata::flash::display_name(code),
         PropertyCategory::Image => metadata::image::display_name(code),
         PropertyCategory::Movie => movie::display_name(code),

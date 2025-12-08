@@ -1,7 +1,6 @@
-//! Drive mode property types and metadata.
+//! Drive mode value types.
 
-use super::PropertyValueType;
-use crsdk_sys::DevicePropertyCode;
+use super::super::PropertyValue;
 
 /// Drive mode / shooting mode settings
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -399,21 +398,10 @@ pub enum DriveMode {
     SelfPortrait2 = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_SelfPortrait_2,
 }
 
-impl DriveMode {
-    /// Converts the drive mode to its raw u64 value for SDK communication
-    pub fn as_raw(self) -> u64 {
-        self as u64
-    }
-
-    /// Alias for as_raw (for PropertyValue trait compatibility)
-    pub fn to_raw(&self) -> u64 {
-        *self as u64
-    }
-
-    /// Converts a raw u64 value from the SDK into a DriveMode variant
-    pub fn from_raw(value: u64) -> Option<Self> {
+impl PropertyValue for DriveMode {
+    fn from_raw(raw: u64) -> Option<Self> {
         use crsdk_sys::SCRSDK::*;
-        let value = value as u32;
+        let value = raw as u32;
         Some(match value {
             x if x == CrDriveMode_CrDrive_Single => Self::Single,
             x if x == CrDriveMode_CrDrive_Continuous_Hi => Self::ContinuousHi,
@@ -739,6 +727,10 @@ impl DriveMode {
             _ => return None,
         })
     }
+
+    fn to_raw(&self) -> u64 {
+        *self as u64
+    }
 }
 
 /// Shutter type for interval recording (timelapse)
@@ -753,20 +745,18 @@ pub enum IntervalRecShutterType {
     Electronic = 3,
 }
 
-impl IntervalRecShutterType {
-    /// Converts the shutter type to its raw u64 value for SDK communication
-    pub fn as_raw(self) -> u64 {
-        self as u64
-    }
-
-    /// Converts a raw u64 value from the SDK into an IntervalRecShutterType variant
-    pub fn from_raw(value: u64) -> Option<Self> {
-        Some(match value as u8 {
+impl PropertyValue for IntervalRecShutterType {
+    fn from_raw(raw: u64) -> Option<Self> {
+        Some(match raw as u8 {
             1 => Self::Auto,
             2 => Self::Mechanical,
             3 => Self::Electronic,
             _ => return None,
         })
+    }
+
+    fn to_raw(&self) -> u64 {
+        *self as u64
     }
 }
 
@@ -778,47 +768,4 @@ impl std::fmt::Display for IntervalRecShutterType {
             Self::Electronic => write!(f, "Electronic"),
         }
     }
-}
-
-/// Returns a human-readable description for drive-related property codes
-pub fn description(code: DevicePropertyCode) -> &'static str {
-    match code {
-        DevicePropertyCode::DriveMode => {
-            "Single shot takes one photo per press. Continuous shoots multiple frames while held. Self-timer delays the shot. Bracket takes multiple exposures."
-        }
-        DevicePropertyCode::BracketOrder => {
-            "Sequence of bracketed exposures. 0/−/+ starts with normal exposure. −/0/+ starts with underexposed."
-        }
-        DevicePropertyCode::BulbTimerSetting => {
-            "Sets a fixed exposure time for bulb mode, allowing long exposures without holding the shutter button."
-        }
-        DevicePropertyCode::ShootingSelfTimerStatus => {
-            "Indicates whether a self-timer shot is currently in progress or pending."
-        }
-        _ => "",
-    }
-}
-
-/// Returns a short display name for drive-related property codes
-pub fn display_name(code: DevicePropertyCode) -> &'static str {
-    match code {
-        DevicePropertyCode::DriveMode => "Drive",
-        DevicePropertyCode::BracketOrder => "Bracket Seq",
-        DevicePropertyCode::BulbTimerSetting => "Bulb Timer",
-        DevicePropertyCode::ShootingSelfTimerStatus => "Timer Active",
-        _ => code.name(),
-    }
-}
-
-/// Returns the property value type for drive-related property codes
-pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
-    use PropertyValueType as V;
-
-    Some(match code {
-        DevicePropertyCode::DriveMode => V::DriveMode,
-        DevicePropertyCode::BracketOrder => V::Integer,
-        DevicePropertyCode::BulbTimerSetting => V::Integer,
-        DevicePropertyCode::ShootingSelfTimerStatus => V::Integer,
-        _ => return None,
-    })
 }

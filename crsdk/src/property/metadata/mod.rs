@@ -5,6 +5,7 @@
 //! - `display_name(code)` - Short human-readable name for UI display
 //! - `value_type(code)` - Which value type this property uses
 
+pub mod drive;
 pub mod exposure;
 pub mod flash;
 pub mod focus;

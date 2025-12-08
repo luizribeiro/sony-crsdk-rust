@@ -16,6 +16,7 @@
 //! - [`power`] - Battery and power types
 
 mod common;
+mod drive;
 mod exposure;
 mod flash;
 mod focus;
@@ -28,6 +29,7 @@ pub use common::{
     AutoManual, Integer, LiveViewDisplayEffect, LockIndicator, OnOff, Percentage,
     SilentModeApertureDrive, Switch,
 };
+pub use drive::{DriveMode, IntervalRecShutterType};
 pub use exposure::{
     Aperture, ExposureComp, ExposureCtrlType, ExposureProgram, Iso, MeterLevel, MeteringMode,
     ShutterMode, ShutterModeStatus, ShutterSpeed,
