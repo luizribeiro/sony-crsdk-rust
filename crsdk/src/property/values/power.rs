@@ -3,6 +3,7 @@
 use std::fmt;
 
 use super::super::traits::PropertyValue;
+use crate::types::ToCrsdk;
 
 /// Battery level indicator.
 ///
@@ -40,16 +41,18 @@ impl BatteryLevel {
     }
 }
 
+impl ToCrsdk<u64> for BatteryLevel {
+    fn to_crsdk(&self) -> u64 {
+        self.raw()
+    }
+}
+
 impl PropertyValue for BatteryLevel {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(BatteryLevel {
             status: ((raw >> 16) & 0xFFFF) as u16,
             level: (raw & 0xFFFF) as u16,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        self.raw()
     }
 }
 

@@ -3,6 +3,7 @@
 use std::fmt;
 
 use super::super::traits::PropertyValue;
+use crate::types::ToCrsdk;
 
 /// Movie recording quality/bitrate setting.
 ///
@@ -18,13 +19,15 @@ impl MovieQuality {
     }
 }
 
+impl ToCrsdk<u64> for MovieQuality {
+    fn to_crsdk(&self) -> u64 {
+        self.0
+    }
+}
+
 impl PropertyValue for MovieQuality {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(MovieQuality(raw))
-    }
-
-    fn to_raw(&self) -> u64 {
-        self.0
     }
 }
 
@@ -152,6 +155,12 @@ pub enum MovieFileFormat {
     XOcnSt = 18,
 }
 
+impl ToCrsdk<u64> for MovieFileFormat {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for MovieFileFormat {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u8 {
@@ -176,10 +185,6 @@ impl PropertyValue for MovieFileFormat {
             18 => Self::XOcnSt,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 

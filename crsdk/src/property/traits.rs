@@ -1,5 +1,6 @@
 //! Core trait for property value types.
 
+use crate::types::ToCrsdk;
 use std::fmt::Display;
 
 /// Trait for all property value types.
@@ -17,7 +18,7 @@ use std::fmt::Display;
 /// assert_eq!(aperture.to_string(), "f/2.8");
 /// assert_eq!(aperture.to_raw(), 280);
 /// ```
-pub trait PropertyValue: Display + Clone {
+pub trait PropertyValue: ToCrsdk<u64> + Display + Clone {
     /// Create a typed value from a raw SDK value.
     ///
     /// Returns `None` if the raw value is invalid or unrecognized.
@@ -31,5 +32,7 @@ pub trait PropertyValue: Display + Clone {
     ///
     /// This is the inverse of `from_raw` and can be used when setting
     /// property values on the camera.
-    fn to_raw(&self) -> u64;
+    fn to_raw(&self) -> u64 {
+        self.to_crsdk()
+    }
 }

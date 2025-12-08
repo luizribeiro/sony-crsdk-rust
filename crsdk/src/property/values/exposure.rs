@@ -3,6 +3,7 @@
 use std::fmt;
 
 use super::super::traits::PropertyValue;
+use crate::types::ToCrsdk;
 
 /// Aperture (f-number) value.
 ///
@@ -18,6 +19,12 @@ impl Aperture {
     }
 }
 
+impl ToCrsdk<u64> for Aperture {
+    fn to_crsdk(&self) -> u64 {
+        self.0
+    }
+}
+
 impl PropertyValue for Aperture {
     fn from_raw(raw: u64) -> Option<Self> {
         if raw == 0 {
@@ -25,10 +32,6 @@ impl PropertyValue for Aperture {
         } else {
             Some(Aperture(raw))
         }
-    }
-
-    fn to_raw(&self) -> u64 {
-        self.0
     }
 }
 
@@ -72,6 +75,12 @@ impl ShutterSpeed {
     }
 }
 
+impl ToCrsdk<u64> for ShutterSpeed {
+    fn to_crsdk(&self) -> u64 {
+        self.0
+    }
+}
+
 impl PropertyValue for ShutterSpeed {
     fn from_raw(raw: u64) -> Option<Self> {
         if raw == 0 {
@@ -79,10 +88,6 @@ impl PropertyValue for ShutterSpeed {
         } else {
             Some(ShutterSpeed(raw))
         }
-    }
-
-    fn to_raw(&self) -> u64 {
-        self.0
     }
 }
 
@@ -118,6 +123,12 @@ impl Iso {
     }
 }
 
+impl ToCrsdk<u64> for Iso {
+    fn to_crsdk(&self) -> u64 {
+        self.0
+    }
+}
+
 impl PropertyValue for Iso {
     fn from_raw(raw: u64) -> Option<Self> {
         if raw == 0 {
@@ -125,10 +136,6 @@ impl PropertyValue for Iso {
         } else {
             Some(Iso(raw))
         }
-    }
-
-    fn to_raw(&self) -> u64 {
-        self.0
     }
 }
 
@@ -157,14 +164,15 @@ impl ExposureComp {
     }
 }
 
+impl ToCrsdk<u64> for ExposureComp {
+    fn to_crsdk(&self) -> u64 {
+        self.0 as u64
+    }
+}
+
 impl PropertyValue for ExposureComp {
     fn from_raw(raw: u64) -> Option<Self> {
-        // Reinterpret as signed
         Some(ExposureComp(raw as i64))
-    }
-
-    fn to_raw(&self) -> u64 {
-        self.0 as u64
     }
 }
 
@@ -201,14 +209,15 @@ impl MeterLevel {
     }
 }
 
+impl ToCrsdk<u64> for MeterLevel {
+    fn to_crsdk(&self) -> u64 {
+        self.0 as u64
+    }
+}
+
 impl PropertyValue for MeterLevel {
     fn from_raw(raw: u64) -> Option<Self> {
-        // Reinterpret as signed - this fixes the bug where -8000 was displayed as 18446744073709543616
         Some(MeterLevel(raw as i64))
-    }
-
-    fn to_raw(&self) -> u64 {
-        self.0 as u64
     }
 }
 
@@ -345,6 +354,12 @@ pub enum ExposureProgram {
     MovieIntervalRecAuto = 32908,
 }
 
+impl ToCrsdk<u64> for ExposureProgram {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for ExposureProgram {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u32 {
@@ -410,10 +425,6 @@ impl PropertyValue for ExposureProgram {
             32908 => Self::MovieIntervalRecAuto,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 
@@ -588,6 +599,12 @@ pub enum MeteringMode {
     Spotlight = 32777,
 }
 
+impl ToCrsdk<u64> for MeteringMode {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for MeteringMode {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u16 {
@@ -606,10 +623,6 @@ impl PropertyValue for MeteringMode {
             32777 => Self::Spotlight,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 
@@ -650,6 +663,12 @@ pub enum ShutterModeStatus {
     Auto = 5,
 }
 
+impl ToCrsdk<u64> for ShutterModeStatus {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for ShutterModeStatus {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u8 {
@@ -660,10 +679,6 @@ impl PropertyValue for ShutterModeStatus {
             5 => Self::Auto,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 
@@ -689,6 +704,12 @@ pub enum ShutterMode {
     Angle = 2,
 }
 
+impl ToCrsdk<u64> for ShutterMode {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for ShutterMode {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u8 {
@@ -696,10 +717,6 @@ impl PropertyValue for ShutterMode {
             2 => Self::Angle,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 
@@ -722,6 +739,12 @@ pub enum ExposureCtrlType {
     FlexibleExposure = 2,
 }
 
+impl ToCrsdk<u64> for ExposureCtrlType {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for ExposureCtrlType {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u8 {
@@ -729,10 +752,6 @@ impl PropertyValue for ExposureCtrlType {
             2 => Self::FlexibleExposure,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 

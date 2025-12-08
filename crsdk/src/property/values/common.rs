@@ -3,6 +3,7 @@
 use std::fmt;
 
 use super::super::traits::PropertyValue;
+use crate::types::ToCrsdk;
 
 /// How to interpret and format a property's raw value.
 ///
@@ -104,13 +105,15 @@ impl Integer {
     }
 }
 
+impl ToCrsdk<u64> for Integer {
+    fn to_crsdk(&self) -> u64 {
+        self.0 as u64
+    }
+}
+
 impl PropertyValue for Integer {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(Integer(raw as i64))
-    }
-
-    fn to_raw(&self) -> u64 {
-        self.0 as u64
     }
 }
 
@@ -133,13 +136,15 @@ impl Percentage {
     }
 }
 
+impl ToCrsdk<u64> for Percentage {
+    fn to_crsdk(&self) -> u64 {
+        self.0
+    }
+}
+
 impl PropertyValue for Percentage {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(Percentage(raw))
-    }
-
-    fn to_raw(&self) -> u64 {
-        self.0
     }
 }
 
@@ -161,6 +166,12 @@ pub enum Switch {
     On = 2,
 }
 
+impl ToCrsdk<u64> for Switch {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for Switch {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u8 {
@@ -168,10 +179,6 @@ impl PropertyValue for Switch {
             2 => Self::On,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 
@@ -196,6 +203,12 @@ pub enum OnOff {
     On = 1,
 }
 
+impl ToCrsdk<u64> for OnOff {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for OnOff {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u8 {
@@ -203,10 +216,6 @@ impl PropertyValue for OnOff {
             1 => Self::On,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 
@@ -231,6 +240,12 @@ pub enum AutoManual {
     Manual = 2,
 }
 
+impl ToCrsdk<u64> for AutoManual {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for AutoManual {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u8 {
@@ -238,10 +253,6 @@ impl PropertyValue for AutoManual {
             2 => Self::Manual,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 
@@ -268,6 +279,12 @@ pub enum LockIndicator {
     Locked = 2,
 }
 
+impl ToCrsdk<u64> for LockIndicator {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for LockIndicator {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u16 {
@@ -276,10 +293,6 @@ impl PropertyValue for LockIndicator {
             2 => Self::Locked,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 
@@ -305,6 +318,12 @@ pub enum LiveViewDisplayEffect {
     Off = 2,
 }
 
+impl ToCrsdk<u64> for LiveViewDisplayEffect {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for LiveViewDisplayEffect {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u8 {
@@ -313,10 +332,6 @@ impl PropertyValue for LiveViewDisplayEffect {
             2 => Self::Off,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 
@@ -342,6 +357,12 @@ pub enum SilentModeApertureDrive {
     SilentPriority = 3,
 }
 
+impl ToCrsdk<u64> for SilentModeApertureDrive {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for SilentModeApertureDrive {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u8 {
@@ -350,10 +371,6 @@ impl PropertyValue for SilentModeApertureDrive {
             3 => Self::SilentPriority,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 

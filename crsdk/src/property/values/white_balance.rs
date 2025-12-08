@@ -3,6 +3,7 @@
 use std::fmt;
 
 use super::super::traits::PropertyValue;
+use crate::types::ToCrsdk;
 
 /// Color temperature value in Kelvin.
 ///
@@ -18,6 +19,12 @@ impl ColorTemperature {
     }
 }
 
+impl ToCrsdk<u64> for ColorTemperature {
+    fn to_crsdk(&self) -> u64 {
+        self.0
+    }
+}
+
 impl PropertyValue for ColorTemperature {
     fn from_raw(raw: u64) -> Option<Self> {
         if raw == 0 {
@@ -25,10 +32,6 @@ impl PropertyValue for ColorTemperature {
         } else {
             Some(ColorTemperature(raw))
         }
-    }
-
-    fn to_raw(&self) -> u64 {
-        self.0
     }
 }
 
@@ -79,6 +82,12 @@ pub enum WhiteBalance {
     Custom = 272,
 }
 
+impl ToCrsdk<u64> for WhiteBalance {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for WhiteBalance {
     fn from_raw(raw: u64) -> Option<Self> {
         let value = raw as u16;
@@ -102,10 +111,6 @@ impl PropertyValue for WhiteBalance {
             272 => Self::Custom,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 
@@ -146,6 +151,12 @@ pub enum PrioritySetInAWB {
     White = 3,
 }
 
+impl ToCrsdk<u64> for PrioritySetInAWB {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for PrioritySetInAWB {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u8 {
@@ -154,10 +165,6 @@ impl PropertyValue for PrioritySetInAWB {
             3 => Self::White,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 

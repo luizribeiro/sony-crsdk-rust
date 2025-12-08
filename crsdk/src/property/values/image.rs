@@ -3,6 +3,7 @@
 use std::fmt;
 
 use super::super::traits::PropertyValue;
+use crate::types::ToCrsdk;
 
 /// File type for still images (RAW vs JPEG)
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -22,6 +23,12 @@ pub enum FileType {
     Heif = 5,
 }
 
+impl ToCrsdk<u64> for FileType {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for FileType {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u16 {
@@ -33,10 +40,6 @@ impl PropertyValue for FileType {
             5 => Self::Heif,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 
@@ -70,6 +73,12 @@ pub enum ImageQuality {
     ExFine = 4,
 }
 
+impl ToCrsdk<u64> for ImageQuality {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for ImageQuality {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u16 {
@@ -80,10 +89,6 @@ impl PropertyValue for ImageQuality {
             4 => Self::ExFine,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 
@@ -114,6 +119,12 @@ pub enum AspectRatio {
     Ratio1x1 = 4,
 }
 
+impl ToCrsdk<u64> for AspectRatio {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for AspectRatio {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u8 {
@@ -123,10 +134,6 @@ impl PropertyValue for AspectRatio {
             4 => Self::Ratio1x1,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 
@@ -156,6 +163,12 @@ pub enum ImageSize {
     Vga = 4,
 }
 
+impl ToCrsdk<u64> for ImageSize {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for ImageSize {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u8 {
@@ -165,10 +178,6 @@ impl PropertyValue for ImageSize {
             4 => Self::Vga,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 

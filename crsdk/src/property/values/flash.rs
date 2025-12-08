@@ -3,6 +3,7 @@
 use std::fmt;
 
 use super::super::traits::PropertyValue;
+use crate::types::ToCrsdk;
 
 /// Flash mode settings
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -22,6 +23,12 @@ pub enum FlashMode {
     RearSync = 6,
 }
 
+impl ToCrsdk<u64> for FlashMode {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for FlashMode {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u16 {
@@ -33,10 +40,6 @@ impl PropertyValue for FlashMode {
             6 => Self::RearSync,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 

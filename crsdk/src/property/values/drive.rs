@@ -1,6 +1,7 @@
 //! Drive mode value types.
 
 use super::super::PropertyValue;
+use crate::types::ToCrsdk;
 
 /// Drive mode / shooting mode settings
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -727,8 +728,10 @@ impl PropertyValue for DriveMode {
             _ => return None,
         })
     }
+}
 
-    fn to_raw(&self) -> u64 {
+impl ToCrsdk<u64> for DriveMode {
+    fn to_crsdk(&self) -> u64 {
         *self as u64
     }
 }
@@ -745,6 +748,12 @@ pub enum IntervalRecShutterType {
     Electronic = 3,
 }
 
+impl ToCrsdk<u64> for IntervalRecShutterType {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for IntervalRecShutterType {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u8 {
@@ -753,10 +762,6 @@ impl PropertyValue for IntervalRecShutterType {
             3 => Self::Electronic,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 

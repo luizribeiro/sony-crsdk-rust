@@ -3,6 +3,7 @@
 use std::fmt;
 
 use super::super::traits::PropertyValue;
+use crate::types::ToCrsdk;
 
 /// Focus mode settings
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -24,6 +25,12 @@ pub enum FocusMode {
     PresetFocus = 7,
 }
 
+impl ToCrsdk<u64> for FocusMode {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for FocusMode {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u16 {
@@ -36,10 +43,6 @@ impl PropertyValue for FocusMode {
             7 => Self::PresetFocus,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 
@@ -119,6 +122,12 @@ pub enum FocusArea {
     TrackingFlexibleSpotFreeSize3 = 274,
 }
 
+impl ToCrsdk<u64> for FocusArea {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for FocusArea {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u16 {
@@ -151,10 +160,6 @@ impl PropertyValue for FocusArea {
             274 => Self::TrackingFlexibleSpotFreeSize3,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 
@@ -205,6 +210,12 @@ pub enum SubjectRecognitionAF {
     PriorityAF = 3,
 }
 
+impl ToCrsdk<u64> for SubjectRecognitionAF {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for SubjectRecognitionAF {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u8 {
@@ -213,10 +224,6 @@ impl PropertyValue for SubjectRecognitionAF {
             3 => Self::PriorityAF,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 
@@ -242,6 +249,12 @@ pub enum PrioritySetInAF {
     BalancedEmphasis = 3,
 }
 
+impl ToCrsdk<u64> for PrioritySetInAF {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for PrioritySetInAF {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u8 {
@@ -250,10 +263,6 @@ impl PropertyValue for PrioritySetInAF {
             3 => Self::BalancedEmphasis,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 
@@ -279,6 +288,12 @@ pub enum FocusTrackingStatus {
     Tracking = 3,
 }
 
+impl ToCrsdk<u64> for FocusTrackingStatus {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
 impl PropertyValue for FocusTrackingStatus {
     fn from_raw(raw: u64) -> Option<Self> {
         Some(match raw as u8 {
@@ -287,10 +302,6 @@ impl PropertyValue for FocusTrackingStatus {
             3 => Self::Tracking,
             _ => return None,
         })
-    }
-
-    fn to_raw(&self) -> u64 {
-        *self as u64
     }
 }
 
