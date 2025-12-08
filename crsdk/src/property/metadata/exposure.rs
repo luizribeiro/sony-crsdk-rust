@@ -1,6 +1,6 @@
 //! Exposure-related property metadata (descriptions, display names, value types).
 
-use super::PropertyValueType;
+use super::super::PropertyValueType;
 use crsdk_sys::DevicePropertyCode;
 
 /// Returns a detailed description for an exposure-related property code

@@ -1,6 +1,6 @@
 //! Focus-related property metadata (descriptions, display names, value types).
 
-use super::PropertyValueType;
+use super::super::PropertyValueType;
 use crsdk_sys::DevicePropertyCode;
 
 /// Returns a detailed description for a focus-related property code

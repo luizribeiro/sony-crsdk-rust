@@ -8,17 +8,13 @@
 
 mod category;
 mod drive;
-mod exposure;
-mod flash;
-mod focus;
-mod image;
+mod metadata;
 mod movie;
 #[cfg(test)]
 mod todo;
 mod traits;
 mod typed_value;
 pub mod values;
-mod white_balance;
 
 // Re-export core trait and typed value
 pub use traits::PropertyValue;
@@ -306,22 +302,22 @@ pub enum PropertyValueType {
 /// Checks all subsystem modules for type mappings, with fallback to common types.
 pub fn property_value_type(code: DevicePropertyCode) -> PropertyValueType {
     // Try subsystem-specific value types first
-    if let Some(vt) = exposure::value_type(code) {
+    if let Some(vt) = metadata::exposure::value_type(code) {
         return vt;
     }
-    if let Some(vt) = focus::value_type(code) {
+    if let Some(vt) = metadata::focus::value_type(code) {
         return vt;
     }
-    if let Some(vt) = white_balance::value_type(code) {
+    if let Some(vt) = metadata::white_balance::value_type(code) {
         return vt;
     }
     if let Some(vt) = drive::value_type(code) {
         return vt;
     }
-    if let Some(vt) = flash::value_type(code) {
+    if let Some(vt) = metadata::flash::value_type(code) {
         return vt;
     }
-    if let Some(vt) = image::value_type(code) {
+    if let Some(vt) = metadata::image::value_type(code) {
         return vt;
     }
     if let Some(vt) = movie::value_type(code) {
@@ -1347,12 +1343,14 @@ pub(crate) unsafe fn device_property_from_sdk_debug(
 /// Get a description of what a property does.
 pub fn property_description(code: DevicePropertyCode) -> &'static str {
     match property_category(code) {
-        PropertyCategory::Exposure | PropertyCategory::Metering => exposure::description(code),
-        PropertyCategory::Focus => focus::description(code),
-        PropertyCategory::WhiteBalance => white_balance::description(code),
+        PropertyCategory::Exposure | PropertyCategory::Metering => {
+            metadata::exposure::description(code)
+        }
+        PropertyCategory::Focus => metadata::focus::description(code),
+        PropertyCategory::WhiteBalance => metadata::white_balance::description(code),
         PropertyCategory::Drive => drive::description(code),
-        PropertyCategory::Flash => flash::description(code),
-        PropertyCategory::Image => image::description(code),
+        PropertyCategory::Flash => metadata::flash::description(code),
+        PropertyCategory::Image => metadata::image::description(code),
         PropertyCategory::Movie => movie::description(code),
         PropertyCategory::Media => media_description(code),
         PropertyCategory::Power => power_description(code),
@@ -1371,12 +1369,14 @@ pub fn property_description(code: DevicePropertyCode) -> &'static str {
 /// Get a human-readable display name for a property code.
 pub fn property_display_name(code: DevicePropertyCode) -> &'static str {
     match property_category(code) {
-        PropertyCategory::Exposure | PropertyCategory::Metering => exposure::display_name(code),
-        PropertyCategory::Focus => focus::display_name(code),
-        PropertyCategory::WhiteBalance => white_balance::display_name(code),
+        PropertyCategory::Exposure | PropertyCategory::Metering => {
+            metadata::exposure::display_name(code)
+        }
+        PropertyCategory::Focus => metadata::focus::display_name(code),
+        PropertyCategory::WhiteBalance => metadata::white_balance::display_name(code),
         PropertyCategory::Drive => drive::display_name(code),
-        PropertyCategory::Flash => flash::display_name(code),
-        PropertyCategory::Image => image::display_name(code),
+        PropertyCategory::Flash => metadata::flash::display_name(code),
+        PropertyCategory::Image => metadata::image::display_name(code),
         PropertyCategory::Movie => movie::display_name(code),
         PropertyCategory::Media => media_display_name(code),
         PropertyCategory::Power => power_display_name(code),
