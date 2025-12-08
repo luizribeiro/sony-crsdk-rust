@@ -1,5 +1,7 @@
 //! Property enable/writable status.
 
+use crate::types::FromCrsdk;
+
 /// Property enable/writable status.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum EnableFlag {
@@ -15,19 +17,21 @@ pub enum EnableFlag {
     WriteOnly,
 }
 
-impl EnableFlag {
-    pub(crate) fn from_sdk(value: i16) -> Self {
+impl FromCrsdk<i16> for EnableFlag {
+    fn from_crsdk(value: i16) -> crate::error::Result<Self> {
         use crsdk_sys::SCRSDK::*;
-        match value {
+        Ok(match value {
             x if x == CrPropertyEnableFlag_CrEnableValue_NotSupported => Self::NotSupported,
             x if x == CrPropertyEnableFlag_CrEnableValue_False => Self::Disabled,
             x if x == CrPropertyEnableFlag_CrEnableValue_True => Self::ReadWrite,
             x if x == CrPropertyEnableFlag_CrEnableValue_DisplayOnly => Self::ReadOnly,
             x if x == CrPropertyEnableFlag_CrEnableValue_SetOnly => Self::WriteOnly,
             _ => Self::NotSupported,
-        }
+        })
     }
+}
 
+impl EnableFlag {
     /// Check if the property is readable
     pub fn is_readable(self) -> bool {
         matches!(self, Self::ReadWrite | Self::ReadOnly)

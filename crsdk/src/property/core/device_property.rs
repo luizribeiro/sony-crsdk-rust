@@ -287,7 +287,7 @@ pub(crate) unsafe fn device_property_from_sdk(
     DeviceProperty {
         code: prop.code,
         data_type,
-        enable_flag: EnableFlag::from_sdk(prop.enableFlag),
+        enable_flag: EnableFlag::from_crsdk(prop.enableFlag).unwrap(),
         current_value: prop.currentValue,
         current_string,
         constraint,
@@ -336,7 +336,7 @@ pub(crate) unsafe fn device_property_from_sdk_debug(
     let device_prop = DeviceProperty {
         code: prop.code,
         data_type,
-        enable_flag: EnableFlag::from_sdk(prop.enableFlag),
+        enable_flag: EnableFlag::from_crsdk(prop.enableFlag).unwrap(),
         current_value: prop.currentValue,
         current_string,
         constraint,
