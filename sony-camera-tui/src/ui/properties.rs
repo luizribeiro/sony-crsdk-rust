@@ -402,15 +402,13 @@ fn render_range_slider(
     max: i64,
     step: i64,
 ) {
-    let step = if step == 0 { 1 } else { step };
+    let _step = if step == 0 { 1 } else { step };
     let progress = prop.progress();
-    let current_raw = prop.current_raw as i64;
 
-    // Layout: value display, gauge, range info, hints
+    // Layout: value display, gauge row, hints
     let layout = Layout::vertical([
         Constraint::Length(2), // Current value
-        Constraint::Length(1), // Gauge
-        Constraint::Length(1), // Range info
+        Constraint::Length(1), // Gauge with min/max
         Constraint::Min(1),    // Hints
     ])
     .split(area);
@@ -425,21 +423,35 @@ fn render_range_slider(
     )]));
     frame.render_widget(value_para, layout[0]);
 
-    // Gauge showing position in range
+    // Gauge row: min | gauge | max
+    let min_str = format!(" {}", min);
+    let max_str = format!("{} ", max);
+    let min_width = min_str.len() as u16;
+    let max_width = max_str.len() as u16;
+
+    let gauge_row = Layout::horizontal([
+        Constraint::Length(min_width),
+        Constraint::Min(10),
+        Constraint::Length(max_width),
+    ])
+    .split(layout[1]);
+
+    // Min label
+    let min_para = Paragraph::new(min_str).style(Style::default().fg(Color::DarkGray));
+    frame.render_widget(min_para, gauge_row[0]);
+
+    // Gauge
     let gauge = Gauge::default()
         .gauge_style(Style::default().fg(Color::Cyan).bg(Color::Rgb(40, 40, 40)))
         .ratio(progress)
         .use_unicode(true);
-    frame.render_widget(gauge, layout[1]);
+    frame.render_widget(gauge, gauge_row[1]);
 
-    // Range info: min - current - max
-    let count = ((max - min) / step + 1) as usize;
-    let range_text = format!("  {} ← {} → {}  ({} values)", min, current_raw, max, count);
-    let range_para = Paragraph::new(Line::from(vec![Span::styled(
-        range_text,
-        Style::default().fg(Color::DarkGray),
-    )]));
-    frame.render_widget(range_para, layout[2]);
+    // Max label
+    let max_para = Paragraph::new(max_str)
+        .style(Style::default().fg(Color::DarkGray))
+        .alignment(ratatui::layout::Alignment::Right);
+    frame.render_widget(max_para, gauge_row[2]);
 
     // Hints for navigation
     let hints = vec![Line::from(vec![
@@ -453,7 +465,7 @@ fn render_range_slider(
         Span::styled("enter value", Style::default().fg(Color::DarkGray)),
     ])];
     let hints_para = Paragraph::new(hints);
-    frame.render_widget(hints_para, layout[3]);
+    frame.render_widget(hints_para, layout[2]);
 }
 
 fn render_info_panel(frame: &mut Frame, area: Rect, app: &App) {
