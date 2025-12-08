@@ -7,7 +7,8 @@ use ratatui::{
 };
 
 use crate::app::{
-    ManualConnectionState, Modal, PropertySearchState, SshCredentialsState, SshFingerprintState,
+    ManualConnectionState, Modal, PropertySearchState, RangeValueInputState, SshCredentialsState,
+    SshFingerprintState,
 };
 use crsdk::{property_category, property_display_name, CameraModel};
 
@@ -17,6 +18,7 @@ pub fn render(frame: &mut Frame, modal: &Modal) {
         Modal::SshFingerprintConfirm(state) => render_fingerprint_modal(frame, state),
         Modal::ManualConnection(state) => render_manual_modal(frame, state),
         Modal::PropertySearch(state) => render_property_search_modal(frame, state),
+        Modal::RangeValueInput(state) => render_range_input_modal(frame, state),
         Modal::Error { message } => render_error_modal(frame, message),
     }
 }
@@ -412,4 +414,64 @@ fn render_property_search_modal(frame: &mut Frame, state: &PropertySearchState) 
         Span::styled("Cancel", Style::default().fg(Color::DarkGray)),
     ]);
     frame.render_widget(Paragraph::new(shortcuts), layout[2]);
+}
+
+fn render_range_input_modal(frame: &mut Frame, state: &RangeValueInputState) {
+    let inner = render_modal_frame(frame, 45, 10, " Enter Value ", Color::Cyan);
+
+    let layout = Layout::vertical([
+        Constraint::Length(2), // Property name
+        Constraint::Length(2), // Input field
+        Constraint::Length(2), // Range info
+        Constraint::Length(2), // Buttons/error
+    ])
+    .split(inner);
+
+    // Property name
+    let name_line = Line::from(vec![
+        Span::styled("  Property: ", Style::default().fg(Color::DarkGray)),
+        Span::styled(&state.property_name, Style::default().fg(Color::White)),
+    ]);
+    frame.render_widget(Paragraph::new(name_line), layout[0]);
+
+    // Input field
+    let input_line = Line::from(vec![
+        Span::styled("  Value    ", Style::default().fg(Color::DarkGray)),
+        Span::styled(&state.input, Style::default().fg(Color::Cyan)),
+        Span::styled("▎", Style::default().fg(Color::Cyan)),
+    ]);
+    frame.render_widget(Paragraph::new(input_line), layout[1]);
+
+    // Range info
+    let step_info = if state.step > 1 {
+        format!(" (step {})", state.step)
+    } else {
+        String::new()
+    };
+    let range_line = Line::from(vec![
+        Span::styled("  Range: ", Style::default().fg(Color::DarkGray)),
+        Span::styled(
+            format!("{} to {}{}", state.min, state.max, step_info),
+            Style::default().fg(Color::DarkGray),
+        ),
+    ]);
+    frame.render_widget(Paragraph::new(range_line), layout[2]);
+
+    // Error or buttons
+    if let Some(error) = &state.error {
+        let error_line = Line::from(vec![
+            Span::raw("  "),
+            Span::styled(error, Style::default().fg(Color::Red)),
+        ]);
+        frame.render_widget(Paragraph::new(error_line), layout[3]);
+    } else {
+        let buttons = Line::from(vec![
+            Span::raw("  "),
+            Span::styled("Enter", Style::default().fg(Color::Cyan)),
+            Span::styled(" Apply    ", Style::default().fg(Color::DarkGray)),
+            Span::styled("Esc", Style::default().fg(Color::Cyan)),
+            Span::styled(" Cancel", Style::default().fg(Color::DarkGray)),
+        ]);
+        frame.render_widget(Paragraph::new(buttons), layout[3]);
+    }
 }

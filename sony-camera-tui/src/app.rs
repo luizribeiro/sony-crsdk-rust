@@ -9,7 +9,10 @@ use crate::camera_service::{
     SlotInfo,
 };
 use crate::property::PropertyStore;
-use crsdk::{property_category, CameraModel, DevicePropertyCode, MacAddr, PropertyCategory};
+use crsdk::{
+    property_category, property_display_name, CameraModel, DevicePropertyCode, MacAddr,
+    PropertyCategory,
+};
 
 const PROPERTY_DEBOUNCE_MS: u64 = 400;
 const IN_FLIGHT_TIMEOUT_MS: u64 = 2000;
@@ -30,6 +33,7 @@ pub enum Modal {
     SshFingerprintConfirm(SshFingerprintState),
     ManualConnection(ManualConnectionState),
     PropertySearch(PropertySearchState),
+    RangeValueInput(RangeValueInputState),
     Error { message: String },
 }
 
@@ -67,6 +71,17 @@ pub struct PropertySearchState {
     pub query: String,
     pub results: Vec<DevicePropertyCode>,
     pub selected_index: usize,
+}
+
+#[derive(Debug, Clone)]
+pub struct RangeValueInputState {
+    pub property_code: DevicePropertyCode,
+    pub property_name: String,
+    pub input: String,
+    pub min: i64,
+    pub max: i64,
+    pub step: i64,
+    pub error: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -736,7 +751,7 @@ impl App {
                 self.set_property_to_extreme(true);
             }
             Action::PropertyEditorEditValue => {
-                // Will be implemented with the modal
+                self.open_range_input_modal();
             }
             Action::PropertyEditorOpenValues => {
                 if self.property_editor.focus == PropertyEditorFocus::Properties {
@@ -872,6 +887,68 @@ impl App {
         self.queue_property_change(code, new_index);
     }
 
+    fn open_range_input_modal(&mut self) {
+        if self.property_editor.focus != PropertyEditorFocus::Properties {
+            return;
+        }
+        let Some(code) = self.selected_property_id_in_editor() else {
+            return;
+        };
+        let Some(prop) = self.properties.get(code) else {
+            return;
+        };
+
+        if let Some((min, max, step)) = prop.range_params() {
+            self.modal = Some(Modal::RangeValueInput(RangeValueInputState {
+                property_code: code,
+                property_name: property_display_name(code).to_string(),
+                input: prop.current_raw.to_string(),
+                min,
+                max,
+                step,
+                error: None,
+            }));
+        }
+    }
+
+    fn apply_range_input_value(&mut self, state: RangeValueInputState) {
+        let value: i64 = match state.input.trim().parse() {
+            Ok(v) => v,
+            Err(_) => {
+                if let Some(Modal::RangeValueInput(ref mut modal_state)) = self.modal {
+                    modal_state.error = Some("Invalid number".to_string());
+                }
+                return;
+            }
+        };
+
+        if value < state.min || value > state.max {
+            if let Some(Modal::RangeValueInput(ref mut modal_state)) = self.modal {
+                modal_state.error = Some(format!("Must be {} to {}", state.min, state.max));
+            }
+            return;
+        }
+
+        let step = if state.step == 0 { 1 } else { state.step };
+        if (value - state.min) % step != 0 {
+            if let Some(Modal::RangeValueInput(ref mut modal_state)) = self.modal {
+                modal_state.error =
+                    Some(format!("Must be a multiple of {} from {}", step, state.min));
+            }
+            return;
+        }
+
+        let new_index = ((value - state.min) / step) as usize;
+        let code = state.property_code;
+
+        if let Some(prop) = self.properties.get_mut(code) {
+            prop.set_index(new_index);
+            self.queue_property_change(code, new_index);
+        }
+
+        self.modal = None;
+    }
+
     fn handle_events_action(&mut self, action: Action) {
         match action {
             Action::ScrollEventsUp => {
@@ -941,6 +1018,9 @@ impl App {
                         self.modal = None;
                         self.jump_to_property_in_editor(id);
                     }
+                }
+                Modal::RangeValueInput(state) => {
+                    self.apply_range_input_value(state);
                 }
                 _ => {
                     self.modal = None;
@@ -1035,6 +1115,11 @@ impl App {
             state.query.push(c);
             state.results = crate::property::search_properties(&self.properties, &state.query);
             state.selected_index = 0;
+        } else if let Some(Modal::RangeValueInput(ref mut state)) = self.modal {
+            if c.is_ascii_digit() || (c == '-' && state.input.is_empty()) {
+                state.input.push(c);
+                state.error = None;
+            }
         } else {
             self.with_focused_modal_field(|text| text.push(c));
         }
@@ -1045,6 +1130,9 @@ impl App {
             state.query.pop();
             state.results = crate::property::search_properties(&self.properties, &state.query);
             state.selected_index = 0;
+        } else if let Some(Modal::RangeValueInput(ref mut state)) = self.modal {
+            state.input.pop();
+            state.error = None;
         } else {
             self.with_focused_modal_field(|text| {
                 text.pop();
