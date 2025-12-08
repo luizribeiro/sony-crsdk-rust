@@ -1,6 +1,7 @@
 //! DeviceProperty struct and SDK parsing utilities.
 
 use super::{DataType, EnableFlag, ValueConstraint};
+use crate::types::FromCrsdk;
 
 /// A camera property with its current value and metadata.
 #[derive(Debug, Clone)]
@@ -268,7 +269,7 @@ unsafe fn parse_current_string(str_ptr: *const u16) -> Option<String> {
 pub(crate) unsafe fn device_property_from_sdk(
     prop: &crsdk_sys::SCRSDK::CrDeviceProperty,
 ) -> DeviceProperty {
-    let data_type = DataType::from_sdk(prop.valueType);
+    let data_type = DataType::from_crsdk(prop.valueType).unwrap();
 
     let constraint = if prop.getSetValuesSize > 0 && !prop.getSetValues.is_null() {
         parse_constraint(
@@ -297,7 +298,7 @@ pub(crate) unsafe fn device_property_from_sdk(
 pub(crate) unsafe fn device_property_from_sdk_debug(
     prop: &crsdk_sys::SCRSDK::CrDeviceProperty,
 ) -> (DeviceProperty, String) {
-    let data_type = DataType::from_sdk(prop.valueType);
+    let data_type = DataType::from_crsdk(prop.valueType).unwrap();
 
     let values_from_sdk = parse_raw_values(data_type, prop.values, prop.valuesSize);
     let get_set_values = parse_raw_values(data_type, prop.getSetValues, prop.getSetValuesSize);

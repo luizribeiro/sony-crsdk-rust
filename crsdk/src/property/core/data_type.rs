@@ -1,5 +1,7 @@
 //! SDK data type classification.
 
+use crate::types::FromCrsdk;
+
 /// SDK data type classification for property values.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DataType {
@@ -25,8 +27,8 @@ pub enum DataType {
     Unknown(u32),
 }
 
-impl DataType {
-    pub(crate) fn from_sdk(value: u32) -> Self {
+impl FromCrsdk<u32> for DataType {
+    fn from_crsdk(value: u32) -> crate::error::Result<Self> {
         use crsdk_sys::SCRSDK::*;
 
         const ARRAY_BIT: u32 = 0x2000;
@@ -34,7 +36,7 @@ impl DataType {
 
         let base_type = value & !(ARRAY_BIT | RANGE_BIT);
 
-        match base_type {
+        Ok(match base_type {
             x if x == CrDataType_CrDataType_UInt8 => Self::UInt8,
             x if x == CrDataType_CrDataType_UInt16 => Self::UInt16,
             x if x == CrDataType_CrDataType_UInt32 => Self::UInt32,
@@ -45,6 +47,6 @@ impl DataType {
             x if x == CrDataType_CrDataType_Int64 => Self::Int64,
             x if x == CrDataType_CrDataType_STR => Self::String,
             _ => Self::Unknown(value),
-        }
+        })
     }
 }
