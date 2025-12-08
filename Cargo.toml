@@ -3,7 +3,7 @@ resolver = "2"
 members = [
     "crsdk-sys",
     "crsdk",
-    "sony-camera-tui",
+    "sony-camera-tui", "sonyctl",
 ]
 
 [workspace.package]

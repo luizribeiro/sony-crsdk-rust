@@ -1,0 +1,19 @@
+[package]
+name = "sonyctl"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "CLI tool for controlling Sony cameras via the Camera Remote SDK"
+
+[[bin]]
+name = "sonyctl"
+path = "src/main.rs"
+
+[dependencies]
+crsdk = { path = "../crsdk" }
+crsdk-sys = { path = "../crsdk-sys" }
+clap = { version = "4", features = ["derive", "env"] }
+tokio = { version = "1", features = ["full"] }
+dialoguer = "0.11"
