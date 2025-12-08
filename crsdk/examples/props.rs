@@ -152,7 +152,12 @@ async fn connect(args: &Args) -> Result<CameraDevice> {
     }
 
     let camera = builder.connect().await?;
-    eprintln!("Connected to {}\n", camera.model().await);
+    eprintln!("Connected to {}", camera.model().await);
+
+    // Wait for camera to populate properties
+    eprintln!("Waiting for properties to load...");
+    tokio::time::sleep(tokio::time::Duration::from_secs(2)).await;
+    eprintln!();
 
     Ok(camera)
 }
