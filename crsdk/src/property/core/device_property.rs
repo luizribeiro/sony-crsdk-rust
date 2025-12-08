@@ -134,14 +134,10 @@ pub(crate) fn parse_raw_values(
     result
 }
 
-/// Parse range constraint from SDK property data
-pub(crate) fn parse_range_constraint(
-    data_type: DataType,
-    values_ptr: *mut u8,
-    values_size: u32,
-) -> Option<ValueConstraint> {
+/// Parse raw values as signed i64 (for range constraints with signed types)
+fn parse_raw_values_signed(data_type: DataType, values_ptr: *mut u8, values_size: u32) -> Vec<i64> {
     if values_ptr.is_null() || values_size == 0 {
-        return None;
+        return Vec::new();
     }
 
     let element_size = match data_type {
@@ -149,60 +145,203 @@ pub(crate) fn parse_range_constraint(
         DataType::UInt16 | DataType::Int16 => 2,
         DataType::UInt32 | DataType::Int32 => 4,
         DataType::UInt64 | DataType::Int64 => 8,
-        _ => return None,
+        _ => return Vec::new(),
     };
 
-    if values_size as usize != element_size * 3 {
-        return None;
+    let count = values_size as usize / element_size;
+    let mut result = Vec::with_capacity(count);
+
+    unsafe {
+        for i in 0..count {
+            let offset = i * element_size;
+            let value: i64 = match data_type {
+                DataType::UInt8 => *values_ptr.add(offset) as i64,
+                DataType::Int8 => (*values_ptr.add(offset) as i8) as i64,
+                DataType::UInt16 => {
+                    u16::from_ne_bytes([*values_ptr.add(offset), *values_ptr.add(offset + 1)])
+                        as i64
+                }
+                DataType::Int16 => {
+                    i16::from_ne_bytes([*values_ptr.add(offset), *values_ptr.add(offset + 1)])
+                        as i64
+                }
+                DataType::UInt32 => u32::from_ne_bytes([
+                    *values_ptr.add(offset),
+                    *values_ptr.add(offset + 1),
+                    *values_ptr.add(offset + 2),
+                    *values_ptr.add(offset + 3),
+                ]) as i64,
+                DataType::Int32 => i32::from_ne_bytes([
+                    *values_ptr.add(offset),
+                    *values_ptr.add(offset + 1),
+                    *values_ptr.add(offset + 2),
+                    *values_ptr.add(offset + 3),
+                ]) as i64,
+                DataType::UInt64 => u64::from_ne_bytes([
+                    *values_ptr.add(offset),
+                    *values_ptr.add(offset + 1),
+                    *values_ptr.add(offset + 2),
+                    *values_ptr.add(offset + 3),
+                    *values_ptr.add(offset + 4),
+                    *values_ptr.add(offset + 5),
+                    *values_ptr.add(offset + 6),
+                    *values_ptr.add(offset + 7),
+                ]) as i64,
+                DataType::Int64 => i64::from_ne_bytes([
+                    *values_ptr.add(offset),
+                    *values_ptr.add(offset + 1),
+                    *values_ptr.add(offset + 2),
+                    *values_ptr.add(offset + 3),
+                    *values_ptr.add(offset + 4),
+                    *values_ptr.add(offset + 5),
+                    *values_ptr.add(offset + 6),
+                    *values_ptr.add(offset + 7),
+                ]),
+                _ => continue,
+            };
+            result.push(value);
+        }
+    }
+
+    result
+}
+
+/// Parse a ValueConstraint from SDK property data
+pub(crate) fn parse_constraint(
+    raw_value_type: u32,
+    data_type: DataType,
+    values_ptr: *mut u8,
+    values_size: u32,
+) -> ValueConstraint {
+    if values_ptr.is_null() || values_size == 0 {
+        return ValueConstraint::None;
+    }
+
+    let is_range = (raw_value_type & RANGE_BIT) != 0;
+
+    if is_range {
+        let signed_values = parse_raw_values_signed(data_type, values_ptr, values_size);
+        if signed_values.len() >= 3 {
+            return ValueConstraint::Range {
+                min: signed_values[0],
+                max: signed_values[1],
+                step: signed_values[2],
+            };
+        } else if signed_values.len() == 2 {
+            return ValueConstraint::Range {
+                min: signed_values[0],
+                max: signed_values[1],
+                step: 1,
+            };
+        }
     }
 
     let values = parse_raw_values(data_type, values_ptr, values_size);
-    if values.len() != 3 {
+    if values.is_empty() {
+        ValueConstraint::None
+    } else {
+        ValueConstraint::Discrete(values)
+    }
+}
+
+/// Parse UTF-16 string from SDK's currentStr pointer
+unsafe fn parse_current_string(str_ptr: *const u16) -> Option<String> {
+    if str_ptr.is_null() {
         return None;
     }
 
-    let (min, max, step) = match data_type {
-        DataType::Int8 | DataType::Int16 | DataType::Int32 | DataType::Int64 => {
-            (values[0] as i64, values[1] as i64, values[2] as i64)
-        }
-        _ => (values[0] as i64, values[1] as i64, values[2] as i64),
-    };
+    let len = unsafe { *str_ptr } as usize;
+    if len == 0 || len > 1024 {
+        return None;
+    }
 
-    Some(ValueConstraint::Range { min, max, step })
+    let char_count = len.saturating_sub(1);
+    if char_count == 0 {
+        return None;
+    }
+
+    let slice = unsafe { std::slice::from_raw_parts(str_ptr.add(1), char_count) };
+    String::from_utf16(slice).ok()
 }
 
-/// Parse a DeviceProperty from raw SDK data
-pub(crate) fn parse_device_property(
-    code: u32,
-    raw_data_type: u32,
-    enable_flag: i16,
-    current_value: u64,
-    current_string: Option<String>,
-    values_ptr: *mut u8,
-    values_size: u32,
+/// Convert SDK CrDeviceProperty to our DeviceProperty
+pub(crate) unsafe fn device_property_from_sdk(
+    prop: &crsdk_sys::SCRSDK::CrDeviceProperty,
 ) -> DeviceProperty {
-    let data_type = DataType::from_sdk(raw_data_type);
-    let is_range = (raw_data_type & RANGE_BIT) != 0;
+    let data_type = DataType::from_sdk(prop.valueType);
 
-    let constraint = if is_range {
-        parse_range_constraint(data_type, values_ptr, values_size).unwrap_or_default()
+    let constraint = if prop.getSetValuesSize > 0 && !prop.getSetValues.is_null() {
+        parse_constraint(
+            prop.valueType,
+            data_type,
+            prop.getSetValues,
+            prop.getSetValuesSize,
+        )
     } else {
-        let values = parse_raw_values(data_type, values_ptr, values_size);
-        if values.is_empty() {
-            ValueConstraint::None
-        } else {
-            ValueConstraint::Discrete(values)
-        }
+        parse_constraint(prop.valueType, data_type, prop.values, prop.valuesSize)
     };
 
+    let current_string = unsafe { parse_current_string(prop.currentStr) };
+
     DeviceProperty {
-        code,
+        code: prop.code,
         data_type,
-        enable_flag: EnableFlag::from_sdk(enable_flag),
-        current_value,
+        enable_flag: EnableFlag::from_sdk(prop.enableFlag),
+        current_value: prop.currentValue,
         current_string,
         constraint,
     }
+}
+
+/// Convert SDK CrDeviceProperty to our DeviceProperty with debug info
+pub(crate) unsafe fn device_property_from_sdk_debug(
+    prop: &crsdk_sys::SCRSDK::CrDeviceProperty,
+) -> (DeviceProperty, String) {
+    let data_type = DataType::from_sdk(prop.valueType);
+
+    let values_from_sdk = parse_raw_values(data_type, prop.values, prop.valuesSize);
+    let get_set_values = parse_raw_values(data_type, prop.getSetValues, prop.getSetValuesSize);
+
+    let is_range = (prop.valueType & RANGE_BIT) != 0;
+
+    let constraint = if prop.getSetValuesSize > 0 && !prop.getSetValues.is_null() {
+        parse_constraint(
+            prop.valueType,
+            data_type,
+            prop.getSetValues,
+            prop.getSetValuesSize,
+        )
+    } else {
+        parse_constraint(prop.valueType, data_type, prop.values, prop.valuesSize)
+    };
+
+    let current_string = unsafe { parse_current_string(prop.currentStr) };
+
+    let debug_info = format!(
+        "dataType={:?}(raw={:#06x}) is_range={} valuesSize={} values_ptr={:?} getSetValuesSize={} getSetValues_ptr={:?} values={:?} getSetValues={:?} constraint={:?} currentStr={:?}",
+        data_type,
+        prop.valueType,
+        is_range,
+        prop.valuesSize,
+        prop.values,
+        prop.getSetValuesSize,
+        prop.getSetValues,
+        values_from_sdk,
+        get_set_values,
+        constraint,
+        current_string,
+    );
+
+    let device_prop = DeviceProperty {
+        code: prop.code,
+        data_type,
+        enable_flag: EnableFlag::from_sdk(prop.enableFlag),
+        current_value: prop.currentValue,
+        current_string,
+        constraint,
+    };
+
+    (device_prop, debug_info)
 }
 
 #[cfg(test)]

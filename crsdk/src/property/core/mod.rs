@@ -13,5 +13,7 @@ mod enable_flag;
 
 pub use constraint::ValueConstraint;
 pub use data_type::DataType;
-pub use device_property::{parse_device_property, parse_raw_values, DeviceProperty};
+pub use device_property::DeviceProperty;
 pub use enable_flag::EnableFlag;
+
+pub(crate) use device_property::{device_property_from_sdk, device_property_from_sdk_debug};
