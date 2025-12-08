@@ -1,196 +1,9 @@
-//! Still image quality property types and metadata.
+//! Still image quality property metadata (descriptions, display names, value types).
 
 use super::PropertyValueType;
 use crsdk_sys::DevicePropertyCode;
 
-/// File type for still images (RAW vs JPEG)
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[repr(u16)]
-pub enum FileType {
-    /// No file type selected
-    None = 0,
-    /// JPEG compressed image
-    Jpeg = 1,
-    /// RAW uncompressed sensor data
-    Raw = 2,
-    /// RAW and JPEG both saved
-    RawJpeg = 3,
-    /// RAW and HEIF both saved
-    RawHeif = 4,
-    /// HEIF compressed image
-    Heif = 5,
-}
-
-impl FileType {
-    /// Converts the enum to its raw SDK value
-    pub fn as_raw(self) -> u64 {
-        self as u64
-    }
-
-    /// Converts a raw SDK value to the enum
-    pub fn from_raw(value: u64) -> Option<Self> {
-        let value = value as u16;
-        Some(match value {
-            0 => Self::None,
-            1 => Self::Jpeg,
-            2 => Self::Raw,
-            3 => Self::RawJpeg,
-            4 => Self::RawHeif,
-            5 => Self::Heif,
-            _ => return None,
-        })
-    }
-}
-
-impl std::fmt::Display for FileType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::None => write!(f, "--"),
-            Self::Jpeg => write!(f, "JPEG"),
-            Self::Raw => write!(f, "RAW"),
-            Self::RawJpeg => write!(f, "RAW+JPEG"),
-            Self::RawHeif => write!(f, "RAW+HEIF"),
-            Self::Heif => write!(f, "HEIF"),
-        }
-    }
-}
-
-/// JPEG image quality level
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[repr(u16)]
-pub enum ImageQuality {
-    /// Quality level unknown
-    Unknown = 0,
-    /// Light compression (smaller file size)
-    Light = 1,
-    /// Standard compression
-    Standard = 2,
-    /// Fine compression (higher quality)
-    Fine = 3,
-    /// Extra fine compression (best quality)
-    ExFine = 4,
-}
-
-impl ImageQuality {
-    /// Converts the enum to its raw SDK value
-    pub fn as_raw(self) -> u64 {
-        self as u64
-    }
-
-    /// Converts a raw SDK value to the enum
-    pub fn from_raw(value: u64) -> Option<Self> {
-        let value = value as u16;
-        Some(match value {
-            0 => Self::Unknown,
-            1 => Self::Light,
-            2 => Self::Standard,
-            3 => Self::Fine,
-            4 => Self::ExFine,
-            _ => return None,
-        })
-    }
-}
-
-impl std::fmt::Display for ImageQuality {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::Unknown => write!(f, "--"),
-            Self::Light => write!(f, "Light"),
-            Self::Standard => write!(f, "Standard"),
-            Self::Fine => write!(f, "Fine"),
-            Self::ExFine => write!(f, "Extra Fine"),
-        }
-    }
-}
-
-/// Aspect ratio settings for still images
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[repr(u8)]
-pub enum AspectRatio {
-    /// 3:2 aspect ratio (standard full-frame)
-    Ratio3x2 = 1,
-    /// 16:9 aspect ratio (widescreen)
-    Ratio16x9 = 2,
-    /// 4:3 aspect ratio (micro four-thirds)
-    Ratio4x3 = 3,
-    /// 1:1 aspect ratio (square)
-    Ratio1x1 = 4,
-}
-
-impl AspectRatio {
-    /// Converts the enum to its raw SDK value
-    pub fn as_raw(self) -> u64 {
-        self as u64
-    }
-
-    /// Converts a raw SDK value to the enum
-    pub fn from_raw(value: u64) -> Option<Self> {
-        let value = value as u8;
-        Some(match value {
-            1 => Self::Ratio3x2,
-            2 => Self::Ratio16x9,
-            3 => Self::Ratio4x3,
-            4 => Self::Ratio1x1,
-            _ => return None,
-        })
-    }
-}
-
-impl std::fmt::Display for AspectRatio {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::Ratio3x2 => write!(f, "3:2"),
-            Self::Ratio16x9 => write!(f, "16:9"),
-            Self::Ratio4x3 => write!(f, "4:3"),
-            Self::Ratio1x1 => write!(f, "1:1"),
-        }
-    }
-}
-
-/// Image size settings for still images
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[repr(u8)]
-pub enum ImageSize {
-    /// Large (full resolution)
-    Large = 1,
-    /// Medium resolution
-    Medium = 2,
-    /// Small resolution
-    Small = 3,
-    /// VGA resolution (640x480)
-    Vga = 4,
-}
-
-impl ImageSize {
-    /// Converts the enum to its raw SDK value
-    pub fn as_raw(self) -> u64 {
-        self as u64
-    }
-
-    /// Converts a raw SDK value to the enum
-    pub fn from_raw(value: u64) -> Option<Self> {
-        let value = value as u8;
-        Some(match value {
-            1 => Self::Large,
-            2 => Self::Medium,
-            3 => Self::Small,
-            4 => Self::Vga,
-            _ => return None,
-        })
-    }
-}
-
-impl std::fmt::Display for ImageSize {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::Large => write!(f, "L"),
-            Self::Medium => write!(f, "M"),
-            Self::Small => write!(f, "S"),
-            Self::Vga => write!(f, "VGA"),
-        }
-    }
-}
-
+/// Returns a detailed description for an image-related property code
 pub fn description(code: DevicePropertyCode) -> &'static str {
     match code {
         DevicePropertyCode::FileType => {
@@ -262,7 +75,6 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::SoftSkinEffect => {
             "Smooths skin tones in portraits. Higher settings provide more smoothing."
         }
-        // Picture Profile properties route to Image category
         DevicePropertyCode::PictureProfile => {
             "Preset color, gamma, and detail settings for video. PP1-PP10 are customizable. Off uses standard processing."
         }
@@ -386,6 +198,7 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
     }
 }
 
+/// Returns a short display name for an image-related property code
 pub fn display_name(code: DevicePropertyCode) -> &'static str {
     match code {
         DevicePropertyCode::FileType => "File Format",
@@ -411,7 +224,6 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::MediaSLOT1RAWFileCompressionType => "Slot 1 RAW Comp",
         DevicePropertyCode::MediaSLOT2RAWFileCompressionType => "Slot 2 RAW Comp",
         DevicePropertyCode::RemoteSaveImageSize => "Remote Save Size",
-        // Picture Profile properties route to Image category
         DevicePropertyCode::PictureProfile => "Pict. Profile",
         DevicePropertyCode::PictureProfileGamma => "PP Gamma",
         DevicePropertyCode::PictureProfileColorMode => "PP Color Mode",
@@ -469,6 +281,7 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
     }
 }
 
+/// Returns the value type for an image-related property code
 pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
     use PropertyValueType as V;
 
@@ -496,7 +309,6 @@ pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
         | DevicePropertyCode::HLGStillImage
         | DevicePropertyCode::PictureEffect
         | DevicePropertyCode::SoftSkinEffect
-        // Picture Profile properties route to Image category
         | DevicePropertyCode::PictureProfile
         | DevicePropertyCode::PictureProfileGamma
         | DevicePropertyCode::PictureProfileColorMode

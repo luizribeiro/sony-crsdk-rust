@@ -4,9 +4,9 @@
 //! - Core types for working with camera properties ([`DeviceProperty`], [`DataType`], [`EnableFlag`])
 //! - Value enums for specific property types (organized by subsystem)
 //! - Display names and descriptions for properties
+//! - The [`PropertyValue`] trait for type-safe value conversion
 
 mod category;
-mod common;
 mod drive;
 mod exposure;
 mod flash;
@@ -15,22 +15,30 @@ mod image;
 mod movie;
 #[cfg(test)]
 mod todo;
+mod traits;
+mod typed_value;
+pub mod types;
 mod white_balance;
+
+// Re-export core trait and typed value
+pub use traits::PropertyValue;
+pub use typed_value::TypedValue;
 
 // Re-export category types
 pub use category::{property_category, PropertyCategory};
 
-// Re-export all value enums
-pub use common::{AutoManual, LiveViewDisplayEffect, OnOff, SilentModeApertureDrive, Switch};
-pub use drive::{DriveMode, IntervalRecShutterType};
-pub use exposure::{
-    ExposureCtrlType, ExposureProgram, MeteringMode, ShutterMode, ShutterModeStatus,
+// Re-export all value types from types/
+pub use types::{
+    AspectRatio, AutoManual, FileType, FlashMode, FocusArea, FocusMode, FocusTrackingStatus,
+    ImageQuality, ImageSize, LiveViewDisplayEffect, LockIndicator, MeteringMode, OnOff,
+    PrioritySetInAF, PrioritySetInAWB, ShutterMode, ShutterModeStatus, SilentModeApertureDrive,
+    SubjectRecognitionAF, Switch, WhiteBalance,
 };
-pub use flash::FlashMode;
-pub use focus::{FocusArea, FocusMode, FocusTrackingStatus, PrioritySetInAF, SubjectRecognitionAF};
-pub use image::{AspectRatio, FileType, ImageQuality, ImageSize};
+pub use types::{ExposureCtrlType, ExposureProgram};
+
+// These types are still defined in old files (have metadata functions)
+pub use drive::{DriveMode, IntervalRecShutterType};
 pub use movie::{format_movie_quality, MovieFileFormat};
-pub use white_balance::{LockIndicator, PrioritySetInAWB, WhiteBalance};
 
 use crsdk_sys::DevicePropertyCode;
 

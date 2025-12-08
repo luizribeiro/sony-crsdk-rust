@@ -18,10 +18,8 @@
 
 use clap::{Parser, Subcommand};
 use crsdk::{
-    format::{format_aperture, format_exposure_comp, format_iso, format_shutter_speed},
     property_category, property_description, property_display_name, property_value_type,
-    CameraDevice, CameraModel, DeviceProperty, EnableFlag, PropertyValueType, Result,
-    ValueConstraint,
+    CameraDevice, CameraModel, DeviceProperty, EnableFlag, Result, TypedValue, ValueConstraint,
 };
 use crsdk_sys::DevicePropertyCode;
 use dialoguer::Confirm;
@@ -421,95 +419,5 @@ fn set_property(device: &crsdk::blocking::CameraDevice, name: &str, value: u64) 
 }
 
 fn format_value(code: DevicePropertyCode, raw: u64) -> String {
-    match property_value_type(code) {
-        PropertyValueType::Aperture => format_aperture(raw),
-        PropertyValueType::ShutterSpeed => format_shutter_speed(raw),
-        PropertyValueType::Iso => format_iso(raw),
-        PropertyValueType::ExposureCompensation => format_exposure_comp(raw as i64),
-        PropertyValueType::ColorTemperature => format!("{}K", raw),
-
-        // Enum types - try to format, fall back to raw
-        PropertyValueType::ExposureProgram => crsdk::ExposureProgram::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::MeteringMode => crsdk::MeteringMode::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::FocusMode => crsdk::FocusMode::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::FocusArea => crsdk::FocusArea::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::WhiteBalance => crsdk::WhiteBalance::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::DriveMode => crsdk::DriveMode::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::FlashMode => crsdk::FlashMode::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::FileType => crsdk::FileType::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::ImageQuality => crsdk::ImageQuality::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::AspectRatio => crsdk::AspectRatio::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::ImageSize => crsdk::ImageSize::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::MovieFileFormat => crsdk::MovieFileFormat::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::MovieQuality => crsdk::format_movie_quality(raw),
-        PropertyValueType::ShutterModeStatus => crsdk::ShutterModeStatus::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::ShutterMode => crsdk::ShutterMode::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::SubjectRecognitionAF => crsdk::SubjectRecognitionAF::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::PrioritySetInAF => crsdk::PrioritySetInAF::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::FocusTrackingStatus => crsdk::FocusTrackingStatus::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::PrioritySetInAWB => crsdk::PrioritySetInAWB::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::IntervalRecShutterType => crsdk::IntervalRecShutterType::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::ExposureCtrlType => crsdk::ExposureCtrlType::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::LiveViewDisplayEffect => crsdk::LiveViewDisplayEffect::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::SilentModeApertureDrive => crsdk::SilentModeApertureDrive::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PropertyValueType::OnOff => crsdk::OnOff::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("{}", raw)),
-        PropertyValueType::Switch => crsdk::Switch::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("{}", raw)),
-        PropertyValueType::AutoManual => crsdk::AutoManual::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("{}", raw)),
-        PropertyValueType::LockIndicator => crsdk::LockIndicator::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("{}", raw)),
-        PropertyValueType::Percentage => format!("{}%", raw),
-        PropertyValueType::Integer => format!("{}", raw),
-        PropertyValueType::Unknown => format!("{}", raw),
-    }
+    TypedValue::from_raw(code, raw).to_string()
 }

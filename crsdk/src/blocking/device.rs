@@ -10,7 +10,8 @@ use crate::event::CameraEvent;
 use crate::event_sender::EventSender;
 use crate::property::{
     device_property_from_sdk, device_property_from_sdk_debug, DeviceProperty, DriveMode,
-    ExposureProgram, FlashMode, FocusArea, FocusMode, LockIndicator, MeteringMode, WhiteBalance,
+    ExposureProgram, FlashMode, FocusArea, FocusMode, LockIndicator, MeteringMode, PropertyValue,
+    WhiteBalance,
 };
 use crate::types::{
     ip_to_sdk_format, CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, MacAddr,
@@ -439,7 +440,7 @@ impl CameraDevice {
     /// Set the focus mode
     #[async_wrap]
     pub fn set_focus_mode(&self, mode: FocusMode) -> Result<()> {
-        self.set_property(DevicePropertyCode::FocusMode, mode.as_raw())
+        self.set_property(DevicePropertyCode::FocusMode, mode.to_raw())
     }
 
     /// Get the current white balance setting
@@ -452,7 +453,7 @@ impl CameraDevice {
     /// Set the white balance
     #[async_wrap]
     pub fn set_white_balance(&self, wb: WhiteBalance) -> Result<()> {
-        self.set_property(DevicePropertyCode::WhiteBalance, wb.as_raw())
+        self.set_property(DevicePropertyCode::WhiteBalance, wb.to_raw())
     }
 
     /// Get the current exposure program mode
@@ -465,7 +466,7 @@ impl CameraDevice {
     /// Set the exposure program mode
     #[async_wrap]
     pub fn set_exposure_program(&self, program: ExposureProgram) -> Result<()> {
-        self.set_property(DevicePropertyCode::ExposureProgramMode, program.as_raw())
+        self.set_property(DevicePropertyCode::ExposureProgramMode, program.to_raw())
     }
 
     /// Get the current drive mode
@@ -478,7 +479,7 @@ impl CameraDevice {
     /// Set the drive mode
     #[async_wrap]
     pub fn set_drive_mode(&self, mode: DriveMode) -> Result<()> {
-        self.set_property(DevicePropertyCode::DriveMode, mode.as_raw())
+        self.set_property(DevicePropertyCode::DriveMode, mode.to_raw())
     }
 
     /// Get the current metering mode
@@ -491,7 +492,7 @@ impl CameraDevice {
     /// Set the metering mode
     #[async_wrap]
     pub fn set_metering_mode(&self, mode: MeteringMode) -> Result<()> {
-        self.set_property(DevicePropertyCode::MeteringMode, mode.as_raw())
+        self.set_property(DevicePropertyCode::MeteringMode, mode.to_raw())
     }
 
     /// Get the current flash mode
@@ -504,7 +505,7 @@ impl CameraDevice {
     /// Set the flash mode
     #[async_wrap]
     pub fn set_flash_mode(&self, mode: FlashMode) -> Result<()> {
-        self.set_property(DevicePropertyCode::FlashMode, mode.as_raw())
+        self.set_property(DevicePropertyCode::FlashMode, mode.to_raw())
     }
 
     /// Get the current focus area
@@ -517,7 +518,7 @@ impl CameraDevice {
     /// Set the focus area
     #[async_wrap]
     pub fn set_focus_area(&self, area: FocusArea) -> Result<()> {
-        self.set_property(DevicePropertyCode::FocusArea, area.as_raw())
+        self.set_property(DevicePropertyCode::FocusArea, area.to_raw())
     }
 
     /// Get the current ISO sensitivity (raw value)
@@ -583,7 +584,7 @@ impl CameraDevice {
             valueType: crsdk_sys::SCRSDK::CrDataType_CrDataType_UInt16,
             enableFlag: 0,
             variableFlag: 0,
-            currentValue: lock.as_raw(),
+            currentValue: lock.to_raw(),
             currentStr: ptr::null_mut(),
             valuesSize: 0,
             values: ptr::null_mut(),

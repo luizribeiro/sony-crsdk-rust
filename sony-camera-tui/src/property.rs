@@ -1,12 +1,7 @@
 use std::collections::HashMap;
 
 use crsdk::{
-    format::{
-        format_aperture, format_color_temp, format_exposure_comp, format_iso_compact,
-        format_shutter_speed,
-    },
-    format_movie_quality, property_category, property_display_name, property_value_type,
-    DevicePropertyCode, PropertyCategory, PropertyValueType,
+    property_category, property_display_name, DevicePropertyCode, PropertyCategory, TypedValue,
 };
 
 /// How a property's values are constrained
@@ -56,11 +51,6 @@ impl Property {
         }
     }
 
-    /// Check if this is a range property
-    pub fn is_range(&self) -> bool {
-        matches!(self.kind, PropertyKind::Range { .. })
-    }
-
     /// Get range parameters if this is a range property
     pub fn range_params(&self) -> Option<(i64, i64, i64)> {
         match &self.kind {
@@ -76,20 +66,6 @@ impl Property {
             PropertyKind::Range { min, max, step } => {
                 let step = if *step == 0 { 1 } else { *step };
                 ((max - min) / step + 1) as usize
-            }
-        }
-    }
-
-    /// Get the raw value at a given index
-    pub fn raw_value_at_index(&self, index: usize) -> Option<u64> {
-        match &self.kind {
-            PropertyKind::Discrete => {
-                // For discrete, we don't store raw values, return None
-                None
-            }
-            PropertyKind::Range { min, step, .. } => {
-                let step = if *step == 0 { 1 } else { *step };
-                Some((min + (index as i64) * step) as u64)
             }
         }
     }
@@ -164,18 +140,6 @@ impl Property {
     pub fn set_value(&mut self, value: &str) {
         if let Some(idx) = self.values.iter().position(|v| v == value) {
             self.current_index = idx;
-        }
-    }
-
-    /// Set the current raw value (for range properties, computes the index)
-    pub fn set_raw_value(&mut self, raw: u64) {
-        self.current_raw = raw;
-        if let PropertyKind::Range { min, step, .. } = &self.kind {
-            let step = if *step == 0 { 1 } else { *step };
-            let raw_signed = raw as i64;
-            if raw_signed >= *min {
-                self.current_index = ((raw_signed - min) / step) as usize;
-            }
         }
     }
 }
@@ -389,104 +353,7 @@ fn category_sort_order(cat: PropertyCategory) -> u8 {
 }
 
 pub fn format_sdk_value(code: DevicePropertyCode, raw: u64) -> String {
-    use PropertyValueType::*;
-
-    match property_value_type(code) {
-        // Formatted numeric values
-        Aperture => format_aperture(raw),
-        ShutterSpeed => format_shutter_speed(raw),
-        Iso => format_iso_compact(raw),
-        ExposureCompensation => format_exposure_comp(raw as i64),
-        ColorTemperature => format_color_temp(raw),
-        MovieQuality => format_movie_quality(raw),
-
-        // Enum types
-        ExposureProgram => crsdk::ExposureProgram::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        MeteringMode => crsdk::MeteringMode::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        FocusMode => crsdk::FocusMode::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        FocusArea => crsdk::FocusArea::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        SubjectRecognitionAF => crsdk::SubjectRecognitionAF::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PrioritySetInAF => crsdk::PrioritySetInAF::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        FocusTrackingStatus => crsdk::FocusTrackingStatus::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        WhiteBalance => crsdk::WhiteBalance::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        PrioritySetInAWB => crsdk::PrioritySetInAWB::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        DriveMode => crsdk::DriveMode::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        IntervalRecShutterType => crsdk::IntervalRecShutterType::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        FlashMode => crsdk::FlashMode::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        FileType => crsdk::FileType::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        ImageQuality => crsdk::ImageQuality::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        AspectRatio => crsdk::AspectRatio::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        ImageSize => crsdk::ImageSize::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        MovieFileFormat => crsdk::MovieFileFormat::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        ShutterModeStatus => crsdk::ShutterModeStatus::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        ShutterMode => crsdk::ShutterMode::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        ExposureCtrlType => crsdk::ExposureCtrlType::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        LiveViewDisplayEffect => crsdk::LiveViewDisplayEffect::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-        SilentModeApertureDrive => crsdk::SilentModeApertureDrive::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("0x{:X}", raw)),
-
-        // Generic toggle types
-        OnOff => crsdk::OnOff::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("{}", raw)),
-        Switch => crsdk::Switch::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("{}", raw)),
-        AutoManual => crsdk::AutoManual::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("{}", raw)),
-        LockIndicator => crsdk::LockIndicator::from_raw(raw)
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| format!("{}", raw)),
-
-        // Raw value types
-        Percentage => format!("{}%", raw),
-        Integer => format!("{}", raw),
-        Unknown => format!("{}", raw),
-    }
+    TypedValue::from_raw(code, raw).to_string()
 }
 
 fn fuzzy_match_score(query: &str, name: &str) -> Option<i32> {
@@ -612,7 +479,7 @@ mod tests {
         let prop = store.get(DevicePropertyCode::FNumber).unwrap();
         assert_eq!(prop.current_value(), "f/2.8");
         assert!(prop.writable);
-        assert!(!prop.is_range());
+        assert!(matches!(prop.kind, PropertyKind::Discrete));
     }
 
     #[test]
@@ -633,11 +500,9 @@ mod tests {
 
         let prop = store.get(DevicePropertyCode::AFTransitionSpeed).unwrap();
         assert_eq!(prop.current_value(), "3");
-        assert!(prop.is_range());
+        assert!(matches!(prop.kind, PropertyKind::Range { .. }));
         assert_eq!(prop.value_count(), 7); // 1 through 7
         assert_eq!(prop.current_index, 2); // value 3 is at index 2 (1, 2, 3)
-        assert_eq!(prop.raw_value_at_index(0), Some(1));
-        assert_eq!(prop.raw_value_at_index(6), Some(7));
 
         // Test progress
         let progress = prop.progress();

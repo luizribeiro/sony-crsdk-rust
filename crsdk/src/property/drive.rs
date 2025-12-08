@@ -405,6 +405,11 @@ impl DriveMode {
         self as u64
     }
 
+    /// Alias for as_raw (for PropertyValue trait compatibility)
+    pub fn to_raw(&self) -> u64 {
+        *self as u64
+    }
+
     /// Converts a raw u64 value from the SDK into a DriveMode variant
     pub fn from_raw(value: u64) -> Option<Self> {
         use crsdk_sys::SCRSDK::*;

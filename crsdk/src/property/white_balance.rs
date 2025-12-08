@@ -1,171 +1,9 @@
-//! White balance property types and metadata.
+//! White balance property metadata (descriptions, display names, value types).
 
 use super::PropertyValueType;
 use crsdk_sys::DevicePropertyCode;
 
-/// White balance settings
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[repr(u16)]
-pub enum WhiteBalance {
-    /// Automatic white balance
-    Auto = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_AWB,
-    /// Daylight preset (5500K)
-    Daylight = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Daylight,
-    /// Shade preset (7000K)
-    Shade = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Shadow,
-    /// Cloudy preset (6000K)
-    Cloudy = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Cloudy,
-    /// Tungsten/incandescent preset (3200K)
-    Tungsten = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Tungsten,
-    /// Fluorescent preset (4000K)
-    Fluorescent = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent,
-    /// Warm white fluorescent preset
-    FluorescentWarmWhite =
-        crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_WarmWhite,
-    /// Cool white fluorescent preset
-    FluorescentCoolWhite =
-        crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_CoolWhite,
-    /// Day white fluorescent preset
-    FluorescentDayWhite =
-        crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_DayWhite,
-    /// Daylight fluorescent preset
-    FluorescentDaylight =
-        crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_Daylight,
-    /// Flash preset (6000K)
-    Flash = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Flush,
-    /// Underwater auto white balance
-    UnderwaterAuto = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Underwater_Auto,
-    /// Manual color temperature in Kelvin
-    ColorTemp = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_ColorTemp,
-    /// Custom white balance preset 1
-    Custom1 = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Custom_1,
-    /// Custom white balance preset 2
-    Custom2 = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Custom_2,
-    /// Custom white balance preset 3
-    Custom3 = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Custom_3,
-    /// Custom white balance from captured reference
-    Custom = crsdk_sys::SCRSDK::CrWhiteBalanceSetting_CrWhiteBalance_Custom,
-}
-
-impl WhiteBalance {
-    /// Converts the enum to its raw SDK value
-    pub fn as_raw(self) -> u64 {
-        self as u64
-    }
-
-    /// Converts a raw SDK value to the enum
-    pub fn from_raw(value: u64) -> Option<Self> {
-        use crsdk_sys::SCRSDK::*;
-        let value = value as u16;
-        Some(match value {
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_AWB => Self::Auto,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Daylight => Self::Daylight,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Shadow => Self::Shade,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Cloudy => Self::Cloudy,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Tungsten => Self::Tungsten,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent => Self::Fluorescent,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_WarmWhite => {
-                Self::FluorescentWarmWhite
-            }
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_CoolWhite => {
-                Self::FluorescentCoolWhite
-            }
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_DayWhite => {
-                Self::FluorescentDayWhite
-            }
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Fluorescent_Daylight => {
-                Self::FluorescentDaylight
-            }
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Flush => Self::Flash,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Underwater_Auto => Self::UnderwaterAuto,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_ColorTemp => Self::ColorTemp,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Custom_1 => Self::Custom1,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Custom_2 => Self::Custom2,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Custom_3 => Self::Custom3,
-            x if x == CrWhiteBalanceSetting_CrWhiteBalance_Custom => Self::Custom,
-            _ => return None,
-        })
-    }
-}
-
-/// White balance lock indicator
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[repr(u16)]
-pub enum LockIndicator {
-    /// Lock status is unknown
-    Unknown = 0,
-    /// White balance is not locked
-    Unlocked = 1,
-    /// White balance is locked
-    Locked = 2,
-}
-
-impl LockIndicator {
-    /// Converts the enum to its raw SDK value
-    pub fn as_raw(self) -> u64 {
-        self as u64
-    }
-
-    /// Converts a raw SDK value to the enum
-    pub fn from_raw(value: u64) -> Option<Self> {
-        Some(match value as u16 {
-            0 => Self::Unknown,
-            1 => Self::Unlocked,
-            2 => Self::Locked,
-            _ => return None,
-        })
-    }
-}
-
-impl std::fmt::Display for LockIndicator {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::Unknown => write!(f, "Unknown"),
-            Self::Unlocked => write!(f, "Unlocked"),
-            Self::Locked => write!(f, "Locked"),
-        }
-    }
-}
-
-/// Priority setting for auto white balance
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[repr(u8)]
-pub enum PrioritySetInAWB {
-    /// Standard neutral white balance
-    Standard = 1,
-    /// Preserve ambient light warmth/coolness
-    Ambience = 2,
-    /// Prioritize neutral white tones
-    White = 3,
-}
-
-impl PrioritySetInAWB {
-    /// Converts the enum to its raw SDK value
-    pub fn as_raw(self) -> u64 {
-        self as u64
-    }
-
-    /// Converts a raw SDK value to the enum
-    pub fn from_raw(value: u64) -> Option<Self> {
-        Some(match value as u8 {
-            1 => Self::Standard,
-            2 => Self::Ambience,
-            3 => Self::White,
-            _ => return None,
-        })
-    }
-}
-
-impl std::fmt::Display for PrioritySetInAWB {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::Standard => write!(f, "Standard"),
-            Self::Ambience => write!(f, "Ambience"),
-            Self::White => write!(f, "White"),
-        }
-    }
-}
-
+/// Returns a detailed description for a white-balance-related property code
 pub fn description(code: DevicePropertyCode) -> &'static str {
     match code {
         DevicePropertyCode::WhiteBalance => {
@@ -249,7 +87,6 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::AWB => {
             "Auto white balance status. Shows the current automatically determined color temperature."
         }
-        // Routes here due to "bw" in name
         DevicePropertyCode::PictureProfileDetailAdjustBWBalance => {
             "Detail/sharpening settings. Controls edge enhancement and texture rendering."
         }
@@ -257,6 +94,7 @@ pub fn description(code: DevicePropertyCode) -> &'static str {
     }
 }
 
+/// Returns a short display name for a white-balance-related property code
 pub fn display_name(code: DevicePropertyCode) -> &'static str {
     match code {
         DevicePropertyCode::WhiteBalance => "WB",
@@ -286,12 +124,12 @@ pub fn display_name(code: DevicePropertyCode) -> &'static str {
         DevicePropertyCode::CustomWBSizeSetting => "Custom WB Size",
         DevicePropertyCode::WhiteBalanceOffsetColorTempATW => "WB Offset ATW (K)",
         DevicePropertyCode::WhiteBalanceOffsetTintATW => "WB Offset ATW (Tint)",
-        // Routes here due to "bw" in name
         DevicePropertyCode::PictureProfileDetailAdjustBWBalance => "PP Detail B/W",
         _ => code.name(),
     }
 }
 
+/// Returns the value type for a white-balance-related property code
 pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
     use PropertyValueType as V;
 
@@ -324,7 +162,6 @@ pub fn value_type(code: DevicePropertyCode) -> Option<PropertyValueType> {
         | DevicePropertyCode::CustomWBCapture
         | DevicePropertyCode::CustomWBCaptureOperation
         | DevicePropertyCode::CustomWBCaptureStandbyCancel
-        // Routes here due to "bw" in name
         | DevicePropertyCode::PictureProfileDetailAdjustBWBalance => V::Integer,
         _ => return None,
     })
