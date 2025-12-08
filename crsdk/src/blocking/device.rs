@@ -15,6 +15,7 @@ use crate::property::{
 };
 use crate::types::{
     ip_to_sdk_format, CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, MacAddr,
+    ToCrsdk,
 };
 use crate::Sdk;
 use crsdk_sys::DevicePropertyCode;
@@ -217,7 +218,7 @@ fn create_camera_info(
     let ip_sdk = ip_to_sdk_format(ip);
     let mac_bytes = mac.as_bytes();
     let ssh_support = if ssh_enabled { 1 } else { 0 };
-    let model_sdk = model.to_sdk_value();
+    let model_sdk = model.to_crsdk();
 
     let result = unsafe {
         crsdk_sys::SCRSDK::CreateCameraObjectInfoEthernetConnection(

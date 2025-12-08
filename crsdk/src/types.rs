@@ -115,9 +115,10 @@ impl CameraModel {
         CameraModel::Alpha9Ii,
         CameraModel::Alpha9Iii,
     ];
+}
 
-    /// Get SDK enum value for this model
-    pub(crate) fn to_sdk_value(self) -> u32 {
+impl ToCrsdk<u32> for CameraModel {
+    fn to_crsdk(&self) -> u32 {
         use crsdk_sys::SCRSDK::*;
         match self {
             CameraModel::Fx3 => CrCameraDeviceModelList_CrCameraDeviceModel_ILME_FX3,
