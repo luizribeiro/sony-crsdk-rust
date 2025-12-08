@@ -130,8 +130,6 @@ pub enum ConnectionType {
     Network,
     /// USB connection
     Usb,
-    /// Unknown connection type
-    Unknown,
 }
 
 impl fmt::Display for ConnectionType {
@@ -139,7 +137,6 @@ impl fmt::Display for ConnectionType {
         match self {
             ConnectionType::Network => write!(f, "Network"),
             ConnectionType::Usb => write!(f, "USB"),
-            ConnectionType::Unknown => write!(f, "Unknown"),
         }
     }
 }
@@ -196,7 +193,6 @@ impl fmt::Display for DiscoveredCamera {
                     write!(f, "{} ({})", self.model, self.connection_type)
                 }
             }
-            ConnectionType::Unknown => write!(f, "{}", self.model),
         }
     }
 }
@@ -249,7 +245,6 @@ mod tests {
     fn test_connection_type_display() {
         assert_eq!(ConnectionType::Network.to_string(), "Network");
         assert_eq!(ConnectionType::Usb.to_string(), "USB");
-        assert_eq!(ConnectionType::Unknown.to_string(), "Unknown");
     }
 
     #[test]

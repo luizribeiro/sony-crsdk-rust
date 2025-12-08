@@ -72,8 +72,10 @@ pub fn discover_cameras(timeout_secs: u8) -> Result<Vec<DiscoveredCamera>> {
             continue;
         }
 
-        let camera = camera_info_from_sdk(info_ptr);
-        cameras.push(camera);
+        match camera_info_from_sdk(info_ptr) {
+            Ok(camera) => cameras.push(camera),
+            Err(e) => tracing::warn!("Failed to parse camera info at index {}: {}", i, e),
+        }
     }
 
     unsafe {
@@ -109,7 +111,9 @@ unsafe fn parse_sdk_string(
     }
 }
 
-fn camera_info_from_sdk(info: *const crsdk_sys::SCRSDK::ICrCameraObjectInfo) -> DiscoveredCamera {
+fn camera_info_from_sdk(
+    info: *const crsdk_sys::SCRSDK::ICrCameraObjectInfo,
+) -> Result<DiscoveredCamera> {
     // SAFETY: info pointer validity is guaranteed by the SDK's enumeration API.
     // GetCameraObjectInfo returns valid pointers for indices 0..GetCount()-1.
     let model = unsafe {
@@ -132,23 +136,22 @@ fn camera_info_from_sdk(info: *const crsdk_sys::SCRSDK::ICrCameraObjectInfo) -> 
         // SAFETY: info is valid per caller contract
         let ptr = crsdk_sys::crsdk_camera_info_get_connection_type(info);
         if ptr.is_null() {
-            tracing::warn!("Connection type pointer is null");
-            ConnectionType::Unknown
-        } else {
-            // SAFETY: SDK guarantees null-terminated string if pointer is non-null
-            let cstr = std::ffi::CStr::from_ptr(ptr);
-            let type_str = cstr.to_str().unwrap_or("");
-            match type_str.to_lowercase().as_str() {
-                s if s.contains("ether") || s.contains("network") || s.contains("ip") => {
-                    ConnectionType::Network
-                }
-                s if s.contains("usb") => ConnectionType::Usb,
-                other => {
-                    if !other.is_empty() {
-                        tracing::debug!("Unknown connection type: {}", other);
-                    }
-                    ConnectionType::Unknown
-                }
+            return Err(Error::InvalidParameter(
+                "GetConnectionTypeName() returned null".to_string(),
+            ));
+        }
+        // SAFETY: SDK guarantees null-terminated string if pointer is non-null
+        let cstr = std::ffi::CStr::from_ptr(ptr);
+        let type_str = cstr.to_str().unwrap_or("");
+        // SDK returns "IP" for network connections and "USB" for USB connections
+        match type_str {
+            "IP" => ConnectionType::Network,
+            "USB" => ConnectionType::Usb,
+            other => {
+                return Err(Error::InvalidParameter(format!(
+                    "GetConnectionTypeName() returned '{}', expected 'IP' or 'USB'",
+                    other
+                )));
             }
         }
     };
@@ -192,7 +195,7 @@ fn camera_info_from_sdk(info: *const crsdk_sys::SCRSDK::ICrCameraObjectInfo) -> 
         }
     };
 
-    DiscoveredCamera {
+    Ok(DiscoveredCamera {
         model,
         name,
         connection_type,
@@ -200,7 +203,7 @@ fn camera_info_from_sdk(info: *const crsdk_sys::SCRSDK::ICrCameraObjectInfo) -> 
         mac_address,
         ssh_supported,
         usb_pid,
-    }
+    })
 }
 
 fn create_camera_info(
