@@ -9,8 +9,6 @@
 mod category;
 mod core;
 mod metadata;
-#[cfg(test)]
-mod todo;
 mod traits;
 mod typed_value;
 pub mod values;
@@ -49,100 +47,58 @@ mod tests {
     use super::*;
     use crsdk_sys::DevicePropertyCode;
 
-    use super::todo::{NEEDS_DESCRIPTION, NEEDS_DISPLAY_NAME, NEEDS_VALUE_TYPE};
-    use std::collections::HashSet;
-
     #[test]
     fn test_all_properties_have_custom_display_names() {
-        let expected: HashSet<_> = NEEDS_DISPLAY_NAME.iter().collect();
-        let mut actual_missing = Vec::new();
+        let mut missing = Vec::new();
 
         for code in DevicePropertyCode::ALL {
             let display = property_display_name(*code);
-            let fallback = code.name();
-
-            if display == fallback {
-                actual_missing.push(*code);
+            if display == code.name() {
+                missing.push(*code);
             }
         }
 
-        let actual: HashSet<_> = actual_missing.iter().collect();
-
-        // Find properties that are missing but not in expected list (new regressions)
-        let unexpected: Vec<_> = actual.difference(&expected).collect();
         assert!(
-            unexpected.is_empty(),
-            "New properties missing display names (add display name or add to NEEDS_DISPLAY_NAME in todo.rs): {:?}",
-            unexpected
-        );
-
-        // Find properties in expected list that now have display names (need to remove from list)
-        let fixed: Vec<_> = expected.difference(&actual).collect();
-        assert!(
-            fixed.is_empty(),
-            "Properties now have display names - remove from NEEDS_DISPLAY_NAME in todo.rs: {:?}",
-            fixed
+            missing.is_empty(),
+            "Properties missing display names: {:?}",
+            missing
         );
     }
 
     #[test]
     fn test_all_properties_have_descriptions() {
-        let expected: HashSet<_> = NEEDS_DESCRIPTION.iter().collect();
-        let mut actual_missing = Vec::new();
+        let mut missing = Vec::new();
 
         for code in DevicePropertyCode::ALL {
-            let desc = property_description(*code);
-            if desc.is_empty() {
-                actual_missing.push(*code);
+            if property_description(*code).is_empty() {
+                missing.push(*code);
             }
         }
 
-        let actual: HashSet<_> = actual_missing.iter().collect();
-
-        // Find properties that are missing but not in expected list (new regressions)
-        let unexpected: Vec<_> = actual.difference(&expected).collect();
         assert!(
-            unexpected.is_empty(),
-            "New properties missing descriptions (add description or add to NEEDS_DESCRIPTION in todo.rs): {:?}",
-            unexpected
-        );
-
-        // Find properties in expected list that now have descriptions (need to remove from list)
-        let fixed: Vec<_> = expected.difference(&actual).collect();
-        assert!(
-            fixed.is_empty(),
-            "Properties now have descriptions - remove from NEEDS_DESCRIPTION in todo.rs: {:?}",
-            fixed
+            missing.is_empty(),
+            "Properties missing descriptions: {:?}",
+            missing
         );
     }
 
     #[test]
     fn test_all_properties_have_value_types() {
-        let expected: HashSet<_> = NEEDS_VALUE_TYPE.iter().collect();
-        let mut actual_missing = Vec::new();
+        let mut missing = Vec::new();
 
         for code in DevicePropertyCode::ALL {
-            if property_value_type(*code) == PropertyValueType::Unknown {
-                actual_missing.push(*code);
+            // Undefined is expected to have Unknown type
+            if *code != DevicePropertyCode::Undefined
+                && property_value_type(*code) == PropertyValueType::Unknown
+            {
+                missing.push(*code);
             }
         }
 
-        let actual: HashSet<_> = actual_missing.iter().collect();
-
-        // Find properties that are missing but not in expected list (new regressions)
-        let unexpected: Vec<_> = actual.difference(&expected).collect();
         assert!(
-            unexpected.is_empty(),
-            "New properties missing value types (add value type or add to NEEDS_VALUE_TYPE in todo.rs): {:?}",
-            unexpected
-        );
-
-        // Find properties in expected list that now have value types (need to remove from list)
-        let fixed: Vec<_> = expected.difference(&actual).collect();
-        assert!(
-            fixed.is_empty(),
-            "Properties now have value types - remove from NEEDS_VALUE_TYPE in todo.rs: {:?}",
-            fixed
+            missing.is_empty(),
+            "Properties missing value types: {:?}",
+            missing
         );
     }
 
@@ -150,7 +106,6 @@ mod tests {
     fn test_all_properties_have_valid_categories() {
         for code in DevicePropertyCode::ALL {
             let category = property_category(*code);
-            // Ensure property_category() doesn't panic and returns a valid category
             let _ = format!("{:?}", category);
         }
     }
@@ -219,7 +174,6 @@ mod tests {
 
     #[test]
     fn test_all_properties_have_valid_value_types() {
-        // Ensure property_value_type doesn't panic for any property
         for code in DevicePropertyCode::ALL {
             let _ = property_value_type(*code);
         }
