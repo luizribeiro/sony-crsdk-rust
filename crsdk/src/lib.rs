@@ -63,7 +63,6 @@ mod device;
 mod error;
 mod event;
 mod event_sender;
-pub mod format;
 pub mod property;
 mod sdk;
 mod types;
