@@ -227,10 +227,10 @@ pub struct ConnectionInfo {
     pub ssh_fingerprint: Option<String>,
 }
 
-/// Convert Ipv4Addr to SDK's 32-bit little-endian format
-pub(crate) fn ip_to_sdk_format(ip: Ipv4Addr) -> u32 {
-    let octets = ip.octets();
-    u32::from_le_bytes(octets)
+impl ToCrsdk<u32> for Ipv4Addr {
+    fn to_crsdk(&self) -> u32 {
+        u32::from_le_bytes(self.octets())
+    }
 }
 
 #[cfg(test)]
@@ -245,11 +245,9 @@ mod tests {
     }
 
     #[test]
-    fn test_ip_to_sdk_format() {
-        let ip = "192.168.1.100".parse::<Ipv4Addr>().unwrap();
-        let sdk_format = ip_to_sdk_format(ip);
-        // Little-endian: 100.1.168.192
-        assert_eq!(sdk_format, 0x64_01_a8_c0);
+    fn test_ipv4_to_crsdk() {
+        let ip: Ipv4Addr = "192.168.1.100".parse().unwrap();
+        assert_eq!(ip.to_crsdk(), 0x64_01_a8_c0);
     }
 
     #[test]

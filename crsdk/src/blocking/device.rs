@@ -14,8 +14,7 @@ use crate::property::{
     WhiteBalance,
 };
 use crate::types::{
-    ip_to_sdk_format, CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, MacAddr,
-    ToCrsdk,
+    CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, MacAddr, ToCrsdk,
 };
 use crate::Sdk;
 use crsdk_sys::DevicePropertyCode;
@@ -215,7 +214,7 @@ fn create_camera_info(
 ) -> Result<*mut crsdk_sys::SCRSDK::ICrCameraObjectInfo> {
     let mut camera_info_ptr: *mut crsdk_sys::SCRSDK::ICrCameraObjectInfo = ptr::null_mut();
 
-    let ip_sdk = ip_to_sdk_format(ip);
+    let ip_sdk = ip.to_crsdk();
     let mac_bytes = mac.as_bytes();
     let ssh_support = if ssh_enabled { 1 } else { 0 };
     let model_sdk = model.to_crsdk();
