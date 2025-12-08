@@ -277,7 +277,7 @@ impl TypedValue {
             TypedValue::ImageQuality(v) => v.to_raw(),
             TypedValue::AspectRatio(v) => v.to_raw(),
             TypedValue::ImageSize(v) => v.to_raw(),
-            TypedValue::MovieFileFormat(v) => v.as_raw(),
+            TypedValue::MovieFileFormat(v) => v.to_raw(),
             TypedValue::MovieQuality(v) => v.to_raw(),
             TypedValue::BatteryLevel(v) => v.to_raw(),
             TypedValue::Switch(v) => v.to_raw(),

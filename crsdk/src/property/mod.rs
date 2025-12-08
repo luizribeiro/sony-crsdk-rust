@@ -8,7 +8,6 @@
 
 mod category;
 mod metadata;
-mod movie;
 #[cfg(test)]
 mod todo;
 mod traits;
@@ -31,9 +30,8 @@ pub use values::{
 };
 pub use values::{ExposureCtrlType, ExposureProgram};
 
-// Re-export drive types from values/
-pub use movie::{format_movie_quality, MovieFileFormat};
-pub use values::{DriveMode, IntervalRecShutterType};
+// Re-export drive and movie types from values/
+pub use values::{DriveMode, IntervalRecShutterType, MovieFileFormat, MovieQuality};
 
 use crsdk_sys::DevicePropertyCode;
 
@@ -319,7 +317,7 @@ pub fn property_value_type(code: DevicePropertyCode) -> PropertyValueType {
     if let Some(vt) = metadata::image::value_type(code) {
         return vt;
     }
-    if let Some(vt) = movie::value_type(code) {
+    if let Some(vt) = metadata::movie::value_type(code) {
         return vt;
     }
 
@@ -1350,7 +1348,7 @@ pub fn property_description(code: DevicePropertyCode) -> &'static str {
         PropertyCategory::Drive => metadata::drive::description(code),
         PropertyCategory::Flash => metadata::flash::description(code),
         PropertyCategory::Image => metadata::image::description(code),
-        PropertyCategory::Movie => movie::description(code),
+        PropertyCategory::Movie => metadata::movie::description(code),
         PropertyCategory::Media => media_description(code),
         PropertyCategory::Power => power_description(code),
         PropertyCategory::Zoom => zoom_description(code),
@@ -1376,7 +1374,7 @@ pub fn property_display_name(code: DevicePropertyCode) -> &'static str {
         PropertyCategory::Drive => metadata::drive::display_name(code),
         PropertyCategory::Flash => metadata::flash::display_name(code),
         PropertyCategory::Image => metadata::image::display_name(code),
-        PropertyCategory::Movie => movie::display_name(code),
+        PropertyCategory::Movie => metadata::movie::display_name(code),
         PropertyCategory::Media => media_display_name(code),
         PropertyCategory::Power => power_display_name(code),
         PropertyCategory::Zoom => zoom_display_name(code),

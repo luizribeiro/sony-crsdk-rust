@@ -10,4 +10,5 @@ pub mod exposure;
 pub mod flash;
 pub mod focus;
 pub mod image;
+pub mod movie;
 pub mod white_balance;

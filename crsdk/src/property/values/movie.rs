@@ -108,6 +108,107 @@ impl fmt::Display for MovieQuality {
     }
 }
 
+/// Movie file format
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum MovieFileFormat {
+    /// AVCHD format
+    Avchd = 0,
+    /// MP4 format
+    Mp4 = 1,
+    /// XAVC S 4K format
+    XavcS4k = 2,
+    /// XAVC S HD format
+    XavcSHd = 3,
+    /// XAVC HS 8K format
+    XavcHs8k = 4,
+    /// XAVC HS 4K format
+    XavcHs4k = 5,
+    /// XAVC S-L 4K format
+    XavcSL4k = 6,
+    /// XAVC S-L HD format
+    XavcSLHd = 7,
+    /// XAVC S-I 4K format
+    XavcSI4k = 8,
+    /// XAVC S-I HD format
+    XavcSIHd = 9,
+    /// XAVC I format
+    XavcI = 10,
+    /// XAVC L format
+    XavcL = 11,
+    /// XAVC HS HD format
+    XavcHsHd = 12,
+    /// XAVC S-I DCI 4K format
+    XavcSIDci4k = 13,
+    /// XAVC H-I HQ format
+    XavcHIHq = 14,
+    /// XAVC H-I SQ format
+    XavcHISq = 15,
+    /// XAVC H-L format
+    XavcHL = 16,
+    /// X-OCN XT format
+    XOcnXt = 17,
+    /// X-OCN ST format
+    XOcnSt = 18,
+}
+
+impl PropertyValue for MovieFileFormat {
+    fn from_raw(raw: u64) -> Option<Self> {
+        Some(match raw as u8 {
+            0 => Self::Avchd,
+            1 => Self::Mp4,
+            2 => Self::XavcS4k,
+            3 => Self::XavcSHd,
+            4 => Self::XavcHs8k,
+            5 => Self::XavcHs4k,
+            6 => Self::XavcSL4k,
+            7 => Self::XavcSLHd,
+            8 => Self::XavcSI4k,
+            9 => Self::XavcSIHd,
+            10 => Self::XavcI,
+            11 => Self::XavcL,
+            12 => Self::XavcHsHd,
+            13 => Self::XavcSIDci4k,
+            14 => Self::XavcHIHq,
+            15 => Self::XavcHISq,
+            16 => Self::XavcHL,
+            17 => Self::XOcnXt,
+            18 => Self::XOcnSt,
+            _ => return None,
+        })
+    }
+
+    fn to_raw(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl fmt::Display for MovieFileFormat {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Avchd => write!(f, "AVCHD"),
+            Self::Mp4 => write!(f, "MP4"),
+            Self::XavcS4k => write!(f, "XAVC S 4K"),
+            Self::XavcSHd => write!(f, "XAVC S HD"),
+            Self::XavcHs8k => write!(f, "XAVC HS 8K"),
+            Self::XavcHs4k => write!(f, "XAVC HS 4K"),
+            Self::XavcSL4k => write!(f, "XAVC S-L 4K"),
+            Self::XavcSLHd => write!(f, "XAVC S-L HD"),
+            Self::XavcSI4k => write!(f, "XAVC S-I 4K"),
+            Self::XavcSIHd => write!(f, "XAVC S-I HD"),
+            Self::XavcI => write!(f, "XAVC I"),
+            Self::XavcL => write!(f, "XAVC L"),
+            Self::XavcHsHd => write!(f, "XAVC HS HD"),
+            Self::XavcSIDci4k => write!(f, "XAVC S-I DCI 4K"),
+            Self::XavcHIHq => write!(f, "XAVC H-I HQ"),
+            Self::XavcHISq => write!(f, "XAVC H-I SQ"),
+            Self::XavcHL => write!(f, "XAVC H-L"),
+            Self::XOcnXt => write!(f, "X-OCN XT"),
+            Self::XOcnSt => write!(f, "X-OCN ST"),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
