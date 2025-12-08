@@ -9,12 +9,28 @@ use crsdk::{
     DevicePropertyCode, PropertyCategory, PropertyValueType,
 };
 
+/// How a property's values are constrained
+#[derive(Debug, Clone, Default)]
+pub enum PropertyKind {
+    /// Discrete list of allowed values
+    #[default]
+    Discrete,
+    /// Numeric range with min/max/step
+    Range { min: i64, max: i64, step: i64 },
+}
+
 #[derive(Debug, Clone)]
 pub struct Property {
     pub code: DevicePropertyCode,
+    /// For discrete: formatted value strings. For range: may be empty or contain formatted current.
     pub values: Vec<String>,
+    /// For discrete: index into values. For range: index in the range (0 = min).
     pub current_index: usize,
     pub writable: bool,
+    /// The kind of constraint (discrete or range)
+    pub kind: PropertyKind,
+    /// Raw SDK value (useful for formatting)
+    pub current_raw: u64,
 }
 
 impl Property {
@@ -24,36 +40,142 @@ impl Property {
             values: Vec::new(),
             current_index: 0,
             writable: false,
+            kind: PropertyKind::Discrete,
+            current_raw: 0,
         }
     }
 
     pub fn current_value(&self) -> &str {
-        self.values
-            .get(self.current_index)
-            .map(|s| s.as_str())
-            .unwrap_or("--")
+        match &self.kind {
+            PropertyKind::Discrete => self
+                .values
+                .get(self.current_index)
+                .map(|s| s.as_str())
+                .unwrap_or("--"),
+            PropertyKind::Range { .. } => self.values.first().map(|s| s.as_str()).unwrap_or("--"),
+        }
     }
 
+    /// Check if this is a range property
+    pub fn is_range(&self) -> bool {
+        matches!(self.kind, PropertyKind::Range { .. })
+    }
+
+    /// Get range parameters if this is a range property
+    pub fn range_params(&self) -> Option<(i64, i64, i64)> {
+        match &self.kind {
+            PropertyKind::Range { min, max, step } => Some((*min, *max, *step)),
+            _ => None,
+        }
+    }
+
+    /// Total number of possible values
+    pub fn value_count(&self) -> usize {
+        match &self.kind {
+            PropertyKind::Discrete => self.values.len(),
+            PropertyKind::Range { min, max, step } => {
+                let step = if *step == 0 { 1 } else { *step };
+                ((max - min) / step + 1) as usize
+            }
+        }
+    }
+
+    /// Get the raw value at a given index
+    pub fn raw_value_at_index(&self, index: usize) -> Option<u64> {
+        match &self.kind {
+            PropertyKind::Discrete => {
+                // For discrete, we don't store raw values, return None
+                None
+            }
+            PropertyKind::Range { min, step, .. } => {
+                let step = if *step == 0 { 1 } else { *step };
+                Some((min + (index as i64) * step) as u64)
+            }
+        }
+    }
+
+    /// Move to next value, returns the new index
     pub fn next(&mut self) -> usize {
-        if self.writable && !self.values.is_empty() {
-            self.current_index = (self.current_index + 1) % self.values.len();
+        self.advance(1)
+    }
+
+    /// Move to previous value, returns the new index
+    pub fn prev(&mut self) -> usize {
+        self.advance(-1)
+    }
+
+    /// Advance by a number of steps (positive or negative)
+    pub fn advance(&mut self, steps: i64) -> usize {
+        if !self.writable {
+            return self.current_index;
         }
+
+        let count = self.value_count();
+        if count == 0 {
+            return self.current_index;
+        }
+
+        let new_index = if steps >= 0 {
+            let forward = steps as usize % count;
+            (self.current_index + forward) % count
+        } else {
+            let backward = (-steps) as usize % count;
+            (self.current_index + count - backward) % count
+        };
+
+        self.current_index = new_index;
+
+        // Update current_raw for range properties
+        if let PropertyKind::Range { min, step, .. } = &self.kind {
+            let step = if *step == 0 { 1 } else { *step };
+            self.current_raw = (min + (new_index as i64) * step) as u64;
+        }
+
         self.current_index
     }
 
-    pub fn prev(&mut self) -> usize {
-        if self.writable && !self.values.is_empty() {
-            self.current_index = self
-                .current_index
-                .checked_sub(1)
-                .unwrap_or(self.values.len() - 1);
+    /// Jump directly to a specific index (clamped to valid range)
+    pub fn set_index(&mut self, index: usize) -> usize {
+        let count = self.value_count();
+        if count == 0 {
+            return self.current_index;
         }
+
+        self.current_index = index.min(count - 1);
+
+        // Update current_raw for range properties
+        if let PropertyKind::Range { min, step, .. } = &self.kind {
+            let step = if *step == 0 { 1 } else { *step };
+            self.current_raw = (min + (self.current_index as i64) * step) as u64;
+        }
+
         self.current_index
+    }
+
+    /// Get progress as a ratio (0.0 to 1.0) for gauge display
+    pub fn progress(&self) -> f64 {
+        let count = self.value_count();
+        if count <= 1 {
+            return 0.0;
+        }
+        self.current_index as f64 / (count - 1) as f64
     }
 
     pub fn set_value(&mut self, value: &str) {
         if let Some(idx) = self.values.iter().position(|v| v == value) {
             self.current_index = idx;
+        }
+    }
+
+    /// Set the current raw value (for range properties, computes the index)
+    pub fn set_raw_value(&mut self, raw: u64) {
+        self.current_raw = raw;
+        if let PropertyKind::Range { min, step, .. } = &self.kind {
+            let step = if *step == 0 { 1 } else { *step };
+            let raw_signed = raw as i64;
+            if raw_signed >= *min {
+                self.current_index = ((raw_signed - min) / step) as usize;
+            }
         }
     }
 }
@@ -150,13 +272,32 @@ impl PropertyStore {
         &mut self,
         code: DevicePropertyCode,
         current: &str,
+        current_raw: u64,
         available: Vec<String>,
         writable: bool,
+        kind: PropertyKind,
     ) {
         let mut prop = Property::new(code);
         prop.values = available;
-        prop.set_value(current);
         prop.writable = writable;
+        prop.kind = kind;
+        prop.current_raw = current_raw;
+
+        // Set up the current index based on kind
+        match &prop.kind {
+            PropertyKind::Discrete => {
+                prop.set_value(current);
+            }
+            PropertyKind::Range { min, step, .. } => {
+                let step = if *step == 0 { 1 } else { *step };
+                let raw_signed = current_raw as i64;
+                if raw_signed >= *min {
+                    prop.current_index = ((raw_signed - min) / step) as usize;
+                }
+                // Store the formatted current value
+                prop.values = vec![current.to_string()];
+            }
+        }
 
         let is_new = !self.properties.contains_key(&code);
         self.properties.insert(code, prop);
@@ -170,15 +311,33 @@ impl PropertyStore {
         &mut self,
         code: DevicePropertyCode,
         current: &str,
+        current_raw: u64,
         available: Vec<String>,
         writable: bool,
+        kind: PropertyKind,
     ) {
         if let Some(prop) = self.properties.get_mut(&code) {
-            prop.values = available;
-            prop.set_value(current);
             prop.writable = writable;
+            prop.kind = kind.clone();
+            prop.current_raw = current_raw;
+
+            match &prop.kind {
+                PropertyKind::Discrete => {
+                    prop.values = available;
+                    prop.set_value(current);
+                }
+                PropertyKind::Range { min, step, .. } => {
+                    let step = if *step == 0 { 1 } else { *step };
+                    let raw_signed = current_raw as i64;
+                    if raw_signed >= *min {
+                        prop.current_index = ((raw_signed - min) / step) as usize;
+                    }
+                    // Store the formatted current value
+                    prop.values = vec![current.to_string()];
+                }
+            }
         } else {
-            self.add_property(code, current, available, writable);
+            self.add_property(code, current, current_raw, available, writable, kind);
         }
     }
 }
@@ -439,18 +598,83 @@ mod tests {
     }
 
     #[test]
-    fn test_property_store_add_and_get() {
+    fn test_property_store_add_and_get_discrete() {
         let mut store = PropertyStore::new();
         store.add_property(
             DevicePropertyCode::FNumber,
             "f/2.8",
+            280, // raw value
             vec!["f/1.4".into(), "f/2.8".into(), "f/4.0".into()],
             true,
+            PropertyKind::Discrete,
         );
 
         let prop = store.get(DevicePropertyCode::FNumber).unwrap();
         assert_eq!(prop.current_value(), "f/2.8");
         assert!(prop.writable);
+        assert!(!prop.is_range());
+    }
+
+    #[test]
+    fn test_property_store_add_and_get_range() {
+        let mut store = PropertyStore::new();
+        store.add_property(
+            DevicePropertyCode::AFTransitionSpeed,
+            "3",
+            3,
+            vec!["3".into()],
+            true,
+            PropertyKind::Range {
+                min: 1,
+                max: 7,
+                step: 1,
+            },
+        );
+
+        let prop = store.get(DevicePropertyCode::AFTransitionSpeed).unwrap();
+        assert_eq!(prop.current_value(), "3");
+        assert!(prop.is_range());
+        assert_eq!(prop.value_count(), 7); // 1 through 7
+        assert_eq!(prop.current_index, 2); // value 3 is at index 2 (1, 2, 3)
+        assert_eq!(prop.raw_value_at_index(0), Some(1));
+        assert_eq!(prop.raw_value_at_index(6), Some(7));
+
+        // Test progress
+        let progress = prop.progress();
+        assert!((progress - (2.0 / 6.0)).abs() < 0.01);
+    }
+
+    #[test]
+    fn test_property_range_navigation() {
+        let mut prop = Property::new(DevicePropertyCode::AFTransitionSpeed);
+        prop.kind = PropertyKind::Range {
+            min: 1,
+            max: 7,
+            step: 1,
+        };
+        prop.writable = true;
+        prop.current_index = 3; // value = 4
+        prop.current_raw = 4;
+
+        // Test next
+        prop.next();
+        assert_eq!(prop.current_index, 4);
+        assert_eq!(prop.current_raw, 5);
+
+        // Test prev
+        prop.prev();
+        assert_eq!(prop.current_index, 3);
+        assert_eq!(prop.current_raw, 4);
+
+        // Test advance by multiple
+        prop.advance(3);
+        assert_eq!(prop.current_index, 6); // max
+        assert_eq!(prop.current_raw, 7);
+
+        // Test wrap around
+        prop.advance(1);
+        assert_eq!(prop.current_index, 0); // wrapped to min
+        assert_eq!(prop.current_raw, 1);
     }
 
     #[test]

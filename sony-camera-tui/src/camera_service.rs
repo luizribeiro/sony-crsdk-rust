@@ -12,30 +12,33 @@ use crsdk::{
     DeviceProperty, DevicePropertyCode, MacAddr, ValueConstraint,
 };
 
-use crate::property::format_sdk_value;
+use crate::property::{format_sdk_value, PropertyKind};
 
 /// Get available values from a property's constraint as formatted strings.
-/// For discrete values, formats each value. For ranges, expands if reasonable size,
-/// otherwise returns a range description.
+/// For discrete values, formats each value. For ranges, returns the current value.
 fn format_available_values(code: DevicePropertyCode, prop: &DeviceProperty) -> Vec<String> {
     match &prop.constraint {
         ValueConstraint::None => vec![],
         ValueConstraint::Discrete(values) => {
             values.iter().map(|&v| format_sdk_value(code, v)).collect()
         }
-        ValueConstraint::Range { min, max, step } => {
-            if *step == 0 {
-                return vec![format!("{} to {}", min, max)];
-            }
-            let count = ((max - min) / step + 1) as usize;
-            if count <= 20 {
-                (0..count as i64)
-                    .map(|i| format_sdk_value(code, (min + i * step) as u64))
-                    .collect()
-            } else {
-                vec![format!("{} to {} (step {})", min, max, step)]
-            }
+        ValueConstraint::Range { .. } => {
+            // For ranges, we just return the current formatted value
+            // The actual range info is passed separately via PropertyKind
+            vec![format_sdk_value(code, prop.current_value)]
         }
+    }
+}
+
+/// Convert SDK ValueConstraint to our PropertyKind
+fn constraint_to_kind(constraint: &ValueConstraint) -> PropertyKind {
+    match constraint {
+        ValueConstraint::None | ValueConstraint::Discrete(_) => PropertyKind::Discrete,
+        ValueConstraint::Range { min, max, step } => PropertyKind::Range {
+            min: *min,
+            max: *max,
+            step: *step,
+        },
     }
 }
 
@@ -50,8 +53,10 @@ pub enum CameraUpdate {
     PropertyChanged {
         code: DevicePropertyCode,
         value: String,
+        raw_value: u64,
         available: Vec<String>,
         writable: bool,
+        kind: PropertyKind,
     },
     /// An error occurred
     Error { message: String },
@@ -502,8 +507,10 @@ impl CameraService {
 
                     if let Some(code) = DevicePropertyCode::from_raw(prop.code) {
                         let current = format_sdk_value(code, prop.current_value);
+                        let raw_value = prop.current_value;
                         let available = format_available_values(code, &prop);
                         let writable = prop.enable_flag.is_writable();
+                        let kind = constraint_to_kind(&prop.constraint);
 
                         tracing::debug!(
                             "Property {}: raw={} formatted='{}' writable={} constraint={:?}",
@@ -519,8 +526,10 @@ impl CameraService {
                         self.send_update(CameraUpdate::PropertyChanged {
                             code,
                             value: current,
+                            raw_value,
                             available,
                             writable,
+                            kind,
                         })
                         .await;
                     }
@@ -903,16 +912,20 @@ impl CameraService {
                                 }
 
                                 let current = format_sdk_value(code, prop.current_value);
+                                let raw_value = prop.current_value;
                                 let available = format_available_values(code, &prop);
                                 let writable = prop.enable_flag.is_writable();
+                                let kind = constraint_to_kind(&prop.constraint);
 
                                 self.cached_properties.insert(code, prop);
 
                                 self.send_update(CameraUpdate::PropertyChanged {
                                     code,
                                     value: current,
+                                    raw_value,
                                     available,
                                     writable,
+                                    kind,
                                 })
                                 .await;
                             }

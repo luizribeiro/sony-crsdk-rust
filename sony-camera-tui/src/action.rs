@@ -32,18 +32,23 @@ pub enum Action {
     Disconnect,
 
     // Property editor
-    PropertyEditorNext,         // Move down in current focus area (j/down)
-    PropertyEditorPrev,         // Move up in current focus area (k/up)
-    PropertyEditorNextCategory, // Go to next category (Tab)
-    PropertyEditorPrevCategory, // Go to previous category (Shift+Tab)
-    PropertyEditorValueNext,    // Change to next value (l/right)
-    PropertyEditorValuePrev,    // Change to prev value (h/left)
-    TogglePropertyPin,          // Toggle pin to quick settings (*)
-    OpenPropertyInEditor,       // Jump to property in editor (o)
-    PropertyEditorOpenValues,   // Open value selector (o in property editor)
-    PropertyEditorApplyValue,   // Apply selected value (Enter in Values focus)
-    TogglePropertyInfo,         // Toggle property info panel (i)
-    ShowPropertySearch,         // Open property search modal (/)
+    PropertyEditorNext,          // Move down in current focus area (j/down)
+    PropertyEditorPrev,          // Move up in current focus area (k/up)
+    PropertyEditorNextCategory,  // Go to next category (Tab)
+    PropertyEditorPrevCategory,  // Go to previous category (Shift+Tab)
+    PropertyEditorValueNext,     // Change to next value (l/right)
+    PropertyEditorValuePrev,     // Change to prev value (h/left)
+    PropertyEditorValueNextFast, // Change value by 10x step (Shift+l/Shift+right)
+    PropertyEditorValuePrevFast, // Change value by 10x step (Shift+h/Shift+left)
+    PropertyEditorValueToMax,    // Jump to max value (Shift+g/End)
+    PropertyEditorValueToMin,    // Jump to min value (g/Home)
+    PropertyEditorEditValue,     // Open direct value input for ranges (e)
+    TogglePropertyPin,           // Toggle pin to quick settings (*)
+    OpenPropertyInEditor,        // Jump to property in editor (o)
+    PropertyEditorOpenValues,    // Open value selector (o in property editor)
+    PropertyEditorApplyValue,    // Apply selected value (Enter in Values focus)
+    TogglePropertyInfo,          // Toggle property info panel (i)
+    ShowPropertySearch,          // Open property search modal (/)
 
     // Events log
     ScrollEventsUp,

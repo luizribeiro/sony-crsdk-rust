@@ -3,11 +3,13 @@ use ratatui::{
     style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{
-        Block, Borders, List, ListItem, Paragraph, Scrollbar, ScrollbarOrientation, ScrollbarState,
-        Wrap,
+        Block, Borders, Gauge, List, ListItem, Paragraph, Scrollbar, ScrollbarOrientation,
+        ScrollbarState, Wrap,
     },
     Frame,
 };
+
+use crate::property::PropertyKind;
 
 fn scroll_offset_for_selection(
     selected: usize,
@@ -322,6 +324,13 @@ fn render_value_list(
     let inner = block.inner(area);
     frame.render_widget(block, area);
 
+    // Check if this is a range property
+    if let PropertyKind::Range { min, max, step } = &prop.kind {
+        render_range_slider(frame, inner, prop, *min, *max, *step);
+        return;
+    }
+
+    // Discrete values - render as list
     if prop.values.is_empty() {
         let hint = Paragraph::new(Line::from(vec![Span::styled(
             "\n  No values available",
@@ -383,6 +392,68 @@ fn render_value_list(
             .style(Style::default().fg(Color::Rgb(60, 60, 60)));
         frame.render_stateful_widget(scrollbar, inner, &mut scrollbar_state);
     }
+}
+
+fn render_range_slider(
+    frame: &mut Frame,
+    area: Rect,
+    prop: &crate::property::Property,
+    min: i64,
+    max: i64,
+    step: i64,
+) {
+    let step = if step == 0 { 1 } else { step };
+    let progress = prop.progress();
+    let current_raw = prop.current_raw as i64;
+
+    // Layout: value display, gauge, range info, hints
+    let layout = Layout::vertical([
+        Constraint::Length(2), // Current value
+        Constraint::Length(1), // Gauge
+        Constraint::Length(1), // Range info
+        Constraint::Min(1),    // Hints
+    ])
+    .split(area);
+
+    // Current value - large and prominent
+    let value_text = format!("  {}", prop.current_value());
+    let value_para = Paragraph::new(Line::from(vec![Span::styled(
+        value_text,
+        Style::default()
+            .fg(Color::Cyan)
+            .add_modifier(Modifier::BOLD),
+    )]));
+    frame.render_widget(value_para, layout[0]);
+
+    // Gauge showing position in range
+    let gauge = Gauge::default()
+        .gauge_style(Style::default().fg(Color::Cyan).bg(Color::Rgb(40, 40, 40)))
+        .ratio(progress)
+        .use_unicode(true);
+    frame.render_widget(gauge, layout[1]);
+
+    // Range info: min - current - max
+    let count = ((max - min) / step + 1) as usize;
+    let range_text = format!("  {} ← {} → {}  ({} values)", min, current_raw, max, count);
+    let range_para = Paragraph::new(Line::from(vec![Span::styled(
+        range_text,
+        Style::default().fg(Color::DarkGray),
+    )]));
+    frame.render_widget(range_para, layout[2]);
+
+    // Hints for navigation
+    let hints = vec![Line::from(vec![
+        Span::styled("  h/l ", Style::default().fg(Color::Yellow)),
+        Span::styled("±1  ", Style::default().fg(Color::DarkGray)),
+        Span::styled("H/L ", Style::default().fg(Color::Yellow)),
+        Span::styled("±10  ", Style::default().fg(Color::DarkGray)),
+        Span::styled("g/G ", Style::default().fg(Color::Yellow)),
+        Span::styled("min/max  ", Style::default().fg(Color::DarkGray)),
+        Span::styled("e ", Style::default().fg(Color::Yellow)),
+        Span::styled("enter value", Style::default().fg(Color::DarkGray)),
+    ])];
+    let hints_para = Paragraph::new(hints);
+    frame.render_widget(hints_para, layout[3]);
 }
 
 fn render_info_panel(frame: &mut Frame, area: Rect, app: &App) {

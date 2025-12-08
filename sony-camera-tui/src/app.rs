@@ -345,8 +345,10 @@ impl App {
             CameraUpdate::PropertyChanged {
                 code,
                 value,
+                raw_value,
                 available,
                 writable,
+                kind,
             } => {
                 // Clear in-flight state if this property was waiting for confirmation
                 if let Some((in_flight_code, _)) = self.in_flight_property {
@@ -356,7 +358,7 @@ impl App {
                     }
                 }
                 self.properties
-                    .update_property(code, &value, available, writable);
+                    .update_property(code, &value, raw_value, available, writable, kind);
             }
             CameraUpdate::Error { message } => {
                 self.log_event("Error", &message);
@@ -716,28 +718,25 @@ impl App {
                 self.change_property_category(-1);
             }
             Action::PropertyEditorValueNext => {
-                if self.property_editor.focus == PropertyEditorFocus::Properties {
-                    if let Some(code) = self.selected_property_id_in_editor() {
-                        if !self.is_in_flight(code) {
-                            if let Some(prop) = self.properties.get_mut(code) {
-                                let new_index = prop.next();
-                                self.queue_property_change(code, new_index);
-                            }
-                        }
-                    }
-                }
+                self.adjust_property_value(1);
             }
             Action::PropertyEditorValuePrev => {
-                if self.property_editor.focus == PropertyEditorFocus::Properties {
-                    if let Some(code) = self.selected_property_id_in_editor() {
-                        if !self.is_in_flight(code) {
-                            if let Some(prop) = self.properties.get_mut(code) {
-                                let new_index = prop.prev();
-                                self.queue_property_change(code, new_index);
-                            }
-                        }
-                    }
-                }
+                self.adjust_property_value(-1);
+            }
+            Action::PropertyEditorValueNextFast => {
+                self.adjust_property_value(10);
+            }
+            Action::PropertyEditorValuePrevFast => {
+                self.adjust_property_value(-10);
+            }
+            Action::PropertyEditorValueToMin => {
+                self.set_property_to_extreme(false);
+            }
+            Action::PropertyEditorValueToMax => {
+                self.set_property_to_extreme(true);
+            }
+            Action::PropertyEditorEditValue => {
+                // Will be implemented with the modal
             }
             Action::PropertyEditorOpenValues => {
                 if self.property_editor.focus == PropertyEditorFocus::Properties {
@@ -831,6 +830,46 @@ impl App {
 
         self.property_editor.focus = PropertyEditorFocus::Properties;
         self.screen = Screen::PropertyEditor;
+    }
+
+    fn adjust_property_value(&mut self, steps: i64) {
+        if self.property_editor.focus != PropertyEditorFocus::Properties {
+            return;
+        }
+        let Some(code) = self.selected_property_id_in_editor() else {
+            return;
+        };
+        if self.is_in_flight(code) {
+            return;
+        }
+        let Some(prop) = self.properties.get_mut(code) else {
+            return;
+        };
+
+        let new_index = prop.advance(steps);
+        self.queue_property_change(code, new_index);
+    }
+
+    fn set_property_to_extreme(&mut self, to_max: bool) {
+        if self.property_editor.focus != PropertyEditorFocus::Properties {
+            return;
+        }
+        let Some(code) = self.selected_property_id_in_editor() else {
+            return;
+        };
+        if self.is_in_flight(code) {
+            return;
+        }
+        let Some(prop) = self.properties.get_mut(code) else {
+            return;
+        };
+
+        let new_index = if to_max {
+            prop.set_index(prop.value_count().saturating_sub(1))
+        } else {
+            prop.set_index(0)
+        };
+        self.queue_property_change(code, new_index);
     }
 
     fn handle_events_action(&mut self, action: Action) {

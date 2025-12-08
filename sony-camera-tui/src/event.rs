@@ -145,6 +145,8 @@ impl EventHandler {
     }
 
     fn map_property_editor_key(key: KeyEvent, focus: PropertyEditorFocus) -> Option<Action> {
+        let shift = key.modifiers.contains(KeyModifiers::SHIFT);
+
         match key.code {
             KeyCode::Char('q') => Some(Action::Quit),
             KeyCode::Char('?') => Some(Action::ShowHelp),
@@ -153,8 +155,44 @@ impl EventHandler {
             KeyCode::Char('k') | KeyCode::Up => Some(Action::PropertyEditorPrev),
             KeyCode::Tab => Some(Action::PropertyEditorNextCategory),
             KeyCode::BackTab => Some(Action::PropertyEditorPrevCategory),
-            KeyCode::Char('h') | KeyCode::Left => Some(Action::PropertyEditorValuePrev),
-            KeyCode::Char('l') | KeyCode::Right => Some(Action::PropertyEditorValueNext),
+            // Value navigation with shift for fast mode
+            KeyCode::Char('h') => {
+                if shift {
+                    Some(Action::PropertyEditorValuePrevFast)
+                } else {
+                    Some(Action::PropertyEditorValuePrev)
+                }
+            }
+            KeyCode::Char('H') => Some(Action::PropertyEditorValuePrevFast),
+            KeyCode::Char('l') => {
+                if shift {
+                    Some(Action::PropertyEditorValueNextFast)
+                } else {
+                    Some(Action::PropertyEditorValueNext)
+                }
+            }
+            KeyCode::Char('L') => Some(Action::PropertyEditorValueNextFast),
+            KeyCode::Left => {
+                if shift {
+                    Some(Action::PropertyEditorValuePrevFast)
+                } else {
+                    Some(Action::PropertyEditorValuePrev)
+                }
+            }
+            KeyCode::Right => {
+                if shift {
+                    Some(Action::PropertyEditorValueNextFast)
+                } else {
+                    Some(Action::PropertyEditorValueNext)
+                }
+            }
+            // Jump to min/max
+            KeyCode::Char('g') => Some(Action::PropertyEditorValueToMin),
+            KeyCode::Char('G') => Some(Action::PropertyEditorValueToMax),
+            KeyCode::Home => Some(Action::PropertyEditorValueToMin),
+            KeyCode::End => Some(Action::PropertyEditorValueToMax),
+            // Direct value input for ranges
+            KeyCode::Char('e') => Some(Action::PropertyEditorEditValue),
             KeyCode::Char('*') => Some(Action::TogglePropertyPin),
             KeyCode::Char('i') => Some(Action::TogglePropertyInfo),
             KeyCode::Char('o') | KeyCode::Enter => match focus {
