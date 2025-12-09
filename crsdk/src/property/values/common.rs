@@ -3,7 +3,8 @@
 use std::fmt;
 
 use super::super::traits::PropertyValue;
-use crate::types::ToCrsdk;
+use crate::error::{Error, Result};
+use crate::types::{FromCrsdk, ToCrsdk};
 
 /// How to interpret and format a property's raw value.
 ///
@@ -111,11 +112,13 @@ impl ToCrsdk<u64> for Integer {
     }
 }
 
-impl PropertyValue for Integer {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(Integer(raw as i64))
+impl FromCrsdk<u64> for Integer {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(Integer(raw as i64))
     }
 }
+
+impl PropertyValue for Integer {}
 
 impl fmt::Display for Integer {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -142,11 +145,13 @@ impl ToCrsdk<u64> for Percentage {
     }
 }
 
-impl PropertyValue for Percentage {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(Percentage(raw))
+impl FromCrsdk<u64> for Percentage {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(Percentage(raw))
     }
 }
+
+impl PropertyValue for Percentage {}
 
 impl fmt::Display for Percentage {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -172,15 +177,17 @@ impl ToCrsdk<u64> for Switch {
     }
 }
 
-impl PropertyValue for Switch {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u8 {
+impl FromCrsdk<u64> for Switch {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
             1 => Self::Off,
             2 => Self::On,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for Switch {}
 
 impl fmt::Display for Switch {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -209,15 +216,17 @@ impl ToCrsdk<u64> for OnOff {
     }
 }
 
-impl PropertyValue for OnOff {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u8 {
+impl FromCrsdk<u64> for OnOff {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
             0 => Self::Off,
             1 => Self::On,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for OnOff {}
 
 impl fmt::Display for OnOff {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -246,15 +255,17 @@ impl ToCrsdk<u64> for AutoManual {
     }
 }
 
-impl PropertyValue for AutoManual {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u8 {
+impl FromCrsdk<u64> for AutoManual {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
             1 => Self::Automatic,
             2 => Self::Manual,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for AutoManual {}
 
 impl fmt::Display for AutoManual {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -285,16 +296,18 @@ impl ToCrsdk<u64> for LockIndicator {
     }
 }
 
-impl PropertyValue for LockIndicator {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u16 {
+impl FromCrsdk<u64> for LockIndicator {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
             0 => Self::Unknown,
             1 => Self::Unlocked,
             2 => Self::Locked,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for LockIndicator {}
 
 impl fmt::Display for LockIndicator {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -324,16 +337,18 @@ impl ToCrsdk<u64> for LiveViewDisplayEffect {
     }
 }
 
-impl PropertyValue for LiveViewDisplayEffect {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u8 {
+impl FromCrsdk<u64> for LiveViewDisplayEffect {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
             0 => Self::Unknown,
             1 => Self::On,
             2 => Self::Off,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for LiveViewDisplayEffect {}
 
 impl fmt::Display for LiveViewDisplayEffect {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -363,16 +378,18 @@ impl ToCrsdk<u64> for SilentModeApertureDrive {
     }
 }
 
-impl PropertyValue for SilentModeApertureDrive {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u8 {
+impl FromCrsdk<u64> for SilentModeApertureDrive {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
             1 => Self::NotTarget,
             2 => Self::Standard,
             3 => Self::SilentPriority,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for SilentModeApertureDrive {}
 
 impl fmt::Display for SilentModeApertureDrive {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

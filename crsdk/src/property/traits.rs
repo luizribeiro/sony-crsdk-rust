@@ -1,6 +1,6 @@
 //! Core trait for property value types.
 
-use crate::types::ToCrsdk;
+use crate::types::{FromCrsdk, ToCrsdk};
 use std::fmt::Display;
 
 /// Trait for all property value types.
@@ -18,15 +18,18 @@ use std::fmt::Display;
 /// assert_eq!(aperture.to_string(), "f/2.8");
 /// assert_eq!(aperture.to_raw(), 280);
 /// ```
-pub trait PropertyValue: ToCrsdk<u64> + Display + Clone {
+pub trait PropertyValue: ToCrsdk<u64> + FromCrsdk<u64> + Display + Clone {
     /// Create a typed value from a raw SDK value.
     ///
     /// Returns `None` if the raw value is invalid or unrecognized.
-    /// The SDK always provides values as `u64`, even for signed types;
-    /// implementations handle the reinterpretation internally.
+    /// This is a convenience wrapper around `from_crsdk` for cases
+    /// where unknown values should be handled gracefully.
     fn from_raw(raw: u64) -> Option<Self>
     where
-        Self: Sized;
+        Self: Sized,
+    {
+        Self::from_crsdk(raw).ok()
+    }
 
     /// Convert back to a raw SDK value.
     ///

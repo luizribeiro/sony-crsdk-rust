@@ -3,7 +3,8 @@
 use std::fmt;
 
 use super::super::traits::PropertyValue;
-use crate::types::ToCrsdk;
+use crate::error::{Error, Result};
+use crate::types::{FromCrsdk, ToCrsdk};
 
 /// Movie recording quality/bitrate setting.
 ///
@@ -25,11 +26,13 @@ impl ToCrsdk<u64> for MovieQuality {
     }
 }
 
-impl PropertyValue for MovieQuality {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(MovieQuality(raw))
+impl FromCrsdk<u64> for MovieQuality {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(MovieQuality(raw))
     }
 }
+
+impl PropertyValue for MovieQuality {}
 
 impl fmt::Display for MovieQuality {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -161,9 +164,9 @@ impl ToCrsdk<u64> for MovieFileFormat {
     }
 }
 
-impl PropertyValue for MovieFileFormat {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u8 {
+impl FromCrsdk<u64> for MovieFileFormat {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
             0 => Self::Avchd,
             1 => Self::Mp4,
             2 => Self::XavcS4k,
@@ -183,10 +186,12 @@ impl PropertyValue for MovieFileFormat {
             16 => Self::XavcHL,
             17 => Self::XOcnXt,
             18 => Self::XOcnSt,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for MovieFileFormat {}
 
 impl fmt::Display for MovieFileFormat {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

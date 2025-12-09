@@ -3,7 +3,8 @@
 use std::fmt;
 
 use super::super::traits::PropertyValue;
-use crate::types::ToCrsdk;
+use crate::error::{Error, Result};
+use crate::types::{FromCrsdk, ToCrsdk};
 
 /// Flash mode settings
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -29,19 +30,21 @@ impl ToCrsdk<u64> for FlashMode {
     }
 }
 
-impl PropertyValue for FlashMode {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u16 {
+impl FromCrsdk<u64> for FlashMode {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
             1 => Self::Auto,
             2 => Self::Off,
             3 => Self::Fill,
             4 => Self::ExternalSync,
             5 => Self::SlowSync,
             6 => Self::RearSync,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for FlashMode {}
 
 impl fmt::Display for FlashMode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

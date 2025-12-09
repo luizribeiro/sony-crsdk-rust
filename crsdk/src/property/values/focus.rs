@@ -3,7 +3,8 @@
 use std::fmt;
 
 use super::super::traits::PropertyValue;
-use crate::types::ToCrsdk;
+use crate::error::{Error, Result};
+use crate::types::{FromCrsdk, ToCrsdk};
 
 /// Focus mode settings
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -31,9 +32,9 @@ impl ToCrsdk<u64> for FocusMode {
     }
 }
 
-impl PropertyValue for FocusMode {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u16 {
+impl FromCrsdk<u64> for FocusMode {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
             1 => Self::Manual,
             2 => Self::AfSingle,
             6 => Self::AfContinuous,
@@ -41,10 +42,12 @@ impl PropertyValue for FocusMode {
             4 => Self::AfDeepLearning,
             5 => Self::DirectManual,
             7 => Self::PresetFocus,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for FocusMode {}
 
 impl fmt::Display for FocusMode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -128,9 +131,9 @@ impl ToCrsdk<u64> for FocusArea {
     }
 }
 
-impl PropertyValue for FocusArea {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u16 {
+impl FromCrsdk<u64> for FocusArea {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
             0 => Self::Unknown,
             1 => Self::Wide,
             2 => Self::Zone,
@@ -158,10 +161,12 @@ impl PropertyValue for FocusArea {
             272 => Self::TrackingFlexibleSpotFreeSize1,
             273 => Self::TrackingFlexibleSpotFreeSize2,
             274 => Self::TrackingFlexibleSpotFreeSize3,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for FocusArea {}
 
 impl fmt::Display for FocusArea {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -216,16 +221,18 @@ impl ToCrsdk<u64> for SubjectRecognitionAF {
     }
 }
 
-impl PropertyValue for SubjectRecognitionAF {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u8 {
+impl FromCrsdk<u64> for SubjectRecognitionAF {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
             1 => Self::Off,
             2 => Self::OnlyAF,
             3 => Self::PriorityAF,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for SubjectRecognitionAF {}
 
 impl fmt::Display for SubjectRecognitionAF {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -255,16 +262,18 @@ impl ToCrsdk<u64> for PrioritySetInAF {
     }
 }
 
-impl PropertyValue for PrioritySetInAF {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u8 {
+impl FromCrsdk<u64> for PrioritySetInAF {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
             1 => Self::AF,
             2 => Self::Release,
             3 => Self::BalancedEmphasis,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for PrioritySetInAF {}
 
 impl fmt::Display for PrioritySetInAF {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -294,16 +303,18 @@ impl ToCrsdk<u64> for FocusTrackingStatus {
     }
 }
 
-impl PropertyValue for FocusTrackingStatus {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u8 {
+impl FromCrsdk<u64> for FocusTrackingStatus {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
             1 => Self::Off,
             2 => Self::Focusing,
             3 => Self::Tracking,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for FocusTrackingStatus {}
 
 impl fmt::Display for FocusTrackingStatus {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

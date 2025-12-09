@@ -3,7 +3,8 @@
 use std::fmt;
 
 use super::super::traits::PropertyValue;
-use crate::types::ToCrsdk;
+use crate::error::{Error, Result};
+use crate::types::{FromCrsdk, ToCrsdk};
 
 /// Color temperature value in Kelvin.
 ///
@@ -25,15 +26,17 @@ impl ToCrsdk<u64> for ColorTemperature {
     }
 }
 
-impl PropertyValue for ColorTemperature {
-    fn from_raw(raw: u64) -> Option<Self> {
+impl FromCrsdk<u64> for ColorTemperature {
+    fn from_crsdk(raw: u64) -> Result<Self> {
         if raw == 0 {
-            None
+            Err(Error::InvalidPropertyValue)
         } else {
-            Some(ColorTemperature(raw))
+            Ok(ColorTemperature(raw))
         }
     }
 }
+
+impl PropertyValue for ColorTemperature {}
 
 impl fmt::Display for ColorTemperature {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -88,10 +91,10 @@ impl ToCrsdk<u64> for WhiteBalance {
     }
 }
 
-impl PropertyValue for WhiteBalance {
-    fn from_raw(raw: u64) -> Option<Self> {
+impl FromCrsdk<u64> for WhiteBalance {
+    fn from_crsdk(raw: u64) -> Result<Self> {
         let value = raw as u16;
-        Some(match value {
+        Ok(match value {
             0 => Self::Auto,
             17 => Self::Daylight,
             18 => Self::Shade,
@@ -109,10 +112,12 @@ impl PropertyValue for WhiteBalance {
             258 => Self::Custom2,
             259 => Self::Custom3,
             272 => Self::Custom,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for WhiteBalance {}
 
 impl fmt::Display for WhiteBalance {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -157,16 +162,18 @@ impl ToCrsdk<u64> for PrioritySetInAWB {
     }
 }
 
-impl PropertyValue for PrioritySetInAWB {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u8 {
+impl FromCrsdk<u64> for PrioritySetInAWB {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
             1 => Self::Standard,
             2 => Self::Ambience,
             3 => Self::White,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for PrioritySetInAWB {}
 
 impl fmt::Display for PrioritySetInAWB {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

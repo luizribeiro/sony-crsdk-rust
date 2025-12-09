@@ -3,7 +3,8 @@
 use std::fmt;
 
 use super::super::traits::PropertyValue;
-use crate::types::ToCrsdk;
+use crate::error::{Error, Result};
+use crate::types::{FromCrsdk, ToCrsdk};
 
 /// File type for still images (RAW vs JPEG)
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -29,19 +30,21 @@ impl ToCrsdk<u64> for FileType {
     }
 }
 
-impl PropertyValue for FileType {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u16 {
+impl FromCrsdk<u64> for FileType {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
             0 => Self::None,
             1 => Self::Jpeg,
             2 => Self::Raw,
             3 => Self::RawJpeg,
             4 => Self::RawHeif,
             5 => Self::Heif,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for FileType {}
 
 impl fmt::Display for FileType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -79,18 +82,20 @@ impl ToCrsdk<u64> for ImageQuality {
     }
 }
 
-impl PropertyValue for ImageQuality {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u16 {
+impl FromCrsdk<u64> for ImageQuality {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
             0 => Self::Unknown,
             1 => Self::Light,
             2 => Self::Standard,
             3 => Self::Fine,
             4 => Self::ExFine,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for ImageQuality {}
 
 impl fmt::Display for ImageQuality {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -125,17 +130,19 @@ impl ToCrsdk<u64> for AspectRatio {
     }
 }
 
-impl PropertyValue for AspectRatio {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u8 {
+impl FromCrsdk<u64> for AspectRatio {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
             1 => Self::Ratio3x2,
             2 => Self::Ratio16x9,
             3 => Self::Ratio4x3,
             4 => Self::Ratio1x1,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for AspectRatio {}
 
 impl fmt::Display for AspectRatio {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -169,17 +176,19 @@ impl ToCrsdk<u64> for ImageSize {
     }
 }
 
-impl PropertyValue for ImageSize {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u8 {
+impl FromCrsdk<u64> for ImageSize {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
             1 => Self::Large,
             2 => Self::Medium,
             3 => Self::Small,
             4 => Self::Vga,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for ImageSize {}
 
 impl fmt::Display for ImageSize {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

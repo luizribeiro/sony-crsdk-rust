@@ -1,7 +1,8 @@
 //! Drive mode value types.
 
 use super::super::PropertyValue;
-use crate::types::ToCrsdk;
+use crate::error::{Error, Result};
+use crate::types::{FromCrsdk, ToCrsdk};
 
 /// Drive mode / shooting mode settings
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -399,11 +400,11 @@ pub enum DriveMode {
     SelfPortrait2 = crsdk_sys::SCRSDK::CrDriveMode_CrDrive_SelfPortrait_2,
 }
 
-impl PropertyValue for DriveMode {
-    fn from_raw(raw: u64) -> Option<Self> {
+impl FromCrsdk<u64> for DriveMode {
+    fn from_crsdk(raw: u64) -> Result<Self> {
         use crsdk_sys::SCRSDK::*;
         let value = raw as u32;
-        Some(match value {
+        Ok(match value {
             x if x == CrDriveMode_CrDrive_Single => Self::Single,
             x if x == CrDriveMode_CrDrive_Continuous_Hi => Self::ContinuousHi,
             x if x == CrDriveMode_CrDrive_Continuous_Hi_Plus => Self::ContinuousHiPlus,
@@ -725,10 +726,12 @@ impl PropertyValue for DriveMode {
             x if x == CrDriveMode_CrDrive_MirrorUp => Self::MirrorUp,
             x if x == CrDriveMode_CrDrive_SelfPortrait_1 => Self::SelfPortrait1,
             x if x == CrDriveMode_CrDrive_SelfPortrait_2 => Self::SelfPortrait2,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for DriveMode {}
 
 impl ToCrsdk<u64> for DriveMode {
     fn to_crsdk(&self) -> u64 {
@@ -754,16 +757,18 @@ impl ToCrsdk<u64> for IntervalRecShutterType {
     }
 }
 
-impl PropertyValue for IntervalRecShutterType {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u8 {
+impl FromCrsdk<u64> for IntervalRecShutterType {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
             1 => Self::Auto,
             2 => Self::Mechanical,
             3 => Self::Electronic,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for IntervalRecShutterType {}
 
 impl std::fmt::Display for IntervalRecShutterType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {

@@ -3,7 +3,8 @@
 use std::fmt;
 
 use super::super::traits::PropertyValue;
-use crate::types::ToCrsdk;
+use crate::error::{Error, Result};
+use crate::types::{FromCrsdk, ToCrsdk};
 
 /// Aperture (f-number) value.
 ///
@@ -25,15 +26,17 @@ impl ToCrsdk<u64> for Aperture {
     }
 }
 
-impl PropertyValue for Aperture {
-    fn from_raw(raw: u64) -> Option<Self> {
+impl FromCrsdk<u64> for Aperture {
+    fn from_crsdk(raw: u64) -> Result<Self> {
         if raw == 0 {
-            None
+            Err(Error::InvalidPropertyValue)
         } else {
-            Some(Aperture(raw))
+            Ok(Aperture(raw))
         }
     }
 }
+
+impl PropertyValue for Aperture {}
 
 impl fmt::Display for Aperture {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -81,15 +84,17 @@ impl ToCrsdk<u64> for ShutterSpeed {
     }
 }
 
-impl PropertyValue for ShutterSpeed {
-    fn from_raw(raw: u64) -> Option<Self> {
+impl FromCrsdk<u64> for ShutterSpeed {
+    fn from_crsdk(raw: u64) -> Result<Self> {
         if raw == 0 {
-            None
+            Err(Error::InvalidPropertyValue)
         } else {
-            Some(ShutterSpeed(raw))
+            Ok(ShutterSpeed(raw))
         }
     }
 }
+
+impl PropertyValue for ShutterSpeed {}
 
 impl fmt::Display for ShutterSpeed {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -129,15 +134,17 @@ impl ToCrsdk<u64> for Iso {
     }
 }
 
-impl PropertyValue for Iso {
-    fn from_raw(raw: u64) -> Option<Self> {
+impl FromCrsdk<u64> for Iso {
+    fn from_crsdk(raw: u64) -> Result<Self> {
         if raw == 0 {
-            None
+            Err(Error::InvalidPropertyValue)
         } else {
-            Some(Iso(raw))
+            Ok(Iso(raw))
         }
     }
 }
+
+impl PropertyValue for Iso {}
 
 impl fmt::Display for Iso {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -170,11 +177,13 @@ impl ToCrsdk<u64> for ExposureComp {
     }
 }
 
-impl PropertyValue for ExposureComp {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(ExposureComp(raw as i64))
+impl FromCrsdk<u64> for ExposureComp {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(ExposureComp(raw as i64))
     }
 }
+
+impl PropertyValue for ExposureComp {}
 
 impl fmt::Display for ExposureComp {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -215,11 +224,13 @@ impl ToCrsdk<u64> for MeterLevel {
     }
 }
 
-impl PropertyValue for MeterLevel {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(MeterLevel(raw as i64))
+impl FromCrsdk<u64> for MeterLevel {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(MeterLevel(raw as i64))
     }
 }
+
+impl PropertyValue for MeterLevel {}
 
 impl fmt::Display for MeterLevel {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -360,9 +371,9 @@ impl ToCrsdk<u64> for ExposureProgram {
     }
 }
 
-impl PropertyValue for ExposureProgram {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u32 {
+impl FromCrsdk<u64> for ExposureProgram {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u32 {
             1 => Self::Manual,
             2 => Self::ProgramAuto,
             3 => Self::AperturePriority,
@@ -423,10 +434,12 @@ impl PropertyValue for ExposureProgram {
             32906 => Self::MovieIntervalRecS,
             32907 => Self::MovieIntervalRecM,
             32908 => Self::MovieIntervalRecAuto,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for ExposureProgram {}
 
 impl fmt::Display for ExposureProgram {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -605,9 +618,9 @@ impl ToCrsdk<u64> for MeteringMode {
     }
 }
 
-impl PropertyValue for MeteringMode {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u16 {
+impl FromCrsdk<u64> for MeteringMode {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
             1 => Self::Average,
             2 => Self::CenterWeightedAverage,
             3 => Self::MultiSpot,
@@ -621,10 +634,12 @@ impl PropertyValue for MeteringMode {
             32775 => Self::Standard,
             32776 => Self::Backlight,
             32777 => Self::Spotlight,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for MeteringMode {}
 
 impl fmt::Display for MeteringMode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -669,18 +684,20 @@ impl ToCrsdk<u64> for ShutterModeStatus {
     }
 }
 
-impl PropertyValue for ShutterModeStatus {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u8 {
+impl FromCrsdk<u64> for ShutterModeStatus {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
             1 => Self::Off,
             2 => Self::Speed,
             3 => Self::Angle,
             4 => Self::Ecs,
             5 => Self::Auto,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for ShutterModeStatus {}
 
 impl fmt::Display for ShutterModeStatus {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -710,15 +727,17 @@ impl ToCrsdk<u64> for ShutterMode {
     }
 }
 
-impl PropertyValue for ShutterMode {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u8 {
+impl FromCrsdk<u64> for ShutterMode {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
             1 => Self::Speed,
             2 => Self::Angle,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for ShutterMode {}
 
 impl fmt::Display for ShutterMode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -745,15 +764,17 @@ impl ToCrsdk<u64> for ExposureCtrlType {
     }
 }
 
-impl PropertyValue for ExposureCtrlType {
-    fn from_raw(raw: u64) -> Option<Self> {
-        Some(match raw as u8 {
+impl FromCrsdk<u64> for ExposureCtrlType {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
             1 => Self::Pasm,
             2 => Self::FlexibleExposure,
-            _ => return None,
+            _ => return Err(Error::InvalidPropertyValue),
         })
     }
 }
+
+impl PropertyValue for ExposureCtrlType {}
 
 impl fmt::Display for ExposureCtrlType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
