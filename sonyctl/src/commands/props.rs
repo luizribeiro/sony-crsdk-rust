@@ -135,11 +135,11 @@ fn list(
             }
         };
 
-        let cat_str = format!("{:?}", category);
+        let cat_str = category.name();
         let cat_display = if cat_str.len() > 14 {
             format!("{}…", &cat_str[..13])
         } else {
-            cat_str
+            cat_str.to_string()
         };
 
         let name_display = if display_name.len() > 35 {
