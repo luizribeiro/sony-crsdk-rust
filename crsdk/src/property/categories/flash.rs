@@ -9,6 +9,7 @@ use PropertyValueType as V;
 pub struct Flash;
 
 impl Category for Flash {
+    const NAME: &'static str = "Flash";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
             C::FlashCompensation,

@@ -9,6 +9,7 @@ use PropertyValueType as V;
 pub struct PictureProfile;
 
 impl Category for PictureProfile {
+    const NAME: &'static str = "Picture Profile";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
             C::PictureEffect,

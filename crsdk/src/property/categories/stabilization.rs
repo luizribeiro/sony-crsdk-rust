@@ -9,6 +9,7 @@ use PropertyValueType as V;
 pub struct Stabilization;
 
 impl Category for Stabilization {
+    const NAME: &'static str = "Stabilization";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
             C::ImageStabilizationSteadyShot,

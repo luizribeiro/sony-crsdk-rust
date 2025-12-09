@@ -9,6 +9,7 @@ use PropertyValueType as V;
 pub struct Lens;
 
 impl Category for Lens {
+    const NAME: &'static str = "Lens";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
             C::ButtonAssignmentLensAssignable1,

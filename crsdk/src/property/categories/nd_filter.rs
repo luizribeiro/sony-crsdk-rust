@@ -9,6 +9,7 @@ use PropertyValueType as V;
 pub struct NdFilter;
 
 impl Category for NdFilter {
+    const NAME: &'static str = "ND Filter";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
             C::NDFilter,

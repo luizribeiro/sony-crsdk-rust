@@ -9,6 +9,7 @@ use PropertyValueType as V;
 pub struct Zoom;
 
 impl Category for Zoom {
+    const NAME: &'static str = "Zoom";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
             C::ZoomScale,

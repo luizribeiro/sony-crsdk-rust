@@ -45,6 +45,17 @@ macro_rules! define_categories {
                 .unwrap_or(PropertyValueType::Unknown)
         }
 
+        impl PropertyCategory {
+            /// Get category name as a string.
+            pub const fn name(self) -> &'static str {
+                match self {
+                    $(
+                        PropertyCategory::$variant => <$module as Category>::NAME,
+                    )+
+                }
+            }
+        }
+
         /// All registered category modules for validation.
         #[allow(dead_code)]
         const REGISTERED_CATEGORIES: &[(&str, &[PropertyDef])] = &[

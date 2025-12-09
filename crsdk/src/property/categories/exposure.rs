@@ -9,6 +9,7 @@ use PropertyValueType as V;
 pub struct Exposure;
 
 impl Category for Exposure {
+    const NAME: &'static str = "Exposure";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
             C::FNumber,

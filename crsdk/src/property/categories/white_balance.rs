@@ -9,6 +9,7 @@ use PropertyValueType as V;
 pub struct WhiteBalance;
 
 impl Category for WhiteBalance {
+    const NAME: &'static str = "White Balance";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
             C::AWBL,

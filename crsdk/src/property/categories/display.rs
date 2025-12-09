@@ -9,6 +9,7 @@ use PropertyValueType as V;
 pub struct Display;
 
 impl Category for Display {
+    const NAME: &'static str = "Display";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
             C::LiveViewDisplayEffect,

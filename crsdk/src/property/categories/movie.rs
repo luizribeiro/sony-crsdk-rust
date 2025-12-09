@@ -9,6 +9,7 @@ use PropertyValueType as V;
 pub struct Movie;
 
 impl Category for Movie {
+    const NAME: &'static str = "Movie";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
             C::MovieFileFormat,

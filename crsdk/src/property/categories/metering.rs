@@ -9,6 +9,7 @@ use PropertyValueType as V;
 pub struct Metering;
 
 impl Category for Metering {
+    const NAME: &'static str = "Metering";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
             C::MeteringMode,

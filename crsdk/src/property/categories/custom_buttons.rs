@@ -9,6 +9,7 @@ use PropertyValueType as V;
 pub struct CustomButtons;
 
 impl Category for CustomButtons {
+    const NAME: &'static str = "Custom Buttons";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
             C::ButtonAssignmentAssignable1,

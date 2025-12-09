@@ -17,6 +17,7 @@ use PropertyValueType as V;
 pub struct Other;
 
 impl Category for Other {
+    const NAME: &'static str = "Other";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(C::Undefined, "Unknown", "Undefined property.", None),
         PropertyDef::new(

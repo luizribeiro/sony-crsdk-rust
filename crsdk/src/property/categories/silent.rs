@@ -9,6 +9,7 @@ use PropertyValueType as V;
 pub struct Silent;
 
 impl Category for Silent {
+    const NAME: &'static str = "Silent";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
             C::SilentMode,

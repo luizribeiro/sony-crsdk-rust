@@ -9,6 +9,7 @@ use PropertyValueType as V;
 pub struct Power;
 
 impl Category for Power {
+    const NAME: &'static str = "Power";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
             C::AutoPowerOffTemperature,

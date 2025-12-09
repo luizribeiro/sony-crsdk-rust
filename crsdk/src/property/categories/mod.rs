@@ -79,6 +79,8 @@ impl PropertyDef {
 
 /// Trait implemented by each category module.
 pub trait Category {
+    /// Human-readable name for this category.
+    const NAME: &'static str;
     /// All properties belonging to this category with their metadata.
     const PROPERTIES: &'static [PropertyDef];
 }
@@ -127,34 +129,6 @@ pub enum PropertyCategory {
     WhiteBalance,
     /// Zoom properties
     Zoom,
-}
-
-impl PropertyCategory {
-    /// Get category name as a string.
-    pub const fn name(self) -> &'static str {
-        match self {
-            Self::Audio => "Audio",
-            Self::CustomButtons => "Custom Buttons",
-            Self::Display => "Display",
-            Self::Drive => "Drive",
-            Self::Exposure => "Exposure",
-            Self::Flash => "Flash",
-            Self::Focus => "Focus",
-            Self::Image => "Image",
-            Self::Lens => "Lens",
-            Self::Media => "Media",
-            Self::Metering => "Metering",
-            Self::Movie => "Movie",
-            Self::NDFilter => "ND Filter",
-            Self::Other => "Other",
-            Self::PictureProfile => "Picture Profile",
-            Self::Power => "Power",
-            Self::Silent => "Silent",
-            Self::Stabilization => "Stabilization",
-            Self::WhiteBalance => "White Balance",
-            Self::Zoom => "Zoom",
-        }
-    }
 }
 
 impl core::fmt::Display for PropertyCategory {

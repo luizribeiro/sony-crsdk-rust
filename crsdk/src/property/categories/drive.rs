@@ -9,6 +9,7 @@ use PropertyValueType as V;
 pub struct Drive;
 
 impl Category for Drive {
+    const NAME: &'static str = "Drive";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
             C::DriveMode,

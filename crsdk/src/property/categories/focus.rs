@@ -9,6 +9,7 @@ use PropertyValueType as V;
 pub struct Focus;
 
 impl Category for Focus {
+    const NAME: &'static str = "Focus";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
             C::FocusMode,

@@ -9,6 +9,7 @@ use PropertyValueType as V;
 pub struct Audio;
 
 impl Category for Audio {
+    const NAME: &'static str = "Audio";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
             C::AudioInputMasterLevel,
