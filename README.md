@@ -1,6 +1,6 @@
 # Sony Camera Remote SDK - Rust Wrapper
 
-Safe, idiomatic Rust bindings for the Sony Camera Remote SDK, enabling programmatic control of Sony cameras via network connection.
+Safe, idiomatic Rust bindings for the Sony Camera Remote SDK, enabling programmatic control of Sony cameras via network or USB.
 
 ## Supported Cameras
 
@@ -27,21 +27,81 @@ The SDK libraries are **not included** due to licensing restrictions.
 ### 3. Build
 
 ```bash
-cargo build --example connect
+cargo build
 ```
 
 ## Usage
 
-### Connect to a Camera
+### sonyctl - CLI/TUI Tool
+
+The easiest way to interact with your camera is through `sonyctl`:
 
 ```bash
-cargo run --example connect -- \
-  --ip 192.168.1.100 \
-  --mac 00:00:00:00:00:00 \
-  --ssh \
-  --user your_username \
-  --password yourpassword
+# Launch interactive TUI with camera discovery
+cargo run -p sonyctl -- tui
+
+# Or connect directly to a known camera
+cargo run -p sonyctl -- --ip 192.168.1.100 --mac 00:00:00:00:00:00 tui
 ```
+
+#### CLI Commands
+
+```bash
+# Show camera info
+sonyctl --ip 192.168.1.100 --mac 00:00:00:00:00:00 info
+
+# List all camera properties
+sonyctl --ip 192.168.1.100 --mac 00:00:00:00:00:00 props list
+
+# Filter properties by name
+sonyctl props list --filter iso
+
+# Get detailed property info
+sonyctl props get IsoSensitivity
+
+# Set a property value
+sonyctl props set IsoSensitivity 800
+
+# Capture a photo
+sonyctl capture
+
+# Video recording
+sonyctl record start
+sonyctl record stop
+```
+
+#### Environment Variables
+
+Connection parameters can be set via environment variables:
+
+```bash
+export SONY_CAMERA_IP=192.168.1.100
+export SONY_CAMERA_MAC=00:00:00:00:00:00
+export SONY_SSH_USER=your_username
+export SONY_SSH_PASSWORD=your_password
+
+# Then simply:
+sonyctl tui
+sonyctl capture
+```
+
+### Examples
+
+```bash
+# Discover cameras on network/USB
+cargo run --example discover
+
+# Connect to a camera
+cargo run --example connect -- --ip 192.168.1.100 --mac 00:00:00:00:00:00
+
+# Monitor camera events
+cargo run --example events -- --ip 192.168.1.100 --mac 00:00:00:00:00:00
+
+# Inspect and modify properties
+cargo run --example props -- --ip 192.168.1.100 --mac 00:00:00:00:00:00 list
+```
+
+For SSH connections, add `--ssh --user <USER> --password <PASS>`.
 
 Find your camera's MAC address with:
 ```bash
@@ -63,41 +123,63 @@ async fn main() -> Result<()> {
         .connect()
         .await?;
 
-    println!("Connected to {}", camera.model());
+    println!("Connected to {}", camera.model().await);
     Ok(())
 }
+```
+
+For blocking (non-async) usage:
+
+```rust
+use crsdk::blocking::CameraDevice;
 ```
 
 ## Project Structure
 
 ```
 sony-crsdk-rust/
-├── crsdk-sys/          # Unsafe FFI bindings (auto-generated via bindgen)
-├── crsdk/              # Safe Rust wrapper
+├── crsdk-sys/           # Unsafe FFI bindings (auto-generated via bindgen)
+├── crsdk/               # Safe Rust wrapper library
 │   ├── src/
-│   │   ├── device.rs   # Camera connection
-│   │   ├── types.rs    # MacAddr, CameraModel, etc.
-│   │   ├── error.rs    # Error types
-│   │   └── sdk.rs      # SDK lifecycle
+│   │   ├── device.rs    # Async camera connection
+│   │   ├── blocking/    # Blocking (sync) API
+│   │   ├── property/    # Property system (ISO, aperture, etc.)
+│   │   ├── command.rs   # Shooting commands
+│   │   ├── event.rs     # Camera event types
+│   │   ├── types.rs     # MacAddr, CameraModel, etc.
+│   │   ├── error.rs     # Error types
+│   │   └── sdk.rs       # SDK lifecycle
 │   └── examples/
-│       └── connect.rs  # Connection example
-├── libs/               # SDK libraries (not in git, created by setup script)
+│       ├── connect.rs   # Basic connection
+│       ├── discover.rs  # Camera discovery
+│       ├── events.rs    # Event monitoring
+│       └── props.rs     # Property inspector
+├── sonyctl/             # CLI/TUI application
+│   └── src/
+│       ├── commands/    # CLI command handlers
+│       └── tui/         # Terminal UI
+├── libs/                # SDK libraries (created by setup script)
 └── scripts/
-    └── setup-libs.sh   # Library setup script
+    └── setup-libs.sh    # Library setup script
 ```
 
-## Development Status
+## Features
 
-**Phase 1: Foundation** (current)
+### Implemented
+
 - SDK initialization and lifecycle
+- Camera discovery (network and USB enumeration)
 - Network connection (IP + MAC + SSH)
-- Error handling
+- Property system (ISO, aperture, shutter speed, focus mode, white balance, etc.)
+- Shooting operations (capture, autofocus, movie recording)
+- Event callbacks (property changes, warnings, errors, transfer progress)
+- Interactive TUI with camera discovery
 
-Future phases:
-- Property system (ISO, aperture, shutter speed, etc.)
-- Shooting operations
+### Planned
+
 - Live view streaming
-- Event callbacks
+- Content transfer (download images/videos)
+- Advanced features (firmware update, settings management)
 
 ## Troubleshooting
 
