@@ -16,7 +16,7 @@ static SDK_LOCK: Mutex<()> = Mutex::new(());
 ///
 /// Note: This type is intentionally !Send and !Sync because the underlying
 /// C++ SDK is not thread-safe and must be used from a single thread.
-pub struct Sdk {
+pub(crate) struct Sdk {
     // PhantomData<*const ()> makes this type !Send and !Sync
     _marker: PhantomData<*const ()>,
 }
@@ -27,15 +27,6 @@ impl Sdk {
     /// This must be called once before any camera operations.
     /// Multiple calls will return an error.
     ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// use crsdk::Sdk;
-    ///
-    /// let sdk = Sdk::init()?;
-    /// // Use SDK...
-    /// # Ok::<(), crsdk::Error>(())
-    /// ```
     pub fn init() -> Result<Self> {
         let _guard = SDK_LOCK.lock().unwrap();
 
@@ -68,17 +59,7 @@ impl Sdk {
         unsafe { crsdk_sys::SCRSDK::GetSDKVersion() }
     }
 
-    /// Get SDK version as a formatted string
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// use crsdk::Sdk;
-    ///
-    /// let sdk = Sdk::init()?;
-    /// println!("SDK version: {}", sdk.version_string());
-    /// # Ok::<(), crsdk::Error>(())
-    /// ```
+    /// Get SDK version as a formatted string (e.g., "2.0.00").
     pub fn version_string(&self) -> String {
         let version = self.version();
         let major = (version >> 24) & 0xFF;

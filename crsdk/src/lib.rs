@@ -81,7 +81,7 @@ pub use property::{
     SilentModeApertureDrive, SubjectRecognitionAF, Switch, TypedValue, ValueConstraint,
     WhiteBalance,
 };
-pub use sdk::Sdk;
+pub(crate) use sdk::Sdk;
 pub use types::{CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, MacAddr};
 
 // Re-export generated property codes (complete SDK coverage)
