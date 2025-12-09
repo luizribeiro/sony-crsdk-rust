@@ -1,6 +1,8 @@
 use std::io;
+use std::path::PathBuf;
 
 use anyhow::Result;
+use clap::Args as ClapArgs;
 use crossterm::{
     event::{DisableMouseCapture, EnableMouseCapture},
     execute,
@@ -22,9 +24,20 @@ use camera_service::{CameraCommand, CameraService};
 use crsdk::MacAddr;
 use event::EventHandler;
 
-use crate::{Cli, TuiArgs};
+use crate::Cli;
 
-fn setup_logging(args: &TuiArgs) -> Result<WorkerGuard> {
+#[derive(ClapArgs)]
+pub struct Args {
+    /// Log file path
+    #[arg(long, default_value = "sonyctl.log")]
+    pub log_file: PathBuf,
+
+    /// Log level (trace, debug, info, warn, error)
+    #[arg(long, default_value = "debug")]
+    pub log_level: String,
+}
+
+fn setup_logging(args: &Args) -> Result<WorkerGuard> {
     let file_appender = tracing_appender::rolling::never(".", &args.log_file);
     let (non_blocking, guard) = tracing_appender::non_blocking(file_appender);
 
@@ -56,7 +69,7 @@ fn restore_terminal() -> Result<()> {
     Ok(())
 }
 
-pub async fn run(cli: &Cli, args: &TuiArgs) -> Result<()> {
+pub async fn run(cli: &Cli, args: &Args) -> Result<()> {
     let _guard = setup_logging(args)?;
 
     let terminal = setup_terminal()?;
