@@ -1,6 +1,6 @@
 //! Power category: battery and power properties.
 
-use super::{Category, PropertyCategory, PropertyDef, PropertyValueType};
+use super::{Category, PropertyDef, PropertyValueType};
 use crsdk_sys::DevicePropertyCode;
 
 use DevicePropertyCode as C;
@@ -10,7 +10,6 @@ use PropertyValueType as V;
 pub struct Power;
 
 impl Category for Power {
-    const CATEGORY: PropertyCategory = PropertyCategory::Power;
     const NAME: &'static str = "Power";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(

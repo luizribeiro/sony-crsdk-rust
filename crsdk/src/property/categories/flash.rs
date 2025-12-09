@@ -1,6 +1,6 @@
 //! Flash category: flash and wireless flash properties.
 
-use super::{Category, PropertyCategory, PropertyDef, PropertyValueType};
+use super::{Category, PropertyDef, PropertyValueType};
 use crsdk_sys::DevicePropertyCode;
 
 use DevicePropertyCode as C;
@@ -10,7 +10,6 @@ use PropertyValueType as V;
 pub struct Flash;
 
 impl Category for Flash {
-    const CATEGORY: PropertyCategory = PropertyCategory::Flash;
     const NAME: &'static str = "Flash";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(

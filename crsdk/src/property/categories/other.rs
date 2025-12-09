@@ -8,7 +8,7 @@
 //! - Subject recognition
 //! - Various settings and controls
 
-use super::{Category, PropertyCategory, PropertyDef, PropertyValueType};
+use super::{Category, PropertyDef, PropertyValueType};
 use crsdk_sys::DevicePropertyCode;
 
 use DevicePropertyCode as C;
@@ -18,7 +18,6 @@ use PropertyValueType as V;
 pub struct Other;
 
 impl Category for Other {
-    const CATEGORY: PropertyCategory = PropertyCategory::Other;
     const NAME: &'static str = "Other";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(C::Undefined, "Unknown", "Undefined property.", None),

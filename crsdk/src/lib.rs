@@ -87,5 +87,6 @@ pub use types::{CameraModel, ConnectionInfo, ConnectionType, DiscoveredCamera, M
 // Re-export generated property codes (complete SDK coverage)
 pub use crsdk_sys::DevicePropertyCode;
 pub use property::{
-    property_category, property_description, property_display_name, PropertyCategory,
+    all_categories, property_category, property_description, property_display_name,
+    PropertyCategoryId,
 };

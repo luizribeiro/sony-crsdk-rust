@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crsdk::{
-    property_category, property_display_name, DevicePropertyCode, PropertyCategory, TypedValue,
+    property_category, property_display_name, DevicePropertyCode, PropertyCategoryId, TypedValue,
 };
 
 /// How a property's values are constrained
@@ -205,7 +205,7 @@ impl PropertyStore {
         self.pinned.insert(insert_pos, code);
     }
 
-    pub fn properties_by_category(&self, category: PropertyCategory) -> Vec<&Property> {
+    pub fn properties_by_category(&self, category: PropertyCategoryId) -> Vec<&Property> {
         let mut props: Vec<_> = self
             .properties
             .values()
@@ -215,8 +215,8 @@ impl PropertyStore {
         props
     }
 
-    pub fn available_categories(&self) -> Vec<PropertyCategory> {
-        let mut categories: Vec<PropertyCategory> = self
+    pub fn available_categories(&self) -> Vec<PropertyCategoryId> {
+        let mut categories: Vec<PropertyCategoryId> = self
             .properties
             .values()
             .map(|p| property_category(p.code))
@@ -326,28 +326,28 @@ fn is_default_pinned(code: DevicePropertyCode) -> bool {
     )
 }
 
-fn category_sort_order(cat: PropertyCategory) -> u8 {
-    match cat {
-        PropertyCategory::Exposure => 0,
-        PropertyCategory::Focus => 1,
-        PropertyCategory::WhiteBalance => 2,
-        PropertyCategory::Image => 3,
-        PropertyCategory::Movie => 4,
-        PropertyCategory::Media => 5,
-        PropertyCategory::Drive => 6,
-        PropertyCategory::Metering => 7,
-        PropertyCategory::Flash => 8,
-        PropertyCategory::Zoom => 9,
-        PropertyCategory::Lens => 10,
-        PropertyCategory::Audio => 11,
-        PropertyCategory::PictureProfile => 12,
-        PropertyCategory::NDFilter => 13,
-        PropertyCategory::Stabilization => 14,
-        PropertyCategory::Display => 15,
-        PropertyCategory::Power => 16,
-        PropertyCategory::CustomButtons => 17,
-        PropertyCategory::Silent => 18,
-        PropertyCategory::Other => 19,
+fn category_sort_order(cat: PropertyCategoryId) -> u8 {
+    match cat.name() {
+        "Exposure" => 0,
+        "Focus" => 1,
+        "White Balance" => 2,
+        "Image" => 3,
+        "Movie" => 4,
+        "Media" => 5,
+        "Drive" => 6,
+        "Metering" => 7,
+        "Flash" => 8,
+        "Zoom" => 9,
+        "Lens" => 10,
+        "Audio" => 11,
+        "Picture Profile" => 12,
+        "ND Filter" => 13,
+        "Stabilization" => 14,
+        "Display" => 15,
+        "Power" => 16,
+        "Custom Buttons" => 17,
+        "Silent" => 18,
+        "Other" => 19,
         _ => 20,
     }
 }
@@ -545,12 +545,12 @@ mod tests {
     #[test]
     fn test_category_sort_order() {
         assert!(
-            category_sort_order(PropertyCategory::Exposure)
-                < category_sort_order(PropertyCategory::Focus)
+            category_sort_order(PropertyCategoryId("Exposure"))
+                < category_sort_order(PropertyCategoryId("Focus"))
         );
         assert!(
-            category_sort_order(PropertyCategory::Focus)
-                < category_sort_order(PropertyCategory::Movie)
+            category_sort_order(PropertyCategoryId("Focus"))
+                < category_sort_order(PropertyCategoryId("Movie"))
         );
     }
 }

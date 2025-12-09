@@ -11,7 +11,7 @@ use crate::camera_service::{
 use crate::property::PropertyStore;
 use crsdk::{
     property_category, property_display_name, CameraModel, DevicePropertyCode, MacAddr,
-    PropertyCategory,
+    PropertyCategoryId,
 };
 
 const PROPERTY_DEBOUNCE_MS: u64 = 400;
@@ -181,11 +181,11 @@ pub struct PropertyEditorState {
 }
 
 impl PropertyEditorState {
-    pub fn current_category(&self, available: &[PropertyCategory]) -> PropertyCategory {
+    pub fn current_category(&self, available: &[PropertyCategoryId]) -> PropertyCategoryId {
         available
             .get(self.category_index)
             .copied()
-            .unwrap_or(PropertyCategory::Exposure)
+            .unwrap_or(PropertyCategoryId("Exposure"))
     }
 }
 

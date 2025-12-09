@@ -15,8 +15,7 @@
 //! - UI-friendly display names (`display_name()`)
 //! - Value type mappings for formatting (`value_type()`)
 //!
-//! The `define_categories!` macro validates at compile time that:
-//! - Every `PropertyCategory` variant has exactly one implementing module
+//! Tests validate at runtime that:
 //! - No property code appears in multiple categories
 //! - All property codes are explicitly categorized
 
@@ -36,8 +35,8 @@ pub use typed_value::TypedValue;
 
 // Re-export category types from new categories module
 pub use categories::{
-    description as property_description, display_name as property_display_name, property_category,
-    value_type as property_value_type, Category, PropertyCategory,
+    all_categories, description as property_description, display_name as property_display_name,
+    property_category, value_type as property_value_type, Category, PropertyCategoryId,
 };
 
 // Re-export all value types from values/

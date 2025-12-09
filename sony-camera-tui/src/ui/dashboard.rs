@@ -28,7 +28,7 @@ fn scroll_offset_for_selection(
 
 use crate::app::{App, ConnectedCamera, DashboardState, EventsLogState, MediaSlotInfo};
 use crate::property::Property;
-use crsdk::{property_category, property_display_name, PropertyCategory};
+use crsdk::{property_category, property_display_name, PropertyCategoryId};
 
 use super::header::{self, HeaderState};
 
@@ -260,7 +260,7 @@ fn render_quick_settings_panel(frame: &mut Frame, area: Rect, app: &App) {
     }
 
     let mut lines: Vec<Line> = Vec::new();
-    let mut current_category: Option<PropertyCategory> = None;
+    let mut current_category: Option<PropertyCategoryId> = None;
     let mut selected_line_index: usize = 0;
 
     for (idx, &prop_code) in pinned_ids.iter().enumerate() {

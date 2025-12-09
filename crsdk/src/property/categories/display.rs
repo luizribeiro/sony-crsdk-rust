@@ -1,6 +1,6 @@
 //! Display category: monitor, viewfinder, and display properties.
 
-use super::{Category, PropertyCategory, PropertyDef, PropertyValueType};
+use super::{Category, PropertyDef, PropertyValueType};
 use crsdk_sys::DevicePropertyCode;
 
 use DevicePropertyCode as C;
@@ -10,7 +10,6 @@ use PropertyValueType as V;
 pub struct Display;
 
 impl Category for Display {
-    const CATEGORY: PropertyCategory = PropertyCategory::Display;
     const NAME: &'static str = "Display";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(

@@ -1,6 +1,6 @@
 //! Picture profile category: color grading and creative look properties.
 
-use super::{Category, PropertyCategory, PropertyDef, PropertyValueType};
+use super::{Category, PropertyDef, PropertyValueType};
 use crsdk_sys::DevicePropertyCode;
 
 use DevicePropertyCode as C;
@@ -10,7 +10,6 @@ use PropertyValueType as V;
 pub struct PictureProfile;
 
 impl Category for PictureProfile {
-    const CATEGORY: PropertyCategory = PropertyCategory::PictureProfile;
     const NAME: &'static str = "Picture Profile";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(

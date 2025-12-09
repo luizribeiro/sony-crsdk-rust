@@ -1,6 +1,6 @@
 //! Custom buttons category: button assignments and customization.
 
-use super::{Category, PropertyCategory, PropertyDef, PropertyValueType};
+use super::{Category, PropertyDef, PropertyValueType};
 use crsdk_sys::DevicePropertyCode;
 
 use DevicePropertyCode as C;
@@ -10,7 +10,6 @@ use PropertyValueType as V;
 pub struct CustomButtons;
 
 impl Category for CustomButtons {
-    const CATEGORY: PropertyCategory = PropertyCategory::CustomButtons;
     const NAME: &'static str = "Custom Buttons";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(

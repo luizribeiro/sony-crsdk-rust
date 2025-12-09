@@ -34,12 +34,30 @@ use super::values::PropertyValueType;
 #[distributed_slice]
 pub static CATEGORIES: [CategoryRegistration];
 
+/// Identifier for a property category.
+///
+/// This is a newtype wrapper around a static string, derived from each category's NAME.
+/// Use the category struct's `ID` constant to get the identifier, e.g., `Exposure::ID`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct PropertyCategoryId(pub &'static str);
+
+impl PropertyCategoryId {
+    /// Get the category name as a string.
+    pub const fn name(self) -> &'static str {
+        self.0
+    }
+}
+
+impl core::fmt::Display for PropertyCategoryId {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
 /// Registration entry for a category, collected at link time.
 pub struct CategoryRegistration {
-    /// The category variant this registration is for.
-    pub category: PropertyCategory,
-    /// Human-readable name for this category.
-    pub name: &'static str,
+    /// The category identifier.
+    pub id: PropertyCategoryId,
     /// All properties belonging to this category.
     pub properties: &'static [PropertyDef],
 }
@@ -85,10 +103,10 @@ impl PropertyDef {
 
 /// Trait implemented by each category module.
 pub trait Category {
-    /// Which category this belongs to.
-    const CATEGORY: PropertyCategory;
     /// Human-readable name for this category.
     const NAME: &'static str;
+    /// Category identifier, derived from NAME.
+    const ID: PropertyCategoryId = PropertyCategoryId(Self::NAME);
     /// All properties belonging to this category with their metadata.
     const PROPERTIES: &'static [PropertyDef];
 }
@@ -100,8 +118,7 @@ macro_rules! register_category {
         #[::linkme::distributed_slice($crate::property::categories::CATEGORIES)]
         static _CATEGORY_REGISTRATION: $crate::property::categories::CategoryRegistration =
             $crate::property::categories::CategoryRegistration {
-                category: <$ty as $crate::property::categories::Category>::CATEGORY,
-                name: <$ty as $crate::property::categories::Category>::NAME,
+                id: <$ty as $crate::property::categories::Category>::ID,
                 properties: <$ty as $crate::property::categories::Category>::PROPERTIES,
             };
     };
@@ -109,76 +126,12 @@ macro_rules! register_category {
 
 pub use register_category;
 
-/// Semantic categories for camera properties.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[non_exhaustive]
-pub enum PropertyCategory {
-    /// Audio recording and monitoring properties
-    Audio,
-    /// Custom button assignments
-    CustomButtons,
-    /// Display, monitor, and viewfinder properties
-    Display,
-    /// Drive mode, bracketing, and timer properties
-    Drive,
-    /// Exposure, ISO, shutter, and aperture properties
-    Exposure,
-    /// Flash and wireless flash properties
-    Flash,
-    /// Autofocus and manual focus properties
-    Focus,
-    /// Image quality, format, and storage properties
-    Image,
-    /// Lens information and compensation properties
-    Lens,
-    /// Memory card and media properties
-    Media,
-    /// Light metering properties
-    Metering,
-    /// Movie recording and video properties
-    Movie,
-    /// ND filter properties
-    NDFilter,
-    /// Uncategorized properties
-    Other,
-    /// Picture profile and color grading properties
-    PictureProfile,
-    /// Battery and power properties
-    Power,
-    /// Silent/quiet shooting properties
-    Silent,
-    /// Image stabilization properties
-    Stabilization,
-    /// White balance and color temperature properties
-    WhiteBalance,
-    /// Zoom properties
-    Zoom,
-}
-
-impl PropertyCategory {
-    /// Get category name as a string.
-    pub fn name(self) -> &'static str {
-        for reg in CATEGORIES {
-            if reg.category == self {
-                return reg.name;
-            }
-        }
-        "Unknown"
-    }
-}
-
-impl core::fmt::Display for PropertyCategory {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        write!(f, "{}", self.name())
-    }
-}
-
 /// Find a property definition by code across all registered categories.
-fn find_property(code: DevicePropertyCode) -> Option<(&'static PropertyDef, PropertyCategory)> {
+fn find_property(code: DevicePropertyCode) -> Option<(&'static PropertyDef, PropertyCategoryId)> {
     for reg in CATEGORIES {
         for prop in reg.properties {
             if prop.code == code {
-                return Some((prop, reg.category));
+                return Some((prop, reg.id));
             }
         }
     }
@@ -186,10 +139,10 @@ fn find_property(code: DevicePropertyCode) -> Option<(&'static PropertyDef, Prop
 }
 
 /// Get the category for a property code.
-pub fn property_category(code: DevicePropertyCode) -> PropertyCategory {
+pub fn property_category(code: DevicePropertyCode) -> PropertyCategoryId {
     find_property(code)
         .map(|(_, cat)| cat)
-        .unwrap_or(PropertyCategory::Other)
+        .unwrap_or(other::Other::ID)
 }
 
 /// Get a description of what a property does.
@@ -213,6 +166,11 @@ pub fn value_type(code: DevicePropertyCode) -> PropertyValueType {
         .unwrap_or(PropertyValueType::Unknown)
 }
 
+/// Get all registered category IDs.
+pub fn all_categories() -> impl Iterator<Item = PropertyCategoryId> {
+    CATEGORIES.iter().map(|reg| reg.id)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -226,12 +184,11 @@ mod tests {
         for reg in CATEGORIES {
             for prop in reg.properties {
                 if seen.contains(&prop.code) {
-                    // Find which category already has this code
                     for other_reg in CATEGORIES {
                         if other_reg.properties.iter().any(|p| p.code == prop.code)
-                            && other_reg.name != reg.name
+                            && other_reg.id != reg.id
                         {
-                            duplicates.push((prop.code, other_reg.name, reg.name));
+                            duplicates.push((prop.code, other_reg.id.name(), reg.id.name()));
                             break;
                         }
                     }
@@ -313,45 +270,6 @@ mod tests {
         assert!(
             missing.is_empty(),
             "Properties missing value types:\n{:?}",
-            missing
-        );
-    }
-
-    #[test]
-    fn test_all_categories_registered() {
-        let registered: HashSet<_> = CATEGORIES.iter().map(|r| r.category).collect();
-
-        let all_variants = [
-            PropertyCategory::Audio,
-            PropertyCategory::CustomButtons,
-            PropertyCategory::Display,
-            PropertyCategory::Drive,
-            PropertyCategory::Exposure,
-            PropertyCategory::Flash,
-            PropertyCategory::Focus,
-            PropertyCategory::Image,
-            PropertyCategory::Lens,
-            PropertyCategory::Media,
-            PropertyCategory::Metering,
-            PropertyCategory::Movie,
-            PropertyCategory::NDFilter,
-            PropertyCategory::Other,
-            PropertyCategory::PictureProfile,
-            PropertyCategory::Power,
-            PropertyCategory::Silent,
-            PropertyCategory::Stabilization,
-            PropertyCategory::WhiteBalance,
-            PropertyCategory::Zoom,
-        ];
-
-        let missing: Vec<_> = all_variants
-            .iter()
-            .filter(|v| !registered.contains(v))
-            .collect();
-
-        assert!(
-            missing.is_empty(),
-            "Categories not registered:\n{:?}",
             missing
         );
     }
