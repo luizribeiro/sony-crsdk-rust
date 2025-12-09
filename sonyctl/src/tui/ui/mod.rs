@@ -8,7 +8,7 @@ mod properties;
 
 use ratatui::Frame;
 
-use crate::app::{App, Screen};
+use super::app::{App, Screen};
 
 pub fn render(frame: &mut Frame, app: &App) {
     match app.screen {

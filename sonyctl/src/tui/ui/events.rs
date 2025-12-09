@@ -6,7 +6,7 @@ use ratatui::{
     Frame,
 };
 
-use crate::app::{App, ConnectedCamera};
+use crate::tui::app::{App, ConnectedCamera};
 
 use super::header::{self, HeaderState};
 

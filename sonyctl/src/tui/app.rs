@@ -3,12 +3,12 @@ use std::net::Ipv4Addr;
 use std::str::FromStr;
 use std::time::{Duration, Instant};
 
-use crate::action::Action;
-use crate::camera_service::{
+use super::action::Action;
+use super::camera_service::{
     CameraCommand, CameraServiceHandle, CameraUpdate, DiscoveredCameraInfo, MediaSlotStatus,
     SlotInfo,
 };
-use crate::property::PropertyStore;
+use super::property::PropertyStore;
 use crsdk::{
     property_category, property_display_name, CameraModel, DevicePropertyCode, MacAddr,
     PropertyCategoryId,
@@ -217,6 +217,9 @@ pub struct App {
 
     camera_service: CameraServiceHandle,
 
+    /// Whether to automatically trust SSH fingerprints (--trust flag)
+    trust_ssh_fingerprint: bool,
+
     /// Pending property change for debouncing (property_code, value_index, timestamp)
     pending_property: Option<(DevicePropertyCode, usize, Instant)>,
     /// Property currently being sent to SDK, waiting for confirmation (with timestamp for timeout)
@@ -224,7 +227,7 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(camera_service: CameraServiceHandle) -> Self {
+    pub fn new(camera_service: CameraServiceHandle, trust_ssh_fingerprint: bool) -> Self {
         Self {
             screen: Screen::Discovery,
             modal: None,
@@ -237,6 +240,7 @@ impl App {
             connected_camera: None,
             should_quit: false,
             camera_service,
+            trust_ssh_fingerprint,
             pending_property: None,
             in_flight_property: None,
         }
@@ -411,13 +415,26 @@ impl App {
                 ssh_user,
                 ssh_pass,
             } => {
-                self.modal = Some(Modal::SshFingerprintConfirm(SshFingerprintState {
-                    fingerprint,
-                    ip,
-                    mac,
-                    ssh_user,
-                    ssh_pass,
-                }));
+                if self.trust_ssh_fingerprint {
+                    tracing::info!("Auto-trusting SSH fingerprint (--trust flag)");
+                    let _ = self.camera_service.cmd_tx.try_send(
+                        CameraCommand::ConnectWithFingerprint {
+                            ip,
+                            mac,
+                            ssh_user,
+                            ssh_pass,
+                            fingerprint,
+                        },
+                    );
+                } else {
+                    self.modal = Some(Modal::SshFingerprintConfirm(SshFingerprintState {
+                        fingerprint,
+                        ip,
+                        mac,
+                        ssh_user,
+                        ssh_pass,
+                    }));
+                }
             }
             CameraUpdate::CameraInfoUpdate {
                 battery_percent,
@@ -643,7 +660,7 @@ impl App {
                 self.screen = Screen::EventsExpanded;
             }
             Action::ShowPropertySearch => {
-                let results = crate::property::search_properties(&self.properties, "");
+                let results = super::property::search_properties(&self.properties, "");
                 self.modal = Some(Modal::PropertySearch(PropertySearchState {
                     query: String::new(),
                     results,
@@ -790,7 +807,7 @@ impl App {
                 self.property_editor.show_info = !self.property_editor.show_info;
             }
             Action::ShowPropertySearch => {
-                let results = crate::property::search_properties(&self.properties, "");
+                let results = super::property::search_properties(&self.properties, "");
                 self.modal = Some(Modal::PropertySearch(PropertySearchState {
                     query: String::new(),
                     results,
@@ -1113,7 +1130,7 @@ impl App {
     fn modal_input_char(&mut self, c: char) {
         if let Some(Modal::PropertySearch(ref mut state)) = self.modal {
             state.query.push(c);
-            state.results = crate::property::search_properties(&self.properties, &state.query);
+            state.results = super::property::search_properties(&self.properties, &state.query);
             state.selected_index = 0;
         } else if let Some(Modal::RangeValueInput(ref mut state)) = self.modal {
             if c.is_ascii_digit() || (c == '-' && state.input.is_empty()) {
@@ -1128,7 +1145,7 @@ impl App {
     fn modal_input_backspace(&mut self) {
         if let Some(Modal::PropertySearch(ref mut state)) = self.modal {
             state.query.pop();
-            state.results = crate::property::search_properties(&self.properties, &state.query);
+            state.results = super::property::search_properties(&self.properties, &state.query);
             state.selected_index = 0;
         } else if let Some(Modal::RangeValueInput(ref mut state)) = self.modal {
             state.input.pop();

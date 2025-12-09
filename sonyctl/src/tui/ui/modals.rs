@@ -6,7 +6,7 @@ use ratatui::{
     Frame,
 };
 
-use crate::app::{
+use crate::tui::app::{
     ManualConnectionState, Modal, PropertySearchState, RangeValueInputState, SshCredentialsState,
     SshFingerprintState,
 };

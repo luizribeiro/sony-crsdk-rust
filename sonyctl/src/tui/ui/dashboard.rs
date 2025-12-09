@@ -26,8 +26,8 @@ fn scroll_offset_for_selection(
     }
 }
 
-use crate::app::{App, ConnectedCamera, DashboardState, EventsLogState, MediaSlotInfo};
-use crate::property::Property;
+use crate::tui::app::{App, ConnectedCamera, DashboardState, EventsLogState, MediaSlotInfo};
+use crate::tui::property::Property;
 use crsdk::{property_category, property_display_name, PropertyCategoryId};
 
 use super::header::{self, HeaderState};

@@ -4,8 +4,8 @@ use crossterm::event::{Event, EventStream, KeyCode, KeyEvent, KeyModifiers};
 use futures::StreamExt;
 use tokio::time::{interval, Interval};
 
-use crate::action::Action;
-use crate::app::{App, PropertyEditorFocus, Screen};
+use super::action::Action;
+use super::app::{App, PropertyEditorFocus, Screen};
 
 pub struct EventHandler {
     events: EventStream,

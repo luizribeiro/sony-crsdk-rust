@@ -6,7 +6,7 @@ use ratatui::{
     Frame,
 };
 
-use crate::app::DiscoveryState;
+use crate::tui::app::DiscoveryState;
 
 pub fn render(frame: &mut Frame, state: &DiscoveryState) {
     let area = frame.area();
@@ -28,7 +28,7 @@ pub fn render(frame: &mut Frame, state: &DiscoveryState) {
 fn render_title(frame: &mut Frame, area: Rect) {
     let title = Paragraph::new(Line::from(vec![
         Span::styled(
-            " Sony Camera TUI ",
+            " sonyctl ",
             Style::default()
                 .fg(Color::White)
                 .add_modifier(Modifier::BOLD),

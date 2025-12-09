@@ -9,7 +9,7 @@ use ratatui::{
     Frame,
 };
 
-use crate::property::PropertyKind;
+use crate::tui::property::PropertyKind;
 
 fn scroll_offset_for_selection(
     selected: usize,
@@ -29,7 +29,7 @@ fn scroll_offset_for_selection(
     }
 }
 
-use crate::app::{App, ConnectedCamera, PropertyEditorFocus};
+use crate::tui::app::{App, ConnectedCamera, PropertyEditorFocus};
 use crsdk::{property_description, property_display_name};
 
 use super::header::{self, HeaderState};
@@ -212,7 +212,7 @@ fn render_property_list(
     frame: &mut Frame,
     area: Rect,
     app: &App,
-    properties: &[&crate::property::Property],
+    properties: &[&crate::tui::property::Property],
 ) {
     // Layout: prefix(2) + pin(2) + name + lock(2) + value
     // Leave ~20 chars for value display, cap name at 35
@@ -297,7 +297,7 @@ fn render_value_list(
     frame: &mut Frame,
     area: Rect,
     app: &App,
-    properties: &[&crate::property::Property],
+    properties: &[&crate::tui::property::Property],
 ) {
     let Some(prop) = properties.get(app.property_editor.property_index) else {
         return;
@@ -397,7 +397,7 @@ fn render_value_list(
 fn render_range_slider(
     frame: &mut Frame,
     area: Rect,
-    prop: &crate::property::Property,
+    prop: &crate::tui::property::Property,
     min: i64,
     max: i64,
     step: i64,

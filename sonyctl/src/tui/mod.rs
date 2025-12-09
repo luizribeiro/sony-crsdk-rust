@@ -1,8 +1,6 @@
 use std::io;
-use std::path::PathBuf;
 
 use anyhow::Result;
-use clap::Parser;
 use crossterm::{
     event::{DisableMouseCapture, EnableMouseCapture},
     execute,
@@ -12,52 +10,21 @@ use ratatui::{backend::CrosstermBackend, Terminal};
 use tracing_appender::non_blocking::WorkerGuard;
 use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
-mod action;
-mod app;
-mod camera_service;
-mod event;
-mod property;
-mod ui;
+pub mod action;
+pub mod app;
+pub mod camera_service;
+pub mod event;
+pub mod property;
+pub mod ui;
 
 use app::App;
 use camera_service::{CameraCommand, CameraService};
 use crsdk::MacAddr;
 use event::EventHandler;
 
-#[derive(Parser)]
-#[command(name = "sony-camera-tui")]
-#[command(about = "Terminal UI for Sony Camera Remote SDK")]
-struct Args {
-    /// Camera IP address (skip discovery if provided)
-    #[arg(long)]
-    ip: Option<String>,
+use crate::{Cli, TuiArgs};
 
-    /// Camera MAC address (required with --ip)
-    #[arg(long)]
-    mac: Option<String>,
-
-    /// Enable SSH tunnel
-    #[arg(long)]
-    ssh: bool,
-
-    /// SSH username
-    #[arg(long)]
-    user: Option<String>,
-
-    /// SSH password
-    #[arg(long)]
-    password: Option<String>,
-
-    /// Log file path (default: sony-camera-tui.log in current directory)
-    #[arg(long, default_value = "sony-camera-tui.log")]
-    log_file: PathBuf,
-
-    /// Log level (trace, debug, info, warn, error)
-    #[arg(long, default_value = "debug")]
-    log_level: String,
-}
-
-fn setup_logging(args: &Args) -> Result<WorkerGuard> {
+fn setup_logging(args: &TuiArgs) -> Result<WorkerGuard> {
     let file_appender = tracing_appender::rolling::never(".", &args.log_file);
     let (non_blocking, guard) = tracing_appender::non_blocking(file_appender);
 
@@ -68,22 +35,10 @@ fn setup_logging(args: &Args) -> Result<WorkerGuard> {
         .with(fmt::layer().with_writer(non_blocking).with_ansi(false))
         .init();
 
-    tracing::info!("Sony Camera TUI starting");
+    tracing::info!("sonyctl TUI starting");
     tracing::info!("Log level: {}", args.log_level);
 
     Ok(guard)
-}
-
-#[tokio::main]
-async fn main() -> Result<()> {
-    let args = Args::parse();
-
-    let _guard = setup_logging(&args)?;
-
-    let terminal = setup_terminal()?;
-    let result = run(terminal, args).await;
-    restore_terminal()?;
-    result
 }
 
 fn setup_terminal() -> Result<Terminal<CrosstermBackend<io::Stdout>>> {
@@ -101,22 +56,31 @@ fn restore_terminal() -> Result<()> {
     Ok(())
 }
 
-async fn run(mut terminal: Terminal<CrosstermBackend<io::Stdout>>, args: Args) -> Result<()> {
+pub async fn run(cli: &Cli, args: &TuiArgs) -> Result<()> {
+    let _guard = setup_logging(args)?;
+
+    let terminal = setup_terminal()?;
+    let result = run_app(terminal, cli).await;
+    restore_terminal()?;
+    result
+}
+
+async fn run_app(mut terminal: Terminal<CrosstermBackend<io::Stdout>>, cli: &Cli) -> Result<()> {
     let camera_handle = CameraService::spawn();
 
-    let mut app = App::new(camera_handle);
+    let mut app = App::new(camera_handle, cli.trust);
     let mut events = EventHandler::new();
 
     // If CLI args provided, skip discovery and connect directly
-    if let (Some(ip_str), Some(mac_str)) = (&args.ip, &args.mac) {
+    if let (Some(ip_str), Some(mac_str)) = (&cli.ip, &cli.mac) {
         tracing::info!("Connecting via CLI args: ip={}, mac={}", ip_str, mac_str);
 
         let ip: std::net::Ipv4Addr = ip_str.parse().expect("Invalid IP address");
         let mac: MacAddr = mac_str.parse().expect("Invalid MAC address");
 
-        if args.ssh {
-            let user = args.user.expect("--user required with --ssh");
-            let password = args.password.expect("--password required with --ssh");
+        if cli.user.is_some() && cli.password.is_some() {
+            let user = cli.user.clone().unwrap();
+            let password = cli.password.clone().unwrap();
             tracing::info!("SSH enabled, fetching fingerprint...");
 
             let _ = app
@@ -150,6 +114,6 @@ async fn run(mut terminal: Terminal<CrosstermBackend<io::Stdout>>, args: Args) -
         }
     }
 
-    tracing::info!("Sony Camera TUI exiting");
+    tracing::info!("sonyctl TUI exiting");
     Ok(())
 }

@@ -6,7 +6,7 @@ use ratatui::{
     Frame,
 };
 
-use crate::app::ConnectedCamera;
+use crate::tui::app::ConnectedCamera;
 
 pub struct HeaderState<'a> {
     pub camera: &'a Option<ConnectedCamera>,
@@ -68,7 +68,7 @@ pub fn render(frame: &mut Frame, area: Rect, state: &HeaderState) {
     } else {
         Line::from(vec![
             Span::styled(
-                " Sony Camera TUI ",
+                " sonyctl ",
                 Style::default()
                     .fg(Color::White)
                     .add_modifier(Modifier::BOLD),

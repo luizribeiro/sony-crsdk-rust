@@ -6,7 +6,7 @@ use ratatui::{
     Frame,
 };
 
-use crate::app::Screen;
+use crate::tui::app::Screen;
 
 pub fn render(frame: &mut Frame, screen: Screen) {
     let area = centered_rect(60, 18, frame.area());

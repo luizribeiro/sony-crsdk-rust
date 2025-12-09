@@ -17,3 +17,14 @@ crsdk-sys = { path = "../crsdk-sys" }
 clap = { version = "4", features = ["derive", "env"] }
 tokio = { version = "1", features = ["full"] }
 dialoguer = "0.11"
+
+# TUI dependencies
+ratatui = "0.29"
+crossterm = { version = "0.28", features = ["event-stream"] }
+futures = "0.3"
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+tracing-subscriber = { workspace = true, features = ["env-filter"] }
+tracing-appender = "0.2"
+chrono = "0.4"

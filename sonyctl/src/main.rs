@@ -1,4 +1,4 @@
-//! sonyctl - CLI tool for controlling Sony cameras
+//! sonyctl - CLI and TUI tool for controlling Sony cameras
 //!
 //! # Environment Variables
 //!
@@ -14,8 +14,14 @@
 //! # Usage
 //!
 //! ```bash
+//! # Launch interactive TUI (with discovery)
+//! sonyctl tui
+//!
+//! # Launch TUI with direct connection
+//! sonyctl --ip 192.168.1.100 --mac 00:00:00:00:00:00 tui
+//!
 //! # List all properties
-//! sonyctl props list
+//! sonyctl --ip 192.168.1.100 --mac 00:00:00:00:00:00 props list
 //!
 //! # Filter properties
 //! sonyctl props list --filter iso
@@ -34,7 +40,11 @@
 //! sonyctl record stop
 //! ```
 
-use clap::{Parser, Subcommand};
+mod tui;
+
+use std::path::PathBuf;
+
+use clap::{Args, Parser, Subcommand};
 use crsdk::{
     property_category, property_description, property_display_name, property_value_type,
     CameraDevice, CameraModel, DeviceProperty, EnableFlag, Result, TypedValue, ValueConstraint,
@@ -44,27 +54,27 @@ use dialoguer::Confirm;
 
 #[derive(Parser)]
 #[command(name = "sonyctl")]
-#[command(about = "CLI tool for controlling Sony cameras via the Camera Remote SDK")]
+#[command(about = "CLI and TUI tool for controlling Sony cameras via the Camera Remote SDK")]
 #[command(version)]
-struct Cli {
-    /// Camera IP address
-    #[arg(long, env = "SONY_CAMERA_IP")]
-    ip: String,
+pub struct Cli {
+    /// Camera IP address (required for CLI commands, optional for TUI)
+    #[arg(long, env = "SONY_CAMERA_IP", global = true)]
+    ip: Option<String>,
 
-    /// Camera MAC address
-    #[arg(long, env = "SONY_CAMERA_MAC")]
-    mac: String,
+    /// Camera MAC address (required for CLI commands, optional for TUI)
+    #[arg(long, env = "SONY_CAMERA_MAC", global = true)]
+    mac: Option<String>,
 
     /// SSH username (enables SSH mode)
-    #[arg(long, env = "SONY_SSH_USER")]
+    #[arg(long, env = "SONY_SSH_USER", global = true)]
     user: Option<String>,
 
     /// SSH password
-    #[arg(long, env = "SONY_SSH_PASSWORD")]
+    #[arg(long, env = "SONY_SSH_PASSWORD", global = true)]
     password: Option<String>,
 
     /// Skip SSH fingerprint confirmation
-    #[arg(long, env = "SONY_SSH_TRUST")]
+    #[arg(long, env = "SONY_SSH_TRUST", global = true)]
     trust: bool,
 
     #[command(subcommand)]
@@ -73,6 +83,8 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Command {
+    /// Launch interactive TUI
+    Tui(TuiArgs),
     /// Property operations
     Props {
         #[command(subcommand)]
@@ -87,6 +99,17 @@ enum Command {
     },
     /// Show camera info
     Info,
+}
+
+#[derive(Args)]
+pub struct TuiArgs {
+    /// Log file path
+    #[arg(long, default_value = "sonyctl.log")]
+    pub log_file: PathBuf,
+
+    /// Log level (trace, debug, info, warn, error)
+    #[arg(long, default_value = "debug")]
+    pub log_level: String,
 }
 
 #[derive(Subcommand)]
@@ -128,42 +151,50 @@ enum RecordAction {
 }
 
 #[tokio::main]
-async fn main() -> Result<()> {
+async fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
 
-    let device = connect(&cli).await?;
-
-    match cli.command {
-        Command::Props { action } => match action {
-            PropsAction::List {
-                filter,
-                writable,
-                raw,
-            } => {
-                list_properties(&device, filter.as_deref(), writable, raw)?;
-            }
-            PropsAction::Get { name } => {
-                get_property(&device, &name)?;
-            }
-            PropsAction::Set { name, value } => {
-                set_property(&device, &name, value)?;
-            }
-        },
-        Command::Capture => {
-            capture(&device)?;
+    match &cli.command {
+        Command::Tui(args) => {
+            tui::run(&cli, args).await?;
         }
-        Command::Record { action } => match action {
-            RecordAction::Start => {
-                device.start_recording()?;
-                println!("Recording started");
+        _ => {
+            let device = connect(&cli).await?;
+
+            match &cli.command {
+                Command::Tui(_) => unreachable!(),
+                Command::Props { action } => match action {
+                    PropsAction::List {
+                        filter,
+                        writable,
+                        raw,
+                    } => {
+                        list_properties(&device, filter.as_deref(), *writable, *raw)?;
+                    }
+                    PropsAction::Get { name } => {
+                        get_property(&device, name)?;
+                    }
+                    PropsAction::Set { name, value } => {
+                        set_property(&device, name, *value)?;
+                    }
+                },
+                Command::Capture => {
+                    capture(&device)?;
+                }
+                Command::Record { action } => match action {
+                    RecordAction::Start => {
+                        device.start_recording()?;
+                        println!("Recording started");
+                    }
+                    RecordAction::Stop => {
+                        device.stop_recording()?;
+                        println!("Recording stopped");
+                    }
+                },
+                Command::Info => {
+                    show_info(&device)?;
+                }
             }
-            RecordAction::Stop => {
-                device.stop_recording()?;
-                println!("Recording stopped");
-            }
-        },
-        Command::Info => {
-            show_info(&device)?;
         }
     }
 
@@ -171,11 +202,20 @@ async fn main() -> Result<()> {
 }
 
 async fn connect(cli: &Cli) -> Result<crsdk::blocking::CameraDevice> {
-    eprintln!("Connecting to {}...", cli.ip);
+    let ip = cli
+        .ip
+        .as_ref()
+        .ok_or_else(|| crsdk::Error::InvalidParameter("--ip is required".into()))?;
+    let mac = cli
+        .mac
+        .as_ref()
+        .ok_or_else(|| crsdk::Error::InvalidParameter("--mac is required".into()))?;
+
+    eprintln!("Connecting to {}...", ip);
 
     let mut builder = CameraDevice::builder()
-        .ip_address(cli.ip.parse().expect("Invalid IP address"))
-        .mac_address(cli.mac.parse().expect("Invalid MAC address"))
+        .ip_address(ip.parse().expect("Invalid IP address"))
+        .mac_address(mac.parse().expect("Invalid MAC address"))
         .model(CameraModel::Fx3);
 
     // Enable SSH if credentials provided

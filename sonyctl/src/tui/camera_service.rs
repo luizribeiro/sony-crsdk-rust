@@ -12,7 +12,7 @@ use crsdk::{
     DeviceProperty, DevicePropertyCode, MacAddr, ValueConstraint,
 };
 
-use crate::property::{format_sdk_value, PropertyKind};
+use super::property::{format_sdk_value, PropertyKind};
 
 /// Get available values from a property's constraint as formatted strings.
 /// For discrete values, formats each value. For ranges, returns the current value.
