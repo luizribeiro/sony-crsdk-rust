@@ -13,6 +13,7 @@ pub struct HeaderState<'a> {
     pub exposure_mode: Option<&'a str>,
     pub is_recording: bool,
     pub recording_seconds: Option<u64>,
+    pub is_connecting: bool,
 }
 
 pub fn render(frame: &mut Frame, area: Rect, state: &HeaderState) {
@@ -65,6 +66,17 @@ pub fn render(frame: &mut Frame, area: Rect, state: &HeaderState) {
         }
 
         Line::from(spans)
+    } else if state.is_connecting {
+        Line::from(vec![
+            Span::styled(
+                " sonyctl ",
+                Style::default()
+                    .fg(Color::White)
+                    .add_modifier(Modifier::BOLD),
+            ),
+            Span::styled("— ", Style::default().fg(Color::DarkGray)),
+            Span::styled("Connecting...", Style::default().fg(Color::Yellow)),
+        ])
     } else {
         Line::from(vec![
             Span::styled(

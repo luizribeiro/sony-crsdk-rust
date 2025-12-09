@@ -213,6 +213,7 @@ pub struct App {
     pub properties: PropertyStore,
 
     pub connected_camera: Option<ConnectedCamera>,
+    pub is_connecting: bool,
     pub should_quit: bool,
 
     camera_service: CameraServiceHandle,
@@ -238,12 +239,18 @@ impl App {
             events_log: EventsLogState::default(),
             properties: PropertyStore::new(),
             connected_camera: None,
+            is_connecting: false,
             should_quit: false,
             camera_service,
             trust_ssh_fingerprint,
             pending_property: None,
             in_flight_property: None,
         }
+    }
+
+    pub fn set_connecting(&mut self) {
+        self.is_connecting = true;
+        self.screen = Screen::Dashboard;
     }
 
     /// Get access to the camera service for sending commands
@@ -309,12 +316,14 @@ impl App {
         match update {
             CameraUpdate::Connected { model, address } => {
                 self.connected_camera = Some(ConnectedCamera { model, address });
+                self.is_connecting = false;
                 self.discovery.is_scanning = false;
                 self.screen = Screen::Dashboard;
                 self.log_event("Connected", "Camera connected");
             }
             CameraUpdate::Disconnected { error } => {
                 self.connected_camera = None;
+                self.is_connecting = false;
                 self.properties.set_loaded(false);
                 self.screen = Screen::Discovery;
                 if let Some(err) = error {

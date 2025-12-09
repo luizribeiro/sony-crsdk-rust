@@ -64,6 +64,7 @@ pub fn render(frame: &mut Frame, app: &App, camera: &Option<ConnectedCamera>) {
         } else {
             None
         },
+        is_connecting: app.is_connecting,
     };
     header::render(frame, layout[0], &header_state);
     render_content(frame, layout[1], app);

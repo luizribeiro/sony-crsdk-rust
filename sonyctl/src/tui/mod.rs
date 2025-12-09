@@ -91,6 +91,9 @@ async fn run_app(mut terminal: Terminal<CrosstermBackend<io::Stdout>>, cli: &Cli
         let ip: std::net::Ipv4Addr = ip_str.parse().expect("Invalid IP address");
         let mac: MacAddr = mac_str.parse().expect("Invalid MAC address");
 
+        // Skip discovery screen - go straight to dashboard while connecting
+        app.set_connecting();
+
         if cli.user.is_some() && cli.password.is_some() {
             let user = cli.user.clone().unwrap();
             let password = cli.password.clone().unwrap();
