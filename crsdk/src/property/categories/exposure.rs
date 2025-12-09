@@ -1,14 +1,16 @@
 //! Exposure category: aperture, shutter, ISO, and metering properties.
 
-use super::{Category, PropertyDef, PropertyValueType};
+use super::{Category, PropertyCategory, PropertyDef, PropertyValueType};
 use crsdk_sys::DevicePropertyCode;
 
 use DevicePropertyCode as C;
 use PropertyValueType as V;
 
+/// Exposure, ISO, shutter, and aperture properties.
 pub struct Exposure;
 
 impl Category for Exposure {
+    const CATEGORY: PropertyCategory = PropertyCategory::Exposure;
     const NAME: &'static str = "Exposure";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
@@ -361,3 +363,5 @@ impl Category for Exposure {
         ),
     ];
 }
+
+crate::register_category!(Exposure);

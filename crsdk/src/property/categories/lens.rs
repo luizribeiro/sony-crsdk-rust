@@ -1,14 +1,16 @@
 //! Lens category: lens information and compensation properties.
 
-use super::{Category, PropertyDef, PropertyValueType};
+use super::{Category, PropertyCategory, PropertyDef, PropertyValueType};
 use crsdk_sys::DevicePropertyCode;
 
 use DevicePropertyCode as C;
 use PropertyValueType as V;
 
+/// Lens information and compensation properties.
 pub struct Lens;
 
 impl Category for Lens {
+    const CATEGORY: PropertyCategory = PropertyCategory::Lens;
     const NAME: &'static str = "Lens";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
@@ -85,3 +87,5 @@ impl Category for Lens {
         ),
     ];
 }
+
+crate::register_category!(Lens);

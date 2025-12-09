@@ -1,14 +1,16 @@
 //! White balance category: color temperature and white balance properties.
 
-use super::{Category, PropertyDef, PropertyValueType};
+use super::{Category, PropertyCategory, PropertyDef, PropertyValueType};
 use crsdk_sys::DevicePropertyCode;
 
 use DevicePropertyCode as C;
 use PropertyValueType as V;
 
+/// White balance and color temperature properties.
 pub struct WhiteBalance;
 
 impl Category for WhiteBalance {
+    const CATEGORY: PropertyCategory = PropertyCategory::WhiteBalance;
     const NAME: &'static str = "White Balance";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
@@ -175,3 +177,5 @@ impl Category for WhiteBalance {
         ),
     ];
 }
+
+crate::register_category!(WhiteBalance);

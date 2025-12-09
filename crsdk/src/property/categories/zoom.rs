@@ -1,14 +1,16 @@
 //! Zoom category: optical and digital zoom properties.
 
-use super::{Category, PropertyDef, PropertyValueType};
+use super::{Category, PropertyCategory, PropertyDef, PropertyValueType};
 use crsdk_sys::DevicePropertyCode;
 
 use DevicePropertyCode as C;
 use PropertyValueType as V;
 
+/// Zoom properties.
 pub struct Zoom;
 
 impl Category for Zoom {
+    const CATEGORY: PropertyCategory = PropertyCategory::Zoom;
     const NAME: &'static str = "Zoom";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
@@ -103,3 +105,5 @@ impl Category for Zoom {
         ),
     ];
 }
+
+crate::register_category!(Zoom);

@@ -1,14 +1,16 @@
 //! Focus category: autofocus and manual focus properties.
 
-use super::{Category, PropertyDef, PropertyValueType};
+use super::{Category, PropertyCategory, PropertyDef, PropertyValueType};
 use crsdk_sys::DevicePropertyCode;
 
 use DevicePropertyCode as C;
 use PropertyValueType as V;
 
+/// Autofocus and manual focus properties.
 pub struct Focus;
 
 impl Category for Focus {
+    const CATEGORY: PropertyCategory = PropertyCategory::Focus;
     const NAME: &'static str = "Focus";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
@@ -313,3 +315,5 @@ impl Category for Focus {
         ),
     ];
 }
+
+crate::register_category!(Focus);

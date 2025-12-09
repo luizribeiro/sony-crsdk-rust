@@ -1,14 +1,16 @@
 //! Metering category: light metering properties.
 
-use super::{Category, PropertyDef, PropertyValueType};
+use super::{Category, PropertyCategory, PropertyDef, PropertyValueType};
 use crsdk_sys::DevicePropertyCode;
 
 use DevicePropertyCode as C;
 use PropertyValueType as V;
 
+/// Light metering properties.
 pub struct Metering;
 
 impl Category for Metering {
+    const CATEGORY: PropertyCategory = PropertyCategory::Metering;
     const NAME: &'static str = "Metering";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
@@ -25,3 +27,5 @@ impl Category for Metering {
         ),
     ];
 }
+
+crate::register_category!(Metering);

@@ -1,14 +1,16 @@
 //! Media category: memory card and media properties.
 
-use super::{Category, PropertyDef, PropertyValueType};
+use super::{Category, PropertyCategory, PropertyDef, PropertyValueType};
 use crsdk_sys::DevicePropertyCode;
 
 use DevicePropertyCode as C;
 use PropertyValueType as V;
 
+/// Memory card and media properties.
 pub struct Media;
 
 impl Category for Media {
+    const CATEGORY: PropertyCategory = PropertyCategory::Media;
     const NAME: &'static str = "Media";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
@@ -259,3 +261,5 @@ impl Category for Media {
         ),
     ];
 }
+
+crate::register_category!(Media);

@@ -1,14 +1,16 @@
 //! Silent category: quiet shooting properties.
 
-use super::{Category, PropertyDef, PropertyValueType};
+use super::{Category, PropertyCategory, PropertyDef, PropertyValueType};
 use crsdk_sys::DevicePropertyCode;
 
 use DevicePropertyCode as C;
 use PropertyValueType as V;
 
+/// Silent/quiet shooting properties.
 pub struct Silent;
 
 impl Category for Silent {
+    const CATEGORY: PropertyCategory = PropertyCategory::Silent;
     const NAME: &'static str = "Silent";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
@@ -25,3 +27,5 @@ impl Category for Silent {
         ),
     ];
 }
+
+crate::register_category!(Silent);

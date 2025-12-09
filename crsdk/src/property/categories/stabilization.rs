@@ -1,14 +1,16 @@
 //! Stabilization category: image stabilization properties.
 
-use super::{Category, PropertyDef, PropertyValueType};
+use super::{Category, PropertyCategory, PropertyDef, PropertyValueType};
 use crsdk_sys::DevicePropertyCode;
 
 use DevicePropertyCode as C;
 use PropertyValueType as V;
 
+/// Image stabilization properties.
 pub struct Stabilization;
 
 impl Category for Stabilization {
+    const CATEGORY: PropertyCategory = PropertyCategory::Stabilization;
     const NAME: &'static str = "Stabilization";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
@@ -37,3 +39,5 @@ impl Category for Stabilization {
         ),
     ];
 }
+
+crate::register_category!(Stabilization);

@@ -1,14 +1,16 @@
 //! Drive category: drive mode, bracketing, and timer properties.
 
-use super::{Category, PropertyDef, PropertyValueType};
+use super::{Category, PropertyCategory, PropertyDef, PropertyValueType};
 use crsdk_sys::DevicePropertyCode;
 
 use DevicePropertyCode as C;
 use PropertyValueType as V;
 
+/// Drive mode, bracketing, and timer properties.
 pub struct Drive;
 
 impl Category for Drive {
+    const CATEGORY: PropertyCategory = PropertyCategory::Drive;
     const NAME: &'static str = "Drive";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
@@ -61,3 +63,5 @@ impl Category for Drive {
         ),
     ];
 }
+
+crate::register_category!(Drive);

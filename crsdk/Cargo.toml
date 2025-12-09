@@ -24,6 +24,9 @@ anyhow.workspace = true
 # Logging
 tracing.workspace = true
 
+# Distributed slices for automatic category registration
+linkme = "0.3"
+
 [dev-dependencies]
 tracing-subscriber.workspace = true
 tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }

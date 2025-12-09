@@ -1,14 +1,16 @@
 //! Image category: image quality, format, and storage properties.
 
-use super::{Category, PropertyDef, PropertyValueType};
+use super::{Category, PropertyCategory, PropertyDef, PropertyValueType};
 use crsdk_sys::DevicePropertyCode;
 
 use DevicePropertyCode as C;
 use PropertyValueType as V;
 
+/// Image quality, format, and storage properties.
 pub struct Image;
 
 impl Category for Image {
+    const CATEGORY: PropertyCategory = PropertyCategory::Image;
     const NAME: &'static str = "Image";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
@@ -229,3 +231,5 @@ impl Category for Image {
         ),
     ];
 }
+
+crate::register_category!(Image);

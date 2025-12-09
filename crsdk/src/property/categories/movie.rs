@@ -1,14 +1,16 @@
 //! Movie category: video recording and movie properties.
 
-use super::{Category, PropertyDef, PropertyValueType};
+use super::{Category, PropertyCategory, PropertyDef, PropertyValueType};
 use crsdk_sys::DevicePropertyCode;
 
 use DevicePropertyCode as C;
 use PropertyValueType as V;
 
+/// Movie recording and video properties.
 pub struct Movie;
 
 impl Category for Movie {
+    const CATEGORY: PropertyCategory = PropertyCategory::Movie;
     const NAME: &'static str = "Movie";
     const PROPERTIES: &'static [PropertyDef] = &[
         PropertyDef::new(
@@ -475,3 +477,5 @@ impl Category for Movie {
         ),
     ];
 }
+
+crate::register_category!(Movie);
