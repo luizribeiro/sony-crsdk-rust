@@ -5,10 +5,23 @@
 //! - Value enums for specific property types (organized by subsystem)
 //! - Display names and descriptions for properties
 //! - The [`PropertyValue`] trait for type-safe value conversion
+//!
+//! # Architecture
+//!
+//! Properties are organized into semantic categories (Exposure, Focus, WhiteBalance, etc.).
+//! Each category module in `categories/` is the single source of truth for:
+//! - Which property codes belong to that category (`CODES` array)
+//! - Human-readable descriptions (`description()`)
+//! - UI-friendly display names (`display_name()`)
+//! - Value type mappings for formatting (`value_type()`)
+//!
+//! The `define_categories!` macro validates at compile time that:
+//! - Every `PropertyCategory` variant has exactly one implementing module
+//! - No property code appears in multiple categories
+//! - All property codes are explicitly categorized
 
-mod category;
+pub mod categories;
 mod core;
-mod metadata;
 mod traits;
 mod typed_value;
 pub mod values;
@@ -21,8 +34,11 @@ pub use core::{DataType, DeviceProperty, EnableFlag, ValueConstraint};
 pub use traits::PropertyValue;
 pub use typed_value::TypedValue;
 
-// Re-export category types
-pub use category::{property_category, PropertyCategory};
+// Re-export category types from new categories module
+pub use categories::{
+    description as property_description, display_name as property_display_name, property_category,
+    value_type as property_value_type, Category, PropertyCategory,
+};
 
 // Re-export all value types from values/
 pub use values::{
@@ -35,12 +51,6 @@ pub use values::{ExposureCtrlType, ExposureProgram};
 
 // Re-export drive and movie types from values/
 pub use values::{DriveMode, IntervalRecShutterType, MovieFileFormat, MovieQuality};
-
-// Re-export metadata functions
-pub use metadata::{
-    description as property_description, display_name as property_display_name,
-    value_type as property_value_type,
-};
 
 #[cfg(test)]
 mod tests {
