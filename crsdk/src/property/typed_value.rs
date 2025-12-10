@@ -8,12 +8,12 @@ use std::fmt;
 use crsdk_sys::DevicePropertyCode;
 
 use super::values::{
-    Aperture, AspectRatio, AutoManual, BatteryLevel, ColorTemperature, ExposureComp,
+    Aperture, AspectRatio, AutoManual, BatteryLevel, ColorTemperature, EframingType, ExposureComp,
     ExposureCtrlType, ExposureProgram, FileType, FlashMode, FocusArea, FocusIndicator, FocusMode,
-    FocusTrackingStatus, ImageQuality, ImageSize, Integer, Iso, LiveViewDisplayEffect,
-    LockIndicator, MeterLevel, MeteringMode, MovieQuality, OnOff, Percentage, PrioritySetInAF,
-    PrioritySetInAWB, ShutterMode, ShutterModeStatus, ShutterSpeed, SilentModeApertureDrive,
-    SubjectRecognitionAF, Switch, WhiteBalance,
+    FocusTrackingStatus, GridLineType, ImageQuality, ImageSize, Integer, Iso,
+    LiveViewDisplayEffect, LockIndicator, MeterLevel, MeteringMode, MovieQuality, OnOff,
+    Percentage, PrioritySetInAF, PrioritySetInAWB, ShutterMode, ShutterModeStatus, ShutterSpeed,
+    SilentModeApertureDrive, SubjectRecognitionAF, Switch, WhiteBalance,
 };
 use super::{property_value_type, PropertyValueType};
 use super::{
@@ -21,17 +21,17 @@ use super::{
     CameraOperatingMode, ColorSpace, CreativeLook, CustomWBSizeSetting, DRangeOptimizer,
     DeviceOverheatingState, DispMode, DriveMode, FTPConnectionStatus, FocusOperation,
     FunctionOfTouchOperation, GainBaseSensitivity, HighIsoNR, ImageStabilizationLevelMovie,
-    ImageStabilizationSteadyShotMovie, IntervalRecMode, IntervalRecShutterType, IntervalRecStatus,
-    IrisDisplayUnit, IsoAutoMinShutterSpeedMode, IsoAutoMinShutterSpeedPreset,
+    ImageStabilizationSteadyShotMovie, ImagerScanMode, IntervalRecMode, IntervalRecShutterType,
+    IntervalRecStatus, IrisDisplayUnit, IsoAutoMinShutterSpeedMode, IsoAutoMinShutterSpeedPreset,
     LensCompensationShading, LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState,
-    MovieFileFormat, NDFilterMode, NearFarEnableStatus, PlaybackMedia, PowerSource,
-    PriorityKeySettings, RAWFileCompressionType, RecorderStatus, RecordingMedia,
-    RecordingMediaMovie, RecordingState, RemoconZoomSpeedType, RightLeftEyeSelect, SdkControlMode,
-    SelectFinder, ShutterReleaseTimeLagControl, ShutterType, SlotStatus, SoftSkinEffect,
-    StillImageStoreDestination, SubjectRecognitionAnimalBirdDetectionParts,
-    SubjectRecognitionAnimalBirdPriority, TCUBDisplaySetting, TimeCodeFormat, TimeCodeMake,
-    TimeCodeRun, TimeShiftTriggerSetting, TouchOperation, WindNoiseReduction, ZoomOperation,
-    APSC_S35,
+    MovieFileFormat, NDFilterMode, NearFarEnableStatus, PictureEffect, PictureProfileColorMode,
+    PictureProfileGamma, PlaybackMedia, PowerSource, PriorityKeySettings, RAWFileCompressionType,
+    RecorderStatus, RecordingMedia, RecordingMediaMovie, RecordingState, RemoconZoomSpeedType,
+    RightLeftEyeSelect, SdkControlMode, SelectFinder, ShutterReleaseTimeLagControl, ShutterType,
+    SlotStatus, SoftSkinEffect, StillImageStoreDestination, StreamStatus,
+    SubjectRecognitionAnimalBirdDetectionParts, SubjectRecognitionAnimalBirdPriority,
+    TCUBDisplaySetting, TimeCodeFormat, TimeCodeMake, TimeCodeRun, TimeShiftTriggerSetting,
+    TouchOperation, WindNoiseReduction, ZoomOperation, APSC_S35,
 };
 use crate::property::traits::PropertyValue;
 
@@ -127,6 +127,8 @@ pub enum TypedValue {
     MediaSlotWritingState(MediaSlotWritingState),
     /// Media slot recording type
     MediaSlotRecordingType(MediaSlotRecordingType),
+    /// Streaming status
+    StreamStatus(StreamStatus),
     /// SDK control mode (Remote/Transfer)
     SdkControlMode(SdkControlMode),
     /// Dynamic range optimizer
@@ -223,6 +225,18 @@ pub enum TypedValue {
     IsoAutoMinShutterSpeedPreset(IsoAutoMinShutterSpeedPreset),
     /// ISO auto minimum shutter speed mode
     IsoAutoMinShutterSpeedMode(IsoAutoMinShutterSpeedMode),
+    /// Picture effect filter
+    PictureEffect(PictureEffect),
+    /// Picture profile color mode
+    PictureProfileColorMode(PictureProfileColorMode),
+    /// Picture profile gamma curve
+    PictureProfileGamma(PictureProfileGamma),
+    /// Grid line overlay type
+    GridLineType(GridLineType),
+    /// Imager/sensor scan mode
+    ImagerScanMode(ImagerScanMode),
+    /// Auto-framing/E-framing type
+    EframingType(EframingType),
     /// Battery level (packed status + percentage)
     BatteryLevel(BatteryLevel),
     /// Switch value (On/Off)
@@ -352,6 +366,9 @@ impl TypedValue {
                 .unwrap_or(TypedValue::Unknown(raw)),
             PVT::MediaSlotRecordingType => MediaSlotRecordingType::from_raw(raw)
                 .map(TypedValue::MediaSlotRecordingType)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::StreamStatus => StreamStatus::from_raw(raw)
+                .map(TypedValue::StreamStatus)
                 .unwrap_or(TypedValue::Unknown(raw)),
             PVT::SdkControlMode => SdkControlMode::from_raw(raw)
                 .map(TypedValue::SdkControlMode)
@@ -503,6 +520,24 @@ impl TypedValue {
             PVT::IsoAutoMinShutterSpeedMode => IsoAutoMinShutterSpeedMode::from_raw(raw)
                 .map(TypedValue::IsoAutoMinShutterSpeedMode)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::PictureEffect => PictureEffect::from_raw(raw)
+                .map(TypedValue::PictureEffect)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::PictureProfileColorMode => PictureProfileColorMode::from_raw(raw)
+                .map(TypedValue::PictureProfileColorMode)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::PictureProfileGamma => PictureProfileGamma::from_raw(raw)
+                .map(TypedValue::PictureProfileGamma)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::GridLineType => GridLineType::from_raw(raw)
+                .map(TypedValue::GridLineType)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::ImagerScanMode => ImagerScanMode::from_raw(raw)
+                .map(TypedValue::ImagerScanMode)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::EframingType => EframingType::from_raw(raw)
+                .map(TypedValue::EframingType)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::ShutterModeStatus => ShutterModeStatus::from_raw(raw)
                 .map(TypedValue::ShutterModeStatus)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -601,6 +636,7 @@ impl TypedValue {
             TypedValue::SlotStatus(v) => v.to_raw(),
             TypedValue::MediaSlotWritingState(v) => v.to_raw(),
             TypedValue::MediaSlotRecordingType(v) => v.to_raw(),
+            TypedValue::StreamStatus(v) => v.to_raw(),
             TypedValue::SdkControlMode(v) => v.to_raw(),
             TypedValue::DRangeOptimizer(v) => v.to_raw(),
             TypedValue::StillImageStoreDestination(v) => v.to_raw(),
@@ -649,6 +685,12 @@ impl TypedValue {
             TypedValue::CreativeLook(v) => v.to_raw(),
             TypedValue::IsoAutoMinShutterSpeedPreset(v) => v.to_raw(),
             TypedValue::IsoAutoMinShutterSpeedMode(v) => v.to_raw(),
+            TypedValue::PictureEffect(v) => v.to_raw(),
+            TypedValue::PictureProfileColorMode(v) => v.to_raw(),
+            TypedValue::PictureProfileGamma(v) => v.to_raw(),
+            TypedValue::GridLineType(v) => v.to_raw(),
+            TypedValue::ImagerScanMode(v) => v.to_raw(),
+            TypedValue::EframingType(v) => v.to_raw(),
             TypedValue::BatteryLevel(v) => v.to_raw(),
             TypedValue::Switch(v) => v.to_raw(),
             TypedValue::OnOff(v) => v.to_raw(),
@@ -703,6 +745,7 @@ impl fmt::Display for TypedValue {
             TypedValue::SlotStatus(v) => write!(f, "{}", v),
             TypedValue::MediaSlotWritingState(v) => write!(f, "{}", v),
             TypedValue::MediaSlotRecordingType(v) => write!(f, "{}", v),
+            TypedValue::StreamStatus(v) => write!(f, "{}", v),
             TypedValue::SdkControlMode(v) => write!(f, "{}", v),
             TypedValue::DRangeOptimizer(v) => write!(f, "{}", v),
             TypedValue::StillImageStoreDestination(v) => write!(f, "{}", v),
@@ -751,6 +794,12 @@ impl fmt::Display for TypedValue {
             TypedValue::CreativeLook(v) => write!(f, "{}", v),
             TypedValue::IsoAutoMinShutterSpeedPreset(v) => write!(f, "{}", v),
             TypedValue::IsoAutoMinShutterSpeedMode(v) => write!(f, "{}", v),
+            TypedValue::PictureEffect(v) => write!(f, "{}", v),
+            TypedValue::PictureProfileColorMode(v) => write!(f, "{}", v),
+            TypedValue::PictureProfileGamma(v) => write!(f, "{}", v),
+            TypedValue::GridLineType(v) => write!(f, "{}", v),
+            TypedValue::ImagerScanMode(v) => write!(f, "{}", v),
+            TypedValue::EframingType(v) => write!(f, "{}", v),
             TypedValue::BatteryLevel(v) => write!(f, "{}", v),
             TypedValue::Switch(v) => write!(f, "{}", v),
             TypedValue::OnOff(v) => write!(f, "{}", v),

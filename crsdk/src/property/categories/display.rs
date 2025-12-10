@@ -112,7 +112,7 @@ impl Category for Display {
             C::GridLineType,
             "Grid Type",
             "Type of grid pattern (rule of thirds, square, diagonal, etc.).",
-            Some(V::Integer),
+            Some(V::GridLineType),
         ),
         PropertyDef::new(
             C::DeSqueezeDisplayRatio,

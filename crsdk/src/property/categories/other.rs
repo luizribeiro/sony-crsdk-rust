@@ -271,7 +271,7 @@ impl Category for Other {
             C::StreamStatus,
             "Stream State",
             "Current streaming connection status.",
-            Some(V::Integer),
+            Some(V::StreamStatus),
         ),
         PropertyDef::new(
             C::StreamDisplayName,
@@ -829,7 +829,7 @@ impl Category for Other {
             C::EframingType,
             "E-Frame Type",
             "Type of electronic framing.",
-            Some(V::Integer),
+            Some(V::EframingType),
         ),
         PropertyDef::new(
             C::EframingCommandVersion,

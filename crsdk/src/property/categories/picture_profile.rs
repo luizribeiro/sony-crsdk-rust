@@ -16,7 +16,7 @@ impl Category for PictureProfile {
             C::PictureEffect,
             "Effect Filter",
             "Creative in-camera filter effects.",
-            Some(V::Integer),
+            Some(V::PictureEffect),
         ),
         PropertyDef::new(
             C::PictureProfile,
@@ -34,7 +34,7 @@ impl Category for PictureProfile {
             C::PictureProfileGamma,
             "PP Gamma",
             "Gamma curve selection. Different curves optimize for broadcast, cinema, or log capture.",
-            Some(V::Integer),
+            Some(V::PictureProfileGamma),
         ),
         PropertyDef::new(
             C::PictureProfileBlackGammaRange,
@@ -82,7 +82,7 @@ impl Category for PictureProfile {
             C::PictureProfileColorMode,
             "PP Color Mode",
             "Color processing mode. Different modes optimize for different display targets.",
-            Some(V::Integer),
+            Some(V::PictureProfileColorMode),
         ),
         PropertyDef::new(
             C::PictureProfileSaturation,

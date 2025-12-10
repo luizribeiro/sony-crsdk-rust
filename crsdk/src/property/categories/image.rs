@@ -226,7 +226,7 @@ impl Category for Image {
             C::ImagerScanMode,
             "Scan Mode",
             "Image sensor scan mode.",
-            Some(V::Integer),
+            Some(V::ImagerScanMode),
         ),
     ];
 }

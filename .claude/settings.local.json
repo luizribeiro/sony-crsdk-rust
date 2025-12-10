@@ -6,7 +6,8 @@
       "Bash(cargo clippy:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(cargo run:*)"
     ],
     "deny": [],
     "ask": []

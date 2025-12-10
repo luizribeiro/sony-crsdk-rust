@@ -188,6 +188,20 @@ pub enum PropertyValueType {
     IsoAutoMinShutterSpeedPreset,
     /// ISO auto minimum shutter speed mode
     IsoAutoMinShutterSpeedMode,
+    /// Picture effect filter
+    PictureEffect,
+    /// Picture profile gamma curve
+    PictureProfileGamma,
+    /// Picture profile color mode
+    PictureProfileColorMode,
+    /// Grid line overlay type
+    GridLineType,
+    /// Streaming status
+    StreamStatus,
+    /// Imager/sensor scan mode
+    ImagerScanMode,
+    /// Auto-framing/E-framing type
+    EframingType,
 
     // Generic toggle types
     /// On/Off toggle (0=Off, 1=On)
@@ -2655,6 +2669,552 @@ impl fmt::Display for IsoAutoMinShutterSpeedMode {
         match self {
             Self::Preset => write!(f, "Preset"),
             Self::Manual => write!(f, "Manual"),
+        }
+    }
+}
+
+/// Picture effect creative filter setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u32)]
+pub enum PictureEffect {
+    /// No picture effect
+    Off = 0x00000000,
+    /// Toy camera effect (normal)
+    ToyCameraNormal = 0x00000001,
+    /// Toy camera effect (cool tone)
+    ToyCameraCool = 0x00000002,
+    /// Toy camera effect (warm tone)
+    ToyCameraWarm = 0x00000003,
+    /// Toy camera effect (green tone)
+    ToyCameraGreen = 0x00000004,
+    /// Toy camera effect (magenta tone)
+    ToyCameraMagenta = 0x00000005,
+    /// Pop color effect
+    Pop = 0x00000100,
+    /// Posterization (black & white)
+    PosterizationBW = 0x00000200,
+    /// Posterization (color)
+    PosterizationColor = 0x00000201,
+    /// Retro photo effect
+    Retro = 0x00000300,
+    /// Soft high-key effect
+    SoftHighkey = 0x00000400,
+    /// Partial color (red only)
+    PartColorRed = 0x00000500,
+    /// Partial color (green only)
+    PartColorGreen = 0x00000501,
+    /// Partial color (blue only)
+    PartColorBlue = 0x00000502,
+    /// Partial color (yellow only)
+    PartColorYellow = 0x00000503,
+    /// High contrast monochrome
+    HighContrastMonochrome = 0x00000600,
+    /// Soft focus (low)
+    SoftFocusLow = 0x00000700,
+    /// Soft focus (medium)
+    SoftFocusMid = 0x00000701,
+    /// Soft focus (high)
+    SoftFocusHigh = 0x00000702,
+    /// HDR painting (low)
+    HDRPaintingLow = 0x00000800,
+    /// HDR painting (medium)
+    HDRPaintingMid = 0x00000801,
+    /// HDR painting (high)
+    HDRPaintingHigh = 0x00000802,
+    /// Rich tone monochrome
+    RichToneMonochrome = 0x00000901,
+    /// Miniature (auto)
+    MiniatureAuto = 0x00000A00,
+    /// Miniature (top)
+    MiniatureTop = 0x00000A01,
+    /// Miniature (middle horizontal)
+    MiniatureMidHorizontal = 0x00000A02,
+    /// Miniature (bottom)
+    MiniatureBottom = 0x00000A03,
+    /// Miniature (left)
+    MiniatureLeft = 0x00000A04,
+    /// Miniature (middle vertical)
+    MiniatureMidVertical = 0x00000A05,
+    /// Miniature (right)
+    MiniatureRight = 0x00000A06,
+    /// Watercolor effect
+    MiniatureWaterColor = 0x00000B00,
+    /// Illustration (low)
+    MiniatureIllustrationLow = 0x00000C00,
+    /// Illustration (medium)
+    MiniatureIllustrationMid = 0x00000C01,
+    /// Illustration (high)
+    MiniatureIllustrationHigh = 0x00000C02,
+}
+
+impl ToCrsdk<u64> for PictureEffect {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for PictureEffect {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u32 {
+            0x00000000 => Self::Off,
+            0x00000001 => Self::ToyCameraNormal,
+            0x00000002 => Self::ToyCameraCool,
+            0x00000003 => Self::ToyCameraWarm,
+            0x00000004 => Self::ToyCameraGreen,
+            0x00000005 => Self::ToyCameraMagenta,
+            0x00000100 => Self::Pop,
+            0x00000200 => Self::PosterizationBW,
+            0x00000201 => Self::PosterizationColor,
+            0x00000300 => Self::Retro,
+            0x00000400 => Self::SoftHighkey,
+            0x00000500 => Self::PartColorRed,
+            0x00000501 => Self::PartColorGreen,
+            0x00000502 => Self::PartColorBlue,
+            0x00000503 => Self::PartColorYellow,
+            0x00000600 => Self::HighContrastMonochrome,
+            0x00000700 => Self::SoftFocusLow,
+            0x00000701 => Self::SoftFocusMid,
+            0x00000702 => Self::SoftFocusHigh,
+            0x00000800 => Self::HDRPaintingLow,
+            0x00000801 => Self::HDRPaintingMid,
+            0x00000802 => Self::HDRPaintingHigh,
+            0x00000901 => Self::RichToneMonochrome,
+            0x00000A00 => Self::MiniatureAuto,
+            0x00000A01 => Self::MiniatureTop,
+            0x00000A02 => Self::MiniatureMidHorizontal,
+            0x00000A03 => Self::MiniatureBottom,
+            0x00000A04 => Self::MiniatureLeft,
+            0x00000A05 => Self::MiniatureMidVertical,
+            0x00000A06 => Self::MiniatureRight,
+            0x00000B00 => Self::MiniatureWaterColor,
+            0x00000C00 => Self::MiniatureIllustrationLow,
+            0x00000C01 => Self::MiniatureIllustrationMid,
+            0x00000C02 => Self::MiniatureIllustrationHigh,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for PictureEffect {}
+
+impl fmt::Display for PictureEffect {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Off => write!(f, "Off"),
+            Self::ToyCameraNormal => write!(f, "Toy Camera"),
+            Self::ToyCameraCool => write!(f, "Toy Camera (Cool)"),
+            Self::ToyCameraWarm => write!(f, "Toy Camera (Warm)"),
+            Self::ToyCameraGreen => write!(f, "Toy Camera (Green)"),
+            Self::ToyCameraMagenta => write!(f, "Toy Camera (Magenta)"),
+            Self::Pop => write!(f, "Pop Color"),
+            Self::PosterizationBW => write!(f, "Posterization B&W"),
+            Self::PosterizationColor => write!(f, "Posterization Color"),
+            Self::Retro => write!(f, "Retro Photo"),
+            Self::SoftHighkey => write!(f, "Soft High-key"),
+            Self::PartColorRed => write!(f, "Partial Color (Red)"),
+            Self::PartColorGreen => write!(f, "Partial Color (Green)"),
+            Self::PartColorBlue => write!(f, "Partial Color (Blue)"),
+            Self::PartColorYellow => write!(f, "Partial Color (Yellow)"),
+            Self::HighContrastMonochrome => write!(f, "High Contrast Mono"),
+            Self::SoftFocusLow => write!(f, "Soft Focus (Low)"),
+            Self::SoftFocusMid => write!(f, "Soft Focus (Mid)"),
+            Self::SoftFocusHigh => write!(f, "Soft Focus (High)"),
+            Self::HDRPaintingLow => write!(f, "HDR Painting (Low)"),
+            Self::HDRPaintingMid => write!(f, "HDR Painting (Mid)"),
+            Self::HDRPaintingHigh => write!(f, "HDR Painting (High)"),
+            Self::RichToneMonochrome => write!(f, "Rich-tone Mono"),
+            Self::MiniatureAuto => write!(f, "Miniature (Auto)"),
+            Self::MiniatureTop => write!(f, "Miniature (Top)"),
+            Self::MiniatureMidHorizontal => write!(f, "Miniature (Mid H)"),
+            Self::MiniatureBottom => write!(f, "Miniature (Bottom)"),
+            Self::MiniatureLeft => write!(f, "Miniature (Left)"),
+            Self::MiniatureMidVertical => write!(f, "Miniature (Mid V)"),
+            Self::MiniatureRight => write!(f, "Miniature (Right)"),
+            Self::MiniatureWaterColor => write!(f, "Watercolor"),
+            Self::MiniatureIllustrationLow => write!(f, "Illustration (Low)"),
+            Self::MiniatureIllustrationMid => write!(f, "Illustration (Mid)"),
+            Self::MiniatureIllustrationHigh => write!(f, "Illustration (High)"),
+        }
+    }
+}
+
+/// Picture profile gamma curve selection.
+///
+/// Different gamma curves optimize for different workflows: broadcast (ITU709),
+/// cinema (Cine1-4), log capture (S-Log2/3), or HDR (HLG).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum PictureProfileGamma {
+    /// Movie gamma curve
+    Movie = 0x0001,
+    /// Still gamma curve
+    Still = 0x0002,
+    /// S-Cinetone gamma
+    SCinetone = 0x0003,
+    /// Cine1 gamma curve
+    Cine1 = 0x0101,
+    /// Cine2 gamma curve
+    Cine2 = 0x0102,
+    /// Cine3 gamma curve
+    Cine3 = 0x0103,
+    /// Cine4 gamma curve
+    Cine4 = 0x0104,
+    /// ITU709 standard gamma
+    ITU709 = 0x0201,
+    /// ITU709 (800%) extended range
+    ITU709_800 = 0x0202,
+    /// S-Log2 logarithmic gamma
+    SLog2 = 0x0302,
+    /// S-Log3 logarithmic gamma
+    SLog3 = 0x0303,
+    /// HLG (Hybrid Log-Gamma)
+    HLG = 0x0401,
+    /// HLG1 variant
+    HLG1 = 0x0402,
+    /// HLG2 variant
+    HLG2 = 0x0403,
+    /// HLG3 variant
+    HLG3 = 0x0404,
+}
+
+impl ToCrsdk<u64> for PictureProfileGamma {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for PictureProfileGamma {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0001 => Self::Movie,
+            0x0002 => Self::Still,
+            0x0003 => Self::SCinetone,
+            0x0101 => Self::Cine1,
+            0x0102 => Self::Cine2,
+            0x0103 => Self::Cine3,
+            0x0104 => Self::Cine4,
+            0x0201 => Self::ITU709,
+            0x0202 => Self::ITU709_800,
+            0x0302 => Self::SLog2,
+            0x0303 => Self::SLog3,
+            0x0401 => Self::HLG,
+            0x0402 => Self::HLG1,
+            0x0403 => Self::HLG2,
+            0x0404 => Self::HLG3,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for PictureProfileGamma {}
+
+impl fmt::Display for PictureProfileGamma {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Movie => write!(f, "Movie"),
+            Self::Still => write!(f, "Still"),
+            Self::SCinetone => write!(f, "S-Cinetone"),
+            Self::Cine1 => write!(f, "Cine1"),
+            Self::Cine2 => write!(f, "Cine2"),
+            Self::Cine3 => write!(f, "Cine3"),
+            Self::Cine4 => write!(f, "Cine4"),
+            Self::ITU709 => write!(f, "ITU709"),
+            Self::ITU709_800 => write!(f, "ITU709 (800%)"),
+            Self::SLog2 => write!(f, "S-Log2"),
+            Self::SLog3 => write!(f, "S-Log3"),
+            Self::HLG => write!(f, "HLG"),
+            Self::HLG1 => write!(f, "HLG1"),
+            Self::HLG2 => write!(f, "HLG2"),
+            Self::HLG3 => write!(f, "HLG3"),
+        }
+    }
+}
+
+/// Picture profile color mode setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum PictureProfileColorMode {
+    /// Movie color mode
+    Movie = 0x0001,
+    /// Still color mode
+    Still = 0x0002,
+    /// S-Cinetone color mode
+    SCinetone = 0x0003,
+    /// Cinema color mode
+    Cinema = 0x0004,
+    /// Pro color mode
+    Pro = 0x0005,
+    /// ITU709 Matrix color mode
+    ITU709Matrix = 0x0006,
+    /// Black & White mode
+    BlackWhite = 0x0007,
+    /// S-Gamut3.Cine color mode
+    SGamut3Cine = 0x0008,
+    /// S-Gamut3 color mode
+    SGamut3 = 0x0009,
+    /// BT.2020 color mode
+    BT2020 = 0x000A,
+    /// 709 color mode
+    Color709 = 0x000B,
+    /// S-Gamut color mode
+    SGamut = 0x000C,
+    /// 709 tone color mode
+    Color709Tone = 0x000D,
+}
+
+impl ToCrsdk<u64> for PictureProfileColorMode {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for PictureProfileColorMode {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0001 => Self::Movie,
+            0x0002 => Self::Still,
+            0x0003 => Self::SCinetone,
+            0x0004 => Self::Cinema,
+            0x0005 => Self::Pro,
+            0x0006 => Self::ITU709Matrix,
+            0x0007 => Self::BlackWhite,
+            0x0008 => Self::SGamut3Cine,
+            0x0009 => Self::SGamut3,
+            0x000A => Self::BT2020,
+            0x000B => Self::Color709,
+            0x000C => Self::SGamut,
+            0x000D => Self::Color709Tone,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for PictureProfileColorMode {}
+
+impl fmt::Display for PictureProfileColorMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Movie => write!(f, "Movie"),
+            Self::Still => write!(f, "Still"),
+            Self::SCinetone => write!(f, "S-Cinetone"),
+            Self::Cinema => write!(f, "Cinema"),
+            Self::Pro => write!(f, "Pro"),
+            Self::ITU709Matrix => write!(f, "ITU709 Matrix"),
+            Self::BlackWhite => write!(f, "Black&White"),
+            Self::SGamut3Cine => write!(f, "S-Gamut3.Cine"),
+            Self::SGamut3 => write!(f, "S-Gamut3"),
+            Self::BT2020 => write!(f, "BT.2020"),
+            Self::Color709 => write!(f, "709"),
+            Self::SGamut => write!(f, "S-Gamut"),
+            Self::Color709Tone => write!(f, "709tone"),
+        }
+    }
+}
+
+/// Grid line overlay type for composition assistance.
+///
+/// Provides various grid patterns overlaid on the camera display
+/// to help with composition and framing.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum GridLineType {
+    /// Rule of thirds grid (3x3)
+    RuleOf3rds = 0x01,
+    /// Square grid
+    Square = 0x02,
+    /// Diagonal and square grid
+    DiagAndSquare = 0x03,
+    /// Golden ratio grid
+    GoldenRatio = 0x04,
+    /// Custom grid pattern 1
+    Custom1 = 0x11,
+    /// Custom grid pattern 2
+    Custom2 = 0x12,
+    /// Custom grid pattern 3
+    Custom3 = 0x13,
+    /// Custom grid pattern 4
+    Custom4 = 0x14,
+}
+
+impl ToCrsdk<u64> for GridLineType {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for GridLineType {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::RuleOf3rds,
+            0x02 => Self::Square,
+            0x03 => Self::DiagAndSquare,
+            0x04 => Self::GoldenRatio,
+            0x11 => Self::Custom1,
+            0x12 => Self::Custom2,
+            0x13 => Self::Custom3,
+            0x14 => Self::Custom4,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for GridLineType {}
+
+impl fmt::Display for GridLineType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let s = match self {
+            Self::RuleOf3rds => "Rule of 3rds",
+            Self::Square => "Square Grid",
+            Self::DiagAndSquare => "Diag+Square",
+            Self::GoldenRatio => "Golden Ratio",
+            Self::Custom1 => "Custom 1",
+            Self::Custom2 => "Custom 2",
+            Self::Custom3 => "Custom 3",
+            Self::Custom4 => "Custom 4",
+        };
+        write!(f, "{}", s)
+    }
+}
+
+/// Streaming status.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum StreamStatus {
+    /// Stream is inactive
+    Inactive = 0x01,
+    /// Stream is idle
+    Idle = 0x02,
+    /// Stream is actively streaming
+    Streaming = 0x03,
+    /// Stream is in error state
+    Error = 0x04,
+    /// Stream is ready
+    Ready = 0x05,
+}
+
+impl ToCrsdk<u64> for StreamStatus {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for StreamStatus {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Inactive,
+            0x02 => Self::Idle,
+            0x03 => Self::Streaming,
+            0x04 => Self::Error,
+            0x05 => Self::Ready,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for StreamStatus {}
+
+impl fmt::Display for StreamStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Inactive => write!(f, "Inactive"),
+            Self::Idle => write!(f, "Idle"),
+            Self::Streaming => write!(f, "Streaming"),
+            Self::Error => write!(f, "Error"),
+            Self::Ready => write!(f, "Ready"),
+        }
+    }
+}
+
+/// Imager/sensor scan mode.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ImagerScanMode {
+    /// Auto scan mode selection
+    Auto = 0x01,
+    /// Full frame scan mode
+    FullFrame = 0x02,
+    /// Super 35mm scan mode
+    Super35mm = 0x03,
+}
+
+impl ToCrsdk<u64> for ImagerScanMode {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for ImagerScanMode {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Auto,
+            0x02 => Self::FullFrame,
+            0x03 => Self::Super35mm,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for ImagerScanMode {}
+
+impl fmt::Display for ImagerScanMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Auto => write!(f, "Auto"),
+            Self::FullFrame => write!(f, "Full Frame"),
+            Self::Super35mm => write!(f, "Super 35mm"),
+        }
+    }
+}
+
+/// Auto-framing/E-framing type for PTZ control.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum EframingType {
+    /// E-framing disabled
+    None = 0x01,
+    /// Auto framing mode
+    Auto = 0x02,
+    /// Single framing mode
+    Single = 0x03,
+    /// Pan-tilt-zoom control mode
+    PTZ = 0x05,
+    /// Hold current position
+    HoldCurrentPosition = 0x08,
+    /// Force zoom out
+    ForceZoomOut = 0x09,
+}
+
+impl ToCrsdk<u64> for EframingType {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for EframingType {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::None,
+            0x02 => Self::Auto,
+            0x03 => Self::Single,
+            0x05 => Self::PTZ,
+            0x08 => Self::HoldCurrentPosition,
+            0x09 => Self::ForceZoomOut,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for EframingType {}
+
+impl fmt::Display for EframingType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::None => write!(f, "None"),
+            Self::Auto => write!(f, "Auto"),
+            Self::Single => write!(f, "Single"),
+            Self::PTZ => write!(f, "PTZ"),
+            Self::HoldCurrentPosition => write!(f, "Hold Position"),
+            Self::ForceZoomOut => write!(f, "Force Zoom Out"),
         }
     }
 }
