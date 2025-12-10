@@ -631,7 +631,7 @@ impl Category for Other {
             C::SoftSkinEffect,
             "Soft Skin",
             "Soft skin smoothing effect for portraits.",
-            Some(V::Integer),
+            Some(V::SoftSkinEffect),
         ),
         PropertyDef::new(
             C::SimulRecSetting,
@@ -931,7 +931,7 @@ impl Category for Other {
             C::WindNoiseReduct,
             "Wind Noise Red",
             "Wind noise reduction for built-in microphone.",
-            Some(V::Integer),
+            Some(V::WindNoiseReduction),
         ),
         PropertyDef::new(
             C::DigitalExtenderMagnificationSetting,

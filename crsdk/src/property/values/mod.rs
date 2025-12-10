@@ -28,11 +28,11 @@ mod white_balance;
 
 pub use common::{
     AudioSignals, AutoManual, BatteryRemainDisplayUnit, ColorSpace, DRangeOptimizer,
-    DeviceOverheatingState, FocusOperation, FunctionOfTouchOperation, HighIsoNR, Integer,
+    DeviceOverheatingState, DispMode, FocusOperation, FunctionOfTouchOperation, HighIsoNR, Integer,
     IntervalRecMode, IntervalRecStatus, LiveViewDisplayEffect, LockIndicator, NearFarEnableStatus,
     OnOff, Percentage, PlaybackMedia, PowerSource, PriorityKeySettings, PropertyValueType,
-    SdkControlMode, ShutterType, SilentModeApertureDrive, StillImageStoreDestination, Switch,
-    TouchOperation,
+    SdkControlMode, SelectFinder, ShutterType, SilentModeApertureDrive, SoftSkinEffect,
+    StillImageStoreDestination, Switch, TouchOperation, WindNoiseReduction,
 };
 pub use drive::{DriveMode, IntervalRecShutterType};
 pub use exposure::{

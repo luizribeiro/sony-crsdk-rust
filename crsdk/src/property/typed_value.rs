@@ -18,11 +18,12 @@ use super::values::{
 use super::{property_value_type, PropertyValueType};
 use super::{
     AudioSignals, BatteryRemainDisplayUnit, ColorSpace, DRangeOptimizer, DeviceOverheatingState,
-    DriveMode, FocusOperation, FunctionOfTouchOperation, HighIsoNR, IntervalRecMode,
+    DispMode, DriveMode, FocusOperation, FunctionOfTouchOperation, HighIsoNR, IntervalRecMode,
     IntervalRecShutterType, IntervalRecStatus, LiveViewStatus, MediaSlotRecordingType,
     MediaSlotWritingState, MovieFileFormat, NearFarEnableStatus, PlaybackMedia, PowerSource,
-    PriorityKeySettings, RecorderStatus, RecordingState, SdkControlMode, ShutterType, SlotStatus,
-    StillImageStoreDestination, TimeCodeFormat, TimeCodeMake, TimeCodeRun, TouchOperation,
+    PriorityKeySettings, RecorderStatus, RecordingState, SdkControlMode, SelectFinder, ShutterType,
+    SlotStatus, SoftSkinEffect, StillImageStoreDestination, TimeCodeFormat, TimeCodeMake,
+    TimeCodeRun, TouchOperation, WindNoiseReduction,
 };
 use crate::property::traits::PropertyValue;
 
@@ -154,6 +155,14 @@ pub enum TypedValue {
     AudioSignals(AudioSignals),
     /// Touch operation function
     FunctionOfTouchOperation(FunctionOfTouchOperation),
+    /// Soft skin effect level
+    SoftSkinEffect(SoftSkinEffect),
+    /// Wind noise reduction
+    WindNoiseReduction(WindNoiseReduction),
+    /// Finder/Monitor selection
+    SelectFinder(SelectFinder),
+    /// Display mode
+    DispMode(DispMode),
     /// Battery level (packed status + percentage)
     BatteryLevel(BatteryLevel),
     /// Switch value (On/Off)
@@ -338,6 +347,18 @@ impl TypedValue {
             PVT::FunctionOfTouchOperation => FunctionOfTouchOperation::from_raw(raw)
                 .map(TypedValue::FunctionOfTouchOperation)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::SoftSkinEffect => SoftSkinEffect::from_raw(raw)
+                .map(TypedValue::SoftSkinEffect)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::WindNoiseReduction => WindNoiseReduction::from_raw(raw)
+                .map(TypedValue::WindNoiseReduction)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::SelectFinder => SelectFinder::from_raw(raw)
+                .map(TypedValue::SelectFinder)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::DispMode => DispMode::from_raw(raw)
+                .map(TypedValue::DispMode)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::ShutterModeStatus => ShutterModeStatus::from_raw(raw)
                 .map(TypedValue::ShutterModeStatus)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -454,6 +475,10 @@ impl TypedValue {
             TypedValue::HighIsoNR(v) => v.to_raw(),
             TypedValue::AudioSignals(v) => v.to_raw(),
             TypedValue::FunctionOfTouchOperation(v) => v.to_raw(),
+            TypedValue::SoftSkinEffect(v) => v.to_raw(),
+            TypedValue::WindNoiseReduction(v) => v.to_raw(),
+            TypedValue::SelectFinder(v) => v.to_raw(),
+            TypedValue::DispMode(v) => v.to_raw(),
             TypedValue::BatteryLevel(v) => v.to_raw(),
             TypedValue::Switch(v) => v.to_raw(),
             TypedValue::OnOff(v) => v.to_raw(),
@@ -526,6 +551,10 @@ impl fmt::Display for TypedValue {
             TypedValue::HighIsoNR(v) => write!(f, "{}", v),
             TypedValue::AudioSignals(v) => write!(f, "{}", v),
             TypedValue::FunctionOfTouchOperation(v) => write!(f, "{}", v),
+            TypedValue::SoftSkinEffect(v) => write!(f, "{}", v),
+            TypedValue::WindNoiseReduction(v) => write!(f, "{}", v),
+            TypedValue::SelectFinder(v) => write!(f, "{}", v),
+            TypedValue::DispMode(v) => write!(f, "{}", v),
             TypedValue::BatteryLevel(v) => write!(f, "{}", v),
             TypedValue::Switch(v) => write!(f, "{}", v),
             TypedValue::OnOff(v) => write!(f, "{}", v),

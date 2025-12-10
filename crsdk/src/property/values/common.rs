@@ -118,6 +118,14 @@ pub enum PropertyValueType {
     AudioSignals,
     /// Touch operation function
     FunctionOfTouchOperation,
+    /// Soft skin effect level
+    SoftSkinEffect,
+    /// Wind noise reduction setting
+    WindNoiseReduction,
+    /// Finder/Monitor selection
+    SelectFinder,
+    /// Display mode
+    DispMode,
     /// Shutter mode status
     ShutterModeStatus,
     /// Shutter mode
@@ -1259,6 +1267,194 @@ impl fmt::Display for FunctionOfTouchOperation {
             Self::FocusAndAEOff => write!(f, "Focus Only"),
             Self::TrackingAndAEOn => write!(f, "Track+AE"),
             Self::TrackingAndAEOff => write!(f, "Track Only"),
+        }
+    }
+}
+
+/// Soft skin effect level.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum SoftSkinEffect {
+    /// Effect off
+    Off = 0x01,
+    /// Low effect
+    Low = 0x02,
+    /// Medium effect
+    Mid = 0x03,
+    /// High effect
+    High = 0x04,
+}
+
+impl ToCrsdk<u64> for SoftSkinEffect {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for SoftSkinEffect {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Off,
+            0x02 => Self::Low,
+            0x03 => Self::Mid,
+            0x04 => Self::High,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for SoftSkinEffect {}
+
+impl fmt::Display for SoftSkinEffect {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Off => write!(f, "Off"),
+            Self::Low => write!(f, "Low"),
+            Self::Mid => write!(f, "Mid"),
+            Self::High => write!(f, "High"),
+        }
+    }
+}
+
+/// Wind noise reduction setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum WindNoiseReduction {
+    /// Wind noise reduction off
+    Off = 0x01,
+    /// Wind noise reduction on
+    On = 0x02,
+    /// Auto wind noise reduction
+    Auto = 0x03,
+}
+
+impl ToCrsdk<u64> for WindNoiseReduction {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for WindNoiseReduction {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Off,
+            0x02 => Self::On,
+            0x03 => Self::Auto,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for WindNoiseReduction {}
+
+impl fmt::Display for WindNoiseReduction {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Off => write!(f, "Off"),
+            Self::On => write!(f, "On"),
+            Self::Auto => write!(f, "Auto"),
+        }
+    }
+}
+
+/// Finder/Monitor selection.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum SelectFinder {
+    /// Auto select between finder and monitor
+    Auto = 0x01,
+    /// Force viewfinder (manual)
+    ViewFinder = 0x02,
+    /// Force monitor (manual)
+    Monitor = 0x03,
+    /// Auto select variant 2
+    Auto2 = 0x04,
+}
+
+impl ToCrsdk<u64> for SelectFinder {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for SelectFinder {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Auto,
+            0x02 => Self::ViewFinder,
+            0x03 => Self::Monitor,
+            0x04 => Self::Auto2,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for SelectFinder {}
+
+impl fmt::Display for SelectFinder {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Auto => write!(f, "Auto"),
+            Self::ViewFinder => write!(f, "Viewfinder"),
+            Self::Monitor => write!(f, "Monitor"),
+            Self::Auto2 => write!(f, "Auto 2"),
+        }
+    }
+}
+
+/// Display mode setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum DispMode {
+    /// Graphic display
+    GraphicDisplay = 0x01,
+    /// Display all info
+    DisplayAllInfo = 0x02,
+    /// No display info
+    NoDispInfo = 0x03,
+    /// Histogram display
+    Histogram = 0x04,
+    /// Level display
+    Level = 0x05,
+    /// For viewfinder
+    ForViewFinder = 0x06,
+    /// Monitor off
+    MonitorOff = 0x07,
+}
+
+impl ToCrsdk<u64> for DispMode {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for DispMode {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::GraphicDisplay,
+            0x02 => Self::DisplayAllInfo,
+            0x03 => Self::NoDispInfo,
+            0x04 => Self::Histogram,
+            0x05 => Self::Level,
+            0x06 => Self::ForViewFinder,
+            0x07 => Self::MonitorOff,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for DispMode {}
+
+impl fmt::Display for DispMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::GraphicDisplay => write!(f, "Graphic"),
+            Self::DisplayAllInfo => write!(f, "All Info"),
+            Self::NoDispInfo => write!(f, "No Info"),
+            Self::Histogram => write!(f, "Histogram"),
+            Self::Level => write!(f, "Level"),
+            Self::ForViewFinder => write!(f, "Viewfinder"),
+            Self::MonitorOff => write!(f, "Off"),
         }
     }
 }

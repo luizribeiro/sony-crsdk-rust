@@ -28,13 +28,13 @@ impl Category for Display {
             C::DispMode,
             "Display Mode",
             "Current display mode.",
-            Some(V::Integer),
+            Some(V::DispMode),
         ),
         PropertyDef::new(
             C::SelectFinder,
             "Finder/Monitor",
             "Choose between viewfinder and monitor display.",
-            Some(V::Integer),
+            Some(V::SelectFinder),
         ),
         PropertyDef::new(
             C::MonitorLUTSetting,
