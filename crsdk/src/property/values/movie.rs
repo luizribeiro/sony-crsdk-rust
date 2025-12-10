@@ -219,6 +219,215 @@ impl fmt::Display for MovieFileFormat {
     }
 }
 
+/// Recording state for movie recording.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum RecordingState {
+    /// Not currently recording
+    NotRecording = 0x0000,
+    /// Actively recording
+    Recording = 0x0001,
+    /// Recording failed
+    RecordingFailed = 0x0002,
+    /// Interval recording - waiting for next recording
+    IntervalWaiting = 0x0003,
+}
+
+impl ToCrsdk<u64> for RecordingState {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for RecordingState {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0000 => Self::NotRecording,
+            0x0001 => Self::Recording,
+            0x0002 => Self::RecordingFailed,
+            0x0003 => Self::IntervalWaiting,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for RecordingState {}
+
+impl fmt::Display for RecordingState {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::NotRecording => write!(f, "Stopped"),
+            Self::Recording => write!(f, "Recording"),
+            Self::RecordingFailed => write!(f, "Failed"),
+            Self::IntervalWaiting => write!(f, "Waiting"),
+        }
+    }
+}
+
+/// Timecode format (drop frame vs non-drop frame).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum TimeCodeFormat {
+    /// Drop frame timecode (for NTSC 29.97fps)
+    DropFrame = 0x01,
+    /// Non-drop frame timecode
+    NonDropFrame = 0x02,
+}
+
+impl ToCrsdk<u64> for TimeCodeFormat {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for TimeCodeFormat {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::DropFrame,
+            0x02 => Self::NonDropFrame,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for TimeCodeFormat {}
+
+impl fmt::Display for TimeCodeFormat {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::DropFrame => write!(f, "DF"),
+            Self::NonDropFrame => write!(f, "NDF"),
+        }
+    }
+}
+
+/// Timecode run mode.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum TimeCodeRun {
+    /// Record run - timecode advances only during recording
+    RecRun = 0x01,
+    /// Free run - timecode advances continuously
+    FreeRun = 0x02,
+}
+
+impl ToCrsdk<u64> for TimeCodeRun {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for TimeCodeRun {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::RecRun,
+            0x02 => Self::FreeRun,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for TimeCodeRun {}
+
+impl fmt::Display for TimeCodeRun {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::RecRun => write!(f, "Rec Run"),
+            Self::FreeRun => write!(f, "Free Run"),
+        }
+    }
+}
+
+/// Timecode generation mode.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum TimeCodeMake {
+    /// Use preset timecode value
+    Preset = 0x01,
+    /// Regenerate from previous recording
+    Regenerate = 0x02,
+}
+
+impl ToCrsdk<u64> for TimeCodeMake {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for TimeCodeMake {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Preset,
+            0x02 => Self::Regenerate,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for TimeCodeMake {}
+
+impl fmt::Display for TimeCodeMake {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Preset => write!(f, "Preset"),
+            Self::Regenerate => write!(f, "Regen"),
+        }
+    }
+}
+
+/// Recorder status (main or proxy).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum RecorderStatus {
+    /// Recorder is idle
+    Idle = 0x00,
+    /// Ready to record
+    Ready = 0x01,
+    /// Preparing to record
+    Preparing = 0x02,
+    /// In standby mode
+    Standby = 0x03,
+    /// Actively recording
+    Recording = 0x04,
+    /// Stopping recording
+    Stopping = 0x05,
+}
+
+impl ToCrsdk<u64> for RecorderStatus {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for RecorderStatus {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x00 => Self::Idle,
+            0x01 => Self::Ready,
+            0x02 => Self::Preparing,
+            0x03 => Self::Standby,
+            0x04 => Self::Recording,
+            0x05 => Self::Stopping,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for RecorderStatus {}
+
+impl fmt::Display for RecorderStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Idle => write!(f, "Idle"),
+            Self::Ready => write!(f, "Ready"),
+            Self::Preparing => write!(f, "Preparing"),
+            Self::Standby => write!(f, "Standby"),
+            Self::Recording => write!(f, "Recording"),
+            Self::Stopping => write!(f, "Stopping"),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

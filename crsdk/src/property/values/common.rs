@@ -62,6 +62,16 @@ pub enum PropertyValueType {
     ImageSize,
     /// Movie file format (XAVC, etc.)
     MovieFileFormat,
+    /// Movie recording state
+    RecordingState,
+    /// Recorder status (main or proxy)
+    RecorderStatus,
+    /// Timecode format (DF/NDF)
+    TimeCodeFormat,
+    /// Timecode run mode
+    TimeCodeRun,
+    /// Timecode make mode
+    TimeCodeMake,
     /// Shutter mode status
     ShutterModeStatus,
     /// Shutter mode

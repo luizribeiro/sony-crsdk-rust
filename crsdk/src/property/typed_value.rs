@@ -16,7 +16,10 @@ use super::values::{
     SubjectRecognitionAF, Switch, WhiteBalance,
 };
 use super::{property_value_type, PropertyValueType};
-use super::{DriveMode, IntervalRecShutterType, MovieFileFormat};
+use super::{
+    DriveMode, IntervalRecShutterType, MovieFileFormat, RecorderStatus, RecordingState,
+    TimeCodeFormat, TimeCodeMake, TimeCodeRun,
+};
 use crate::property::traits::PropertyValue;
 
 /// A typed property value with Display formatting.
@@ -91,6 +94,16 @@ pub enum TypedValue {
     MovieFileFormat(MovieFileFormat),
     /// Movie quality setting
     MovieQuality(MovieQuality),
+    /// Movie recording state
+    RecordingState(RecordingState),
+    /// Recorder status (main or proxy)
+    RecorderStatus(RecorderStatus),
+    /// Timecode format (DF/NDF)
+    TimeCodeFormat(TimeCodeFormat),
+    /// Timecode run mode
+    TimeCodeRun(TimeCodeRun),
+    /// Timecode make mode
+    TimeCodeMake(TimeCodeMake),
     /// Battery level (packed status + percentage)
     BatteryLevel(BatteryLevel),
     /// Switch value (On/Off)
@@ -191,6 +204,21 @@ impl TypedValue {
             PVT::MovieFileFormat => MovieFileFormat::from_raw(raw)
                 .map(TypedValue::MovieFileFormat)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::RecordingState => RecordingState::from_raw(raw)
+                .map(TypedValue::RecordingState)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::RecorderStatus => RecorderStatus::from_raw(raw)
+                .map(TypedValue::RecorderStatus)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::TimeCodeFormat => TimeCodeFormat::from_raw(raw)
+                .map(TypedValue::TimeCodeFormat)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::TimeCodeRun => TimeCodeRun::from_raw(raw)
+                .map(TypedValue::TimeCodeRun)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::TimeCodeMake => TimeCodeMake::from_raw(raw)
+                .map(TypedValue::TimeCodeMake)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::ShutterModeStatus => ShutterModeStatus::from_raw(raw)
                 .map(TypedValue::ShutterModeStatus)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -279,6 +307,11 @@ impl TypedValue {
             TypedValue::ImageSize(v) => v.to_raw(),
             TypedValue::MovieFileFormat(v) => v.to_raw(),
             TypedValue::MovieQuality(v) => v.to_raw(),
+            TypedValue::RecordingState(v) => v.to_raw(),
+            TypedValue::RecorderStatus(v) => v.to_raw(),
+            TypedValue::TimeCodeFormat(v) => v.to_raw(),
+            TypedValue::TimeCodeRun(v) => v.to_raw(),
+            TypedValue::TimeCodeMake(v) => v.to_raw(),
             TypedValue::BatteryLevel(v) => v.to_raw(),
             TypedValue::Switch(v) => v.to_raw(),
             TypedValue::OnOff(v) => v.to_raw(),
@@ -323,6 +356,11 @@ impl fmt::Display for TypedValue {
             TypedValue::ImageSize(v) => write!(f, "{}", v),
             TypedValue::MovieFileFormat(v) => write!(f, "{}", v),
             TypedValue::MovieQuality(v) => write!(f, "{}", v),
+            TypedValue::RecordingState(v) => write!(f, "{}", v),
+            TypedValue::RecorderStatus(v) => write!(f, "{}", v),
+            TypedValue::TimeCodeFormat(v) => write!(f, "{}", v),
+            TypedValue::TimeCodeRun(v) => write!(f, "{}", v),
+            TypedValue::TimeCodeMake(v) => write!(f, "{}", v),
             TypedValue::BatteryLevel(v) => write!(f, "{}", v),
             TypedValue::Switch(v) => write!(f, "{}", v),
             TypedValue::OnOff(v) => write!(f, "{}", v),

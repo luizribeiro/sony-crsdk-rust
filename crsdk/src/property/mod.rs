@@ -49,7 +49,10 @@ pub use values::{
 pub use values::{ExposureCtrlType, ExposureProgram};
 
 // Re-export drive and movie types from values/
-pub use values::{DriveMode, IntervalRecShutterType, MovieFileFormat, MovieQuality};
+pub use values::{
+    DriveMode, IntervalRecShutterType, MovieFileFormat, MovieQuality, RecorderStatus,
+    RecordingState, TimeCodeFormat, TimeCodeMake, TimeCodeRun,
+};
 
 #[cfg(test)]
 mod tests {

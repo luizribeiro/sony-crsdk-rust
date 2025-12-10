@@ -37,6 +37,9 @@ pub use exposure::{
 pub use flash::FlashMode;
 pub use focus::{FocusArea, FocusMode, FocusTrackingStatus, PrioritySetInAF, SubjectRecognitionAF};
 pub use image::{AspectRatio, FileType, ImageQuality, ImageSize};
-pub use movie::{MovieFileFormat, MovieQuality};
+pub use movie::{
+    MovieFileFormat, MovieQuality, RecorderStatus, RecordingState, TimeCodeFormat, TimeCodeMake,
+    TimeCodeRun,
+};
 pub use power::BatteryLevel;
 pub use white_balance::{ColorTemperature, PrioritySetInAWB, WhiteBalance};

@@ -154,19 +154,19 @@ impl Category for Movie {
             C::TimeCodeFormat,
             "TC Format",
             "Timecode format (drop frame, non-drop frame).",
-            Some(V::Integer),
+            Some(V::TimeCodeFormat),
         ),
         PropertyDef::new(
             C::TimeCodeRun,
             "TC Run",
             "Timecode run mode (free run, record run).",
-            Some(V::Integer),
+            Some(V::TimeCodeRun),
         ),
         PropertyDef::new(
             C::TimeCodeMake,
             "TC Make",
             "How timecode is generated (preset, regenerate).",
-            Some(V::Integer),
+            Some(V::TimeCodeMake),
         ),
         PropertyDef::new(
             C::UserBitTimeRec,
@@ -274,13 +274,13 @@ impl Category for Movie {
             C::RecorderMainStatus,
             "Main Rec Status",
             "Main recorder status.",
-            Some(V::Integer),
+            Some(V::RecorderStatus),
         ),
         PropertyDef::new(
             C::RecordingState,
             "Recording",
             "Current recording state.",
-            Some(V::Integer),
+            Some(V::RecordingState),
         ),
         PropertyDef::new(
             C::RecordingFolderFormat,
@@ -442,7 +442,7 @@ impl Category for Movie {
             C::RecorderProxyStatus,
             "Proxy Status",
             "Proxy recorder status.",
-            Some(V::Integer),
+            Some(V::RecorderStatus),
         ),
         PropertyDef::new(
             C::MovieRecButtonToggleEnableStatus,
