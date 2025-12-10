@@ -52,7 +52,7 @@ impl Category for NdFilter {
             C::NDFilterMode,
             "ND Mode Status",
             "Current ND filter operating mode.",
-            Some(V::Integer),
+            Some(V::NDFilterMode),
         ),
         PropertyDef::new(
             C::NDFilterPresetSelect,

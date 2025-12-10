@@ -60,16 +60,17 @@ pub use values::{LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState, 
 // Re-export common/other types from values/
 pub use values::{
     AFTrackForSpeedChange, ApertureDriveInAF, AudioSignals, BatteryRemainDisplayUnit,
-    CameraOperatingMode, ColorSpace, CustomWBSizeSetting, DRangeOptimizer, DeviceOverheatingState,
-    DispMode, FTPConnectionStatus, FocusOperation, FunctionOfTouchOperation, GainBaseSensitivity,
-    HighIsoNR, ImageStabilizationLevelMovie, ImageStabilizationSteadyShotMovie, IntervalRecMode,
-    IntervalRecStatus, IrisDisplayUnit, LensCompensationShading, NearFarEnableStatus,
-    PlaybackMedia, PowerSource, PriorityKeySettings, RAWFileCompressionType, RecordingMedia,
-    RecordingMediaMovie, RemoconZoomSpeedType, RightLeftEyeSelect, SdkControlMode, SelectFinder,
-    ShutterReleaseTimeLagControl, ShutterType, SoftSkinEffect, StillImageStoreDestination,
-    SubjectRecognitionAnimalBirdDetectionParts, SubjectRecognitionAnimalBirdPriority,
-    TCUBDisplaySetting, TimeShiftTriggerSetting, TouchOperation, WindNoiseReduction, ZoomOperation,
-    APSC_S35,
+    CameraOperatingMode, ColorSpace, CreativeLook, CustomWBSizeSetting, DRangeOptimizer,
+    DeviceOverheatingState, DispMode, FTPConnectionStatus, FocusOperation,
+    FunctionOfTouchOperation, GainBaseSensitivity, HighIsoNR, ImageStabilizationLevelMovie,
+    ImageStabilizationSteadyShotMovie, IntervalRecMode, IntervalRecStatus, IrisDisplayUnit,
+    IsoAutoMinShutterSpeedMode, IsoAutoMinShutterSpeedPreset, LensCompensationShading,
+    NDFilterMode, NearFarEnableStatus, PlaybackMedia, PowerSource, PriorityKeySettings,
+    RAWFileCompressionType, RecordingMedia, RecordingMediaMovie, RemoconZoomSpeedType,
+    RightLeftEyeSelect, SdkControlMode, SelectFinder, ShutterReleaseTimeLagControl, ShutterType,
+    SoftSkinEffect, StillImageStoreDestination, SubjectRecognitionAnimalBirdDetectionParts,
+    SubjectRecognitionAnimalBirdPriority, TCUBDisplaySetting, TimeShiftTriggerSetting,
+    TouchOperation, WindNoiseReduction, ZoomOperation, APSC_S35,
 };
 
 #[cfg(test)]

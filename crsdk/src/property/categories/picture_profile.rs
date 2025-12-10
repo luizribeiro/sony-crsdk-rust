@@ -184,7 +184,7 @@ impl Category for PictureProfile {
             C::CreativeLook,
             "CL Select",
             "Creative Look preset selection.",
-            Some(V::Integer),
+            Some(V::CreativeLook),
         ),
         PropertyDef::new(
             C::CreativeLookContrast,

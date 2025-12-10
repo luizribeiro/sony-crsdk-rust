@@ -226,7 +226,7 @@ impl Category for Exposure {
             C::IsoAutoMinShutterSpeedMode,
             "ISO Auto Min SS Mode",
             "How minimum shutter speed is determined in Auto ISO. Faster keeps shutter quick, Slower prioritizes low ISO.",
-            Some(V::Integer),
+            Some(V::IsoAutoMinShutterSpeedMode),
         ),
         PropertyDef::new(
             C::IsoAutoMinShutterSpeedManual,
@@ -238,7 +238,7 @@ impl Category for Exposure {
             C::IsoAutoMinShutterSpeedPreset,
             "ISO Auto Min SS (Preset)",
             "Preset minimum shutter speed based on focal length. Helps prevent motion blur from camera shake.",
-            Some(V::ShutterSpeed),
+            Some(V::IsoAutoMinShutterSpeedPreset),
         ),
         PropertyDef::new(
             C::IrisDisplayUnit,

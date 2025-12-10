@@ -18,12 +18,13 @@ use super::values::{
 use super::{property_value_type, PropertyValueType};
 use super::{
     AFTrackForSpeedChange, ApertureDriveInAF, AudioSignals, BatteryRemainDisplayUnit,
-    CameraOperatingMode, ColorSpace, CustomWBSizeSetting, DRangeOptimizer, DeviceOverheatingState,
-    DispMode, DriveMode, FTPConnectionStatus, FocusOperation, FunctionOfTouchOperation,
-    GainBaseSensitivity, HighIsoNR, ImageStabilizationLevelMovie,
+    CameraOperatingMode, ColorSpace, CreativeLook, CustomWBSizeSetting, DRangeOptimizer,
+    DeviceOverheatingState, DispMode, DriveMode, FTPConnectionStatus, FocusOperation,
+    FunctionOfTouchOperation, GainBaseSensitivity, HighIsoNR, ImageStabilizationLevelMovie,
     ImageStabilizationSteadyShotMovie, IntervalRecMode, IntervalRecShutterType, IntervalRecStatus,
-    IrisDisplayUnit, LensCompensationShading, LiveViewStatus, MediaSlotRecordingType,
-    MediaSlotWritingState, MovieFileFormat, NearFarEnableStatus, PlaybackMedia, PowerSource,
+    IrisDisplayUnit, IsoAutoMinShutterSpeedMode, IsoAutoMinShutterSpeedPreset,
+    LensCompensationShading, LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState,
+    MovieFileFormat, NDFilterMode, NearFarEnableStatus, PlaybackMedia, PowerSource,
     PriorityKeySettings, RAWFileCompressionType, RecorderStatus, RecordingMedia,
     RecordingMediaMovie, RecordingState, RemoconZoomSpeedType, RightLeftEyeSelect, SdkControlMode,
     SelectFinder, ShutterReleaseTimeLagControl, ShutterType, SlotStatus, SoftSkinEffect,
@@ -214,6 +215,14 @@ pub enum TypedValue {
     RAWFileCompressionType(RAWFileCompressionType),
     /// Zoom speed type
     RemoconZoomSpeedType(RemoconZoomSpeedType),
+    /// ND filter mode
+    NDFilterMode(NDFilterMode),
+    /// Creative Look style preset
+    CreativeLook(CreativeLook),
+    /// ISO auto minimum shutter speed preset
+    IsoAutoMinShutterSpeedPreset(IsoAutoMinShutterSpeedPreset),
+    /// ISO auto minimum shutter speed mode
+    IsoAutoMinShutterSpeedMode(IsoAutoMinShutterSpeedMode),
     /// Battery level (packed status + percentage)
     BatteryLevel(BatteryLevel),
     /// Switch value (On/Off)
@@ -482,6 +491,18 @@ impl TypedValue {
             PVT::RemoconZoomSpeedType => RemoconZoomSpeedType::from_raw(raw)
                 .map(TypedValue::RemoconZoomSpeedType)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::NDFilterMode => NDFilterMode::from_raw(raw)
+                .map(TypedValue::NDFilterMode)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::CreativeLook => CreativeLook::from_raw(raw)
+                .map(TypedValue::CreativeLook)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::IsoAutoMinShutterSpeedPreset => IsoAutoMinShutterSpeedPreset::from_raw(raw)
+                .map(TypedValue::IsoAutoMinShutterSpeedPreset)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::IsoAutoMinShutterSpeedMode => IsoAutoMinShutterSpeedMode::from_raw(raw)
+                .map(TypedValue::IsoAutoMinShutterSpeedMode)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::ShutterModeStatus => ShutterModeStatus::from_raw(raw)
                 .map(TypedValue::ShutterModeStatus)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -624,6 +645,10 @@ impl TypedValue {
             TypedValue::ZoomOperation(v) => v.to_raw(),
             TypedValue::RAWFileCompressionType(v) => v.to_raw(),
             TypedValue::RemoconZoomSpeedType(v) => v.to_raw(),
+            TypedValue::NDFilterMode(v) => v.to_raw(),
+            TypedValue::CreativeLook(v) => v.to_raw(),
+            TypedValue::IsoAutoMinShutterSpeedPreset(v) => v.to_raw(),
+            TypedValue::IsoAutoMinShutterSpeedMode(v) => v.to_raw(),
             TypedValue::BatteryLevel(v) => v.to_raw(),
             TypedValue::Switch(v) => v.to_raw(),
             TypedValue::OnOff(v) => v.to_raw(),
@@ -722,6 +747,10 @@ impl fmt::Display for TypedValue {
             TypedValue::ZoomOperation(v) => write!(f, "{}", v),
             TypedValue::RAWFileCompressionType(v) => write!(f, "{}", v),
             TypedValue::RemoconZoomSpeedType(v) => write!(f, "{}", v),
+            TypedValue::NDFilterMode(v) => write!(f, "{}", v),
+            TypedValue::CreativeLook(v) => write!(f, "{}", v),
+            TypedValue::IsoAutoMinShutterSpeedPreset(v) => write!(f, "{}", v),
+            TypedValue::IsoAutoMinShutterSpeedMode(v) => write!(f, "{}", v),
             TypedValue::BatteryLevel(v) => write!(f, "{}", v),
             TypedValue::Switch(v) => write!(f, "{}", v),
             TypedValue::OnOff(v) => write!(f, "{}", v),

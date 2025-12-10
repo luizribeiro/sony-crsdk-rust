@@ -180,6 +180,14 @@ pub enum PropertyValueType {
     RAWFileCompressionType,
     /// Zoom speed type
     RemoconZoomSpeedType,
+    /// ND filter mode
+    NDFilterMode,
+    /// Creative Look style
+    CreativeLook,
+    /// ISO auto minimum shutter speed preset
+    IsoAutoMinShutterSpeedPreset,
+    /// ISO auto minimum shutter speed mode
+    IsoAutoMinShutterSpeedMode,
 
     // Generic toggle types
     /// On/Off toggle (0=Off, 1=On)
@@ -2425,6 +2433,228 @@ impl fmt::Display for RemoconZoomSpeedType {
             Self::Invalid => write!(f, "N/A"),
             Self::Variable => write!(f, "Variable"),
             Self::Fixed => write!(f, "Fixed"),
+        }
+    }
+}
+
+/// ND filter mode setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum NDFilterMode {
+    /// Auto ND filter
+    Auto = 0x01,
+    /// Preset ND value
+    Preset = 0x02,
+    /// Preset with clear option
+    PresetClear = 0x03,
+    /// Variable ND
+    Variable = 0x04,
+    /// Variable with clear option
+    VariableClear = 0x05,
+    /// Step ND
+    Step = 0x06,
+    /// Step with clear option
+    StepClear = 0x07,
+}
+
+impl ToCrsdk<u64> for NDFilterMode {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for NDFilterMode {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Auto,
+            0x02 => Self::Preset,
+            0x03 => Self::PresetClear,
+            0x04 => Self::Variable,
+            0x05 => Self::VariableClear,
+            0x06 => Self::Step,
+            0x07 => Self::StepClear,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for NDFilterMode {}
+
+impl fmt::Display for NDFilterMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Auto => write!(f, "Auto"),
+            Self::Preset => write!(f, "Preset"),
+            Self::PresetClear => write!(f, "Preset+Clear"),
+            Self::Variable => write!(f, "Variable"),
+            Self::VariableClear => write!(f, "Variable+Clear"),
+            Self::Step => write!(f, "Step"),
+            Self::StepClear => write!(f, "Step+Clear"),
+        }
+    }
+}
+
+/// Creative Look style preset.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum CreativeLook {
+    /// Standard (ST)
+    Standard = 0x0001,
+    /// Portrait (PT)
+    Portrait = 0x0002,
+    /// Neutral (NT)
+    Neutral = 0x0003,
+    /// Vivid (VV)
+    Vivid = 0x0004,
+    /// Vivid 2 (VV2)
+    Vivid2 = 0x0005,
+    /// Film (FL)
+    Film = 0x0006,
+    /// Instant (IN)
+    Instant = 0x0007,
+    /// Soft Highkey (SH)
+    SoftHighkey = 0x0008,
+    /// Black & White (BW)
+    BlackWhite = 0x0009,
+    /// Sepia (SE)
+    Sepia = 0x000A,
+    /// Film 2
+    Film2 = 0x000B,
+    /// Film 3
+    Film3 = 0x000C,
+}
+
+impl ToCrsdk<u64> for CreativeLook {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for CreativeLook {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        // Handle both raw values and custom look offset values
+        let value = (raw & 0xFF) as u16;
+        Ok(match value {
+            0x01 => Self::Standard,
+            0x02 => Self::Portrait,
+            0x03 => Self::Neutral,
+            0x04 => Self::Vivid,
+            0x05 => Self::Vivid2,
+            0x06 => Self::Film,
+            0x07 => Self::Instant,
+            0x08 => Self::SoftHighkey,
+            0x09 => Self::BlackWhite,
+            0x0A => Self::Sepia,
+            0x0B => Self::Film2,
+            0x0C => Self::Film3,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for CreativeLook {}
+
+impl fmt::Display for CreativeLook {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Standard => write!(f, "ST"),
+            Self::Portrait => write!(f, "PT"),
+            Self::Neutral => write!(f, "NT"),
+            Self::Vivid => write!(f, "VV"),
+            Self::Vivid2 => write!(f, "VV2"),
+            Self::Film => write!(f, "FL"),
+            Self::Instant => write!(f, "IN"),
+            Self::SoftHighkey => write!(f, "SH"),
+            Self::BlackWhite => write!(f, "BW"),
+            Self::Sepia => write!(f, "SE"),
+            Self::Film2 => write!(f, "FL2"),
+            Self::Film3 => write!(f, "FL3"),
+        }
+    }
+}
+
+/// ISO auto minimum shutter speed preset.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum IsoAutoMinShutterSpeedPreset {
+    /// Slower than standard
+    Slower = 0x01,
+    /// Slow
+    Slow = 0x02,
+    /// Standard speed
+    Standard = 0x03,
+    /// Fast
+    Fast = 0x04,
+    /// Faster than standard
+    Faster = 0x05,
+}
+
+impl ToCrsdk<u64> for IsoAutoMinShutterSpeedPreset {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for IsoAutoMinShutterSpeedPreset {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Slower,
+            0x02 => Self::Slow,
+            0x03 => Self::Standard,
+            0x04 => Self::Fast,
+            0x05 => Self::Faster,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for IsoAutoMinShutterSpeedPreset {}
+
+impl fmt::Display for IsoAutoMinShutterSpeedPreset {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Slower => write!(f, "Slower"),
+            Self::Slow => write!(f, "Slow"),
+            Self::Standard => write!(f, "Standard"),
+            Self::Fast => write!(f, "Fast"),
+            Self::Faster => write!(f, "Faster"),
+        }
+    }
+}
+
+/// ISO auto minimum shutter speed mode.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum IsoAutoMinShutterSpeedMode {
+    /// Use preset speed values
+    Preset = 0x01,
+    /// Manual speed setting
+    Manual = 0x02,
+}
+
+impl ToCrsdk<u64> for IsoAutoMinShutterSpeedMode {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for IsoAutoMinShutterSpeedMode {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Preset,
+            0x02 => Self::Manual,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for IsoAutoMinShutterSpeedMode {}
+
+impl fmt::Display for IsoAutoMinShutterSpeedMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Preset => write!(f, "Preset"),
+            Self::Manual => write!(f, "Manual"),
         }
     }
 }
