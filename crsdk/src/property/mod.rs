@@ -41,10 +41,10 @@ pub use categories::{
 
 // Re-export all value types from values/
 pub use values::{
-    AspectRatio, AutoManual, FileType, FlashMode, FocusArea, FocusMode, FocusTrackingStatus,
-    ImageQuality, ImageSize, LiveViewDisplayEffect, LockIndicator, MeteringMode, OnOff,
-    PrioritySetInAF, PrioritySetInAWB, PropertyValueType, ShutterMode, ShutterModeStatus,
-    SilentModeApertureDrive, SubjectRecognitionAF, Switch, WhiteBalance,
+    AspectRatio, AutoManual, FileType, FlashMode, FocusArea, FocusIndicator, FocusMode,
+    FocusTrackingStatus, ImageQuality, ImageSize, LiveViewDisplayEffect, LockIndicator,
+    MeteringMode, OnOff, PrioritySetInAF, PrioritySetInAWB, PropertyValueType, ShutterMode,
+    ShutterModeStatus, SilentModeApertureDrive, SubjectRecognitionAF, Switch, WhiteBalance,
 };
 pub use values::{ExposureCtrlType, ExposureProgram};
 

@@ -42,6 +42,8 @@ pub enum PropertyValueType {
     PrioritySetInAF,
     /// Focus tracking status
     FocusTrackingStatus,
+    /// Focus indicator (lock state)
+    FocusIndicator,
     /// White balance preset
     WhiteBalance,
     /// AWB priority setting

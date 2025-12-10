@@ -9,7 +9,7 @@ use crsdk_sys::DevicePropertyCode;
 
 use super::values::{
     Aperture, AspectRatio, AutoManual, BatteryLevel, ColorTemperature, ExposureComp,
-    ExposureCtrlType, ExposureProgram, FileType, FlashMode, FocusArea, FocusMode,
+    ExposureCtrlType, ExposureProgram, FileType, FlashMode, FocusArea, FocusIndicator, FocusMode,
     FocusTrackingStatus, ImageQuality, ImageSize, Integer, Iso, LiveViewDisplayEffect,
     LockIndicator, MeterLevel, MeteringMode, MovieQuality, OnOff, Percentage, PrioritySetInAF,
     PrioritySetInAWB, ShutterMode, ShutterModeStatus, ShutterSpeed, SilentModeApertureDrive,
@@ -70,6 +70,8 @@ pub enum TypedValue {
     PrioritySetInAF(PrioritySetInAF),
     /// Focus tracking status (Off/Focusing/Tracking)
     FocusTrackingStatus(FocusTrackingStatus),
+    /// Focus indicator (lock state)
+    FocusIndicator(FocusIndicator),
     /// White balance setting (Auto/Daylight/Tungsten/etc.)
     WhiteBalance(WhiteBalance),
     /// Priority setting in AWB (Standard/Ambience/White)
@@ -173,6 +175,9 @@ impl TypedValue {
                 .unwrap_or(TypedValue::Unknown(raw)),
             PVT::FocusTrackingStatus => FocusTrackingStatus::from_raw(raw)
                 .map(TypedValue::FocusTrackingStatus)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::FocusIndicator => FocusIndicator::from_raw(raw)
+                .map(TypedValue::FocusIndicator)
                 .unwrap_or(TypedValue::Unknown(raw)),
             PVT::WhiteBalance => WhiteBalance::from_raw(raw)
                 .map(TypedValue::WhiteBalance)
@@ -295,6 +300,7 @@ impl TypedValue {
             TypedValue::SubjectRecognitionAF(v) => v.to_raw(),
             TypedValue::PrioritySetInAF(v) => v.to_raw(),
             TypedValue::FocusTrackingStatus(v) => v.to_raw(),
+            TypedValue::FocusIndicator(v) => v.to_raw(),
             TypedValue::WhiteBalance(v) => v.to_raw(),
             TypedValue::PrioritySetInAWB(v) => v.to_raw(),
             TypedValue::ColorTemperature(v) => v.to_raw(),
@@ -344,6 +350,7 @@ impl fmt::Display for TypedValue {
             TypedValue::SubjectRecognitionAF(v) => write!(f, "{}", v),
             TypedValue::PrioritySetInAF(v) => write!(f, "{}", v),
             TypedValue::FocusTrackingStatus(v) => write!(f, "{}", v),
+            TypedValue::FocusIndicator(v) => write!(f, "{}", v),
             TypedValue::WhiteBalance(v) => write!(f, "{}", v),
             TypedValue::PrioritySetInAWB(v) => write!(f, "{}", v),
             TypedValue::ColorTemperature(v) => write!(f, "{}", v),

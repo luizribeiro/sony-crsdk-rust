@@ -250,7 +250,7 @@ impl Category for Focus {
             C::FocusIndication,
             "Focus Lock",
             "Focus lock indicator. Shows when autofocus has achieved or lost focus on the subject.",
-            Some(V::Integer),
+            Some(V::FocusIndicator),
         ),
         PropertyDef::new(
             C::FocusSpeedRange,

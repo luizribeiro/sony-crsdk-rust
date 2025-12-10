@@ -326,6 +326,70 @@ impl fmt::Display for FocusTrackingStatus {
     }
 }
 
+/// Focus indicator status showing AF lock state.
+///
+/// This indicates whether the camera has achieved focus lock
+/// and in which AF mode it is operating.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u32)]
+pub enum FocusIndicator {
+    /// Focus not locked
+    Unlocked = 0x00000001,
+    /// Focused in AF-S mode
+    FocusedAfS = 0x00000102,
+    /// Not focused in AF-S mode
+    NotFocusedAfS = 0x00000202,
+    /// Focused in AF-C mode
+    FocusedAfC = 0x00000103,
+    /// Not focused in AF-C mode
+    NotFocusedAfC = 0x00000203,
+    /// Tracking subject in AF-C mode
+    TrackingAfC = 0x00000303,
+    /// Focus unpaused
+    Unpause = 0x00001008,
+    /// Focus paused
+    Pause = 0x00002008,
+}
+
+impl ToCrsdk<u64> for FocusIndicator {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for FocusIndicator {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u32 {
+            0x00000001 => Self::Unlocked,
+            0x00000102 => Self::FocusedAfS,
+            0x00000202 => Self::NotFocusedAfS,
+            0x00000103 => Self::FocusedAfC,
+            0x00000203 => Self::NotFocusedAfC,
+            0x00000303 => Self::TrackingAfC,
+            0x00001008 => Self::Unpause,
+            0x00002008 => Self::Pause,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for FocusIndicator {}
+
+impl fmt::Display for FocusIndicator {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Unlocked => write!(f, "Unlocked"),
+            Self::FocusedAfS => write!(f, "Focused (AF-S)"),
+            Self::NotFocusedAfS => write!(f, "Not Focused (AF-S)"),
+            Self::FocusedAfC => write!(f, "Focused (AF-C)"),
+            Self::NotFocusedAfC => write!(f, "Not Focused (AF-C)"),
+            Self::TrackingAfC => write!(f, "Tracking (AF-C)"),
+            Self::Unpause => write!(f, "Unpaused"),
+            Self::Pause => write!(f, "Paused"),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

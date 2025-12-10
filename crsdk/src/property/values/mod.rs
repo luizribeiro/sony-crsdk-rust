@@ -35,7 +35,10 @@ pub use exposure::{
     ShutterMode, ShutterModeStatus, ShutterSpeed,
 };
 pub use flash::FlashMode;
-pub use focus::{FocusArea, FocusMode, FocusTrackingStatus, PrioritySetInAF, SubjectRecognitionAF};
+pub use focus::{
+    FocusArea, FocusIndicator, FocusMode, FocusTrackingStatus, PrioritySetInAF,
+    SubjectRecognitionAF,
+};
 pub use image::{AspectRatio, FileType, ImageQuality, ImageSize};
 pub use movie::{
     MovieFileFormat, MovieQuality, RecorderStatus, RecordingState, TimeCodeFormat, TimeCodeMake,
