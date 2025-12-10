@@ -27,14 +27,15 @@ mod power;
 mod white_balance;
 
 pub use common::{
-    ApertureDriveInAF, AudioSignals, AutoManual, BatteryRemainDisplayUnit, ColorSpace,
-    CustomWBSizeSetting, DRangeOptimizer, DeviceOverheatingState, DispMode, FocusOperation,
-    FunctionOfTouchOperation, HighIsoNR, ImageStabilizationSteadyShotMovie, Integer,
-    IntervalRecMode, IntervalRecStatus, LensCompensationShading, LiveViewDisplayEffect,
+    AFTrackForSpeedChange, ApertureDriveInAF, AudioSignals, AutoManual, BatteryRemainDisplayUnit,
+    ColorSpace, CustomWBSizeSetting, DRangeOptimizer, DeviceOverheatingState, DispMode,
+    FocusOperation, FunctionOfTouchOperation, HighIsoNR, ImageStabilizationSteadyShotMovie,
+    Integer, IntervalRecMode, IntervalRecStatus, LensCompensationShading, LiveViewDisplayEffect,
     LockIndicator, NearFarEnableStatus, OnOff, Percentage, PlaybackMedia, PowerSource,
     PriorityKeySettings, PropertyValueType, RecordingMedia, RecordingMediaMovie, SdkControlMode,
     SelectFinder, ShutterType, SilentModeApertureDrive, SoftSkinEffect, StillImageStoreDestination,
-    Switch, TouchOperation, WindNoiseReduction,
+    SubjectRecognitionAnimalBirdDetectionParts, SubjectRecognitionAnimalBirdPriority, Switch,
+    TCUBDisplaySetting, TouchOperation, WindNoiseReduction,
 };
 pub use drive::{DriveMode, IntervalRecShutterType};
 pub use exposure::{

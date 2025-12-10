@@ -148,7 +148,7 @@ impl Category for Display {
             C::TCUBDisplaySetting,
             "TC/UB Display",
             "Timecode/User Bit display settings.",
-            Some(V::Integer),
+            Some(V::TCUBDisplaySetting),
         ),
         PropertyDef::new(
             C::MonitorBrightnessType,

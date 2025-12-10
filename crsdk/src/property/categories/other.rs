@@ -469,13 +469,13 @@ impl Category for Other {
             C::SubjectRecognitionAnimalBirdPriority,
             "Animal/Bird Pri",
             "Priority between animal and bird detection.",
-            Some(V::Integer),
+            Some(V::SubjectRecognitionAnimalBirdPriority),
         ),
         PropertyDef::new(
             C::SubjectRecognitionAnimalBirdDetectionParts,
             "A/B Det Parts",
             "Detection parts for animal/bird recognition.",
-            Some(V::Integer),
+            Some(V::SubjectRecognitionAnimalBirdDetectionParts),
         ),
         PropertyDef::new(
             C::SubjectRecognitionAnimalDetectionParts,

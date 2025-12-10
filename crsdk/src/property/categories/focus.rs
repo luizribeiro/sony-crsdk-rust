@@ -190,7 +190,7 @@ impl Category for Focus {
             C::AFTrackForSpeedChange,
             "AF Track Spd",
             "Controls how AF responds when a subject suddenly speeds up or slows down. Optimizes focus tracking for different movement patterns.",
-            Some(V::Integer),
+            Some(V::AFTrackForSpeedChange),
         ),
         PropertyDef::new(
             C::AFFreeSizeAndPositionSetting,

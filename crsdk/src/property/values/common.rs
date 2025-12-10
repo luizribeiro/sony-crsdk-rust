@@ -138,6 +138,14 @@ pub enum PropertyValueType {
     RecordingMedia,
     /// Recording media selection (movie)
     RecordingMediaMovie,
+    /// AF tracking responsiveness
+    AFTrackForSpeedChange,
+    /// Timecode/userbit display setting
+    TCUBDisplaySetting,
+    /// Subject recognition animal/bird priority
+    SubjectRecognitionAnimalBirdPriority,
+    /// Subject recognition detection parts
+    SubjectRecognitionAnimalBirdDetectionParts,
     /// Shutter mode status
     ShutterModeStatus,
     /// Shutter mode
@@ -1721,6 +1729,178 @@ impl fmt::Display for RecordingMediaMovie {
             Self::Slot1 => write!(f, "Slot 1"),
             Self::Slot2 => write!(f, "Slot 2"),
             Self::Simultaneous => write!(f, "Both"),
+        }
+    }
+}
+
+/// AF tracking responsiveness setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum AFTrackForSpeedChange {
+    /// Stable tracking (less responsive to speed changes)
+    Stable = 0x01,
+    /// Standard tracking
+    Standard = 0x02,
+    /// Responsive tracking (quick to adapt)
+    Responsive = 0x03,
+}
+
+impl ToCrsdk<u64> for AFTrackForSpeedChange {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for AFTrackForSpeedChange {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Stable,
+            0x02 => Self::Standard,
+            0x03 => Self::Responsive,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for AFTrackForSpeedChange {}
+
+impl fmt::Display for AFTrackForSpeedChange {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Stable => write!(f, "Stable"),
+            Self::Standard => write!(f, "Standard"),
+            Self::Responsive => write!(f, "Responsive"),
+        }
+    }
+}
+
+/// Timecode/Userbit display setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum TCUBDisplaySetting {
+    /// Show counter
+    Counter = 0x01,
+    /// Show timecode
+    TimeCode = 0x02,
+    /// Show userbit
+    UserBit = 0x03,
+    /// Show duration
+    Duration = 0x04,
+}
+
+impl ToCrsdk<u64> for TCUBDisplaySetting {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for TCUBDisplaySetting {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Counter,
+            0x02 => Self::TimeCode,
+            0x03 => Self::UserBit,
+            0x04 => Self::Duration,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for TCUBDisplaySetting {}
+
+impl fmt::Display for TCUBDisplaySetting {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Counter => write!(f, "Counter"),
+            Self::TimeCode => write!(f, "TC"),
+            Self::UserBit => write!(f, "UB"),
+            Self::Duration => write!(f, "Duration"),
+        }
+    }
+}
+
+/// Subject recognition animal/bird priority.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum SubjectRecognitionAnimalBirdPriority {
+    /// Auto priority selection
+    Auto = 0x01,
+    /// Prioritize animals
+    AnimalPriority = 0x02,
+    /// Prioritize birds
+    BirdPriority = 0x03,
+}
+
+impl ToCrsdk<u64> for SubjectRecognitionAnimalBirdPriority {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for SubjectRecognitionAnimalBirdPriority {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Auto,
+            0x02 => Self::AnimalPriority,
+            0x03 => Self::BirdPriority,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for SubjectRecognitionAnimalBirdPriority {}
+
+impl fmt::Display for SubjectRecognitionAnimalBirdPriority {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Auto => write!(f, "Auto"),
+            Self::AnimalPriority => write!(f, "Animal"),
+            Self::BirdPriority => write!(f, "Bird"),
+        }
+    }
+}
+
+/// Subject recognition detection parts.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum SubjectRecognitionAnimalBirdDetectionParts {
+    /// Follow individual setting
+    FollowIndividual = 0xFF,
+    /// Detect eye, head, and body
+    EyeHeadBody = 0x01,
+    /// Detect eye and head only
+    EyeHead = 0x02,
+    /// Detect eye only
+    Eye = 0x03,
+}
+
+impl ToCrsdk<u64> for SubjectRecognitionAnimalBirdDetectionParts {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for SubjectRecognitionAnimalBirdDetectionParts {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0xFF => Self::FollowIndividual,
+            0x01 => Self::EyeHeadBody,
+            0x02 => Self::EyeHead,
+            0x03 => Self::Eye,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for SubjectRecognitionAnimalBirdDetectionParts {}
+
+impl fmt::Display for SubjectRecognitionAnimalBirdDetectionParts {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::FollowIndividual => write!(f, "Individual"),
+            Self::EyeHeadBody => write!(f, "Eye+Head+Body"),
+            Self::EyeHead => write!(f, "Eye+Head"),
+            Self::Eye => write!(f, "Eye Only"),
         }
     }
 }

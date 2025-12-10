@@ -17,15 +17,17 @@ use super::values::{
 };
 use super::{property_value_type, PropertyValueType};
 use super::{
-    ApertureDriveInAF, AudioSignals, BatteryRemainDisplayUnit, ColorSpace, CustomWBSizeSetting,
-    DRangeOptimizer, DeviceOverheatingState, DispMode, DriveMode, FocusOperation,
-    FunctionOfTouchOperation, HighIsoNR, ImageStabilizationSteadyShotMovie, IntervalRecMode,
-    IntervalRecShutterType, IntervalRecStatus, LensCompensationShading, LiveViewStatus,
-    MediaSlotRecordingType, MediaSlotWritingState, MovieFileFormat, NearFarEnableStatus,
-    PlaybackMedia, PowerSource, PriorityKeySettings, RecorderStatus, RecordingMedia,
-    RecordingMediaMovie, RecordingState, SdkControlMode, SelectFinder, ShutterType, SlotStatus,
-    SoftSkinEffect, StillImageStoreDestination, TimeCodeFormat, TimeCodeMake, TimeCodeRun,
-    TouchOperation, WindNoiseReduction,
+    AFTrackForSpeedChange, ApertureDriveInAF, AudioSignals, BatteryRemainDisplayUnit, ColorSpace,
+    CustomWBSizeSetting, DRangeOptimizer, DeviceOverheatingState, DispMode, DriveMode,
+    FocusOperation, FunctionOfTouchOperation, HighIsoNR, ImageStabilizationSteadyShotMovie,
+    IntervalRecMode, IntervalRecShutterType, IntervalRecStatus, LensCompensationShading,
+    LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState, MovieFileFormat,
+    NearFarEnableStatus, PlaybackMedia, PowerSource, PriorityKeySettings, RecorderStatus,
+    RecordingMedia, RecordingMediaMovie, RecordingState, SdkControlMode, SelectFinder, ShutterType,
+    SlotStatus, SoftSkinEffect, StillImageStoreDestination,
+    SubjectRecognitionAnimalBirdDetectionParts, SubjectRecognitionAnimalBirdPriority,
+    TCUBDisplaySetting, TimeCodeFormat, TimeCodeMake, TimeCodeRun, TouchOperation,
+    WindNoiseReduction,
 };
 use crate::property::traits::PropertyValue;
 
@@ -177,6 +179,14 @@ pub enum TypedValue {
     RecordingMedia(RecordingMedia),
     /// Recording media (movie)
     RecordingMediaMovie(RecordingMediaMovie),
+    /// AF tracking responsiveness
+    AFTrackForSpeedChange(AFTrackForSpeedChange),
+    /// Timecode/userbit display
+    TCUBDisplaySetting(TCUBDisplaySetting),
+    /// Subject recognition animal/bird priority
+    SubjectRecognitionAnimalBirdPriority(SubjectRecognitionAnimalBirdPriority),
+    /// Subject recognition detection parts
+    SubjectRecognitionAnimalBirdDetectionParts(SubjectRecognitionAnimalBirdDetectionParts),
     /// Battery level (packed status + percentage)
     BatteryLevel(BatteryLevel),
     /// Switch value (On/Off)
@@ -393,6 +403,22 @@ impl TypedValue {
             PVT::RecordingMediaMovie => RecordingMediaMovie::from_raw(raw)
                 .map(TypedValue::RecordingMediaMovie)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::AFTrackForSpeedChange => AFTrackForSpeedChange::from_raw(raw)
+                .map(TypedValue::AFTrackForSpeedChange)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::TCUBDisplaySetting => TCUBDisplaySetting::from_raw(raw)
+                .map(TypedValue::TCUBDisplaySetting)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::SubjectRecognitionAnimalBirdPriority => {
+                SubjectRecognitionAnimalBirdPriority::from_raw(raw)
+                    .map(TypedValue::SubjectRecognitionAnimalBirdPriority)
+                    .unwrap_or(TypedValue::Unknown(raw))
+            }
+            PVT::SubjectRecognitionAnimalBirdDetectionParts => {
+                SubjectRecognitionAnimalBirdDetectionParts::from_raw(raw)
+                    .map(TypedValue::SubjectRecognitionAnimalBirdDetectionParts)
+                    .unwrap_or(TypedValue::Unknown(raw))
+            }
             PVT::ShutterModeStatus => ShutterModeStatus::from_raw(raw)
                 .map(TypedValue::ShutterModeStatus)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -519,6 +545,10 @@ impl TypedValue {
             TypedValue::ApertureDriveInAF(v) => v.to_raw(),
             TypedValue::RecordingMedia(v) => v.to_raw(),
             TypedValue::RecordingMediaMovie(v) => v.to_raw(),
+            TypedValue::AFTrackForSpeedChange(v) => v.to_raw(),
+            TypedValue::TCUBDisplaySetting(v) => v.to_raw(),
+            TypedValue::SubjectRecognitionAnimalBirdPriority(v) => v.to_raw(),
+            TypedValue::SubjectRecognitionAnimalBirdDetectionParts(v) => v.to_raw(),
             TypedValue::BatteryLevel(v) => v.to_raw(),
             TypedValue::Switch(v) => v.to_raw(),
             TypedValue::OnOff(v) => v.to_raw(),
@@ -601,6 +631,10 @@ impl fmt::Display for TypedValue {
             TypedValue::ApertureDriveInAF(v) => write!(f, "{}", v),
             TypedValue::RecordingMedia(v) => write!(f, "{}", v),
             TypedValue::RecordingMediaMovie(v) => write!(f, "{}", v),
+            TypedValue::AFTrackForSpeedChange(v) => write!(f, "{}", v),
+            TypedValue::TCUBDisplaySetting(v) => write!(f, "{}", v),
+            TypedValue::SubjectRecognitionAnimalBirdPriority(v) => write!(f, "{}", v),
+            TypedValue::SubjectRecognitionAnimalBirdDetectionParts(v) => write!(f, "{}", v),
             TypedValue::BatteryLevel(v) => write!(f, "{}", v),
             TypedValue::Switch(v) => write!(f, "{}", v),
             TypedValue::OnOff(v) => write!(f, "{}", v),
