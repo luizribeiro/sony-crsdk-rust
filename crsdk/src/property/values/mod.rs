@@ -29,15 +29,16 @@ mod white_balance;
 pub use common::{
     AFTrackForSpeedChange, ApertureDriveInAF, AudioSignals, AutoManual, BatteryRemainDisplayUnit,
     CameraOperatingMode, ColorSpace, CustomWBSizeSetting, DRangeOptimizer, DeviceOverheatingState,
-    DispMode, FocusOperation, FunctionOfTouchOperation, HighIsoNR, ImageStabilizationLevelMovie,
-    ImageStabilizationSteadyShotMovie, Integer, IntervalRecMode, IntervalRecStatus,
-    IrisDisplayUnit, LensCompensationShading, LiveViewDisplayEffect, LockIndicator,
-    NearFarEnableStatus, OnOff, Percentage, PlaybackMedia, PowerSource, PriorityKeySettings,
-    PropertyValueType, RecordingMedia, RecordingMediaMovie, SdkControlMode, SelectFinder,
+    DispMode, FTPConnectionStatus, FocusOperation, FunctionOfTouchOperation, GainBaseSensitivity,
+    HighIsoNR, ImageStabilizationLevelMovie, ImageStabilizationSteadyShotMovie, Integer,
+    IntervalRecMode, IntervalRecStatus, IrisDisplayUnit, LensCompensationShading,
+    LiveViewDisplayEffect, LockIndicator, NearFarEnableStatus, OnOff, Percentage, PlaybackMedia,
+    PowerSource, PriorityKeySettings, PropertyValueType, RAWFileCompressionType, RecordingMedia,
+    RecordingMediaMovie, RemoconZoomSpeedType, RightLeftEyeSelect, SdkControlMode, SelectFinder,
     ShutterReleaseTimeLagControl, ShutterType, SilentModeApertureDrive, SoftSkinEffect,
     StillImageStoreDestination, SubjectRecognitionAnimalBirdDetectionParts,
     SubjectRecognitionAnimalBirdPriority, Switch, TCUBDisplaySetting, TimeShiftTriggerSetting,
-    TouchOperation, WindNoiseReduction, APSC_S35,
+    TouchOperation, WindNoiseReduction, ZoomOperation, APSC_S35,
 };
 pub use drive::{DriveMode, IntervalRecShutterType};
 pub use exposure::{

@@ -40,7 +40,7 @@ impl Category for Image {
             C::RAWFileCompressionType,
             "RAW Compression",
             "RAW file compression. Uncompressed has best quality but largest files. Lossless compressed is smaller with no quality loss. Compressed is smallest but some data loss.",
-            Some(V::Integer),
+            Some(V::RAWFileCompressionType),
         ),
         PropertyDef::new(
             C::StillImageStoreDestination,

@@ -168,6 +168,18 @@ pub enum PropertyValueType {
     LiveViewDisplayEffect,
     /// Silent mode aperture drive
     SilentModeApertureDrive,
+    /// Right/Left eye select for AF
+    RightLeftEyeSelect,
+    /// Gain base sensitivity
+    GainBaseSensitivity,
+    /// FTP connection status
+    FTPConnectionStatus,
+    /// Zoom operation direction
+    ZoomOperation,
+    /// RAW file compression type
+    RAWFileCompressionType,
+    /// Zoom speed type
+    RemoconZoomSpeedType,
 
     // Generic toggle types
     /// On/Off toggle (0=Off, 1=On)
@@ -2155,6 +2167,264 @@ impl fmt::Display for APSC_S35 {
             Self::Off => write!(f, "Off"),
             Self::On => write!(f, "On"),
             Self::Auto => write!(f, "Auto"),
+        }
+    }
+}
+
+/// Right/Left eye select for AF.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum RightLeftEyeSelect {
+    /// Auto eye selection
+    Auto = 0x01,
+    /// Focus on right eye
+    RightEye = 0x02,
+    /// Focus on left eye
+    LeftEye = 0x03,
+}
+
+impl ToCrsdk<u64> for RightLeftEyeSelect {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for RightLeftEyeSelect {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Auto,
+            0x02 => Self::RightEye,
+            0x03 => Self::LeftEye,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for RightLeftEyeSelect {}
+
+impl fmt::Display for RightLeftEyeSelect {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Auto => write!(f, "Auto"),
+            Self::RightEye => write!(f, "Right"),
+            Self::LeftEye => write!(f, "Left"),
+        }
+    }
+}
+
+/// Gain base sensitivity setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum GainBaseSensitivity {
+    /// High sensitivity mode
+    High = 0x01,
+    /// Low sensitivity mode
+    Low = 0x02,
+}
+
+impl ToCrsdk<u64> for GainBaseSensitivity {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for GainBaseSensitivity {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::High,
+            0x02 => Self::Low,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for GainBaseSensitivity {}
+
+impl fmt::Display for GainBaseSensitivity {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::High => write!(f, "High"),
+            Self::Low => write!(f, "Low"),
+        }
+    }
+}
+
+/// FTP connection status.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum FTPConnectionStatus {
+    /// Currently connecting
+    Connecting = 0x01,
+    /// Successfully connected
+    Connected = 0x02,
+    /// Connected but server error
+    ConnectedServerError = 0x03,
+    /// Connection error
+    ConnectionError = 0x04,
+}
+
+impl ToCrsdk<u64> for FTPConnectionStatus {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for FTPConnectionStatus {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Connecting,
+            0x02 => Self::Connected,
+            0x03 => Self::ConnectedServerError,
+            0x04 => Self::ConnectionError,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for FTPConnectionStatus {}
+
+impl fmt::Display for FTPConnectionStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Connecting => write!(f, "Connecting"),
+            Self::Connected => write!(f, "Connected"),
+            Self::ConnectedServerError => write!(f, "Server Error"),
+            Self::ConnectionError => write!(f, "Error"),
+        }
+    }
+}
+
+/// Zoom operation direction.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(i8)]
+pub enum ZoomOperation {
+    /// Zoom toward wide angle
+    Wide = -1,
+    /// Stop zoom movement
+    Stop = 0,
+    /// Zoom toward telephoto
+    Tele = 1,
+}
+
+impl ToCrsdk<u64> for ZoomOperation {
+    fn to_crsdk(&self) -> u64 {
+        (*self as i8) as u64
+    }
+}
+
+impl FromCrsdk<u64> for ZoomOperation {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as i8 {
+            -1 => Self::Wide,
+            0 => Self::Stop,
+            1 => Self::Tele,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for ZoomOperation {}
+
+impl fmt::Display for ZoomOperation {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Wide => write!(f, "Wide"),
+            Self::Stop => write!(f, "Stop"),
+            Self::Tele => write!(f, "Tele"),
+        }
+    }
+}
+
+/// RAW file compression type.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum RAWFileCompressionType {
+    /// Uncompressed RAW
+    Uncompressed = 0x0000,
+    /// Compressed RAW
+    Compressed = 0x0001,
+    /// Lossless compression
+    Lossless = 0x0002,
+    /// Lossless compression (Small)
+    LosslessS = 0x0003,
+    /// Lossless compression (Medium)
+    LosslessM = 0x0004,
+    /// Lossless compression (Large)
+    LosslessL = 0x0005,
+}
+
+impl ToCrsdk<u64> for RAWFileCompressionType {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for RAWFileCompressionType {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0000 => Self::Uncompressed,
+            0x0001 => Self::Compressed,
+            0x0002 => Self::Lossless,
+            0x0003 => Self::LosslessS,
+            0x0004 => Self::LosslessM,
+            0x0005 => Self::LosslessL,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for RAWFileCompressionType {}
+
+impl fmt::Display for RAWFileCompressionType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Uncompressed => write!(f, "Uncompressed"),
+            Self::Compressed => write!(f, "Compressed"),
+            Self::Lossless => write!(f, "Lossless"),
+            Self::LosslessS => write!(f, "Lossless S"),
+            Self::LosslessM => write!(f, "Lossless M"),
+            Self::LosslessL => write!(f, "Lossless L"),
+        }
+    }
+}
+
+/// Remocon zoom speed type.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum RemoconZoomSpeedType {
+    /// Invalid/not available
+    Invalid = 0x00,
+    /// Variable speed zoom
+    Variable = 0x01,
+    /// Fixed speed zoom
+    Fixed = 0x02,
+}
+
+impl ToCrsdk<u64> for RemoconZoomSpeedType {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for RemoconZoomSpeedType {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x00 => Self::Invalid,
+            0x01 => Self::Variable,
+            0x02 => Self::Fixed,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for RemoconZoomSpeedType {}
+
+impl fmt::Display for RemoconZoomSpeedType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Invalid => write!(f, "N/A"),
+            Self::Variable => write!(f, "Variable"),
+            Self::Fixed => write!(f, "Fixed"),
         }
     }
 }

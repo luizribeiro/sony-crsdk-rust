@@ -385,7 +385,7 @@ impl Category for Other {
             C::FTPConnectionStatus,
             "FTP Status",
             "Current FTP connection status.",
-            Some(V::Integer),
+            Some(V::FTPConnectionStatus),
         ),
         PropertyDef::new(
             C::FTPConnectionErrorInfo,
@@ -1477,7 +1477,7 @@ impl Category for Other {
             C::RightLeftEyeSelect,
             "L/R Eye Select",
             "Eye selection for eye AF (left/right).",
-            Some(V::Integer),
+            Some(V::RightLeftEyeSelect),
         ),
         PropertyDef::new(
             C::SensorCleaningEnableStatus,

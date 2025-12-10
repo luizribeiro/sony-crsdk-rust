@@ -28,7 +28,7 @@ impl Category for Zoom {
             C::ZoomOperation,
             "Zoom Op",
             "Zoom control command. Positive values zoom in (telephoto), negative values zoom out (wide).",
-            Some(V::Integer),
+            Some(V::ZoomOperation),
         ),
         PropertyDef::new(
             C::DigitalZoomScale,
@@ -100,7 +100,7 @@ impl Category for Zoom {
             C::RemoconZoomSpeedType,
             "Remote Zoom Speed",
             "Zoom speed type for remote control.",
-            Some(V::Integer),
+            Some(V::RemoconZoomSpeedType),
         ),
     ];
 }

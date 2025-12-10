@@ -70,7 +70,7 @@ impl Category for Exposure {
             C::GainBaseSensitivity,
             "Base Sensitivity",
             "Base sensor sensitivity for cinema cameras. Determines the native ISO/gain starting point.",
-            Some(V::Integer),
+            Some(V::GainBaseSensitivity),
         ),
         PropertyDef::new(
             C::ExposureIndex,

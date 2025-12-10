@@ -19,16 +19,18 @@ use super::{property_value_type, PropertyValueType};
 use super::{
     AFTrackForSpeedChange, ApertureDriveInAF, AudioSignals, BatteryRemainDisplayUnit,
     CameraOperatingMode, ColorSpace, CustomWBSizeSetting, DRangeOptimizer, DeviceOverheatingState,
-    DispMode, DriveMode, FocusOperation, FunctionOfTouchOperation, HighIsoNR,
-    ImageStabilizationLevelMovie, ImageStabilizationSteadyShotMovie, IntervalRecMode,
-    IntervalRecShutterType, IntervalRecStatus, IrisDisplayUnit, LensCompensationShading,
-    LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState, MovieFileFormat,
-    NearFarEnableStatus, PlaybackMedia, PowerSource, PriorityKeySettings, RecorderStatus,
-    RecordingMedia, RecordingMediaMovie, RecordingState, SdkControlMode, SelectFinder,
-    ShutterReleaseTimeLagControl, ShutterType, SlotStatus, SoftSkinEffect,
+    DispMode, DriveMode, FTPConnectionStatus, FocusOperation, FunctionOfTouchOperation,
+    GainBaseSensitivity, HighIsoNR, ImageStabilizationLevelMovie,
+    ImageStabilizationSteadyShotMovie, IntervalRecMode, IntervalRecShutterType, IntervalRecStatus,
+    IrisDisplayUnit, LensCompensationShading, LiveViewStatus, MediaSlotRecordingType,
+    MediaSlotWritingState, MovieFileFormat, NearFarEnableStatus, PlaybackMedia, PowerSource,
+    PriorityKeySettings, RAWFileCompressionType, RecorderStatus, RecordingMedia,
+    RecordingMediaMovie, RecordingState, RemoconZoomSpeedType, RightLeftEyeSelect, SdkControlMode,
+    SelectFinder, ShutterReleaseTimeLagControl, ShutterType, SlotStatus, SoftSkinEffect,
     StillImageStoreDestination, SubjectRecognitionAnimalBirdDetectionParts,
     SubjectRecognitionAnimalBirdPriority, TCUBDisplaySetting, TimeCodeFormat, TimeCodeMake,
-    TimeCodeRun, TimeShiftTriggerSetting, TouchOperation, WindNoiseReduction, APSC_S35,
+    TimeCodeRun, TimeShiftTriggerSetting, TouchOperation, WindNoiseReduction, ZoomOperation,
+    APSC_S35,
 };
 use crate::property::traits::PropertyValue;
 
@@ -200,6 +202,18 @@ pub enum TypedValue {
     TimeShiftTriggerSetting(TimeShiftTriggerSetting),
     /// APS-C/S35 crop mode
     APSC_S35(APSC_S35),
+    /// Right/Left eye select for AF
+    RightLeftEyeSelect(RightLeftEyeSelect),
+    /// Gain base sensitivity
+    GainBaseSensitivity(GainBaseSensitivity),
+    /// FTP connection status
+    FTPConnectionStatus(FTPConnectionStatus),
+    /// Zoom operation direction
+    ZoomOperation(ZoomOperation),
+    /// RAW file compression type
+    RAWFileCompressionType(RAWFileCompressionType),
+    /// Zoom speed type
+    RemoconZoomSpeedType(RemoconZoomSpeedType),
     /// Battery level (packed status + percentage)
     BatteryLevel(BatteryLevel),
     /// Switch value (On/Off)
@@ -450,6 +464,24 @@ impl TypedValue {
             PVT::APSC_S35 => APSC_S35::from_raw(raw)
                 .map(TypedValue::APSC_S35)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::RightLeftEyeSelect => RightLeftEyeSelect::from_raw(raw)
+                .map(TypedValue::RightLeftEyeSelect)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::GainBaseSensitivity => GainBaseSensitivity::from_raw(raw)
+                .map(TypedValue::GainBaseSensitivity)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::FTPConnectionStatus => FTPConnectionStatus::from_raw(raw)
+                .map(TypedValue::FTPConnectionStatus)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::ZoomOperation => ZoomOperation::from_raw(raw)
+                .map(TypedValue::ZoomOperation)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::RAWFileCompressionType => RAWFileCompressionType::from_raw(raw)
+                .map(TypedValue::RAWFileCompressionType)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::RemoconZoomSpeedType => RemoconZoomSpeedType::from_raw(raw)
+                .map(TypedValue::RemoconZoomSpeedType)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::ShutterModeStatus => ShutterModeStatus::from_raw(raw)
                 .map(TypedValue::ShutterModeStatus)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -586,6 +618,12 @@ impl TypedValue {
             TypedValue::ShutterReleaseTimeLagControl(v) => v.to_raw(),
             TypedValue::TimeShiftTriggerSetting(v) => v.to_raw(),
             TypedValue::APSC_S35(v) => v.to_raw(),
+            TypedValue::RightLeftEyeSelect(v) => v.to_raw(),
+            TypedValue::GainBaseSensitivity(v) => v.to_raw(),
+            TypedValue::FTPConnectionStatus(v) => v.to_raw(),
+            TypedValue::ZoomOperation(v) => v.to_raw(),
+            TypedValue::RAWFileCompressionType(v) => v.to_raw(),
+            TypedValue::RemoconZoomSpeedType(v) => v.to_raw(),
             TypedValue::BatteryLevel(v) => v.to_raw(),
             TypedValue::Switch(v) => v.to_raw(),
             TypedValue::OnOff(v) => v.to_raw(),
@@ -678,6 +716,12 @@ impl fmt::Display for TypedValue {
             TypedValue::ShutterReleaseTimeLagControl(v) => write!(f, "{}", v),
             TypedValue::TimeShiftTriggerSetting(v) => write!(f, "{}", v),
             TypedValue::APSC_S35(v) => write!(f, "{}", v),
+            TypedValue::RightLeftEyeSelect(v) => write!(f, "{}", v),
+            TypedValue::GainBaseSensitivity(v) => write!(f, "{}", v),
+            TypedValue::FTPConnectionStatus(v) => write!(f, "{}", v),
+            TypedValue::ZoomOperation(v) => write!(f, "{}", v),
+            TypedValue::RAWFileCompressionType(v) => write!(f, "{}", v),
+            TypedValue::RemoconZoomSpeedType(v) => write!(f, "{}", v),
             TypedValue::BatteryLevel(v) => write!(f, "{}", v),
             TypedValue::Switch(v) => write!(f, "{}", v),
             TypedValue::OnOff(v) => write!(f, "{}", v),

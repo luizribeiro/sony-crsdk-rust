@@ -52,13 +52,13 @@ impl Category for Media {
             C::MediaSLOT1RAWFileCompressionType,
             "Slot 1 RAW Comp",
             "RAW compression for slot 1.",
-            Some(V::Integer),
+            Some(V::RAWFileCompressionType),
         ),
         PropertyDef::new(
             C::MediaSLOT2RAWFileCompressionType,
             "Slot 2 RAW Comp",
             "RAW compression for slot 2.",
-            Some(V::Integer),
+            Some(V::RAWFileCompressionType),
         ),
         PropertyDef::new(
             C::PlaybackMedia,
