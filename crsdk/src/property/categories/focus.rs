@@ -63,8 +63,8 @@ impl Category for Focus {
         PropertyDef::new(
             C::FocusOperation,
             "Focus Op.",
-            "Manual focus adjustment direction. Controls whether to focus nearer or farther.",
-            Some(V::Integer),
+            "Manual focus direction: Near, Stop, or Far.",
+            Some(V::FocusOperation),
         ),
         PropertyDef::new(
             C::FocusModeSetting,

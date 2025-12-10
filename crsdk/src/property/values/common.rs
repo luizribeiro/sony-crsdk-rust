@@ -106,6 +106,10 @@ pub enum PropertyValueType {
     PowerSource,
     /// Battery remaining display unit
     BatteryRemainDisplayUnit,
+    /// Focus operation direction
+    FocusOperation,
+    /// Shutter type (auto/mechanical/electronic)
+    ShutterType,
     /// Shutter mode status
     ShutterModeStatus,
     /// Shutter mode
@@ -961,6 +965,88 @@ impl fmt::Display for BatteryRemainDisplayUnit {
             Self::Minute => write!(f, "Minutes"),
             Self::Percent => write!(f, "%"),
             Self::Voltage => write!(f, "Voltage"),
+        }
+    }
+}
+
+/// Focus operation direction.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(i8)]
+pub enum FocusOperation {
+    /// Focus toward wide/near
+    Wide = -1,
+    /// Stop focus movement
+    Stop = 0,
+    /// Focus toward tele/far
+    Tele = 1,
+}
+
+impl ToCrsdk<u64> for FocusOperation {
+    fn to_crsdk(&self) -> u64 {
+        (*self as i8) as u64
+    }
+}
+
+impl FromCrsdk<u64> for FocusOperation {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as i8 {
+            -1 => Self::Wide,
+            0 => Self::Stop,
+            1 => Self::Tele,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for FocusOperation {}
+
+impl fmt::Display for FocusOperation {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Wide => write!(f, "Near"),
+            Self::Stop => write!(f, "Stop"),
+            Self::Tele => write!(f, "Far"),
+        }
+    }
+}
+
+/// Shutter type setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ShutterType {
+    /// Auto shutter selection
+    Auto = 0x01,
+    /// Mechanical shutter
+    Mechanical = 0x02,
+    /// Electronic shutter
+    Electronic = 0x03,
+}
+
+impl ToCrsdk<u64> for ShutterType {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for ShutterType {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Auto,
+            0x02 => Self::Mechanical,
+            0x03 => Self::Electronic,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for ShutterType {}
+
+impl fmt::Display for ShutterType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Auto => write!(f, "Auto"),
+            Self::Mechanical => write!(f, "Mechanical"),
+            Self::Electronic => write!(f, "Electronic"),
         }
     }
 }

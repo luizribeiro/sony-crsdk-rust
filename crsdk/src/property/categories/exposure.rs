@@ -172,7 +172,7 @@ impl Category for Exposure {
             C::ShutterType,
             "Shutter (Mech/Elec)",
             "Mechanical vs electronic shutter. Electronic is silent and faster but may cause rolling shutter artifacts.",
-            Some(V::Integer),
+            Some(V::ShutterType),
         ),
         PropertyDef::new(
             C::HighResolutionShutterSpeedSetting,

@@ -17,11 +17,12 @@ use super::values::{
 };
 use super::{property_value_type, PropertyValueType};
 use super::{
-    BatteryRemainDisplayUnit, ColorSpace, DRangeOptimizer, DriveMode, IntervalRecMode,
-    IntervalRecShutterType, IntervalRecStatus, LiveViewStatus, MediaSlotRecordingType,
-    MediaSlotWritingState, MovieFileFormat, NearFarEnableStatus, PlaybackMedia, PowerSource,
-    PriorityKeySettings, RecorderStatus, RecordingState, SdkControlMode, SlotStatus,
-    StillImageStoreDestination, TimeCodeFormat, TimeCodeMake, TimeCodeRun, TouchOperation,
+    BatteryRemainDisplayUnit, ColorSpace, DRangeOptimizer, DriveMode, FocusOperation,
+    IntervalRecMode, IntervalRecShutterType, IntervalRecStatus, LiveViewStatus,
+    MediaSlotRecordingType, MediaSlotWritingState, MovieFileFormat, NearFarEnableStatus,
+    PlaybackMedia, PowerSource, PriorityKeySettings, RecorderStatus, RecordingState,
+    SdkControlMode, ShutterType, SlotStatus, StillImageStoreDestination, TimeCodeFormat,
+    TimeCodeMake, TimeCodeRun, TouchOperation,
 };
 use crate::property::traits::PropertyValue;
 
@@ -141,6 +142,10 @@ pub enum TypedValue {
     PowerSource(PowerSource),
     /// Battery remaining display unit
     BatteryRemainDisplayUnit(BatteryRemainDisplayUnit),
+    /// Focus operation direction
+    FocusOperation(FocusOperation),
+    /// Shutter type
+    ShutterType(ShutterType),
     /// Battery level (packed status + percentage)
     BatteryLevel(BatteryLevel),
     /// Switch value (On/Off)
@@ -307,6 +312,12 @@ impl TypedValue {
             PVT::BatteryRemainDisplayUnit => BatteryRemainDisplayUnit::from_raw(raw)
                 .map(TypedValue::BatteryRemainDisplayUnit)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::FocusOperation => FocusOperation::from_raw(raw)
+                .map(TypedValue::FocusOperation)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::ShutterType => ShutterType::from_raw(raw)
+                .map(TypedValue::ShutterType)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::ShutterModeStatus => ShutterModeStatus::from_raw(raw)
                 .map(TypedValue::ShutterModeStatus)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -417,6 +428,8 @@ impl TypedValue {
             TypedValue::TouchOperation(v) => v.to_raw(),
             TypedValue::PowerSource(v) => v.to_raw(),
             TypedValue::BatteryRemainDisplayUnit(v) => v.to_raw(),
+            TypedValue::FocusOperation(v) => v.to_raw(),
+            TypedValue::ShutterType(v) => v.to_raw(),
             TypedValue::BatteryLevel(v) => v.to_raw(),
             TypedValue::Switch(v) => v.to_raw(),
             TypedValue::OnOff(v) => v.to_raw(),
@@ -483,6 +496,8 @@ impl fmt::Display for TypedValue {
             TypedValue::TouchOperation(v) => write!(f, "{}", v),
             TypedValue::PowerSource(v) => write!(f, "{}", v),
             TypedValue::BatteryRemainDisplayUnit(v) => write!(f, "{}", v),
+            TypedValue::FocusOperation(v) => write!(f, "{}", v),
+            TypedValue::ShutterType(v) => write!(f, "{}", v),
             TypedValue::BatteryLevel(v) => write!(f, "{}", v),
             TypedValue::Switch(v) => write!(f, "{}", v),
             TypedValue::OnOff(v) => write!(f, "{}", v),
