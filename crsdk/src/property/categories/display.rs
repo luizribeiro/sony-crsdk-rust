@@ -40,19 +40,19 @@ impl Category for Display {
             C::MonitorLUTSetting,
             "Monitor LUT",
             "LUT applied to monitor output for color grading preview.",
-            Some(V::Integer),
+            Some(V::Switch),
         ),
         PropertyDef::new(
             C::MonitoringOutputDisplayHDMI,
             "HDMI Monitor",
             "HDMI monitoring output display settings.",
-            Some(V::Integer),
+            Some(V::Switch),
         ),
         PropertyDef::new(
             C::MonitoringOutputDisplaySDI,
             "SDI Monitor",
             "SDI monitoring output display settings.",
-            Some(V::Integer),
+            Some(V::Switch),
         ),
         PropertyDef::new(
             C::MonitoringOutputDisplaySetting1,

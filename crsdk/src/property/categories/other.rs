@@ -187,7 +187,7 @@ impl Category for Other {
             C::FlickerLessShooting,
             "Flicker-Less",
             "Reduces banding from flickering artificial lights.",
-            Some(V::Integer),
+            Some(V::Switch),
         ),
         PropertyDef::new(
             C::PlaybackVolumeSettings,
