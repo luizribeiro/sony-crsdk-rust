@@ -370,7 +370,7 @@ impl Category for Movie {
             C::MovieImageStabilizationLevel,
             "Movie IS Level",
             "Image stabilization level for movie recording.",
-            Some(V::Integer),
+            Some(V::ImageStabilizationLevelMovie),
         ),
         PropertyDef::new(
             C::MovieQualityFullAutoMode,

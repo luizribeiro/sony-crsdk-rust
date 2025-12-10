@@ -244,7 +244,7 @@ impl Category for Exposure {
             C::IrisDisplayUnit,
             "Iris Unit (F/T)",
             "How aperture values are displayed. F-stop (f/2.8) is standard. T-stop accounts for light transmission loss in the lens.",
-            Some(V::Integer),
+            Some(V::IrisDisplayUnit),
         ),
         PropertyDef::new(
             C::ExtendedShutterSpeed,
@@ -256,7 +256,7 @@ impl Category for Exposure {
             C::ShutterReleaseTimeLagControl,
             "Shutter Release Lag",
             "Controls shutter release delay. Standard mode optimizes image quality, Speed mode minimizes delay.",
-            Some(V::Integer),
+            Some(V::ShutterReleaseTimeLagControl),
         ),
         PropertyDef::new(
             C::ContinuousShootingSpeedInElectricShutterHiPlus,

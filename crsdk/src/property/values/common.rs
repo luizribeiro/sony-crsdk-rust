@@ -146,6 +146,18 @@ pub enum PropertyValueType {
     SubjectRecognitionAnimalBirdPriority,
     /// Subject recognition detection parts
     SubjectRecognitionAnimalBirdDetectionParts,
+    /// Camera operating mode
+    CameraOperatingMode,
+    /// Iris display unit
+    IrisDisplayUnit,
+    /// Image stabilization level for movie
+    ImageStabilizationLevelMovie,
+    /// Shutter release time lag control
+    ShutterReleaseTimeLagControl,
+    /// TimeShift trigger setting
+    TimeShiftTriggerSetting,
+    /// APS-C/S35 crop mode
+    APSC_S35,
     /// Shutter mode status
     ShutterModeStatus,
     /// Shutter mode
@@ -1901,6 +1913,248 @@ impl fmt::Display for SubjectRecognitionAnimalBirdDetectionParts {
             Self::EyeHeadBody => write!(f, "Eye+Head+Body"),
             Self::EyeHead => write!(f, "Eye+Head"),
             Self::Eye => write!(f, "Eye Only"),
+        }
+    }
+}
+
+/// Camera operating mode.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum CameraOperatingMode {
+    /// Recording mode
+    Record = 0x01,
+    /// Playback mode
+    Playback = 0x02,
+}
+
+impl ToCrsdk<u64> for CameraOperatingMode {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for CameraOperatingMode {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Record,
+            0x02 => Self::Playback,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for CameraOperatingMode {}
+
+impl fmt::Display for CameraOperatingMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Record => write!(f, "Record"),
+            Self::Playback => write!(f, "Playback"),
+        }
+    }
+}
+
+/// Iris display unit setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum IrisDisplayUnit {
+    /// Auto display unit
+    Auto = 0x01,
+    /// F-number lock
+    FLock = 0x02,
+    /// T-number lock
+    TLock = 0x03,
+}
+
+impl ToCrsdk<u64> for IrisDisplayUnit {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for IrisDisplayUnit {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Auto,
+            0x02 => Self::FLock,
+            0x03 => Self::TLock,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for IrisDisplayUnit {}
+
+impl fmt::Display for IrisDisplayUnit {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Auto => write!(f, "Auto"),
+            Self::FLock => write!(f, "F-Lock"),
+            Self::TLock => write!(f, "T-Lock"),
+        }
+    }
+}
+
+/// Image stabilization level for movie recording.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ImageStabilizationLevelMovie {
+    /// Stabilization off
+    Off = 0x01,
+    /// Low stabilization
+    Low = 0x02,
+    /// High stabilization
+    High = 0x03,
+}
+
+impl ToCrsdk<u64> for ImageStabilizationLevelMovie {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for ImageStabilizationLevelMovie {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Off,
+            0x02 => Self::Low,
+            0x03 => Self::High,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for ImageStabilizationLevelMovie {}
+
+impl fmt::Display for ImageStabilizationLevelMovie {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Off => write!(f, "Off"),
+            Self::Low => write!(f, "Low"),
+            Self::High => write!(f, "High"),
+        }
+    }
+}
+
+/// Shutter release time lag control.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ShutterReleaseTimeLagControl {
+    /// Lag control off
+    Off = 0x01,
+    /// On with stability priority
+    OnStability = 0x02,
+    /// On with fastest response
+    OnFastest = 0x03,
+}
+
+impl ToCrsdk<u64> for ShutterReleaseTimeLagControl {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for ShutterReleaseTimeLagControl {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Off,
+            0x02 => Self::OnStability,
+            0x03 => Self::OnFastest,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for ShutterReleaseTimeLagControl {}
+
+impl fmt::Display for ShutterReleaseTimeLagControl {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Off => write!(f, "Off"),
+            Self::OnStability => write!(f, "Stability"),
+            Self::OnFastest => write!(f, "Fastest"),
+        }
+    }
+}
+
+/// TimeShift trigger setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum TimeShiftTriggerSetting {
+    /// S1 and AF trigger
+    S1AndAF = 0x01,
+    /// S1 only trigger
+    S1 = 0x02,
+    /// AF only trigger
+    AF = 0x03,
+}
+
+impl ToCrsdk<u64> for TimeShiftTriggerSetting {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for TimeShiftTriggerSetting {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::S1AndAF,
+            0x02 => Self::S1,
+            0x03 => Self::AF,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for TimeShiftTriggerSetting {}
+
+impl fmt::Display for TimeShiftTriggerSetting {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::S1AndAF => write!(f, "S1+AF"),
+            Self::S1 => write!(f, "S1"),
+            Self::AF => write!(f, "AF"),
+        }
+    }
+}
+
+/// APS-C/Super35 crop mode.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum APSC_S35 {
+    /// Crop off (full frame)
+    Off = 0x01,
+    /// Crop on
+    On = 0x02,
+    /// Auto crop
+    Auto = 0x03,
+}
+
+impl ToCrsdk<u64> for APSC_S35 {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for APSC_S35 {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Off,
+            0x02 => Self::On,
+            0x03 => Self::Auto,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for APSC_S35 {}
+
+impl fmt::Display for APSC_S35 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Off => write!(f, "Off"),
+            Self::On => write!(f, "On"),
+            Self::Auto => write!(f, "Auto"),
         }
     }
 }

@@ -17,17 +17,18 @@ use super::values::{
 };
 use super::{property_value_type, PropertyValueType};
 use super::{
-    AFTrackForSpeedChange, ApertureDriveInAF, AudioSignals, BatteryRemainDisplayUnit, ColorSpace,
-    CustomWBSizeSetting, DRangeOptimizer, DeviceOverheatingState, DispMode, DriveMode,
-    FocusOperation, FunctionOfTouchOperation, HighIsoNR, ImageStabilizationSteadyShotMovie,
-    IntervalRecMode, IntervalRecShutterType, IntervalRecStatus, LensCompensationShading,
+    AFTrackForSpeedChange, ApertureDriveInAF, AudioSignals, BatteryRemainDisplayUnit,
+    CameraOperatingMode, ColorSpace, CustomWBSizeSetting, DRangeOptimizer, DeviceOverheatingState,
+    DispMode, DriveMode, FocusOperation, FunctionOfTouchOperation, HighIsoNR,
+    ImageStabilizationLevelMovie, ImageStabilizationSteadyShotMovie, IntervalRecMode,
+    IntervalRecShutterType, IntervalRecStatus, IrisDisplayUnit, LensCompensationShading,
     LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState, MovieFileFormat,
     NearFarEnableStatus, PlaybackMedia, PowerSource, PriorityKeySettings, RecorderStatus,
-    RecordingMedia, RecordingMediaMovie, RecordingState, SdkControlMode, SelectFinder, ShutterType,
-    SlotStatus, SoftSkinEffect, StillImageStoreDestination,
-    SubjectRecognitionAnimalBirdDetectionParts, SubjectRecognitionAnimalBirdPriority,
-    TCUBDisplaySetting, TimeCodeFormat, TimeCodeMake, TimeCodeRun, TouchOperation,
-    WindNoiseReduction,
+    RecordingMedia, RecordingMediaMovie, RecordingState, SdkControlMode, SelectFinder,
+    ShutterReleaseTimeLagControl, ShutterType, SlotStatus, SoftSkinEffect,
+    StillImageStoreDestination, SubjectRecognitionAnimalBirdDetectionParts,
+    SubjectRecognitionAnimalBirdPriority, TCUBDisplaySetting, TimeCodeFormat, TimeCodeMake,
+    TimeCodeRun, TimeShiftTriggerSetting, TouchOperation, WindNoiseReduction, APSC_S35,
 };
 use crate::property::traits::PropertyValue;
 
@@ -187,6 +188,18 @@ pub enum TypedValue {
     SubjectRecognitionAnimalBirdPriority(SubjectRecognitionAnimalBirdPriority),
     /// Subject recognition detection parts
     SubjectRecognitionAnimalBirdDetectionParts(SubjectRecognitionAnimalBirdDetectionParts),
+    /// Camera operating mode
+    CameraOperatingMode(CameraOperatingMode),
+    /// Iris display unit
+    IrisDisplayUnit(IrisDisplayUnit),
+    /// Image stabilization level for movie
+    ImageStabilizationLevelMovie(ImageStabilizationLevelMovie),
+    /// Shutter release time lag control
+    ShutterReleaseTimeLagControl(ShutterReleaseTimeLagControl),
+    /// TimeShift trigger setting
+    TimeShiftTriggerSetting(TimeShiftTriggerSetting),
+    /// APS-C/S35 crop mode
+    APSC_S35(APSC_S35),
     /// Battery level (packed status + percentage)
     BatteryLevel(BatteryLevel),
     /// Switch value (On/Off)
@@ -419,6 +432,24 @@ impl TypedValue {
                     .map(TypedValue::SubjectRecognitionAnimalBirdDetectionParts)
                     .unwrap_or(TypedValue::Unknown(raw))
             }
+            PVT::CameraOperatingMode => CameraOperatingMode::from_raw(raw)
+                .map(TypedValue::CameraOperatingMode)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::IrisDisplayUnit => IrisDisplayUnit::from_raw(raw)
+                .map(TypedValue::IrisDisplayUnit)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::ImageStabilizationLevelMovie => ImageStabilizationLevelMovie::from_raw(raw)
+                .map(TypedValue::ImageStabilizationLevelMovie)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::ShutterReleaseTimeLagControl => ShutterReleaseTimeLagControl::from_raw(raw)
+                .map(TypedValue::ShutterReleaseTimeLagControl)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::TimeShiftTriggerSetting => TimeShiftTriggerSetting::from_raw(raw)
+                .map(TypedValue::TimeShiftTriggerSetting)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::APSC_S35 => APSC_S35::from_raw(raw)
+                .map(TypedValue::APSC_S35)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::ShutterModeStatus => ShutterModeStatus::from_raw(raw)
                 .map(TypedValue::ShutterModeStatus)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -549,6 +580,12 @@ impl TypedValue {
             TypedValue::TCUBDisplaySetting(v) => v.to_raw(),
             TypedValue::SubjectRecognitionAnimalBirdPriority(v) => v.to_raw(),
             TypedValue::SubjectRecognitionAnimalBirdDetectionParts(v) => v.to_raw(),
+            TypedValue::CameraOperatingMode(v) => v.to_raw(),
+            TypedValue::IrisDisplayUnit(v) => v.to_raw(),
+            TypedValue::ImageStabilizationLevelMovie(v) => v.to_raw(),
+            TypedValue::ShutterReleaseTimeLagControl(v) => v.to_raw(),
+            TypedValue::TimeShiftTriggerSetting(v) => v.to_raw(),
+            TypedValue::APSC_S35(v) => v.to_raw(),
             TypedValue::BatteryLevel(v) => v.to_raw(),
             TypedValue::Switch(v) => v.to_raw(),
             TypedValue::OnOff(v) => v.to_raw(),
@@ -635,6 +672,12 @@ impl fmt::Display for TypedValue {
             TypedValue::TCUBDisplaySetting(v) => write!(f, "{}", v),
             TypedValue::SubjectRecognitionAnimalBirdPriority(v) => write!(f, "{}", v),
             TypedValue::SubjectRecognitionAnimalBirdDetectionParts(v) => write!(f, "{}", v),
+            TypedValue::CameraOperatingMode(v) => write!(f, "{}", v),
+            TypedValue::IrisDisplayUnit(v) => write!(f, "{}", v),
+            TypedValue::ImageStabilizationLevelMovie(v) => write!(f, "{}", v),
+            TypedValue::ShutterReleaseTimeLagControl(v) => write!(f, "{}", v),
+            TypedValue::TimeShiftTriggerSetting(v) => write!(f, "{}", v),
+            TypedValue::APSC_S35(v) => write!(f, "{}", v),
             TypedValue::BatteryLevel(v) => write!(f, "{}", v),
             TypedValue::Switch(v) => write!(f, "{}", v),
             TypedValue::OnOff(v) => write!(f, "{}", v),

@@ -59,14 +59,15 @@ pub use values::{LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState, 
 
 // Re-export common/other types from values/
 pub use values::{
-    AFTrackForSpeedChange, ApertureDriveInAF, AudioSignals, BatteryRemainDisplayUnit, ColorSpace,
-    CustomWBSizeSetting, DRangeOptimizer, DeviceOverheatingState, DispMode, FocusOperation,
-    FunctionOfTouchOperation, HighIsoNR, ImageStabilizationSteadyShotMovie, IntervalRecMode,
-    IntervalRecStatus, LensCompensationShading, NearFarEnableStatus, PlaybackMedia, PowerSource,
-    PriorityKeySettings, RecordingMedia, RecordingMediaMovie, SdkControlMode, SelectFinder,
-    ShutterType, SoftSkinEffect, StillImageStoreDestination,
+    AFTrackForSpeedChange, ApertureDriveInAF, AudioSignals, BatteryRemainDisplayUnit,
+    CameraOperatingMode, ColorSpace, CustomWBSizeSetting, DRangeOptimizer, DeviceOverheatingState,
+    DispMode, FocusOperation, FunctionOfTouchOperation, HighIsoNR, ImageStabilizationLevelMovie,
+    ImageStabilizationSteadyShotMovie, IntervalRecMode, IntervalRecStatus, IrisDisplayUnit,
+    LensCompensationShading, NearFarEnableStatus, PlaybackMedia, PowerSource, PriorityKeySettings,
+    RecordingMedia, RecordingMediaMovie, SdkControlMode, SelectFinder,
+    ShutterReleaseTimeLagControl, ShutterType, SoftSkinEffect, StillImageStoreDestination,
     SubjectRecognitionAnimalBirdDetectionParts, SubjectRecognitionAnimalBirdPriority,
-    TCUBDisplaySetting, TouchOperation, WindNoiseReduction,
+    TCUBDisplaySetting, TimeShiftTriggerSetting, TouchOperation, WindNoiseReduction, APSC_S35,
 };
 
 #[cfg(test)]

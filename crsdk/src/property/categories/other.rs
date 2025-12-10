@@ -607,7 +607,7 @@ impl Category for Other {
             C::APSCS35,
             "APS-C/S35 Crop",
             "APS-C/Super 35mm crop mode.",
-            Some(V::Integer),
+            Some(V::APSC_S35),
         ),
         PropertyDef::new(
             C::ContinuousShootingSpotBoostStatus,
@@ -655,7 +655,7 @@ impl Category for Other {
             C::CameraOperatingMode,
             "Op Mode",
             "Current camera operating mode.",
-            Some(V::Integer),
+            Some(V::CameraOperatingMode),
         ),
         PropertyDef::new(
             C::CameraErrorCautionStatus,
@@ -1249,7 +1249,7 @@ impl Category for Other {
             C::TimeShiftTriggerSetting,
             "Time Shift Trigger",
             "Trigger setting for time shift mode.",
-            Some(V::Integer),
+            Some(V::TimeShiftTriggerSetting),
         ),
         PropertyDef::new(
             C::PlaySetOfMultiMedia,
