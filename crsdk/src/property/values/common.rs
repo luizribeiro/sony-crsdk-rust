@@ -90,6 +90,14 @@ pub enum PropertyValueType {
     StillImageStoreDestination,
     /// Near/far focus control status
     NearFarEnableStatus,
+    /// Interval recording mode
+    IntervalRecMode,
+    /// Interval recording status
+    IntervalRecStatus,
+    /// Priority key settings
+    PriorityKeySettings,
+    /// Color space (sRGB/Adobe RGB)
+    ColorSpace,
     /// Shutter mode status
     ShutterModeStatus,
     /// Shutter mode
@@ -637,6 +645,154 @@ impl fmt::Display for NearFarEnableStatus {
         match self {
             Self::Disabled => write!(f, "Disabled"),
             Self::Enabled => write!(f, "Enabled"),
+        }
+    }
+}
+
+/// Interval recording mode.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum IntervalRecMode {
+    /// Interval recording off
+    Off = 0x0001,
+    /// Interval recording on
+    On = 0x0002,
+}
+
+impl ToCrsdk<u64> for IntervalRecMode {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for IntervalRecMode {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0001 => Self::Off,
+            0x0002 => Self::On,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for IntervalRecMode {}
+
+impl fmt::Display for IntervalRecMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Off => write!(f, "Off"),
+            Self::On => write!(f, "On"),
+        }
+    }
+}
+
+/// Interval recording status.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum IntervalRecStatus {
+    /// Waiting for interval shooting to start
+    WaitingStart = 0x0001,
+    /// Interval shooting in progress
+    IntervalShooting = 0x0002,
+}
+
+impl ToCrsdk<u64> for IntervalRecStatus {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for IntervalRecStatus {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0001 => Self::WaitingStart,
+            0x0002 => Self::IntervalShooting,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for IntervalRecStatus {}
+
+impl fmt::Display for IntervalRecStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::WaitingStart => write!(f, "Waiting"),
+            Self::IntervalShooting => write!(f, "Shooting"),
+        }
+    }
+}
+
+/// Priority key settings.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum PriorityKeySettings {
+    /// Camera position has priority
+    CameraPosition = 0x0001,
+    /// PC Remote has priority
+    PcRemote = 0x0002,
+}
+
+impl ToCrsdk<u64> for PriorityKeySettings {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for PriorityKeySettings {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0001 => Self::CameraPosition,
+            0x0002 => Self::PcRemote,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for PriorityKeySettings {}
+
+impl fmt::Display for PriorityKeySettings {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::CameraPosition => write!(f, "Camera"),
+            Self::PcRemote => write!(f, "PC Remote"),
+        }
+    }
+}
+
+/// Color space setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ColorSpace {
+    /// sRGB color space (web/most monitors)
+    Srgb = 0x01,
+    /// Adobe RGB color space (print/wide gamut)
+    AdobeRgb = 0x02,
+}
+
+impl ToCrsdk<u64> for ColorSpace {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for ColorSpace {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Srgb,
+            0x02 => Self::AdobeRgb,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for ColorSpace {}
+
+impl fmt::Display for ColorSpace {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Srgb => write!(f, "sRGB"),
+            Self::AdobeRgb => write!(f, "Adobe RGB"),
         }
     }
 }

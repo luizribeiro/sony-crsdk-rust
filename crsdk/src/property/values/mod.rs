@@ -27,9 +27,10 @@ mod power;
 mod white_balance;
 
 pub use common::{
-    AutoManual, DRangeOptimizer, Integer, LiveViewDisplayEffect, LockIndicator,
-    NearFarEnableStatus, OnOff, Percentage, PropertyValueType, SdkControlMode,
-    SilentModeApertureDrive, StillImageStoreDestination, Switch,
+    AutoManual, ColorSpace, DRangeOptimizer, Integer, IntervalRecMode, IntervalRecStatus,
+    LiveViewDisplayEffect, LockIndicator, NearFarEnableStatus, OnOff, Percentage,
+    PriorityKeySettings, PropertyValueType, SdkControlMode, SilentModeApertureDrive,
+    StillImageStoreDestination, Switch,
 };
 pub use drive::{DriveMode, IntervalRecShutterType};
 pub use exposure::{

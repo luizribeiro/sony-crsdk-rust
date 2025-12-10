@@ -66,8 +66,8 @@ impl Category for Other {
         PropertyDef::new(
             C::PriorityKeySettings,
             "Key Priority",
-            "Which control takes priority when both photo and video controls are pressed.",
-            Some(V::Integer),
+            "Which control takes priority: camera body or PC Remote.",
+            Some(V::PriorityKeySettings),
         ),
         PropertyDef::new(
             C::DateTimeSettings,
@@ -223,7 +223,7 @@ impl Category for Other {
             C::IntervalRecMode,
             "Interval Rec",
             "Interval shooting mode for time-lapse photography.",
-            Some(V::Integer),
+            Some(V::IntervalRecMode),
         ),
         PropertyDef::new(
             C::IntervalRecNumberOfShots,
@@ -247,7 +247,7 @@ impl Category for Other {
             C::IntervalRecStatus,
             "Interval Status",
             "Current status of interval shooting.",
-            Some(V::Integer),
+            Some(V::IntervalRecStatus),
         ),
         PropertyDef::new(
             C::IntervalRecShootIntervalPriority,
@@ -643,7 +643,7 @@ impl Category for Other {
             C::ColorSpace,
             "Color Gamut",
             "Color space for images (sRGB, AdobeRGB).",
-            Some(V::Integer),
+            Some(V::ColorSpace),
         ),
         PropertyDef::new(
             C::ReleaseWithoutCard,

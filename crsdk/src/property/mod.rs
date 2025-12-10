@@ -59,7 +59,8 @@ pub use values::{LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState, 
 
 // Re-export common/other types from values/
 pub use values::{
-    DRangeOptimizer, NearFarEnableStatus, SdkControlMode, StillImageStoreDestination,
+    ColorSpace, DRangeOptimizer, IntervalRecMode, IntervalRecStatus, NearFarEnableStatus,
+    PriorityKeySettings, SdkControlMode, StillImageStoreDestination,
 };
 
 #[cfg(test)]

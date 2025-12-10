@@ -17,8 +17,9 @@ use super::values::{
 };
 use super::{property_value_type, PropertyValueType};
 use super::{
-    DRangeOptimizer, DriveMode, IntervalRecShutterType, LiveViewStatus, MediaSlotRecordingType,
-    MediaSlotWritingState, MovieFileFormat, NearFarEnableStatus, RecorderStatus, RecordingState,
+    ColorSpace, DRangeOptimizer, DriveMode, IntervalRecMode, IntervalRecShutterType,
+    IntervalRecStatus, LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState,
+    MovieFileFormat, NearFarEnableStatus, PriorityKeySettings, RecorderStatus, RecordingState,
     SdkControlMode, SlotStatus, StillImageStoreDestination, TimeCodeFormat, TimeCodeMake,
     TimeCodeRun,
 };
@@ -124,6 +125,14 @@ pub enum TypedValue {
     StillImageStoreDestination(StillImageStoreDestination),
     /// Near/far focus enable status
     NearFarEnableStatus(NearFarEnableStatus),
+    /// Interval recording mode
+    IntervalRecMode(IntervalRecMode),
+    /// Interval recording status
+    IntervalRecStatus(IntervalRecStatus),
+    /// Priority key settings
+    PriorityKeySettings(PriorityKeySettings),
+    /// Color space (sRGB/Adobe RGB)
+    ColorSpace(ColorSpace),
     /// Battery level (packed status + percentage)
     BatteryLevel(BatteryLevel),
     /// Switch value (On/Off)
@@ -266,6 +275,18 @@ impl TypedValue {
             PVT::NearFarEnableStatus => NearFarEnableStatus::from_raw(raw)
                 .map(TypedValue::NearFarEnableStatus)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::IntervalRecMode => IntervalRecMode::from_raw(raw)
+                .map(TypedValue::IntervalRecMode)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::IntervalRecStatus => IntervalRecStatus::from_raw(raw)
+                .map(TypedValue::IntervalRecStatus)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::PriorityKeySettings => PriorityKeySettings::from_raw(raw)
+                .map(TypedValue::PriorityKeySettings)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::ColorSpace => ColorSpace::from_raw(raw)
+                .map(TypedValue::ColorSpace)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::ShutterModeStatus => ShutterModeStatus::from_raw(raw)
                 .map(TypedValue::ShutterModeStatus)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -368,6 +389,10 @@ impl TypedValue {
             TypedValue::DRangeOptimizer(v) => v.to_raw(),
             TypedValue::StillImageStoreDestination(v) => v.to_raw(),
             TypedValue::NearFarEnableStatus(v) => v.to_raw(),
+            TypedValue::IntervalRecMode(v) => v.to_raw(),
+            TypedValue::IntervalRecStatus(v) => v.to_raw(),
+            TypedValue::PriorityKeySettings(v) => v.to_raw(),
+            TypedValue::ColorSpace(v) => v.to_raw(),
             TypedValue::BatteryLevel(v) => v.to_raw(),
             TypedValue::Switch(v) => v.to_raw(),
             TypedValue::OnOff(v) => v.to_raw(),
@@ -426,6 +451,10 @@ impl fmt::Display for TypedValue {
             TypedValue::DRangeOptimizer(v) => write!(f, "{}", v),
             TypedValue::StillImageStoreDestination(v) => write!(f, "{}", v),
             TypedValue::NearFarEnableStatus(v) => write!(f, "{}", v),
+            TypedValue::IntervalRecMode(v) => write!(f, "{}", v),
+            TypedValue::IntervalRecStatus(v) => write!(f, "{}", v),
+            TypedValue::PriorityKeySettings(v) => write!(f, "{}", v),
+            TypedValue::ColorSpace(v) => write!(f, "{}", v),
             TypedValue::BatteryLevel(v) => write!(f, "{}", v),
             TypedValue::Switch(v) => write!(f, "{}", v),
             TypedValue::OnOff(v) => write!(f, "{}", v),
