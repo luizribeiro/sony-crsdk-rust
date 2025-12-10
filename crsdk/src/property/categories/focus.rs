@@ -40,7 +40,7 @@ impl Category for Focus {
             C::NearFar,
             "Near/Far",
             "Manual focus adjustment amount and direction. Controls how much to move focus nearer or farther.",
-            Some(V::Integer),
+            Some(V::NearFarEnableStatus),
         ),
         PropertyDef::new(
             C::AFAreaPosition,

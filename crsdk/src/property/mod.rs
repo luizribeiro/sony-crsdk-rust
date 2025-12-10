@@ -57,6 +57,11 @@ pub use values::{
 // Re-export media types from values/
 pub use values::{LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState, SlotStatus};
 
+// Re-export common/other types from values/
+pub use values::{
+    DRangeOptimizer, NearFarEnableStatus, SdkControlMode, StillImageStoreDestination,
+};
+
 #[cfg(test)]
 mod tests {
     use super::*;

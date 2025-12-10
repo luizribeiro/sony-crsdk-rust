@@ -45,8 +45,8 @@ impl Category for Image {
         PropertyDef::new(
             C::StillImageStoreDestination,
             "Save To",
-            "Which memory card slot to save still images to.",
-            Some(V::Integer),
+            "Where to save still images: PC, memory card, or both.",
+            Some(V::StillImageStoreDestination),
         ),
         PropertyDef::new(
             C::ImageIDNumSetting,

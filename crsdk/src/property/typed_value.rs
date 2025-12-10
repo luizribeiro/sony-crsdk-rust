@@ -17,9 +17,10 @@ use super::values::{
 };
 use super::{property_value_type, PropertyValueType};
 use super::{
-    DriveMode, IntervalRecShutterType, LiveViewStatus, MediaSlotRecordingType,
-    MediaSlotWritingState, MovieFileFormat, RecorderStatus, RecordingState, SlotStatus,
-    TimeCodeFormat, TimeCodeMake, TimeCodeRun,
+    DRangeOptimizer, DriveMode, IntervalRecShutterType, LiveViewStatus, MediaSlotRecordingType,
+    MediaSlotWritingState, MovieFileFormat, NearFarEnableStatus, RecorderStatus, RecordingState,
+    SdkControlMode, SlotStatus, StillImageStoreDestination, TimeCodeFormat, TimeCodeMake,
+    TimeCodeRun,
 };
 use crate::property::traits::PropertyValue;
 
@@ -115,6 +116,14 @@ pub enum TypedValue {
     MediaSlotWritingState(MediaSlotWritingState),
     /// Media slot recording type
     MediaSlotRecordingType(MediaSlotRecordingType),
+    /// SDK control mode (Remote/Transfer)
+    SdkControlMode(SdkControlMode),
+    /// Dynamic range optimizer
+    DRangeOptimizer(DRangeOptimizer),
+    /// Still image store destination
+    StillImageStoreDestination(StillImageStoreDestination),
+    /// Near/far focus enable status
+    NearFarEnableStatus(NearFarEnableStatus),
     /// Battery level (packed status + percentage)
     BatteryLevel(BatteryLevel),
     /// Switch value (On/Off)
@@ -245,6 +254,18 @@ impl TypedValue {
             PVT::MediaSlotRecordingType => MediaSlotRecordingType::from_raw(raw)
                 .map(TypedValue::MediaSlotRecordingType)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::SdkControlMode => SdkControlMode::from_raw(raw)
+                .map(TypedValue::SdkControlMode)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::DRangeOptimizer => DRangeOptimizer::from_raw(raw)
+                .map(TypedValue::DRangeOptimizer)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::StillImageStoreDestination => StillImageStoreDestination::from_raw(raw)
+                .map(TypedValue::StillImageStoreDestination)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::NearFarEnableStatus => NearFarEnableStatus::from_raw(raw)
+                .map(TypedValue::NearFarEnableStatus)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::ShutterModeStatus => ShutterModeStatus::from_raw(raw)
                 .map(TypedValue::ShutterModeStatus)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -343,6 +364,10 @@ impl TypedValue {
             TypedValue::SlotStatus(v) => v.to_raw(),
             TypedValue::MediaSlotWritingState(v) => v.to_raw(),
             TypedValue::MediaSlotRecordingType(v) => v.to_raw(),
+            TypedValue::SdkControlMode(v) => v.to_raw(),
+            TypedValue::DRangeOptimizer(v) => v.to_raw(),
+            TypedValue::StillImageStoreDestination(v) => v.to_raw(),
+            TypedValue::NearFarEnableStatus(v) => v.to_raw(),
             TypedValue::BatteryLevel(v) => v.to_raw(),
             TypedValue::Switch(v) => v.to_raw(),
             TypedValue::OnOff(v) => v.to_raw(),
@@ -397,6 +422,10 @@ impl fmt::Display for TypedValue {
             TypedValue::SlotStatus(v) => write!(f, "{}", v),
             TypedValue::MediaSlotWritingState(v) => write!(f, "{}", v),
             TypedValue::MediaSlotRecordingType(v) => write!(f, "{}", v),
+            TypedValue::SdkControlMode(v) => write!(f, "{}", v),
+            TypedValue::DRangeOptimizer(v) => write!(f, "{}", v),
+            TypedValue::StillImageStoreDestination(v) => write!(f, "{}", v),
+            TypedValue::NearFarEnableStatus(v) => write!(f, "{}", v),
             TypedValue::BatteryLevel(v) => write!(f, "{}", v),
             TypedValue::Switch(v) => write!(f, "{}", v),
             TypedValue::OnOff(v) => write!(f, "{}", v),

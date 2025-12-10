@@ -55,7 +55,7 @@ impl Category for Other {
             C::DRO,
             "D-Range Optimizer",
             "Dynamic Range Optimizer. Automatically adjusts shadows and highlights.",
-            Some(V::Integer),
+            Some(V::DRangeOptimizer),
         ),
         PropertyDef::new(
             C::AspectRatio,
@@ -702,8 +702,8 @@ impl Category for Other {
         PropertyDef::new(
             C::SdkControlMode,
             "SDK Control",
-            "SDK control mode status.",
-            Some(V::Integer),
+            "SDK control mode: Remote control, content transfer, or both.",
+            Some(V::SdkControlMode),
         ),
         PropertyDef::new(
             C::SystemErrorCautionStatus,

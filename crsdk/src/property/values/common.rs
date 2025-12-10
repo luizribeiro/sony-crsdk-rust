@@ -82,6 +82,14 @@ pub enum PropertyValueType {
     MediaSlotWritingState,
     /// Media slot recording type
     MediaSlotRecordingType,
+    /// SDK control mode
+    SdkControlMode,
+    /// Dynamic range optimizer
+    DRangeOptimizer,
+    /// Still image store destination
+    StillImageStoreDestination,
+    /// Near/far focus control status
+    NearFarEnableStatus,
     /// Shutter mode status
     ShutterModeStatus,
     /// Shutter mode
@@ -417,6 +425,218 @@ impl fmt::Display for SilentModeApertureDrive {
             Self::NotTarget => write!(f, "Not Target"),
             Self::Standard => write!(f, "Standard"),
             Self::SilentPriority => write!(f, "Silent Priority"),
+        }
+    }
+}
+
+/// SDK control mode.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u32)]
+pub enum SdkControlMode {
+    /// Remote control mode
+    Remote = 0x00000000,
+    /// Contents transfer mode
+    ContentsTransfer = 0x00000001,
+    /// Remote transfer mode
+    RemoteTransfer = 0x00000002,
+}
+
+impl ToCrsdk<u64> for SdkControlMode {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for SdkControlMode {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u32 {
+            0x00000000 => Self::Remote,
+            0x00000001 => Self::ContentsTransfer,
+            0x00000002 => Self::RemoteTransfer,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for SdkControlMode {}
+
+impl fmt::Display for SdkControlMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Remote => write!(f, "Remote"),
+            Self::ContentsTransfer => write!(f, "Transfer"),
+            Self::RemoteTransfer => write!(f, "Remote Transfer"),
+        }
+    }
+}
+
+/// Dynamic range optimizer setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum DRangeOptimizer {
+    /// DRO off
+    Off = 0x0000,
+    /// DRO on (auto level)
+    On = 0x0001,
+    /// DRO+ base
+    Plus = 0x0010,
+    /// DRO+ manual level 1
+    PlusManual1 = 0x0011,
+    /// DRO+ manual level 2
+    PlusManual2 = 0x0012,
+    /// DRO+ manual level 3
+    PlusManual3 = 0x0013,
+    /// DRO+ manual level 4
+    PlusManual4 = 0x0014,
+    /// DRO+ manual level 5
+    PlusManual5 = 0x0015,
+    /// DRO auto
+    Auto = 0x0020,
+    /// HDR auto
+    HdrAuto = 0x0030,
+    /// HDR 1.0 EV
+    Hdr10Ev = 0x0031,
+    /// HDR 2.0 EV
+    Hdr20Ev = 0x0032,
+    /// HDR 3.0 EV
+    Hdr30Ev = 0x0033,
+    /// HDR 4.0 EV
+    Hdr40Ev = 0x0034,
+    /// HDR 5.0 EV
+    Hdr50Ev = 0x0035,
+    /// HDR 6.0 EV
+    Hdr60Ev = 0x0036,
+}
+
+impl ToCrsdk<u64> for DRangeOptimizer {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for DRangeOptimizer {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0000 => Self::Off,
+            0x0001 => Self::On,
+            0x0010 => Self::Plus,
+            0x0011 => Self::PlusManual1,
+            0x0012 => Self::PlusManual2,
+            0x0013 => Self::PlusManual3,
+            0x0014 => Self::PlusManual4,
+            0x0015 => Self::PlusManual5,
+            0x0020 => Self::Auto,
+            0x0030 => Self::HdrAuto,
+            0x0031 => Self::Hdr10Ev,
+            0x0032 => Self::Hdr20Ev,
+            0x0033 => Self::Hdr30Ev,
+            0x0034 => Self::Hdr40Ev,
+            0x0035 => Self::Hdr50Ev,
+            0x0036 => Self::Hdr60Ev,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for DRangeOptimizer {}
+
+impl fmt::Display for DRangeOptimizer {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Off => write!(f, "Off"),
+            Self::On => write!(f, "On"),
+            Self::Plus => write!(f, "DRO+"),
+            Self::PlusManual1 => write!(f, "DRO+ Lv1"),
+            Self::PlusManual2 => write!(f, "DRO+ Lv2"),
+            Self::PlusManual3 => write!(f, "DRO+ Lv3"),
+            Self::PlusManual4 => write!(f, "DRO+ Lv4"),
+            Self::PlusManual5 => write!(f, "DRO+ Lv5"),
+            Self::Auto => write!(f, "Auto"),
+            Self::HdrAuto => write!(f, "HDR Auto"),
+            Self::Hdr10Ev => write!(f, "HDR 1.0EV"),
+            Self::Hdr20Ev => write!(f, "HDR 2.0EV"),
+            Self::Hdr30Ev => write!(f, "HDR 3.0EV"),
+            Self::Hdr40Ev => write!(f, "HDR 4.0EV"),
+            Self::Hdr50Ev => write!(f, "HDR 5.0EV"),
+            Self::Hdr60Ev => write!(f, "HDR 6.0EV"),
+        }
+    }
+}
+
+/// Still image store destination.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum StillImageStoreDestination {
+    /// Save to host PC only
+    HostPC = 0x0001,
+    /// Save to memory card only
+    MemoryCard = 0x0002,
+    /// Save to both host PC and memory card
+    Both = 0x0003,
+}
+
+impl ToCrsdk<u64> for StillImageStoreDestination {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for StillImageStoreDestination {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0001 => Self::HostPC,
+            0x0002 => Self::MemoryCard,
+            0x0003 => Self::Both,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for StillImageStoreDestination {}
+
+impl fmt::Display for StillImageStoreDestination {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::HostPC => write!(f, "PC"),
+            Self::MemoryCard => write!(f, "Card"),
+            Self::Both => write!(f, "PC+Card"),
+        }
+    }
+}
+
+/// Near/far focus control enable status.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum NearFarEnableStatus {
+    /// Near/far control disabled
+    Disabled = 0x0000,
+    /// Near/far control enabled
+    Enabled = 0x0001,
+}
+
+impl ToCrsdk<u64> for NearFarEnableStatus {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for NearFarEnableStatus {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0000 => Self::Disabled,
+            0x0001 => Self::Enabled,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for NearFarEnableStatus {}
+
+impl fmt::Display for NearFarEnableStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Disabled => write!(f, "Disabled"),
+            Self::Enabled => write!(f, "Enabled"),
         }
     }
 }
