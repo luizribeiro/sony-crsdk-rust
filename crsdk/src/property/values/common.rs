@@ -110,6 +110,14 @@ pub enum PropertyValueType {
     FocusOperation,
     /// Shutter type (auto/mechanical/electronic)
     ShutterType,
+    /// Device overheating state
+    DeviceOverheatingState,
+    /// High ISO noise reduction
+    HighIsoNR,
+    /// Audio signals (beep) setting
+    AudioSignals,
+    /// Touch operation function
+    FunctionOfTouchOperation,
     /// Shutter mode status
     ShutterModeStatus,
     /// Shutter mode
@@ -1047,6 +1055,210 @@ impl fmt::Display for ShutterType {
             Self::Auto => write!(f, "Auto"),
             Self::Mechanical => write!(f, "Mechanical"),
             Self::Electronic => write!(f, "Electronic"),
+        }
+    }
+}
+
+/// Device overheating state.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum DeviceOverheatingState {
+    /// Normal temperature
+    NotOverheating = 0x00,
+    /// Camera is warming up
+    PreOverheating = 0x01,
+    /// Camera is overheated
+    Overheating = 0x02,
+}
+
+impl ToCrsdk<u64> for DeviceOverheatingState {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for DeviceOverheatingState {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x00 => Self::NotOverheating,
+            0x01 => Self::PreOverheating,
+            0x02 => Self::Overheating,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for DeviceOverheatingState {}
+
+impl fmt::Display for DeviceOverheatingState {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::NotOverheating => write!(f, "Normal"),
+            Self::PreOverheating => write!(f, "Warning"),
+            Self::Overheating => write!(f, "Overheated"),
+        }
+    }
+}
+
+/// High ISO noise reduction setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum HighIsoNR {
+    /// Noise reduction off
+    Off = 0x01,
+    /// Low noise reduction
+    Low = 0x02,
+    /// Normal noise reduction
+    Normal = 0x03,
+    /// High noise reduction
+    High = 0x04,
+}
+
+impl ToCrsdk<u64> for HighIsoNR {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for HighIsoNR {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Off,
+            0x02 => Self::Low,
+            0x03 => Self::Normal,
+            0x04 => Self::High,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for HighIsoNR {}
+
+impl fmt::Display for HighIsoNR {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Off => write!(f, "Off"),
+            Self::Low => write!(f, "Low"),
+            Self::Normal => write!(f, "Normal"),
+            Self::High => write!(f, "High"),
+        }
+    }
+}
+
+/// Audio signals (beep) setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum AudioSignals {
+    /// Audio signals off
+    Off = 0x01,
+    /// Audio signals on
+    On = 0x02,
+    /// Only shutter sound
+    OnShutterOnly = 0x03,
+    /// All sounds except shutter
+    OnWithoutShutter = 0x04,
+}
+
+impl ToCrsdk<u64> for AudioSignals {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for AudioSignals {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Off,
+            0x02 => Self::On,
+            0x03 => Self::OnShutterOnly,
+            0x04 => Self::OnWithoutShutter,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for AudioSignals {}
+
+impl fmt::Display for AudioSignals {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Off => write!(f, "Off"),
+            Self::On => write!(f, "On"),
+            Self::OnShutterOnly => write!(f, "Shutter Only"),
+            Self::OnWithoutShutter => write!(f, "No Shutter"),
+        }
+    }
+}
+
+/// Touch operation function setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum FunctionOfTouchOperation {
+    /// Touch function off
+    Off = 0x01,
+    /// Touch to trigger shutter
+    Shutter = 0x02,
+    /// Touch to focus
+    Focus = 0x03,
+    /// Touch to track subject
+    Tracking = 0x04,
+    /// Touch for auto exposure
+    AE = 0x05,
+    /// Shutter + AE enabled
+    ShutterAndAEOn = 0x06,
+    /// Shutter only, AE disabled
+    ShutterAndAEOff = 0x07,
+    /// Focus + AE enabled
+    FocusAndAEOn = 0x08,
+    /// Focus only, AE disabled
+    FocusAndAEOff = 0x09,
+    /// Tracking + AE enabled
+    TrackingAndAEOn = 0x0A,
+    /// Tracking only, AE disabled
+    TrackingAndAEOff = 0x0B,
+}
+
+impl ToCrsdk<u64> for FunctionOfTouchOperation {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for FunctionOfTouchOperation {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Off,
+            0x02 => Self::Shutter,
+            0x03 => Self::Focus,
+            0x04 => Self::Tracking,
+            0x05 => Self::AE,
+            0x06 => Self::ShutterAndAEOn,
+            0x07 => Self::ShutterAndAEOff,
+            0x08 => Self::FocusAndAEOn,
+            0x09 => Self::FocusAndAEOff,
+            0x0A => Self::TrackingAndAEOn,
+            0x0B => Self::TrackingAndAEOff,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for FunctionOfTouchOperation {}
+
+impl fmt::Display for FunctionOfTouchOperation {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Off => write!(f, "Off"),
+            Self::Shutter => write!(f, "Shutter"),
+            Self::Focus => write!(f, "Focus"),
+            Self::Tracking => write!(f, "Tracking"),
+            Self::AE => write!(f, "AE"),
+            Self::ShutterAndAEOn => write!(f, "Shutter+AE"),
+            Self::ShutterAndAEOff => write!(f, "Shutter Only"),
+            Self::FocusAndAEOn => write!(f, "Focus+AE"),
+            Self::FocusAndAEOff => write!(f, "Focus Only"),
+            Self::TrackingAndAEOn => write!(f, "Track+AE"),
+            Self::TrackingAndAEOff => write!(f, "Track Only"),
         }
     }
 }

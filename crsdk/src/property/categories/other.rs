@@ -151,7 +151,7 @@ impl Category for Other {
             C::FunctionOfTouchOperation,
             "Touch Func",
             "Function assigned to touch operations.",
-            Some(V::Integer),
+            Some(V::FunctionOfTouchOperation),
         ),
         PropertyDef::new(
             C::DeleteUserBaseLook,

@@ -17,12 +17,12 @@ use super::values::{
 };
 use super::{property_value_type, PropertyValueType};
 use super::{
-    BatteryRemainDisplayUnit, ColorSpace, DRangeOptimizer, DriveMode, FocusOperation,
-    IntervalRecMode, IntervalRecShutterType, IntervalRecStatus, LiveViewStatus,
-    MediaSlotRecordingType, MediaSlotWritingState, MovieFileFormat, NearFarEnableStatus,
-    PlaybackMedia, PowerSource, PriorityKeySettings, RecorderStatus, RecordingState,
-    SdkControlMode, ShutterType, SlotStatus, StillImageStoreDestination, TimeCodeFormat,
-    TimeCodeMake, TimeCodeRun, TouchOperation,
+    AudioSignals, BatteryRemainDisplayUnit, ColorSpace, DRangeOptimizer, DeviceOverheatingState,
+    DriveMode, FocusOperation, FunctionOfTouchOperation, HighIsoNR, IntervalRecMode,
+    IntervalRecShutterType, IntervalRecStatus, LiveViewStatus, MediaSlotRecordingType,
+    MediaSlotWritingState, MovieFileFormat, NearFarEnableStatus, PlaybackMedia, PowerSource,
+    PriorityKeySettings, RecorderStatus, RecordingState, SdkControlMode, ShutterType, SlotStatus,
+    StillImageStoreDestination, TimeCodeFormat, TimeCodeMake, TimeCodeRun, TouchOperation,
 };
 use crate::property::traits::PropertyValue;
 
@@ -146,6 +146,14 @@ pub enum TypedValue {
     FocusOperation(FocusOperation),
     /// Shutter type
     ShutterType(ShutterType),
+    /// Device overheating state
+    DeviceOverheatingState(DeviceOverheatingState),
+    /// High ISO noise reduction
+    HighIsoNR(HighIsoNR),
+    /// Audio signals (beep) setting
+    AudioSignals(AudioSignals),
+    /// Touch operation function
+    FunctionOfTouchOperation(FunctionOfTouchOperation),
     /// Battery level (packed status + percentage)
     BatteryLevel(BatteryLevel),
     /// Switch value (On/Off)
@@ -318,6 +326,18 @@ impl TypedValue {
             PVT::ShutterType => ShutterType::from_raw(raw)
                 .map(TypedValue::ShutterType)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::DeviceOverheatingState => DeviceOverheatingState::from_raw(raw)
+                .map(TypedValue::DeviceOverheatingState)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::HighIsoNR => HighIsoNR::from_raw(raw)
+                .map(TypedValue::HighIsoNR)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::AudioSignals => AudioSignals::from_raw(raw)
+                .map(TypedValue::AudioSignals)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::FunctionOfTouchOperation => FunctionOfTouchOperation::from_raw(raw)
+                .map(TypedValue::FunctionOfTouchOperation)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::ShutterModeStatus => ShutterModeStatus::from_raw(raw)
                 .map(TypedValue::ShutterModeStatus)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -430,6 +450,10 @@ impl TypedValue {
             TypedValue::BatteryRemainDisplayUnit(v) => v.to_raw(),
             TypedValue::FocusOperation(v) => v.to_raw(),
             TypedValue::ShutterType(v) => v.to_raw(),
+            TypedValue::DeviceOverheatingState(v) => v.to_raw(),
+            TypedValue::HighIsoNR(v) => v.to_raw(),
+            TypedValue::AudioSignals(v) => v.to_raw(),
+            TypedValue::FunctionOfTouchOperation(v) => v.to_raw(),
             TypedValue::BatteryLevel(v) => v.to_raw(),
             TypedValue::Switch(v) => v.to_raw(),
             TypedValue::OnOff(v) => v.to_raw(),
@@ -498,6 +522,10 @@ impl fmt::Display for TypedValue {
             TypedValue::BatteryRemainDisplayUnit(v) => write!(f, "{}", v),
             TypedValue::FocusOperation(v) => write!(f, "{}", v),
             TypedValue::ShutterType(v) => write!(f, "{}", v),
+            TypedValue::DeviceOverheatingState(v) => write!(f, "{}", v),
+            TypedValue::HighIsoNR(v) => write!(f, "{}", v),
+            TypedValue::AudioSignals(v) => write!(f, "{}", v),
+            TypedValue::FunctionOfTouchOperation(v) => write!(f, "{}", v),
             TypedValue::BatteryLevel(v) => write!(f, "{}", v),
             TypedValue::Switch(v) => write!(f, "{}", v),
             TypedValue::OnOff(v) => write!(f, "{}", v),

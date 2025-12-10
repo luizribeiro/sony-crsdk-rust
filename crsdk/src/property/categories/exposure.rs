@@ -196,7 +196,7 @@ impl Category for Exposure {
             C::HighIsoNR,
             "High ISO NR",
             "Noise reduction applied at high ISO values. Reduces grain but may soften fine details.",
-            Some(V::Switch),
+            Some(V::HighIsoNR),
         ),
         PropertyDef::new(
             C::IntervalRecShutterType,

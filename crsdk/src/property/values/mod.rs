@@ -27,7 +27,8 @@ mod power;
 mod white_balance;
 
 pub use common::{
-    AutoManual, BatteryRemainDisplayUnit, ColorSpace, DRangeOptimizer, FocusOperation, Integer,
+    AudioSignals, AutoManual, BatteryRemainDisplayUnit, ColorSpace, DRangeOptimizer,
+    DeviceOverheatingState, FocusOperation, FunctionOfTouchOperation, HighIsoNR, Integer,
     IntervalRecMode, IntervalRecStatus, LiveViewDisplayEffect, LockIndicator, NearFarEnableStatus,
     OnOff, Percentage, PlaybackMedia, PowerSource, PriorityKeySettings, PropertyValueType,
     SdkControlMode, ShutterType, SilentModeApertureDrive, StillImageStoreDestination, Switch,

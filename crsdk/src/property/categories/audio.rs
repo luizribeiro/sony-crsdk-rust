@@ -28,7 +28,7 @@ impl Category for Audio {
             C::AudioSignals,
             "Audio Beep",
             "Enable or disable audio beeps for camera operations.",
-            Some(V::OnOff),
+            Some(V::AudioSignals),
         ),
         PropertyDef::new(
             C::AudioSignalsStartEnd,

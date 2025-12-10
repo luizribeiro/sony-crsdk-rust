@@ -88,7 +88,7 @@ impl Category for Power {
             C::DeviceOverheatingState,
             "Overheat Status",
             "Camera overheating status and warning level.",
-            Some(V::Integer),
+            Some(V::DeviceOverheatingState),
         ),
         PropertyDef::new(
             C::SecondBatteryRemain,
