@@ -130,7 +130,7 @@ impl Category for Display {
             C::LiveViewStatus,
             "LV Status",
             "Current live view status.",
-            Some(V::Integer),
+            Some(V::LiveViewStatus),
         ),
         PropertyDef::new(
             C::LiveViewProtocol,

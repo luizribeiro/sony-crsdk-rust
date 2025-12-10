@@ -17,7 +17,8 @@ use super::values::{
 };
 use super::{property_value_type, PropertyValueType};
 use super::{
-    DriveMode, IntervalRecShutterType, MovieFileFormat, RecorderStatus, RecordingState,
+    DriveMode, IntervalRecShutterType, LiveViewStatus, MediaSlotRecordingType,
+    MediaSlotWritingState, MovieFileFormat, RecorderStatus, RecordingState, SlotStatus,
     TimeCodeFormat, TimeCodeMake, TimeCodeRun,
 };
 use crate::property::traits::PropertyValue;
@@ -106,6 +107,14 @@ pub enum TypedValue {
     TimeCodeRun(TimeCodeRun),
     /// Timecode make mode
     TimeCodeMake(TimeCodeMake),
+    /// Live view status
+    LiveViewStatus(LiveViewStatus),
+    /// Memory card slot status
+    SlotStatus(SlotStatus),
+    /// Media slot writing state
+    MediaSlotWritingState(MediaSlotWritingState),
+    /// Media slot recording type
+    MediaSlotRecordingType(MediaSlotRecordingType),
     /// Battery level (packed status + percentage)
     BatteryLevel(BatteryLevel),
     /// Switch value (On/Off)
@@ -224,6 +233,18 @@ impl TypedValue {
             PVT::TimeCodeMake => TimeCodeMake::from_raw(raw)
                 .map(TypedValue::TimeCodeMake)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::LiveViewStatus => LiveViewStatus::from_raw(raw)
+                .map(TypedValue::LiveViewStatus)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::SlotStatus => SlotStatus::from_raw(raw)
+                .map(TypedValue::SlotStatus)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::MediaSlotWritingState => MediaSlotWritingState::from_raw(raw)
+                .map(TypedValue::MediaSlotWritingState)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::MediaSlotRecordingType => MediaSlotRecordingType::from_raw(raw)
+                .map(TypedValue::MediaSlotRecordingType)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::ShutterModeStatus => ShutterModeStatus::from_raw(raw)
                 .map(TypedValue::ShutterModeStatus)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -318,6 +339,10 @@ impl TypedValue {
             TypedValue::TimeCodeFormat(v) => v.to_raw(),
             TypedValue::TimeCodeRun(v) => v.to_raw(),
             TypedValue::TimeCodeMake(v) => v.to_raw(),
+            TypedValue::LiveViewStatus(v) => v.to_raw(),
+            TypedValue::SlotStatus(v) => v.to_raw(),
+            TypedValue::MediaSlotWritingState(v) => v.to_raw(),
+            TypedValue::MediaSlotRecordingType(v) => v.to_raw(),
             TypedValue::BatteryLevel(v) => v.to_raw(),
             TypedValue::Switch(v) => v.to_raw(),
             TypedValue::OnOff(v) => v.to_raw(),
@@ -368,6 +393,10 @@ impl fmt::Display for TypedValue {
             TypedValue::TimeCodeFormat(v) => write!(f, "{}", v),
             TypedValue::TimeCodeRun(v) => write!(f, "{}", v),
             TypedValue::TimeCodeMake(v) => write!(f, "{}", v),
+            TypedValue::LiveViewStatus(v) => write!(f, "{}", v),
+            TypedValue::SlotStatus(v) => write!(f, "{}", v),
+            TypedValue::MediaSlotWritingState(v) => write!(f, "{}", v),
+            TypedValue::MediaSlotRecordingType(v) => write!(f, "{}", v),
             TypedValue::BatteryLevel(v) => write!(f, "{}", v),
             TypedValue::Switch(v) => write!(f, "{}", v),
             TypedValue::OnOff(v) => write!(f, "{}", v),

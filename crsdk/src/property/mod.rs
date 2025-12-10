@@ -54,6 +54,9 @@ pub use values::{
     RecordingState, TimeCodeFormat, TimeCodeMake, TimeCodeRun,
 };
 
+// Re-export media types from values/
+pub use values::{LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState, SlotStatus};
+
 #[cfg(test)]
 mod tests {
     use super::*;

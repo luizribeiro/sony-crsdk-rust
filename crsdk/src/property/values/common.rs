@@ -74,6 +74,14 @@ pub enum PropertyValueType {
     TimeCodeRun,
     /// Timecode make mode
     TimeCodeMake,
+    /// Live view status
+    LiveViewStatus,
+    /// Memory card slot status
+    SlotStatus,
+    /// Media slot writing state
+    MediaSlotWritingState,
+    /// Media slot recording type
+    MediaSlotRecordingType,
     /// Shutter mode status
     ShutterModeStatus,
     /// Shutter mode

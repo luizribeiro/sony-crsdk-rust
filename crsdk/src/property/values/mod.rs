@@ -21,6 +21,7 @@ mod exposure;
 mod flash;
 mod focus;
 mod image;
+mod media;
 mod movie;
 mod power;
 mod white_balance;
@@ -40,6 +41,7 @@ pub use focus::{
     SubjectRecognitionAF,
 };
 pub use image::{AspectRatio, FileType, ImageQuality, ImageSize};
+pub use media::{LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState, SlotStatus};
 pub use movie::{
     MovieFileFormat, MovieQuality, RecorderStatus, RecordingState, TimeCodeFormat, TimeCodeMake,
     TimeCodeRun,
