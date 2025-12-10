@@ -70,7 +70,7 @@ impl Category for Movie {
             C::RecorderControlProxySetting,
             "Proxy Control",
             "Proxy recorder control settings.",
-            Some(V::Integer),
+            Some(V::OnOff),
         ),
         PropertyDef::new(
             C::MoviePlayButton,
@@ -250,7 +250,7 @@ impl Category for Movie {
             C::RecorderStartMain,
             "Start Main Rec",
             "Start main recorder.",
-            Some(V::Integer),
+            Some(V::OnOff),
         ),
         PropertyDef::new(
             C::RecorderClipName,
@@ -262,7 +262,7 @@ impl Category for Movie {
             C::RecorderControlMainSetting,
             "Main Rec Control",
             "Main recorder control settings.",
-            Some(V::Integer),
+            Some(V::OnOff),
         ),
         PropertyDef::new(
             C::RecorderSaveDestination,
@@ -298,7 +298,7 @@ impl Category for Movie {
             C::SQModeSetting,
             "S&Q Mode",
             "Slow & Quick mode configuration.",
-            Some(V::Integer),
+            Some(V::Switch),
         ),
         PropertyDef::new(
             C::LogShootingMode,
@@ -400,7 +400,7 @@ impl Category for Movie {
             C::PictureCacheRecSetting,
             "Cache Rec",
             "Picture cache recording mode configuration.",
-            Some(V::Integer),
+            Some(V::Switch),
         ),
         PropertyDef::new(
             C::PictureCacheRecSizeAndTime,
@@ -436,7 +436,7 @@ impl Category for Movie {
             C::RecorderStartProxy,
             "Start Proxy Rec",
             "Start proxy recorder.",
-            Some(V::Integer),
+            Some(V::OnOff),
         ),
         PropertyDef::new(
             C::RecorderProxyStatus,
@@ -448,7 +448,7 @@ impl Category for Movie {
             C::MovieRecButtonToggleEnableStatus,
             "Rec Btn Toggle",
             "Whether movie record button toggle is enabled.",
-            Some(V::Integer),
+            Some(V::OnOff),
         ),
         PropertyDef::new(
             C::MovieIntervalRecCountDownIntervalTime,
