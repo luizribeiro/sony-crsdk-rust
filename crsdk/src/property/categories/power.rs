@@ -22,13 +22,13 @@ impl Category for Power {
             C::BatteryRemainDisplayUnit,
             "Battery Display",
             "How battery remaining is displayed (percentage, time, etc.).",
-            Some(V::Integer),
+            Some(V::BatteryRemainDisplayUnit),
         ),
         PropertyDef::new(
             C::PowerSource,
             "Power Type",
-            "Current power source (battery, AC adapter, USB).",
-            Some(V::Integer),
+            "Current power source (DC, battery, or PoE).",
+            Some(V::PowerSource),
         ),
         PropertyDef::new(
             C::SilentModeShutterWhenPowerOff,

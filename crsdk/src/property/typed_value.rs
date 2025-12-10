@@ -17,11 +17,11 @@ use super::values::{
 };
 use super::{property_value_type, PropertyValueType};
 use super::{
-    ColorSpace, DRangeOptimizer, DriveMode, IntervalRecMode, IntervalRecShutterType,
-    IntervalRecStatus, LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState,
-    MovieFileFormat, NearFarEnableStatus, PriorityKeySettings, RecorderStatus, RecordingState,
-    SdkControlMode, SlotStatus, StillImageStoreDestination, TimeCodeFormat, TimeCodeMake,
-    TimeCodeRun,
+    BatteryRemainDisplayUnit, ColorSpace, DRangeOptimizer, DriveMode, IntervalRecMode,
+    IntervalRecShutterType, IntervalRecStatus, LiveViewStatus, MediaSlotRecordingType,
+    MediaSlotWritingState, MovieFileFormat, NearFarEnableStatus, PlaybackMedia, PowerSource,
+    PriorityKeySettings, RecorderStatus, RecordingState, SdkControlMode, SlotStatus,
+    StillImageStoreDestination, TimeCodeFormat, TimeCodeMake, TimeCodeRun, TouchOperation,
 };
 use crate::property::traits::PropertyValue;
 
@@ -133,6 +133,14 @@ pub enum TypedValue {
     PriorityKeySettings(PriorityKeySettings),
     /// Color space (sRGB/Adobe RGB)
     ColorSpace(ColorSpace),
+    /// Playback media slot
+    PlaybackMedia(PlaybackMedia),
+    /// Touch operation mode
+    TouchOperation(TouchOperation),
+    /// Power source type
+    PowerSource(PowerSource),
+    /// Battery remaining display unit
+    BatteryRemainDisplayUnit(BatteryRemainDisplayUnit),
     /// Battery level (packed status + percentage)
     BatteryLevel(BatteryLevel),
     /// Switch value (On/Off)
@@ -287,6 +295,18 @@ impl TypedValue {
             PVT::ColorSpace => ColorSpace::from_raw(raw)
                 .map(TypedValue::ColorSpace)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::PlaybackMedia => PlaybackMedia::from_raw(raw)
+                .map(TypedValue::PlaybackMedia)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::TouchOperation => TouchOperation::from_raw(raw)
+                .map(TypedValue::TouchOperation)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::PowerSource => PowerSource::from_raw(raw)
+                .map(TypedValue::PowerSource)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::BatteryRemainDisplayUnit => BatteryRemainDisplayUnit::from_raw(raw)
+                .map(TypedValue::BatteryRemainDisplayUnit)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::ShutterModeStatus => ShutterModeStatus::from_raw(raw)
                 .map(TypedValue::ShutterModeStatus)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -393,6 +413,10 @@ impl TypedValue {
             TypedValue::IntervalRecStatus(v) => v.to_raw(),
             TypedValue::PriorityKeySettings(v) => v.to_raw(),
             TypedValue::ColorSpace(v) => v.to_raw(),
+            TypedValue::PlaybackMedia(v) => v.to_raw(),
+            TypedValue::TouchOperation(v) => v.to_raw(),
+            TypedValue::PowerSource(v) => v.to_raw(),
+            TypedValue::BatteryRemainDisplayUnit(v) => v.to_raw(),
             TypedValue::BatteryLevel(v) => v.to_raw(),
             TypedValue::Switch(v) => v.to_raw(),
             TypedValue::OnOff(v) => v.to_raw(),
@@ -455,6 +479,10 @@ impl fmt::Display for TypedValue {
             TypedValue::IntervalRecStatus(v) => write!(f, "{}", v),
             TypedValue::PriorityKeySettings(v) => write!(f, "{}", v),
             TypedValue::ColorSpace(v) => write!(f, "{}", v),
+            TypedValue::PlaybackMedia(v) => write!(f, "{}", v),
+            TypedValue::TouchOperation(v) => write!(f, "{}", v),
+            TypedValue::PowerSource(v) => write!(f, "{}", v),
+            TypedValue::BatteryRemainDisplayUnit(v) => write!(f, "{}", v),
             TypedValue::BatteryLevel(v) => write!(f, "{}", v),
             TypedValue::Switch(v) => write!(f, "{}", v),
             TypedValue::OnOff(v) => write!(f, "{}", v),

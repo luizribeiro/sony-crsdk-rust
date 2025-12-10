@@ -78,8 +78,8 @@ impl Category for Other {
         PropertyDef::new(
             C::TouchOperation,
             "Touch Op",
-            "Enable or disable touch screen functionality.",
-            Some(V::Integer),
+            "Touch screen mode: off, on, or playback only.",
+            Some(V::TouchOperation),
         ),
         PropertyDef::new(
             C::BodyKeyLock,

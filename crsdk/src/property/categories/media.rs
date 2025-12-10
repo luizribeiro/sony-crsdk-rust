@@ -64,7 +64,7 @@ impl Category for Media {
             C::PlaybackMedia,
             "Play Media",
             "Select which card slot for playback.",
-            Some(V::Integer),
+            Some(V::PlaybackMedia),
         ),
         PropertyDef::new(
             C::MediaSLOT1Status,

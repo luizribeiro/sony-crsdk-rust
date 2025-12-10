@@ -59,8 +59,9 @@ pub use values::{LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState, 
 
 // Re-export common/other types from values/
 pub use values::{
-    ColorSpace, DRangeOptimizer, IntervalRecMode, IntervalRecStatus, NearFarEnableStatus,
-    PriorityKeySettings, SdkControlMode, StillImageStoreDestination,
+    BatteryRemainDisplayUnit, ColorSpace, DRangeOptimizer, IntervalRecMode, IntervalRecStatus,
+    NearFarEnableStatus, PlaybackMedia, PowerSource, PriorityKeySettings, SdkControlMode,
+    StillImageStoreDestination, TouchOperation,
 };
 
 #[cfg(test)]

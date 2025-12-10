@@ -98,6 +98,14 @@ pub enum PropertyValueType {
     PriorityKeySettings,
     /// Color space (sRGB/Adobe RGB)
     ColorSpace,
+    /// Playback media slot
+    PlaybackMedia,
+    /// Touch operation mode
+    TouchOperation,
+    /// Power source type
+    PowerSource,
+    /// Battery remaining display unit
+    BatteryRemainDisplayUnit,
     /// Shutter mode status
     ShutterModeStatus,
     /// Shutter mode
@@ -793,6 +801,166 @@ impl fmt::Display for ColorSpace {
         match self {
             Self::Srgb => write!(f, "sRGB"),
             Self::AdobeRgb => write!(f, "Adobe RGB"),
+        }
+    }
+}
+
+/// Playback media slot selection.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum PlaybackMedia {
+    /// Playback from slot 1
+    Slot1 = 0x01,
+    /// Playback from slot 2
+    Slot2 = 0x02,
+}
+
+impl ToCrsdk<u64> for PlaybackMedia {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for PlaybackMedia {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Slot1,
+            0x02 => Self::Slot2,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for PlaybackMedia {}
+
+impl fmt::Display for PlaybackMedia {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Slot1 => write!(f, "Slot 1"),
+            Self::Slot2 => write!(f, "Slot 2"),
+        }
+    }
+}
+
+/// Touch operation mode.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum TouchOperation {
+    /// Touch disabled
+    Off = 0x01,
+    /// Touch enabled
+    On = 0x02,
+    /// Touch enabled only during playback
+    PlaybackOnly = 0x03,
+}
+
+impl ToCrsdk<u64> for TouchOperation {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for TouchOperation {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Off,
+            0x02 => Self::On,
+            0x03 => Self::PlaybackOnly,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for TouchOperation {}
+
+impl fmt::Display for TouchOperation {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Off => write!(f, "Off"),
+            Self::On => write!(f, "On"),
+            Self::PlaybackOnly => write!(f, "Playback Only"),
+        }
+    }
+}
+
+/// Power source type.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum PowerSource {
+    /// DC power (external adapter)
+    Dc = 0x01,
+    /// Battery power
+    Battery = 0x02,
+    /// Power over Ethernet
+    PoE = 0x03,
+}
+
+impl ToCrsdk<u64> for PowerSource {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for PowerSource {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Dc,
+            0x02 => Self::Battery,
+            0x03 => Self::PoE,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for PowerSource {}
+
+impl fmt::Display for PowerSource {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Dc => write!(f, "DC"),
+            Self::Battery => write!(f, "Battery"),
+            Self::PoE => write!(f, "PoE"),
+        }
+    }
+}
+
+/// Battery remaining display unit.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum BatteryRemainDisplayUnit {
+    /// Display as minutes remaining
+    Minute = 0x01,
+    /// Display as percentage
+    Percent = 0x02,
+    /// Display as voltage
+    Voltage = 0x03,
+}
+
+impl ToCrsdk<u64> for BatteryRemainDisplayUnit {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for BatteryRemainDisplayUnit {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Minute,
+            0x02 => Self::Percent,
+            0x03 => Self::Voltage,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for BatteryRemainDisplayUnit {}
+
+impl fmt::Display for BatteryRemainDisplayUnit {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Minute => write!(f, "Minutes"),
+            Self::Percent => write!(f, "%"),
+            Self::Voltage => write!(f, "Voltage"),
         }
     }
 }
