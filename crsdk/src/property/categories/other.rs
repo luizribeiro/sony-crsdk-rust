@@ -295,7 +295,7 @@ impl Category for Other {
             C::StreamCipherType,
             "Stream Encrypt",
             "Encryption type for streaming.",
-            Some(V::Integer),
+            Some(V::StreamCipherType),
         ),
         PropertyDef::new(
             C::StreamSettingListOperationStatus,
@@ -337,7 +337,7 @@ impl Category for Other {
             C::VideoStreamCodec,
             "Stream Codec",
             "Video codec for streaming (H.264, H.265, etc.).",
-            Some(V::Integer),
+            Some(V::VideoStreamCodec),
         ),
         PropertyDef::new(
             C::VideoStreamMaxBitRate,
@@ -1183,7 +1183,7 @@ impl Category for Other {
             C::MonitoringOutputFormat,
             "Mon Output",
             "Current monitoring output format.",
-            Some(V::Integer),
+            Some(V::MonitoringOutputFormat),
         ),
         PropertyDef::new(
             C::MonitoringSettingVersion,

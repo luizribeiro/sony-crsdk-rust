@@ -34,7 +34,7 @@ impl Category for Image {
             C::CompressionFileFormatStill,
             "Still Format",
             "Compression format for still images.",
-            Some(V::Integer),
+            Some(V::CompressionFileFormat),
         ),
         PropertyDef::new(
             C::RAWFileCompressionType,

@@ -8,27 +8,30 @@ use std::fmt;
 use crsdk_sys::DevicePropertyCode;
 
 use super::values::{
-    Aperture, AspectRatio, AutoManual, BatteryLevel, ColorTemperature, EframingType, ExposureComp,
-    ExposureCtrlType, ExposureProgram, FileType, FlashMode, FocusArea, FocusIndicator, FocusMode,
-    FocusTrackingStatus, GridLineType, ImageQuality, ImageSize, Integer, Iso,
-    LiveViewDisplayEffect, LockIndicator, MeterLevel, MeteringMode, MovieQuality, OnOff,
-    Percentage, PrioritySetInAF, PrioritySetInAWB, ShutterMode, ShutterModeStatus, ShutterSpeed,
-    SilentModeApertureDrive, SubjectRecognitionAF, Switch, WhiteBalance,
+    Aperture, AspectRatio, AudioStreamChannel, AutoManual, BatteryLevel, ColorTemperature,
+    CompressionFileFormat, EframingType, ExposureComp, ExposureCtrlType, ExposureProgram,
+    FaceFrameType, FileType, FlashMode, FocusArea, FocusIndicator, FocusMode, FocusTrackingStatus,
+    GridLineType, ImageQuality, ImageSize, Integer, Iso, LiveViewDisplayEffect, LockIndicator,
+    MeterLevel, MeteringMode, MovieQuality, OnOff, Percentage, PrioritySetInAF, PrioritySetInAWB,
+    ShutterMode, ShutterModeStatus, ShutterSpeed, SilentModeApertureDrive, SubjectRecognitionAF,
+    Switch, VideoStreamCodec, WhiteBalance,
 };
 use super::{property_value_type, PropertyValueType};
 use super::{
-    AFTrackForSpeedChange, ApertureDriveInAF, AudioSignals, BatteryRemainDisplayUnit,
-    CameraOperatingMode, ColorSpace, CreativeLook, CustomWBSizeSetting, DRangeOptimizer,
-    DeviceOverheatingState, DispMode, DriveMode, FTPConnectionStatus, FocusOperation,
-    FunctionOfTouchOperation, GainBaseSensitivity, HighIsoNR, ImageStabilizationLevelMovie,
-    ImageStabilizationSteadyShotMovie, ImagerScanMode, IntervalRecMode, IntervalRecShutterType,
-    IntervalRecStatus, IrisDisplayUnit, IsoAutoMinShutterSpeedMode, IsoAutoMinShutterSpeedPreset,
-    LensCompensationShading, LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState,
-    MovieFileFormat, NDFilterMode, NearFarEnableStatus, PictureEffect, PictureProfileColorMode,
-    PictureProfileGamma, PlaybackMedia, PowerSource, PriorityKeySettings, RAWFileCompressionType,
-    RecorderStatus, RecordingMedia, RecordingMediaMovie, RecordingState, RemoconZoomSpeedType,
-    RightLeftEyeSelect, SdkControlMode, SelectFinder, ShutterReleaseTimeLagControl, ShutterType,
-    SlotStatus, SoftSkinEffect, StillImageStoreDestination, StreamStatus,
+    AFTrackForSpeedChange, ApertureDriveInAF, AudioSignals, AudioStreamBitDepth,
+    BatteryRemainDisplayUnit, CameraOperatingMode, ColorSpace, CreativeLook, CustomWBSizeSetting,
+    DRangeOptimizer, DeviceOverheatingState, DispMode, DriveMode, FTPConnectionStatus,
+    FocusOperation, FunctionOfTouchOperation, GainBaseSensitivity, HighIsoNR,
+    ImageStabilizationLevelMovie, ImageStabilizationSteadyShotMovie, ImagerScanMode,
+    IntervalRecMode, IntervalRecShutterType, IntervalRecStatus, IrisDisplayUnit,
+    IsoAutoMinShutterSpeedMode, IsoAutoMinShutterSpeedPreset, LensCompensationShading,
+    LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState, MonitoringOutputFormat,
+    MovieFileFormat, NDFilterMode, NearFarEnableStatus, PictureEffect,
+    PictureProfileBlackGammaRange, PictureProfileColorMode, PictureProfileGamma, PlaybackMedia,
+    PowerSource, PriorityKeySettings, RAWFileCompressionType, RecorderStatus, RecordingMedia,
+    RecordingMediaMovie, RecordingState, RemoconZoomSpeedType, RightLeftEyeSelect, SdkControlMode,
+    SelectFinder, ShutterReleaseTimeLagControl, ShutterType, SlotStatus, SoftSkinEffect,
+    StillImageStoreDestination, StreamCipherType, StreamStatus,
     SubjectRecognitionAnimalBirdDetectionParts, SubjectRecognitionAnimalBirdPriority,
     TCUBDisplaySetting, TimeCodeFormat, TimeCodeMake, TimeCodeRun, TimeShiftTriggerSetting,
     TouchOperation, WindNoiseReduction, ZoomOperation, APSC_S35,
@@ -127,8 +130,14 @@ pub enum TypedValue {
     MediaSlotWritingState(MediaSlotWritingState),
     /// Media slot recording type
     MediaSlotRecordingType(MediaSlotRecordingType),
+    /// Monitoring output format
+    MonitoringOutputFormat(MonitoringOutputFormat),
     /// Streaming status
     StreamStatus(StreamStatus),
+    /// Stream encryption cipher type
+    StreamCipherType(StreamCipherType),
+    /// Video stream codec
+    VideoStreamCodec(VideoStreamCodec),
     /// SDK control mode (Remote/Transfer)
     SdkControlMode(SdkControlMode),
     /// Dynamic range optimizer
@@ -163,6 +172,10 @@ pub enum TypedValue {
     HighIsoNR(HighIsoNR),
     /// Audio signals (beep) setting
     AudioSignals(AudioSignals),
+    /// Audio stream bit depth
+    AudioStreamBitDepth(AudioStreamBitDepth),
+    /// Audio stream channel count
+    AudioStreamChannel(AudioStreamChannel),
     /// Touch operation function
     FunctionOfTouchOperation(FunctionOfTouchOperation),
     /// Soft skin effect level
@@ -215,6 +228,8 @@ pub enum TypedValue {
     ZoomOperation(ZoomOperation),
     /// RAW file compression type
     RAWFileCompressionType(RAWFileCompressionType),
+    /// Compression file format
+    CompressionFileFormat(CompressionFileFormat),
     /// Zoom speed type
     RemoconZoomSpeedType(RemoconZoomSpeedType),
     /// ND filter mode
@@ -231,8 +246,12 @@ pub enum TypedValue {
     PictureProfileColorMode(PictureProfileColorMode),
     /// Picture profile gamma curve
     PictureProfileGamma(PictureProfileGamma),
+    /// Picture profile black gamma range
+    PictureProfileBlackGammaRange(PictureProfileBlackGammaRange),
     /// Grid line overlay type
     GridLineType(GridLineType),
+    /// Face frame type
+    FaceFrameType(FaceFrameType),
     /// Imager/sensor scan mode
     ImagerScanMode(ImagerScanMode),
     /// Auto-framing/E-framing type
@@ -367,8 +386,17 @@ impl TypedValue {
             PVT::MediaSlotRecordingType => MediaSlotRecordingType::from_raw(raw)
                 .map(TypedValue::MediaSlotRecordingType)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::MonitoringOutputFormat => MonitoringOutputFormat::from_raw(raw)
+                .map(TypedValue::MonitoringOutputFormat)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::StreamStatus => StreamStatus::from_raw(raw)
                 .map(TypedValue::StreamStatus)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::StreamCipherType => StreamCipherType::from_raw(raw)
+                .map(TypedValue::StreamCipherType)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::VideoStreamCodec => VideoStreamCodec::from_raw(raw)
+                .map(TypedValue::VideoStreamCodec)
                 .unwrap_or(TypedValue::Unknown(raw)),
             PVT::SdkControlMode => SdkControlMode::from_raw(raw)
                 .map(TypedValue::SdkControlMode)
@@ -420,6 +448,12 @@ impl TypedValue {
                 .unwrap_or(TypedValue::Unknown(raw)),
             PVT::AudioSignals => AudioSignals::from_raw(raw)
                 .map(TypedValue::AudioSignals)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::AudioStreamBitDepth => AudioStreamBitDepth::from_raw(raw)
+                .map(TypedValue::AudioStreamBitDepth)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::AudioStreamChannel => AudioStreamChannel::from_raw(raw)
+                .map(TypedValue::AudioStreamChannel)
                 .unwrap_or(TypedValue::Unknown(raw)),
             PVT::FunctionOfTouchOperation => FunctionOfTouchOperation::from_raw(raw)
                 .map(TypedValue::FunctionOfTouchOperation)
@@ -505,6 +539,9 @@ impl TypedValue {
             PVT::RAWFileCompressionType => RAWFileCompressionType::from_raw(raw)
                 .map(TypedValue::RAWFileCompressionType)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::CompressionFileFormat => CompressionFileFormat::from_raw(raw)
+                .map(TypedValue::CompressionFileFormat)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::RemoconZoomSpeedType => RemoconZoomSpeedType::from_raw(raw)
                 .map(TypedValue::RemoconZoomSpeedType)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -529,6 +566,9 @@ impl TypedValue {
             PVT::PictureProfileGamma => PictureProfileGamma::from_raw(raw)
                 .map(TypedValue::PictureProfileGamma)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::PictureProfileBlackGammaRange => PictureProfileBlackGammaRange::from_raw(raw)
+                .map(TypedValue::PictureProfileBlackGammaRange)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::GridLineType => GridLineType::from_raw(raw)
                 .map(TypedValue::GridLineType)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -537,6 +577,9 @@ impl TypedValue {
                 .unwrap_or(TypedValue::Unknown(raw)),
             PVT::EframingType => EframingType::from_raw(raw)
                 .map(TypedValue::EframingType)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::FaceFrameType => FaceFrameType::from_raw(raw)
+                .map(TypedValue::FaceFrameType)
                 .unwrap_or(TypedValue::Unknown(raw)),
             PVT::ShutterModeStatus => ShutterModeStatus::from_raw(raw)
                 .map(TypedValue::ShutterModeStatus)
@@ -636,7 +679,10 @@ impl TypedValue {
             TypedValue::SlotStatus(v) => v.to_raw(),
             TypedValue::MediaSlotWritingState(v) => v.to_raw(),
             TypedValue::MediaSlotRecordingType(v) => v.to_raw(),
+            TypedValue::MonitoringOutputFormat(v) => v.to_raw(),
             TypedValue::StreamStatus(v) => v.to_raw(),
+            TypedValue::StreamCipherType(v) => v.to_raw(),
+            TypedValue::VideoStreamCodec(v) => v.to_raw(),
             TypedValue::SdkControlMode(v) => v.to_raw(),
             TypedValue::DRangeOptimizer(v) => v.to_raw(),
             TypedValue::StillImageStoreDestination(v) => v.to_raw(),
@@ -654,6 +700,8 @@ impl TypedValue {
             TypedValue::DeviceOverheatingState(v) => v.to_raw(),
             TypedValue::HighIsoNR(v) => v.to_raw(),
             TypedValue::AudioSignals(v) => v.to_raw(),
+            TypedValue::AudioStreamBitDepth(v) => v.to_raw(),
+            TypedValue::AudioStreamChannel(v) => v.to_raw(),
             TypedValue::FunctionOfTouchOperation(v) => v.to_raw(),
             TypedValue::SoftSkinEffect(v) => v.to_raw(),
             TypedValue::WindNoiseReduction(v) => v.to_raw(),
@@ -680,6 +728,7 @@ impl TypedValue {
             TypedValue::FTPConnectionStatus(v) => v.to_raw(),
             TypedValue::ZoomOperation(v) => v.to_raw(),
             TypedValue::RAWFileCompressionType(v) => v.to_raw(),
+            TypedValue::CompressionFileFormat(v) => v.to_raw(),
             TypedValue::RemoconZoomSpeedType(v) => v.to_raw(),
             TypedValue::NDFilterMode(v) => v.to_raw(),
             TypedValue::CreativeLook(v) => v.to_raw(),
@@ -688,7 +737,9 @@ impl TypedValue {
             TypedValue::PictureEffect(v) => v.to_raw(),
             TypedValue::PictureProfileColorMode(v) => v.to_raw(),
             TypedValue::PictureProfileGamma(v) => v.to_raw(),
+            TypedValue::PictureProfileBlackGammaRange(v) => v.to_raw(),
             TypedValue::GridLineType(v) => v.to_raw(),
+            TypedValue::FaceFrameType(v) => v.to_raw(),
             TypedValue::ImagerScanMode(v) => v.to_raw(),
             TypedValue::EframingType(v) => v.to_raw(),
             TypedValue::BatteryLevel(v) => v.to_raw(),
@@ -745,7 +796,10 @@ impl fmt::Display for TypedValue {
             TypedValue::SlotStatus(v) => write!(f, "{}", v),
             TypedValue::MediaSlotWritingState(v) => write!(f, "{}", v),
             TypedValue::MediaSlotRecordingType(v) => write!(f, "{}", v),
+            TypedValue::MonitoringOutputFormat(v) => write!(f, "{}", v),
             TypedValue::StreamStatus(v) => write!(f, "{}", v),
+            TypedValue::StreamCipherType(v) => write!(f, "{}", v),
+            TypedValue::VideoStreamCodec(v) => write!(f, "{}", v),
             TypedValue::SdkControlMode(v) => write!(f, "{}", v),
             TypedValue::DRangeOptimizer(v) => write!(f, "{}", v),
             TypedValue::StillImageStoreDestination(v) => write!(f, "{}", v),
@@ -763,6 +817,8 @@ impl fmt::Display for TypedValue {
             TypedValue::DeviceOverheatingState(v) => write!(f, "{}", v),
             TypedValue::HighIsoNR(v) => write!(f, "{}", v),
             TypedValue::AudioSignals(v) => write!(f, "{}", v),
+            TypedValue::AudioStreamBitDepth(v) => write!(f, "{}", v),
+            TypedValue::AudioStreamChannel(v) => write!(f, "{}", v),
             TypedValue::FunctionOfTouchOperation(v) => write!(f, "{}", v),
             TypedValue::SoftSkinEffect(v) => write!(f, "{}", v),
             TypedValue::WindNoiseReduction(v) => write!(f, "{}", v),
@@ -789,6 +845,7 @@ impl fmt::Display for TypedValue {
             TypedValue::FTPConnectionStatus(v) => write!(f, "{}", v),
             TypedValue::ZoomOperation(v) => write!(f, "{}", v),
             TypedValue::RAWFileCompressionType(v) => write!(f, "{}", v),
+            TypedValue::CompressionFileFormat(v) => write!(f, "{}", v),
             TypedValue::RemoconZoomSpeedType(v) => write!(f, "{}", v),
             TypedValue::NDFilterMode(v) => write!(f, "{}", v),
             TypedValue::CreativeLook(v) => write!(f, "{}", v),
@@ -799,7 +856,9 @@ impl fmt::Display for TypedValue {
             TypedValue::PictureProfileGamma(v) => write!(f, "{}", v),
             TypedValue::GridLineType(v) => write!(f, "{}", v),
             TypedValue::ImagerScanMode(v) => write!(f, "{}", v),
+            TypedValue::PictureProfileBlackGammaRange(v) => write!(f, "{}", v),
             TypedValue::EframingType(v) => write!(f, "{}", v),
+            TypedValue::FaceFrameType(v) => write!(f, "{}", v),
             TypedValue::BatteryLevel(v) => write!(f, "{}", v),
             TypedValue::Switch(v) => write!(f, "{}", v),
             TypedValue::OnOff(v) => write!(f, "{}", v),

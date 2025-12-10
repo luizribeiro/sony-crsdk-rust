@@ -116,6 +116,10 @@ pub enum PropertyValueType {
     HighIsoNR,
     /// Audio signals (beep) setting
     AudioSignals,
+    /// Audio stream bit depth
+    AudioStreamBitDepth,
+    /// Audio stream channel count
+    AudioStreamChannel,
     /// Touch operation function
     FunctionOfTouchOperation,
     /// Soft skin effect level
@@ -178,6 +182,8 @@ pub enum PropertyValueType {
     ZoomOperation,
     /// RAW file compression type
     RAWFileCompressionType,
+    /// Compression file format
+    CompressionFileFormat,
     /// Zoom speed type
     RemoconZoomSpeedType,
     /// ND filter mode
@@ -194,14 +200,24 @@ pub enum PropertyValueType {
     PictureProfileGamma,
     /// Picture profile color mode
     PictureProfileColorMode,
+    /// Picture profile black gamma range
+    PictureProfileBlackGammaRange,
     /// Grid line overlay type
     GridLineType,
     /// Streaming status
     StreamStatus,
+    /// Stream encryption cipher type
+    StreamCipherType,
     /// Imager/sensor scan mode
     ImagerScanMode,
     /// Auto-framing/E-framing type
     EframingType,
+    /// Video stream codec
+    VideoStreamCodec,
+    /// Monitoring output format
+    MonitoringOutputFormat,
+    /// Face frame type
+    FaceFrameType,
 
     // Generic toggle types
     /// On/Off toggle (0=Off, 1=On)
@@ -1260,6 +1276,88 @@ impl fmt::Display for AudioSignals {
             Self::On => write!(f, "On"),
             Self::OnShutterOnly => write!(f, "Shutter Only"),
             Self::OnWithoutShutter => write!(f, "No Shutter"),
+        }
+    }
+}
+
+/// Audio stream bit depth setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum AudioStreamBitDepth {
+    /// 16-bit audio
+    Bit16 = 0x01,
+    /// 24-bit audio
+    Bit24 = 0x02,
+    /// 32-bit audio
+    Bit32 = 0x03,
+}
+
+impl ToCrsdk<u64> for AudioStreamBitDepth {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for AudioStreamBitDepth {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Bit16,
+            0x02 => Self::Bit24,
+            0x03 => Self::Bit32,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for AudioStreamBitDepth {}
+
+impl fmt::Display for AudioStreamBitDepth {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Bit16 => write!(f, "16-bit"),
+            Self::Bit24 => write!(f, "24-bit"),
+            Self::Bit32 => write!(f, "32-bit"),
+        }
+    }
+}
+
+/// Audio stream channel count.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum AudioStreamChannel {
+    /// 1 channel (mono)
+    Ch1 = 0x01,
+    /// 2 channels (stereo)
+    Ch2 = 0x02,
+    /// 4 channels
+    Ch4 = 0x04,
+}
+
+impl ToCrsdk<u64> for AudioStreamChannel {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for AudioStreamChannel {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Ch1,
+            0x02 => Self::Ch2,
+            0x04 => Self::Ch4,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for AudioStreamChannel {}
+
+impl fmt::Display for AudioStreamChannel {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Ch1 => write!(f, "1 Channel"),
+            Self::Ch2 => write!(f, "2 Channels"),
+            Self::Ch4 => write!(f, "4 Channels"),
         }
     }
 }
@@ -2410,6 +2508,47 @@ impl fmt::Display for RAWFileCompressionType {
     }
 }
 
+/// Compression file format for still images.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum CompressionFileFormat {
+    /// JPEG compression
+    Jpeg = 0x01,
+    /// HEIF 4:2:2 compression
+    Heif422 = 0x02,
+    /// HEIF 4:2:0 compression
+    Heif420 = 0x03,
+}
+
+impl ToCrsdk<u64> for CompressionFileFormat {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for CompressionFileFormat {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Jpeg,
+            0x02 => Self::Heif422,
+            0x03 => Self::Heif420,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for CompressionFileFormat {}
+
+impl fmt::Display for CompressionFileFormat {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Jpeg => write!(f, "JPEG"),
+            Self::Heif422 => write!(f, "HEIF 4:2:2"),
+            Self::Heif420 => write!(f, "HEIF 4:2:0"),
+        }
+    }
+}
+
 /// Remocon zoom speed type.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
@@ -3011,6 +3150,50 @@ impl fmt::Display for PictureProfileColorMode {
     }
 }
 
+/// Picture profile black gamma range setting.
+///
+/// Defines the range of shadow tones affected by black gamma adjustment.
+/// Controls how wide the tonal range is for shadow detail manipulation.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum PictureProfileBlackGammaRange {
+    /// Wide shadow tone range
+    Wide = 0x01,
+    /// Middle shadow tone range
+    Middle = 0x02,
+    /// Narrow shadow tone range
+    Narrow = 0x03,
+}
+
+impl ToCrsdk<u64> for PictureProfileBlackGammaRange {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for PictureProfileBlackGammaRange {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Wide,
+            0x02 => Self::Middle,
+            0x03 => Self::Narrow,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for PictureProfileBlackGammaRange {}
+
+impl fmt::Display for PictureProfileBlackGammaRange {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Wide => write!(f, "Wide"),
+            Self::Middle => write!(f, "Middle"),
+            Self::Narrow => write!(f, "Narrow"),
+        }
+    }
+}
+
 /// Grid line overlay type for composition assistance.
 ///
 /// Provides various grid patterns overlaid on the camera display
@@ -3125,6 +3308,51 @@ impl fmt::Display for StreamStatus {
     }
 }
 
+/// Stream encryption cipher type.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum StreamCipherType {
+    /// No encryption
+    None = 0x01,
+    /// AES-128 encryption
+    AES128 = 0x02,
+    /// AES-192 encryption
+    AES192 = 0x03,
+    /// AES-256 encryption
+    AES256 = 0x04,
+}
+
+impl ToCrsdk<u64> for StreamCipherType {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for StreamCipherType {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::None,
+            0x02 => Self::AES128,
+            0x03 => Self::AES192,
+            0x04 => Self::AES256,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for StreamCipherType {}
+
+impl fmt::Display for StreamCipherType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::None => write!(f, "None"),
+            Self::AES128 => write!(f, "AES-128"),
+            Self::AES192 => write!(f, "AES-192"),
+            Self::AES256 => write!(f, "AES-256"),
+        }
+    }
+}
+
 /// Imager/sensor scan mode.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
@@ -3215,6 +3443,181 @@ impl fmt::Display for EframingType {
             Self::PTZ => write!(f, "PTZ"),
             Self::HoldCurrentPosition => write!(f, "Hold Position"),
             Self::ForceZoomOut => write!(f, "Force Zoom Out"),
+        }
+    }
+}
+
+/// Video stream codec selection.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum VideoStreamCodec {
+    /// Streaming disabled
+    Off = 0x0001,
+    /// Motion JPEG codec
+    MotionJpeg = 0x0002,
+    /// H.264 codec
+    H264 = 0x0003,
+    /// H.265 codec
+    H265 = 0x0004,
+}
+
+impl ToCrsdk<u64> for VideoStreamCodec {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for VideoStreamCodec {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0001 => Self::Off,
+            0x0002 => Self::MotionJpeg,
+            0x0003 => Self::H264,
+            0x0004 => Self::H265,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for VideoStreamCodec {}
+
+impl fmt::Display for VideoStreamCodec {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Off => write!(f, "Off"),
+            Self::MotionJpeg => write!(f, "Motion JPEG"),
+            Self::H264 => write!(f, "H.264"),
+            Self::H265 => write!(f, "H.265"),
+        }
+    }
+}
+
+/// Monitoring output format selection.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum MonitoringOutputFormat {
+    /// No output
+    None = 0x00,
+    /// 720x480p at 59.94Hz or 720x576p at 50Hz
+    P720x480_576 = 0x01,
+    /// 1920x1080i
+    I1080 = 0x02,
+    /// 1920x1080i PsF
+    I1080PsF = 0x03,
+    /// 1920x1080p
+    P1080 = 0x04,
+    /// 1920x1080p Level A
+    P1080LevelA = 0x05,
+    /// 1920x1080p Level B
+    P1080LevelB = 0x06,
+    /// 3840x2160p (4K UHD)
+    P3840x2160 = 0x07,
+    /// 4096x2160p (4K DCI)
+    P4096x2160 = 0x08,
+    /// 1280x720p
+    P720 = 0x09,
+}
+
+impl ToCrsdk<u64> for MonitoringOutputFormat {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for MonitoringOutputFormat {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x00 => Self::None,
+            0x01 => Self::P720x480_576,
+            0x02 => Self::I1080,
+            0x03 => Self::I1080PsF,
+            0x04 => Self::P1080,
+            0x05 => Self::P1080LevelA,
+            0x06 => Self::P1080LevelB,
+            0x07 => Self::P3840x2160,
+            0x08 => Self::P4096x2160,
+            0x09 => Self::P720,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for MonitoringOutputFormat {}
+
+impl fmt::Display for MonitoringOutputFormat {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::None => write!(f, "None"),
+            Self::P720x480_576 => write!(f, "720x480p/720x576p"),
+            Self::I1080 => write!(f, "1080i"),
+            Self::I1080PsF => write!(f, "1080i PsF"),
+            Self::P1080 => write!(f, "1080p"),
+            Self::P1080LevelA => write!(f, "1080p Level A"),
+            Self::P1080LevelB => write!(f, "1080p Level B"),
+            Self::P3840x2160 => write!(f, "4K (3840x2160)"),
+            Self::P4096x2160 => write!(f, "4K (4096x2160)"),
+            Self::P720 => write!(f, "720p"),
+        }
+    }
+}
+
+/// Face detection frame type.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum FaceFrameType {
+    /// Unknown face frame type
+    Unknown = 0x0000,
+    /// Detected face
+    DetectedFace = 0x0001,
+    /// AF target face
+    AFTargetFace = 0x0002,
+    /// Personal recognition face
+    PersonalRecognition = 0x0003,
+    /// Smile detection face
+    SmileDetection = 0x0004,
+    /// Selected face
+    SelectedFace = 0x0005,
+    /// AF target selection face
+    AFTargetSelection = 0x0006,
+    /// Smile detection select face
+    SmileDetectionSelect = 0x0007,
+}
+
+impl ToCrsdk<u64> for FaceFrameType {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for FaceFrameType {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0000 => Self::Unknown,
+            0x0001 => Self::DetectedFace,
+            0x0002 => Self::AFTargetFace,
+            0x0003 => Self::PersonalRecognition,
+            0x0004 => Self::SmileDetection,
+            0x0005 => Self::SelectedFace,
+            0x0006 => Self::AFTargetSelection,
+            0x0007 => Self::SmileDetectionSelect,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for FaceFrameType {}
+
+impl fmt::Display for FaceFrameType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Unknown => write!(f, "Unknown"),
+            Self::DetectedFace => write!(f, "Detected Face"),
+            Self::AFTargetFace => write!(f, "AF Target Face"),
+            Self::PersonalRecognition => write!(f, "Personal Recognition"),
+            Self::SmileDetection => write!(f, "Smile Detection"),
+            Self::SelectedFace => write!(f, "Selected Face"),
+            Self::AFTargetSelection => write!(f, "AF Target Selection"),
+            Self::SmileDetectionSelect => write!(f, "Smile Detection Select"),
         }
     }
 }

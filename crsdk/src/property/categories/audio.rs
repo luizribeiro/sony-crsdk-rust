@@ -166,13 +166,13 @@ impl Category for Audio {
             C::AudioStreamBitDepth,
             "Stream Bit Depth",
             "Bit depth for audio stream.",
-            Some(V::Integer),
+            Some(V::AudioStreamBitDepth),
         ),
         PropertyDef::new(
             C::AudioStreamChannel,
             "Stream Channels",
             "Number of audio channels for streaming.",
-            Some(V::Integer),
+            Some(V::AudioStreamChannel),
         ),
     ];
 }

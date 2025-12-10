@@ -40,7 +40,7 @@ impl Category for PictureProfile {
             C::PictureProfileBlackGammaRange,
             "PP Black Gamma Range",
             "Range of shadow tones affected by black gamma adjustment.",
-            Some(V::Integer),
+            Some(V::PictureProfileBlackGammaRange),
         ),
         PropertyDef::new(
             C::PictureProfileBlackGammaLevel,

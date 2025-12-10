@@ -27,21 +27,23 @@ mod power;
 mod white_balance;
 
 pub use common::{
-    AFTrackForSpeedChange, ApertureDriveInAF, AudioSignals, AutoManual, BatteryRemainDisplayUnit,
-    CameraOperatingMode, ColorSpace, CreativeLook, CustomWBSizeSetting, DRangeOptimizer,
-    DeviceOverheatingState, DispMode, EframingType, FTPConnectionStatus, FocusOperation,
-    FunctionOfTouchOperation, GainBaseSensitivity, GridLineType, HighIsoNR,
+    AFTrackForSpeedChange, ApertureDriveInAF, AudioSignals, AudioStreamBitDepth,
+    AudioStreamChannel, AutoManual, BatteryRemainDisplayUnit, CameraOperatingMode, ColorSpace,
+    CompressionFileFormat, CreativeLook, CustomWBSizeSetting, DRangeOptimizer,
+    DeviceOverheatingState, DispMode, EframingType, FTPConnectionStatus, FaceFrameType,
+    FocusOperation, FunctionOfTouchOperation, GainBaseSensitivity, GridLineType, HighIsoNR,
     ImageStabilizationLevelMovie, ImageStabilizationSteadyShotMovie, ImagerScanMode, Integer,
     IntervalRecMode, IntervalRecStatus, IrisDisplayUnit, IsoAutoMinShutterSpeedMode,
     IsoAutoMinShutterSpeedPreset, LensCompensationShading, LiveViewDisplayEffect, LockIndicator,
-    NDFilterMode, NearFarEnableStatus, OnOff, Percentage, PictureEffect, PictureProfileColorMode,
-    PictureProfileGamma, PlaybackMedia, PowerSource, PriorityKeySettings, PropertyValueType,
-    RAWFileCompressionType, RecordingMedia, RecordingMediaMovie, RemoconZoomSpeedType,
-    RightLeftEyeSelect, SdkControlMode, SelectFinder, ShutterReleaseTimeLagControl, ShutterType,
-    SilentModeApertureDrive, SoftSkinEffect, StillImageStoreDestination, StreamStatus,
+    MonitoringOutputFormat, NDFilterMode, NearFarEnableStatus, OnOff, Percentage, PictureEffect,
+    PictureProfileBlackGammaRange, PictureProfileColorMode, PictureProfileGamma, PlaybackMedia,
+    PowerSource, PriorityKeySettings, PropertyValueType, RAWFileCompressionType, RecordingMedia,
+    RecordingMediaMovie, RemoconZoomSpeedType, RightLeftEyeSelect, SdkControlMode, SelectFinder,
+    ShutterReleaseTimeLagControl, ShutterType, SilentModeApertureDrive, SoftSkinEffect,
+    StillImageStoreDestination, StreamCipherType, StreamStatus,
     SubjectRecognitionAnimalBirdDetectionParts, SubjectRecognitionAnimalBirdPriority, Switch,
-    TCUBDisplaySetting, TimeShiftTriggerSetting, TouchOperation, WindNoiseReduction, ZoomOperation,
-    APSC_S35,
+    TCUBDisplaySetting, TimeShiftTriggerSetting, TouchOperation, VideoStreamCodec,
+    WindNoiseReduction, ZoomOperation, APSC_S35,
 };
 pub use drive::{DriveMode, IntervalRecShutterType};
 pub use exposure::{
