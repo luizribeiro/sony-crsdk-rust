@@ -338,10 +338,7 @@ impl App {
 
                 // Derive format info from property store now that properties are loaded
                 // FileType shows RAW/JPEG/RAW+JPEG, ImageQuality shows JPEG compression level
-                if let Some(file_type) = self
-                    .properties
-                    .get(DevicePropertyCode::StillImageStoreDestination)
-                {
+                if let Some(file_type) = self.properties.get(DevicePropertyCode::FileType) {
                     let ft = file_type.current_value();
                     // Append JPEG quality if relevant (contains JPEG)
                     if ft.contains("JPEG") {

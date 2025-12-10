@@ -52,7 +52,7 @@ impl Category for Image {
             C::ImageIDNumSetting,
             "Image ID Setting",
             "Numeric identifier embedded in image metadata.",
-            Some(V::Integer),
+            Some(V::Switch),
         ),
         PropertyDef::new(
             C::ImageIDNum,
@@ -100,7 +100,7 @@ impl Category for Image {
             C::ProtectImageInFTPTransfer,
             "FTP Protect",
             "Protect images during FTP transfer.",
-            Some(V::Integer),
+            Some(V::Switch),
         ),
         PropertyDef::new(
             C::FileSettingsTitleNameSettings,
@@ -112,7 +112,7 @@ impl Category for Image {
             C::EmbedLUTFile,
             "Embed LUT",
             "Embeds LUT information in recorded files.",
-            Some(V::Integer),
+            Some(V::Switch),
         ),
         PropertyDef::new(
             C::SceneFileIndex,
@@ -124,7 +124,7 @@ impl Category for Image {
             C::CurrentSceneFileEdited,
             "Scene Modified",
             "Whether the current scene file has been modified.",
-            Some(V::Integer),
+            Some(V::Switch),
         ),
         PropertyDef::new(
             C::RecorderExtRawStatus,
@@ -136,7 +136,7 @@ impl Category for Image {
             C::ForcedFileNumberResetEnableStatus,
             "File # Reset Avail",
             "Whether forced file number reset is available.",
-            Some(V::Integer),
+            Some(V::OnOff),
         ),
         PropertyDef::new(
             C::MaximumSizeOfImageIDString,
@@ -154,13 +154,13 @@ impl Category for Image {
             C::SceneFileUploadOperationEnableStatus,
             "Scene Upload Avail",
             "Whether scene file upload is available.",
-            Some(V::Integer),
+            Some(V::OnOff),
         ),
         PropertyDef::new(
             C::SceneFileDownloadOperationEnableStatus,
             "Scene DL Avail",
             "Whether scene file download is available.",
-            Some(V::Integer),
+            Some(V::OnOff),
         ),
         PropertyDef::new(
             C::SceneFileIndexesAvailableForDownload,
@@ -196,7 +196,7 @@ impl Category for Image {
             C::OSDImageMode,
             "OSD Mode",
             "On-screen display image mode.",
-            Some(V::Integer),
+            Some(V::OnOff),
         ),
         PropertyDef::new(
             C::LiveViewImageQualityByNumericalValue,

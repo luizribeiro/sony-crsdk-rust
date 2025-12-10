@@ -22,7 +22,7 @@ impl Category for Movie {
             C::MovieRecordingSetting,
             "Movie Setting",
             "Video resolution and quality settings combined. Higher settings require more storage.",
-            Some(V::Integer),
+            Some(V::MovieQuality),
         ),
         PropertyDef::new(
             C::MovieRecordingFrameRateSetting,
@@ -136,7 +136,7 @@ impl Category for Movie {
             C::SQRecordingSetting,
             "S&Q Setting",
             "Slow & Quick recording settings.",
-            Some(V::Integer),
+            Some(V::MovieQuality),
         ),
         PropertyDef::new(
             C::AudioRecording,
@@ -190,7 +190,7 @@ impl Category for Movie {
             C::ProxyRecordingSetting,
             "Proxy Setting",
             "Proxy recording configuration.",
-            Some(V::Integer),
+            Some(V::MovieQuality),
         ),
         PropertyDef::new(
             C::MovieHDMIOutputRecMedia,

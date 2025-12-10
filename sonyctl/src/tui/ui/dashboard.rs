@@ -141,12 +141,7 @@ fn render_camera_info_panel(
                 Style::default().fg(Color::Cyan),
             ),
         ]),
-        Line::from(vec![
-            Span::styled("  Format    ", Style::default().fg(Color::DarkGray)),
-            Span::styled(&info.image_format, Style::default().fg(Color::White)),
-            Span::styled(" │ ", Style::default().fg(Color::Rgb(60, 60, 60))),
-            Span::styled(&info.recording_format, Style::default().fg(Color::White)),
-        ]),
+        render_format_line(&info.image_format, &info.recording_format),
         Line::from(vec![
             Span::styled("  Battery   ", Style::default().fg(Color::DarkGray)),
             Span::styled(battery_bar, Style::default().fg(battery_color)),
@@ -183,6 +178,53 @@ fn render_battery_bar(percentage: u8) -> String {
     let filled = (percentage as usize * 10) / 100;
     let empty = 10 - filled;
     format!("[{}{}]", "█".repeat(filled), "░".repeat(empty))
+}
+
+fn render_format_line(image_format: &str, recording_format: &str) -> Line<'static> {
+    let has_image = image_format != "--";
+    let has_recording = recording_format != "--";
+
+    let mut spans = vec![Span::styled(
+        "  Format    ",
+        Style::default().fg(Color::DarkGray),
+    )];
+
+    match (has_image, has_recording) {
+        (true, true) => {
+            spans.push(Span::styled(
+                image_format.to_string(),
+                Style::default().fg(Color::White),
+            ));
+            spans.push(Span::styled(
+                " │ ",
+                Style::default().fg(Color::Rgb(60, 60, 60)),
+            ));
+            spans.push(Span::styled(
+                recording_format.to_string(),
+                Style::default().fg(Color::White),
+            ));
+        }
+        (true, false) => {
+            spans.push(Span::styled(
+                image_format.to_string(),
+                Style::default().fg(Color::White),
+            ));
+        }
+        (false, true) => {
+            spans.push(Span::styled(
+                recording_format.to_string(),
+                Style::default().fg(Color::White),
+            ));
+        }
+        (false, false) => {
+            spans.push(Span::styled(
+                "--".to_string(),
+                Style::default().fg(Color::Rgb(80, 80, 80)),
+            ));
+        }
+    }
+
+    Line::from(spans)
 }
 
 fn render_slot_line<'a>(label: &'a str, slot: &'a MediaSlotInfo) -> Line<'a> {

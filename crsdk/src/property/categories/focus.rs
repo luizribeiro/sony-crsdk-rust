@@ -172,7 +172,7 @@ impl Category for Focus {
             C::FocusMap,
             "Depth Map",
             "Visual depth map showing focus distances across the frame. Helps visualize depth of field.",
-            Some(V::Integer),
+            Some(V::Switch),
         ),
         PropertyDef::new(
             C::InitialFocusMagnifier,
@@ -220,7 +220,7 @@ impl Category for Focus {
             C::AutoFocusHold,
             "AF Hold",
             "Temporarily pauses autofocus. Useful to prevent focus from changing during recomposition.",
-            Some(V::Integer),
+            Some(V::Switch),
         ),
         PropertyDef::new(
             C::PushAutoFocus,
