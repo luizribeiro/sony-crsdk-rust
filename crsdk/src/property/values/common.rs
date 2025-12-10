@@ -126,6 +126,18 @@ pub enum PropertyValueType {
     SelectFinder,
     /// Display mode
     DispMode,
+    /// Image stabilization for movie
+    ImageStabilizationSteadyShotMovie,
+    /// Lens shading compensation
+    LensCompensationShading,
+    /// Custom white balance capture size
+    CustomWBSizeSetting,
+    /// Aperture drive behavior in AF
+    ApertureDriveInAF,
+    /// Recording media selection (still)
+    RecordingMedia,
+    /// Recording media selection (movie)
+    RecordingMediaMovie,
     /// Shutter mode status
     ShutterModeStatus,
     /// Shutter mode
@@ -1455,6 +1467,260 @@ impl fmt::Display for DispMode {
             Self::Level => write!(f, "Level"),
             Self::ForViewFinder => write!(f, "Viewfinder"),
             Self::MonitorOff => write!(f, "Off"),
+        }
+    }
+}
+
+/// Image stabilization mode for movie recording.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ImageStabilizationSteadyShotMovie {
+    /// Stabilization off
+    Off = 0x01,
+    /// Standard stabilization
+    Standard = 0x02,
+    /// Active stabilization (stronger)
+    Active = 0x03,
+    /// Dynamic active (strongest, crops more)
+    DynamicActive = 0x04,
+}
+
+impl ToCrsdk<u64> for ImageStabilizationSteadyShotMovie {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for ImageStabilizationSteadyShotMovie {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Off,
+            0x02 => Self::Standard,
+            0x03 => Self::Active,
+            0x04 => Self::DynamicActive,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for ImageStabilizationSteadyShotMovie {}
+
+impl fmt::Display for ImageStabilizationSteadyShotMovie {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Off => write!(f, "Off"),
+            Self::Standard => write!(f, "Standard"),
+            Self::Active => write!(f, "Active"),
+            Self::DynamicActive => write!(f, "Dynamic"),
+        }
+    }
+}
+
+/// Lens shading compensation setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum LensCompensationShading {
+    /// Compensation off
+    Off = 0x01,
+    /// Auto compensation
+    Auto = 0x02,
+    /// Low compensation
+    Low = 0x03,
+}
+
+impl ToCrsdk<u64> for LensCompensationShading {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for LensCompensationShading {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Off,
+            0x02 => Self::Auto,
+            0x03 => Self::Low,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for LensCompensationShading {}
+
+impl fmt::Display for LensCompensationShading {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Off => write!(f, "Off"),
+            Self::Auto => write!(f, "Auto"),
+            Self::Low => write!(f, "Low"),
+        }
+    }
+}
+
+/// Custom white balance capture size.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum CustomWBSizeSetting {
+    /// Small capture area
+    Small = 0x01,
+    /// Medium capture area
+    Medium = 0x02,
+    /// Large capture area
+    Large = 0x03,
+}
+
+impl ToCrsdk<u64> for CustomWBSizeSetting {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for CustomWBSizeSetting {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Small,
+            0x02 => Self::Medium,
+            0x03 => Self::Large,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for CustomWBSizeSetting {}
+
+impl fmt::Display for CustomWBSizeSetting {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Small => write!(f, "S"),
+            Self::Medium => write!(f, "M"),
+            Self::Large => write!(f, "L"),
+        }
+    }
+}
+
+/// Aperture drive behavior during AF.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ApertureDriveInAF {
+    /// Standard aperture drive
+    Standard = 0x01,
+    /// Prioritize focus speed
+    FocusPriority = 0x02,
+    /// Prioritize silent operation
+    SilentPriority = 0x03,
+}
+
+impl ToCrsdk<u64> for ApertureDriveInAF {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for ApertureDriveInAF {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Standard,
+            0x02 => Self::FocusPriority,
+            0x03 => Self::SilentPriority,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for ApertureDriveInAF {}
+
+impl fmt::Display for ApertureDriveInAF {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Standard => write!(f, "Standard"),
+            Self::FocusPriority => write!(f, "Focus"),
+            Self::SilentPriority => write!(f, "Silent"),
+        }
+    }
+}
+
+/// Recording media selection for still images.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum RecordingMedia {
+    /// Record to slot 1
+    Slot1 = 0x0001,
+    /// Record to slot 2
+    Slot2 = 0x0002,
+    /// Record to both slots simultaneously
+    Simultaneous = 0x0101,
+    /// Sort recording between slots
+    Sort = 0x0102,
+}
+
+impl ToCrsdk<u64> for RecordingMedia {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for RecordingMedia {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0001 => Self::Slot1,
+            0x0002 => Self::Slot2,
+            0x0101 => Self::Simultaneous,
+            0x0102 => Self::Sort,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for RecordingMedia {}
+
+impl fmt::Display for RecordingMedia {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Slot1 => write!(f, "Slot 1"),
+            Self::Slot2 => write!(f, "Slot 2"),
+            Self::Simultaneous => write!(f, "Both"),
+            Self::Sort => write!(f, "Sort"),
+        }
+    }
+}
+
+/// Recording media selection for movies.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum RecordingMediaMovie {
+    /// Record to slot 1
+    Slot1 = 0x0001,
+    /// Record to slot 2
+    Slot2 = 0x0002,
+    /// Record to both slots simultaneously
+    Simultaneous = 0x0101,
+}
+
+impl ToCrsdk<u64> for RecordingMediaMovie {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for RecordingMediaMovie {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0001 => Self::Slot1,
+            0x0002 => Self::Slot2,
+            0x0101 => Self::Simultaneous,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for RecordingMediaMovie {}
+
+impl fmt::Display for RecordingMediaMovie {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Slot1 => write!(f, "Slot 1"),
+            Self::Slot2 => write!(f, "Slot 2"),
+            Self::Simultaneous => write!(f, "Both"),
         }
     }
 }

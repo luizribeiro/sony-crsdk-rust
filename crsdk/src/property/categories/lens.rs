@@ -28,7 +28,7 @@ impl Category for Lens {
             C::LensCompensationShading,
             "Shading Comp",
             "Corrects light falloff (vignetting) at image corners. Automatically adjusts based on lens profile.",
-            Some(V::OnOff),
+            Some(V::LensCompensationShading),
         ),
         PropertyDef::new(
             C::LensCompensationChromaticAberration,

@@ -17,13 +17,15 @@ use super::values::{
 };
 use super::{property_value_type, PropertyValueType};
 use super::{
-    AudioSignals, BatteryRemainDisplayUnit, ColorSpace, DRangeOptimizer, DeviceOverheatingState,
-    DispMode, DriveMode, FocusOperation, FunctionOfTouchOperation, HighIsoNR, IntervalRecMode,
-    IntervalRecShutterType, IntervalRecStatus, LiveViewStatus, MediaSlotRecordingType,
-    MediaSlotWritingState, MovieFileFormat, NearFarEnableStatus, PlaybackMedia, PowerSource,
-    PriorityKeySettings, RecorderStatus, RecordingState, SdkControlMode, SelectFinder, ShutterType,
-    SlotStatus, SoftSkinEffect, StillImageStoreDestination, TimeCodeFormat, TimeCodeMake,
-    TimeCodeRun, TouchOperation, WindNoiseReduction,
+    ApertureDriveInAF, AudioSignals, BatteryRemainDisplayUnit, ColorSpace, CustomWBSizeSetting,
+    DRangeOptimizer, DeviceOverheatingState, DispMode, DriveMode, FocusOperation,
+    FunctionOfTouchOperation, HighIsoNR, ImageStabilizationSteadyShotMovie, IntervalRecMode,
+    IntervalRecShutterType, IntervalRecStatus, LensCompensationShading, LiveViewStatus,
+    MediaSlotRecordingType, MediaSlotWritingState, MovieFileFormat, NearFarEnableStatus,
+    PlaybackMedia, PowerSource, PriorityKeySettings, RecorderStatus, RecordingMedia,
+    RecordingMediaMovie, RecordingState, SdkControlMode, SelectFinder, ShutterType, SlotStatus,
+    SoftSkinEffect, StillImageStoreDestination, TimeCodeFormat, TimeCodeMake, TimeCodeRun,
+    TouchOperation, WindNoiseReduction,
 };
 use crate::property::traits::PropertyValue;
 
@@ -163,6 +165,18 @@ pub enum TypedValue {
     SelectFinder(SelectFinder),
     /// Display mode
     DispMode(DispMode),
+    /// Image stabilization for movie
+    ImageStabilizationSteadyShotMovie(ImageStabilizationSteadyShotMovie),
+    /// Lens shading compensation
+    LensCompensationShading(LensCompensationShading),
+    /// Custom white balance size
+    CustomWBSizeSetting(CustomWBSizeSetting),
+    /// Aperture drive in AF
+    ApertureDriveInAF(ApertureDriveInAF),
+    /// Recording media (still)
+    RecordingMedia(RecordingMedia),
+    /// Recording media (movie)
+    RecordingMediaMovie(RecordingMediaMovie),
     /// Battery level (packed status + percentage)
     BatteryLevel(BatteryLevel),
     /// Switch value (On/Off)
@@ -359,6 +373,26 @@ impl TypedValue {
             PVT::DispMode => DispMode::from_raw(raw)
                 .map(TypedValue::DispMode)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::ImageStabilizationSteadyShotMovie => {
+                ImageStabilizationSteadyShotMovie::from_raw(raw)
+                    .map(TypedValue::ImageStabilizationSteadyShotMovie)
+                    .unwrap_or(TypedValue::Unknown(raw))
+            }
+            PVT::LensCompensationShading => LensCompensationShading::from_raw(raw)
+                .map(TypedValue::LensCompensationShading)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::CustomWBSizeSetting => CustomWBSizeSetting::from_raw(raw)
+                .map(TypedValue::CustomWBSizeSetting)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::ApertureDriveInAF => ApertureDriveInAF::from_raw(raw)
+                .map(TypedValue::ApertureDriveInAF)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::RecordingMedia => RecordingMedia::from_raw(raw)
+                .map(TypedValue::RecordingMedia)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::RecordingMediaMovie => RecordingMediaMovie::from_raw(raw)
+                .map(TypedValue::RecordingMediaMovie)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::ShutterModeStatus => ShutterModeStatus::from_raw(raw)
                 .map(TypedValue::ShutterModeStatus)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -479,6 +513,12 @@ impl TypedValue {
             TypedValue::WindNoiseReduction(v) => v.to_raw(),
             TypedValue::SelectFinder(v) => v.to_raw(),
             TypedValue::DispMode(v) => v.to_raw(),
+            TypedValue::ImageStabilizationSteadyShotMovie(v) => v.to_raw(),
+            TypedValue::LensCompensationShading(v) => v.to_raw(),
+            TypedValue::CustomWBSizeSetting(v) => v.to_raw(),
+            TypedValue::ApertureDriveInAF(v) => v.to_raw(),
+            TypedValue::RecordingMedia(v) => v.to_raw(),
+            TypedValue::RecordingMediaMovie(v) => v.to_raw(),
             TypedValue::BatteryLevel(v) => v.to_raw(),
             TypedValue::Switch(v) => v.to_raw(),
             TypedValue::OnOff(v) => v.to_raw(),
@@ -555,6 +595,12 @@ impl fmt::Display for TypedValue {
             TypedValue::WindNoiseReduction(v) => write!(f, "{}", v),
             TypedValue::SelectFinder(v) => write!(f, "{}", v),
             TypedValue::DispMode(v) => write!(f, "{}", v),
+            TypedValue::ImageStabilizationSteadyShotMovie(v) => write!(f, "{}", v),
+            TypedValue::LensCompensationShading(v) => write!(f, "{}", v),
+            TypedValue::CustomWBSizeSetting(v) => write!(f, "{}", v),
+            TypedValue::ApertureDriveInAF(v) => write!(f, "{}", v),
+            TypedValue::RecordingMedia(v) => write!(f, "{}", v),
+            TypedValue::RecordingMediaMovie(v) => write!(f, "{}", v),
             TypedValue::BatteryLevel(v) => write!(f, "{}", v),
             TypedValue::Switch(v) => write!(f, "{}", v),
             TypedValue::OnOff(v) => write!(f, "{}", v),

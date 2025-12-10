@@ -178,7 +178,7 @@ impl Category for Movie {
             C::MovieImageStabilizationSteadyShot,
             "Movie SteadyShot",
             "Image stabilization mode for movie recording.",
-            Some(V::Integer),
+            Some(V::ImageStabilizationSteadyShotMovie),
         ),
         PropertyDef::new(
             C::MovieProxyFileFormat,
@@ -466,7 +466,7 @@ impl Category for Movie {
             C::MovieRecordingMedia,
             "Rec Media",
             "Media destination for movie recording.",
-            Some(V::Integer),
+            Some(V::RecordingMediaMovie),
         ),
         PropertyDef::new(
             C::MovieRecordingFileNumber,

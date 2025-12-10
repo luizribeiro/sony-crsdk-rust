@@ -136,7 +136,7 @@ impl Category for Media {
             C::RecordingMedia,
             "Rec Media",
             "Media destination for recording.",
-            Some(V::Integer),
+            Some(V::RecordingMedia),
         ),
         PropertyDef::new(
             C::AutoSwitchMedia,

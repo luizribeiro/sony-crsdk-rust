@@ -298,7 +298,7 @@ impl Category for Exposure {
             C::ApertureDriveInAF,
             "Aperture Drive in AF",
             "Controls aperture behavior during autofocus. Standard mode adjusts for focus speed, Focus Priority prioritizes tracking, Silent Priority minimizes noise.",
-            Some(V::Integer),
+            Some(V::ApertureDriveInAF),
         ),
         PropertyDef::new(
             C::PushAutoIris,

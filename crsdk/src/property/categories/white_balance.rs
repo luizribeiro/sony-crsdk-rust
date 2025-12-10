@@ -130,7 +130,7 @@ impl Category for WhiteBalance {
             C::CustomWBSizeSetting,
             "Custom WB Size",
             "Size of the area used for custom white balance measurement.",
-            Some(V::Integer),
+            Some(V::CustomWBSizeSetting),
         ),
         PropertyDef::new(
             C::CustomWBCaptureStandby,

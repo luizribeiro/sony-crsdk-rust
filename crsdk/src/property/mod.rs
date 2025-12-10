@@ -59,11 +59,12 @@ pub use values::{LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState, 
 
 // Re-export common/other types from values/
 pub use values::{
-    AudioSignals, BatteryRemainDisplayUnit, ColorSpace, DRangeOptimizer, DeviceOverheatingState,
-    DispMode, FocusOperation, FunctionOfTouchOperation, HighIsoNR, IntervalRecMode,
-    IntervalRecStatus, NearFarEnableStatus, PlaybackMedia, PowerSource, PriorityKeySettings,
-    SdkControlMode, SelectFinder, ShutterType, SoftSkinEffect, StillImageStoreDestination,
-    TouchOperation, WindNoiseReduction,
+    ApertureDriveInAF, AudioSignals, BatteryRemainDisplayUnit, ColorSpace, CustomWBSizeSetting,
+    DRangeOptimizer, DeviceOverheatingState, DispMode, FocusOperation, FunctionOfTouchOperation,
+    HighIsoNR, ImageStabilizationSteadyShotMovie, IntervalRecMode, IntervalRecStatus,
+    LensCompensationShading, NearFarEnableStatus, PlaybackMedia, PowerSource, PriorityKeySettings,
+    RecordingMedia, RecordingMediaMovie, SdkControlMode, SelectFinder, ShutterType, SoftSkinEffect,
+    StillImageStoreDestination, TouchOperation, WindNoiseReduction,
 };
 
 #[cfg(test)]
