@@ -117,14 +117,44 @@ impl fmt::Display for ShutterSpeed {
 
 /// ISO sensitivity value.
 ///
-/// The SDK represents ISO directly as an integer (e.g., 100, 800, 3200).
+/// The SDK uses special encoding for ISO values:
+/// - `0xFFFFFF` represents Auto ISO
+/// - Values with bit `0x10000000` set are extended/Hi ISO values,
+///   where the actual ISO is in the lower bits
+/// - Regular values are the ISO number directly (e.g., 100, 800, 3200)
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Iso(u64);
 
+const ISO_AUTO: u64 = 0xFFFFFF;
+const ISO_EXTENDED_FLAG: u64 = 0x10000000;
+
 impl Iso {
-    /// Get the numeric ISO value.
-    pub fn value(&self) -> u64 {
+    /// Get the raw SDK value.
+    pub fn raw(&self) -> u64 {
         self.0
+    }
+
+    /// Check if this is Auto ISO.
+    pub fn is_auto(&self) -> bool {
+        self.0 == ISO_AUTO
+    }
+
+    /// Check if this is an extended/Hi ISO value.
+    pub fn is_extended(&self) -> bool {
+        (self.0 & ISO_EXTENDED_FLAG) != 0
+    }
+
+    /// Get the effective ISO number, stripping any flags.
+    ///
+    /// Returns `None` for Auto ISO.
+    pub fn value(&self) -> Option<u64> {
+        if self.is_auto() {
+            None
+        } else if self.is_extended() {
+            Some(self.0 & !ISO_EXTENDED_FLAG)
+        } else {
+            Some(self.0)
+        }
     }
 }
 
@@ -148,7 +178,13 @@ impl PropertyValue for Iso {}
 
 impl fmt::Display for Iso {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "ISO {}", self.0)
+        if self.is_auto() {
+            write!(f, "Auto")
+        } else if let Some(iso) = self.value() {
+            write!(f, "ISO {}", iso)
+        } else {
+            write!(f, "ISO {}", self.0)
+        }
     }
 }
 
@@ -872,9 +908,59 @@ mod tests {
     }
 
     #[test]
+    fn test_iso_auto() {
+        let auto = Iso(0xFFFFFF);
+        assert!(auto.is_auto());
+        assert!(!auto.is_extended());
+        assert_eq!(auto.value(), None);
+        assert_eq!(auto.to_string(), "Auto");
+    }
+
+    #[test]
+    fn test_iso_extended() {
+        // 0x10027100 = extended flag | 160000
+        let iso_160k = Iso(0x10027100);
+        assert!(!iso_160k.is_auto());
+        assert!(iso_160k.is_extended());
+        assert_eq!(iso_160k.value(), Some(160000));
+        assert_eq!(iso_160k.to_string(), "ISO 160000");
+
+        // 0x10032000 = extended flag | 204800
+        let iso_204k = Iso(0x10032000);
+        assert!(iso_204k.is_extended());
+        assert_eq!(iso_204k.value(), Some(204800));
+        assert_eq!(iso_204k.to_string(), "ISO 204800");
+
+        // 0x1003E800 = extended flag | 256000
+        let iso_256k = Iso(0x1003E800);
+        assert_eq!(iso_256k.value(), Some(256000));
+        assert_eq!(iso_256k.to_string(), "ISO 256000");
+
+        // 0x1004E200 = extended flag | 320000
+        let iso_320k = Iso(0x1004E200);
+        assert_eq!(iso_320k.value(), Some(320000));
+        assert_eq!(iso_320k.to_string(), "ISO 320000");
+
+        // 0x10064000 = extended flag | 409600
+        let iso_409k = Iso(0x10064000);
+        assert_eq!(iso_409k.value(), Some(409600));
+        assert_eq!(iso_409k.to_string(), "ISO 409600");
+    }
+
+    #[test]
+    fn test_iso_regular() {
+        let iso = Iso(800);
+        assert!(!iso.is_auto());
+        assert!(!iso.is_extended());
+        assert_eq!(iso.value(), Some(800));
+        assert_eq!(iso.raw(), 800);
+        assert_eq!(iso.to_string(), "ISO 800");
+    }
+
+    #[test]
     fn test_iso_from_raw() {
         assert!(Iso::from_raw(0).is_none());
-        assert_eq!(Iso::from_raw(800).unwrap().value(), 800);
+        assert_eq!(Iso::from_raw(800).unwrap().value(), Some(800));
     }
 
     #[test]
