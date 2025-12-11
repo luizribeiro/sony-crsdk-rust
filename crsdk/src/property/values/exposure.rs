@@ -292,11 +292,11 @@ pub enum ExposureProgram {
     /// Memory recall
     MemoryRecall = 32800,
     /// Continuous AE (8 shots)
-    ContinuousPriorityAE8 = 32816,
+    ContinuousPriorityAE8 = 32817,
     /// Continuous AE (10 shots)
-    ContinuousPriorityAE10 = 32817,
+    ContinuousPriorityAE10 = 32818,
     /// Continuous AE (12 shots)
-    ContinuousPriorityAE12 = 32818,
+    ContinuousPriorityAE12 = 32819,
     /// 3D sweep panorama
     SweepPanorama3D = 32832,
     /// Sweep panorama
@@ -314,55 +314,55 @@ pub enum ExposureProgram {
     /// Movie flexible exposure
     MovieF = 32853,
     /// S&Q motion program auto
-    MovieSQMotionP = 32854,
+    MovieSQMotionP = 32857,
     /// S&Q motion aperture priority
-    MovieSQMotionA = 32855,
+    MovieSQMotionA = 32858,
     /// S&Q motion shutter priority
-    MovieSQMotionS = 32856,
+    MovieSQMotionS = 32859,
     /// S&Q motion manual
-    MovieSQMotionM = 32857,
+    MovieSQMotionM = 32860,
     /// S&Q motion auto
-    MovieSQMotionAuto = 32858,
+    MovieSQMotionAuto = 32861,
     /// S&Q motion flexible
-    MovieSQMotionF = 32859,
+    MovieSQMotionF = 32862,
     /// Flash off scene
     FlashOff = 32864,
     /// Picture effect mode
-    PictureEffect = 32865,
+    PictureEffect = 32880,
     /// High frame rate program
-    HiFrameRateP = 32880,
+    HiFrameRateP = 32896,
     /// High frame rate aperture
-    HiFrameRateA = 32881,
+    HiFrameRateA = 32897,
     /// High frame rate shutter
-    HiFrameRateS = 32882,
+    HiFrameRateS = 32898,
     /// High frame rate manual
-    HiFrameRateM = 32883,
+    HiFrameRateM = 32899,
     /// S&Q program auto
-    SQMotionP = 32896,
+    SQMotionP = 32900,
     /// S&Q aperture priority
-    SQMotionA = 32897,
+    SQMotionA = 32901,
     /// S&Q shutter priority
-    SQMotionS = 32898,
+    SQMotionS = 32902,
     /// S&Q manual
-    SQMotionM = 32899,
+    SQMotionM = 32903,
     /// Generic movie mode
-    Movie = 32900,
+    Movie = 32904,
     /// Still image mode
-    Still = 32901,
+    Still = 32905,
     /// Movie F mode
-    MovieFMode = 32902,
+    MovieFMode = 32906,
     /// Interval rec flexible
-    MovieIntervalRecF = 32903,
+    MovieIntervalRecF = 32914,
     /// Interval rec program
-    MovieIntervalRecP = 32904,
+    MovieIntervalRecP = 32915,
     /// Interval rec aperture
-    MovieIntervalRecA = 32905,
+    MovieIntervalRecA = 32916,
     /// Interval rec shutter
-    MovieIntervalRecS = 32906,
+    MovieIntervalRecS = 32917,
     /// Interval rec manual
-    MovieIntervalRecM = 32907,
+    MovieIntervalRecM = 32918,
     /// Interval rec auto
-    MovieIntervalRecAuto = 32908,
+    MovieIntervalRecAuto = 32919,
 }
 
 impl ToCrsdk<u64> for ExposureProgram {
@@ -398,9 +398,9 @@ impl FromCrsdk<u64> for ExposureProgram {
             32795 => Self::Fireworks,
             32796 => Self::HighSensitivity,
             32800 => Self::MemoryRecall,
-            32816 => Self::ContinuousPriorityAE8,
-            32817 => Self::ContinuousPriorityAE10,
-            32818 => Self::ContinuousPriorityAE12,
+            32817 => Self::ContinuousPriorityAE8,
+            32818 => Self::ContinuousPriorityAE10,
+            32819 => Self::ContinuousPriorityAE12,
             32832 => Self::SweepPanorama3D,
             32833 => Self::SweepPanorama,
             32848 => Self::MovieP,
@@ -409,31 +409,31 @@ impl FromCrsdk<u64> for ExposureProgram {
             32851 => Self::MovieM,
             32852 => Self::MovieAuto,
             32853 => Self::MovieF,
-            32854 => Self::MovieSQMotionP,
-            32855 => Self::MovieSQMotionA,
-            32856 => Self::MovieSQMotionS,
-            32857 => Self::MovieSQMotionM,
-            32858 => Self::MovieSQMotionAuto,
-            32859 => Self::MovieSQMotionF,
+            32857 => Self::MovieSQMotionP,
+            32858 => Self::MovieSQMotionA,
+            32859 => Self::MovieSQMotionS,
+            32860 => Self::MovieSQMotionM,
+            32861 => Self::MovieSQMotionAuto,
+            32862 => Self::MovieSQMotionF,
             32864 => Self::FlashOff,
-            32865 => Self::PictureEffect,
-            32880 => Self::HiFrameRateP,
-            32881 => Self::HiFrameRateA,
-            32882 => Self::HiFrameRateS,
-            32883 => Self::HiFrameRateM,
-            32896 => Self::SQMotionP,
-            32897 => Self::SQMotionA,
-            32898 => Self::SQMotionS,
-            32899 => Self::SQMotionM,
-            32900 => Self::Movie,
-            32901 => Self::Still,
-            32902 => Self::MovieFMode,
-            32903 => Self::MovieIntervalRecF,
-            32904 => Self::MovieIntervalRecP,
-            32905 => Self::MovieIntervalRecA,
-            32906 => Self::MovieIntervalRecS,
-            32907 => Self::MovieIntervalRecM,
-            32908 => Self::MovieIntervalRecAuto,
+            32880 => Self::PictureEffect,
+            32896 => Self::HiFrameRateP,
+            32897 => Self::HiFrameRateA,
+            32898 => Self::HiFrameRateS,
+            32899 => Self::HiFrameRateM,
+            32900 => Self::SQMotionP,
+            32901 => Self::SQMotionA,
+            32902 => Self::SQMotionS,
+            32903 => Self::SQMotionM,
+            32904 => Self::Movie,
+            32905 => Self::Still,
+            32906 => Self::MovieFMode,
+            32914 => Self::MovieIntervalRecF,
+            32915 => Self::MovieIntervalRecP,
+            32916 => Self::MovieIntervalRecA,
+            32917 => Self::MovieIntervalRecS,
+            32918 => Self::MovieIntervalRecM,
+            32919 => Self::MovieIntervalRecAuto,
             _ => return Err(Error::InvalidPropertyValue),
         })
     }
