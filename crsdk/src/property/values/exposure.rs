@@ -621,31 +621,31 @@ impl ExposureProgram {
 #[non_exhaustive]
 pub enum MeteringMode {
     /// Average metering
-    Average = 1,
+    Average = 0x0001,
     /// Center-weighted average
-    CenterWeightedAverage = 2,
+    CenterWeightedAverage = 0x0002,
     /// Multi-spot metering
-    MultiSpot = 3,
+    MultiSpot = 0x0003,
     /// Center spot metering
-    CenterSpot = 4,
-    /// Multi-pattern metering
-    Multi = 32769,
+    CenterSpot = 0x0004,
+    /// Multi-pattern metering (most common default)
+    Multi = 0x0005,
     /// Center-weighted metering
-    CenterWeighted = 32770,
+    CenterWeighted = 0x0006,
     /// Entire screen average
-    EntireScreenAverage = 32771,
+    EntireScreenAverage = 0x0007,
     /// Standard spot metering
-    SpotStandard = 32772,
+    SpotStandard = 0x0008,
     /// Large spot metering
-    SpotLarge = 32773,
+    SpotLarge = 0x0009,
     /// Highlight-weighted metering
-    HighLightWeighted = 32774,
+    HighLightWeighted = 0x000A,
     /// Standard metering
-    Standard = 32775,
+    Standard = 0x000B,
     /// Backlight compensation
-    Backlight = 32776,
+    Backlight = 0x000C,
     /// Spotlight metering
-    Spotlight = 32777,
+    Spotlight = 0x000D,
 }
 
 impl ToCrsdk<u64> for MeteringMode {
@@ -657,19 +657,19 @@ impl ToCrsdk<u64> for MeteringMode {
 impl FromCrsdk<u64> for MeteringMode {
     fn from_crsdk(raw: u64) -> Result<Self> {
         Ok(match raw as u16 {
-            1 => Self::Average,
-            2 => Self::CenterWeightedAverage,
-            3 => Self::MultiSpot,
-            4 => Self::CenterSpot,
-            32769 => Self::Multi,
-            32770 => Self::CenterWeighted,
-            32771 => Self::EntireScreenAverage,
-            32772 => Self::SpotStandard,
-            32773 => Self::SpotLarge,
-            32774 => Self::HighLightWeighted,
-            32775 => Self::Standard,
-            32776 => Self::Backlight,
-            32777 => Self::Spotlight,
+            0x0001 => Self::Average,
+            0x0002 => Self::CenterWeightedAverage,
+            0x0003 => Self::MultiSpot,
+            0x0004 => Self::CenterSpot,
+            0x0005 => Self::Multi,
+            0x0006 => Self::CenterWeighted,
+            0x0007 => Self::EntireScreenAverage,
+            0x0008 => Self::SpotStandard,
+            0x0009 => Self::SpotLarge,
+            0x000A => Self::HighLightWeighted,
+            0x000B => Self::Standard,
+            0x000C => Self::Backlight,
+            0x000D => Self::Spotlight,
             _ => return Err(Error::InvalidPropertyValue),
         })
     }
