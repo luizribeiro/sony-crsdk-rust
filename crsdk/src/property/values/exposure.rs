@@ -154,19 +154,19 @@ impl fmt::Display for Iso {
 
 /// Exposure compensation value.
 ///
-/// The SDK represents exposure compensation in 1/3 EV steps as integers.
-/// For example: 0 → 0.0, 3 → +1.0, -3 → -1.0, 1 → +0.3
+/// The SDK represents exposure compensation in 1/1000 EV units as signed integers.
+/// For example: 0 → 0.0, 1000 → +1.0, -1000 → -1.0, 3000 → +3.0
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct ExposureComp(i64);
 
 impl ExposureComp {
     /// Get the EV value as a floating point number.
     pub fn ev(&self) -> f64 {
-        self.0 as f64 / 3.0
+        self.0 as f64 / 1000.0
     }
 
-    /// Get the raw step value (in 1/3 EV increments).
-    pub fn steps(&self) -> i64 {
+    /// Get the raw value (in 1/1000 EV units).
+    pub fn raw_value(&self) -> i64 {
         self.0
     }
 }
@@ -880,17 +880,19 @@ mod tests {
     #[test]
     fn test_exposure_comp_display() {
         assert_eq!(ExposureComp(0).to_string(), "0.0");
-        assert_eq!(ExposureComp(3).to_string(), "+1.0");
-        assert_eq!(ExposureComp(-3).to_string(), "-1.0");
-        assert_eq!(ExposureComp(1).to_string(), "+0.3");
-        assert_eq!(ExposureComp(-1).to_string(), "-0.3");
+        assert_eq!(ExposureComp(1000).to_string(), "+1.0");
+        assert_eq!(ExposureComp(-1000).to_string(), "-1.0");
+        assert_eq!(ExposureComp(3000).to_string(), "+3.0");
+        assert_eq!(ExposureComp(-3700).to_string(), "-3.7");
+        assert_eq!(ExposureComp(300).to_string(), "+0.3");
     }
 
     #[test]
     fn test_exposure_comp_from_raw() {
-        // Test signed interpretation
-        let ec = ExposureComp::from_raw(u64::MAX - 2).unwrap(); // -3 as u64
-        assert_eq!(ec.steps(), -3);
+        // Test signed interpretation: -3700 as u64 sign-extended
+        let ec = ExposureComp::from_raw((-3700i64) as u64).unwrap();
+        assert_eq!(ec.raw_value(), -3700);
+        assert_eq!(ec.ev(), -3.7);
     }
 
     #[test]

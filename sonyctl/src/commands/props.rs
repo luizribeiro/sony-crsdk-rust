@@ -178,8 +178,9 @@ pub fn get(device: &crsdk::blocking::CameraDevice, name: &str) -> Result<()> {
     println!("Current Value:");
     println!("  Formatted: {}", format_value(code, prop.current_value));
     println!(
-        "  Raw:       {} (0x{:X})",
-        prop.current_value, prop.current_value
+        "  Raw:       {} ({})",
+        prop.data_type.format_raw(prop.current_value),
+        prop.data_type.format_raw_hex(prop.current_value)
     );
     println!();
     println!("Status:   {:?}", prop.enable_flag);
@@ -194,23 +195,38 @@ pub fn get(device: &crsdk::blocking::CameraDevice, name: &str) -> Result<()> {
         ValueConstraint::Range { min, max, step } => {
             let count = if *step > 0 { (max - min) / step + 1 } else { 0 };
             println!("Constraint: Range");
-            println!("  Min:   {} (0x{:X})", min, *min as u64);
-            println!("  Max:   {} (0x{:X})", max, *max as u64);
+            println!(
+                "  Min:   {} ({})",
+                prop.data_type.format_raw(*min as u64),
+                prop.data_type.format_raw_hex(*min as u64)
+            );
+            println!(
+                "  Max:   {} ({})",
+                prop.data_type.format_raw(*max as u64),
+                prop.data_type.format_raw_hex(*max as u64)
+            );
             println!("  Step:  {}", step);
             println!("  Count: {} values", count);
         }
         ValueConstraint::Discrete(values) => {
             println!("Constraint: Discrete ({} values)", values.len());
+            let print_value = |val: u64| {
+                let formatted = format_value(code, val);
+                println!(
+                    "  {} ({}) = {}",
+                    prop.data_type.format_raw(val),
+                    prop.data_type.format_raw_hex(val),
+                    formatted
+                );
+            };
             if values.len() <= 20 {
                 for val in values {
-                    let formatted = format_value(code, *val);
-                    println!("  {} (0x{:X}) = {}", val, val, formatted);
+                    print_value(*val);
                 }
             } else {
                 println!("  (showing first 10 and last 5)");
                 for val in values.iter().take(10) {
-                    let formatted = format_value(code, *val);
-                    println!("  {} (0x{:X}) = {}", val, val, formatted);
+                    print_value(*val);
                 }
                 println!("  ...");
                 for val in values
@@ -221,8 +237,7 @@ pub fn get(device: &crsdk::blocking::CameraDevice, name: &str) -> Result<()> {
                     .into_iter()
                     .rev()
                 {
-                    let formatted = format_value(code, *val);
-                    println!("  {} (0x{:X}) = {}", val, val, formatted);
+                    print_value(*val);
                 }
             }
         }

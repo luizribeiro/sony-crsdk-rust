@@ -27,6 +27,64 @@ pub enum DataType {
     Unknown(u32),
 }
 
+impl DataType {
+    /// Returns true if this is a signed integer type.
+    pub fn is_signed(&self) -> bool {
+        matches!(self, Self::Int8 | Self::Int16 | Self::Int32 | Self::Int64)
+    }
+
+    /// Format a raw u64 value as a signed integer string if this is a signed type.
+    /// For unsigned types, returns the value as-is.
+    pub fn format_raw(&self, raw: u64) -> String {
+        match self {
+            Self::Int8 => format!("{}", raw as i8),
+            Self::Int16 => format!("{}", raw as i16),
+            Self::Int32 => format!("{}", raw as i32),
+            Self::Int64 => format!("{}", raw as i64),
+            _ => format!("{}", raw),
+        }
+    }
+
+    /// Format a raw u64 value as a hex string, using signed representation for signed types.
+    pub fn format_raw_hex(&self, raw: u64) -> String {
+        match self {
+            Self::Int8 => {
+                let v = raw as i8;
+                if v < 0 {
+                    format!("-0x{:X}", -(v as i16))
+                } else {
+                    format!("0x{:X}", v)
+                }
+            }
+            Self::Int16 => {
+                let v = raw as i16;
+                if v < 0 {
+                    format!("-0x{:X}", -(v as i32))
+                } else {
+                    format!("0x{:X}", v)
+                }
+            }
+            Self::Int32 => {
+                let v = raw as i32;
+                if v < 0 {
+                    format!("-0x{:X}", -(v as i64))
+                } else {
+                    format!("0x{:X}", v)
+                }
+            }
+            Self::Int64 => {
+                let v = raw as i64;
+                if v < 0 {
+                    format!("-0x{:X}", v.wrapping_neg() as u64)
+                } else {
+                    format!("0x{:X}", v)
+                }
+            }
+            _ => format!("0x{:X}", raw),
+        }
+    }
+}
+
 impl FromCrsdk<u32> for DataType {
     fn from_crsdk(value: u32) -> crate::error::Result<Self> {
         use crsdk_sys::SCRSDK::*;
