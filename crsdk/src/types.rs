@@ -239,9 +239,12 @@ mod tests {
 
     #[test]
     fn test_mac_addr_parse() {
-        let mac = "00:00:00:00:00:00".parse::<MacAddr>().unwrap();
-        assert_eq!(mac.0, [0x10, 0x32, 0x2c, 0x7d, 0xc7, 0xb3]);
-        assert_eq!(mac.to_string(), "10:32:2C:7D:C7:B3");
+        let mac = "aa:bb:cc:dd:ee:ff".parse::<MacAddr>().unwrap();
+        assert_eq!(mac.0, [0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff]);
+        assert_eq!(mac.to_string(), "AA:BB:CC:DD:EE:FF");
+
+        let zeros = "00:00:00:00:00:00".parse::<MacAddr>().unwrap();
+        assert_eq!(zeros.0, [0, 0, 0, 0, 0, 0]);
     }
 
     #[test]

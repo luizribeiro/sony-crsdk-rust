@@ -10,6 +10,8 @@ fn main() {
     let sdk_path = workspace_root.join("../app/CRSDK");
     let libs_path = workspace_root.join("libs");
 
+    setup_adapter_symlinks(workspace_root, &libs_path);
+
     println!("cargo:rerun-if-changed=wrapper.h");
     println!("cargo:rerun-if-changed=src/callback_shim.cpp");
     println!("cargo:rerun-if-changed={}", sdk_path.display());
@@ -326,4 +328,62 @@ fn humanize_property_name(name: &str) -> String {
     }
 
     result.trim().to_string()
+}
+
+fn setup_adapter_symlinks(workspace_root: &std::path::Path, libs_path: &std::path::Path) {
+    let adapters_path = libs_path.join("adapters");
+    if !adapters_path.exists() {
+        return;
+    }
+
+    let target_dir = workspace_root.join("target");
+
+    for profile in &["debug", "release"] {
+        for subdir in &["", "examples"] {
+            let binary_dir = if subdir.is_empty() {
+                target_dir.join(profile)
+            } else {
+                target_dir.join(profile).join(subdir)
+            };
+
+            #[cfg(target_os = "macos")]
+            {
+                // macOS: SDK expects adapters in Contents/Frameworks/CrAdapter/
+                let frameworks_dir = binary_dir.join("Contents/Frameworks");
+                let symlink_path = frameworks_dir.join("CrAdapter");
+
+                if symlink_path.exists() || symlink_path.symlink_metadata().is_ok() {
+                    continue;
+                }
+
+                if fs::create_dir_all(&frameworks_dir).is_err() {
+                    continue;
+                }
+
+                let _ = std::os::unix::fs::symlink(&adapters_path, &symlink_path);
+            }
+
+            #[cfg(target_os = "linux")]
+            {
+                // Linux: SDK expects adapters in same directory as executable ($ORIGIN)
+                // Symlink each .so file individually
+                if let Ok(entries) = fs::read_dir(&adapters_path) {
+                    for entry in entries.flatten() {
+                        let path = entry.path();
+                        if path.extension().map(|e| e == "so").unwrap_or(false) {
+                            let filename = path.file_name().unwrap();
+                            let symlink_path = binary_dir.join(filename);
+
+                            if symlink_path.exists() || symlink_path.symlink_metadata().is_ok() {
+                                continue;
+                            }
+
+                            let _ = fs::create_dir_all(&binary_dir);
+                            let _ = std::os::unix::fs::symlink(&path, &symlink_path);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
