@@ -8,6 +8,11 @@ Safe, idiomatic Rust bindings for the Sony Camera Remote SDK, enabling programma
 - Sony α (Alpha) series: α1, α7 IV, α7R V, α7S III, α9 II, α9 III
 - See [Sony's official compatibility list](https://support.d-imaging.sony.co.jp/app/sdk/en/index.html)
 
+## Supported Platforms
+
+- **macOS** (12.1+): Monterey, Ventura, Sonoma
+- **Linux**: Ubuntu 20.04 LTS or compatible
+
 ## Setup
 
 ### 1. Download Sony Camera Remote SDK
@@ -16,7 +21,9 @@ The SDK libraries are **not included** due to licensing restrictions.
 
 1. Visit [Sony Camera Remote SDK](https://support.d-imaging.sony.co.jp/app/sdk/en/index.html)
 2. Accept the license agreement
-3. Download `CrSDK_v2.00.00_20251030a_Mac.zip`
+3. Download the SDK for your platform:
+   - macOS: `CrSDK_v2.00.00_20251030a_Mac.zip`
+   - Linux: `CrSDK_v2.00.00_20251030a_Linux.zip`
 
 ### 2. Set Up Libraries
 
@@ -24,11 +31,15 @@ The SDK libraries are **not included** due to licensing restrictions.
 ./scripts/setup-libs.sh ~/Downloads/CrSDK_v2.00.00_20251030a_Mac.zip
 ```
 
+This extracts SDK libraries and fixes their install names for proper loading.
+
 ### 3. Build
 
 ```bash
 cargo build
 ```
+
+The build process automatically creates the necessary symlinks for the SDK to find its adapter libraries. These symlinks are recreated on every build, so `cargo clean` won't break the SDK.
 
 ## Usage
 
