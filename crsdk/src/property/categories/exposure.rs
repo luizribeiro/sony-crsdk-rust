@@ -130,7 +130,7 @@ impl Category for Exposure {
             C::ShutterAngle,
             "Shutter Angle (°)",
             "Shutter timing expressed as an angle (45°-360°). 180° is cinematic standard, giving natural motion blur at 24fps.",
-            Some(V::Integer),
+            Some(V::ShutterAngle),
         ),
         PropertyDef::new(
             C::ShutterSetting,

@@ -234,6 +234,54 @@ impl fmt::Display for ExposureComp {
     }
 }
 
+/// Shutter angle value (used in cinema/video modes).
+///
+/// The SDK represents shutter angle as an integer multiplied by 1000.
+/// For example: 180000 → 180.0°, 90000 → 90.0°, 360000 → 360.0°
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct ShutterAngle(u64);
+
+impl ShutterAngle {
+    /// Get the angle in degrees.
+    pub fn degrees(&self) -> f64 {
+        self.0 as f64 / 1000.0
+    }
+
+    /// Get the raw SDK value.
+    pub fn raw(&self) -> u64 {
+        self.0
+    }
+}
+
+impl ToCrsdk<u64> for ShutterAngle {
+    fn to_crsdk(&self) -> u64 {
+        self.0
+    }
+}
+
+impl FromCrsdk<u64> for ShutterAngle {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(ShutterAngle(raw))
+    }
+}
+
+impl PropertyValue for ShutterAngle {}
+
+impl fmt::Display for ShutterAngle {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if self.0 == 0 {
+            write!(f, "--")
+        } else {
+            let angle = self.degrees();
+            if angle.fract() == 0.0 {
+                write!(f, "{}°", angle as u32)
+            } else {
+                write!(f, "{:.1}°", angle)
+            }
+        }
+    }
+}
+
 /// Metered manual exposure level.
 ///
 /// This is a signed value representing the exposure meter reading in manual mode.
@@ -898,6 +946,23 @@ mod tests {
         let ss = ShutterSpeed::from_raw((1u64 << 16) | 200).unwrap();
         assert_eq!(ss.numerator(), 1);
         assert_eq!(ss.denominator(), 200);
+    }
+
+    #[test]
+    fn test_shutter_angle_display() {
+        assert_eq!(ShutterAngle(180000).to_string(), "180°");
+        assert_eq!(ShutterAngle(360000).to_string(), "360°");
+        assert_eq!(ShutterAngle(90000).to_string(), "90°");
+        assert_eq!(ShutterAngle(45000).to_string(), "45°");
+        assert_eq!(ShutterAngle(172500).to_string(), "172.5°");
+        assert_eq!(ShutterAngle(0).to_string(), "--");
+    }
+
+    #[test]
+    fn test_shutter_angle_from_raw() {
+        let angle = ShutterAngle::from_raw(180000).unwrap();
+        assert_eq!(angle.degrees(), 180.0);
+        assert_eq!(angle.raw(), 180000);
     }
 
     #[test]

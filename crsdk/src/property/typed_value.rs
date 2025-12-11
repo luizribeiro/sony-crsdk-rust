@@ -18,8 +18,8 @@ use super::values::{
     MoviePlayingState, MovieQuality, MovieRecReviewPlayingState, MovieShootingMode,
     MovieShootingModeColorGamut, MovieShootingModeTargetDisplay, OnOff, Percentage, PictureProfile,
     PlaybackContentsGammaType, PrioritySetInAF, PrioritySetInAWB, PushAutoFocus,
-    RecorderSaveDestination, RecordingFolderFormat, ShutterMode, ShutterModeStatus, ShutterSpeed,
-    SilentModeApertureDrive, SubjectRecognitionAF, Switch, TrackingFrameType,
+    RecorderSaveDestination, RecordingFolderFormat, ShutterAngle, ShutterMode, ShutterModeStatus,
+    ShutterSpeed, SilentModeApertureDrive, SubjectRecognitionAF, Switch, TrackingFrameType,
     VideoRecordingFormatQuality, VideoStreamCodec, WhiteBalance, WhiteBalanceSwitch,
     ZoomDrivingStatus, ZoomTypeStatus,
 };
@@ -70,6 +70,8 @@ pub enum TypedValue {
     Aperture(Aperture),
     /// Shutter speed value
     ShutterSpeed(ShutterSpeed),
+    /// Shutter angle value (degrees)
+    ShutterAngle(ShutterAngle),
     /// ISO sensitivity value
     Iso(Iso),
     /// Exposure compensation value
@@ -381,6 +383,9 @@ impl TypedValue {
                 .unwrap_or(TypedValue::Unknown(raw)),
             PVT::ShutterSpeed => ShutterSpeed::from_raw(raw)
                 .map(TypedValue::ShutterSpeed)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::ShutterAngle => ShutterAngle::from_raw(raw)
+                .map(TypedValue::ShutterAngle)
                 .unwrap_or(TypedValue::Unknown(raw)),
             PVT::Iso => Iso::from_raw(raw)
                 .map(TypedValue::Iso)
@@ -848,6 +853,7 @@ impl TypedValue {
         match self {
             TypedValue::Aperture(v) => v.to_raw(),
             TypedValue::ShutterSpeed(v) => v.to_raw(),
+            TypedValue::ShutterAngle(v) => v.to_raw(),
             TypedValue::Iso(v) => v.to_raw(),
             TypedValue::ExposureComp(v) => v.to_raw(),
             TypedValue::MeterLevel(v) => v.to_raw(),
@@ -1004,6 +1010,7 @@ impl fmt::Display for TypedValue {
         match self {
             TypedValue::Aperture(v) => write!(f, "{}", v),
             TypedValue::ShutterSpeed(v) => write!(f, "{}", v),
+            TypedValue::ShutterAngle(v) => write!(f, "{}", v),
             TypedValue::Iso(v) => write!(f, "{}", v),
             TypedValue::ExposureComp(v) => write!(f, "{}", v),
             TypedValue::MeterLevel(v) => write!(f, "{}", v),

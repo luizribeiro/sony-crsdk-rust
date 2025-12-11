@@ -197,12 +197,12 @@ pub fn get(device: &crsdk::blocking::CameraDevice, name: &str) -> Result<()> {
             println!("Constraint: Range");
             println!(
                 "  Min:   {} ({})",
-                prop.data_type.format_raw(*min as u64),
+                format_value(code, *min as u64),
                 prop.data_type.format_raw_hex(*min as u64)
             );
             println!(
                 "  Max:   {} ({})",
-                prop.data_type.format_raw(*max as u64),
+                format_value(code, *max as u64),
                 prop.data_type.format_raw_hex(*max as u64)
             );
             println!("  Step:  {}", step);

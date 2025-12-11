@@ -18,6 +18,8 @@ pub enum PropertyValueType {
     Aperture,
     /// Shutter speed (upper 16 bits = numerator, lower 16 = denominator)
     ShutterSpeed,
+    /// Shutter angle in degrees (raw value / 1000, e.g., 180000 → 180°)
+    ShutterAngle,
     /// ISO sensitivity (raw value is ISO number)
     Iso,
     /// Exposure compensation (raw value in 1/3 EV steps)

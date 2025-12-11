@@ -164,6 +164,10 @@ mod tests {
             property_value_type(DevicePropertyCode::ShutterSpeed),
             ShutterSpeed
         );
+        assert_eq!(
+            property_value_type(DevicePropertyCode::ShutterAngle),
+            ShutterAngle
+        );
         assert_eq!(property_value_type(DevicePropertyCode::IsoSensitivity), Iso);
         assert_eq!(
             property_value_type(DevicePropertyCode::ExposureBiasCompensation),

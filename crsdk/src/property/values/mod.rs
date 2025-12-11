@@ -53,7 +53,7 @@ pub use common::{
 pub use drive::{DriveMode, IntervalRecShutterType};
 pub use exposure::{
     Aperture, ExposureComp, ExposureCtrlType, ExposureProgram, GainUnitSetting, Iso, MeterLevel,
-    MeteringMode, ShutterMode, ShutterModeStatus, ShutterSpeed,
+    MeteringMode, ShutterAngle, ShutterMode, ShutterModeStatus, ShutterSpeed,
 };
 pub use flash::FlashMode;
 pub use focus::{
