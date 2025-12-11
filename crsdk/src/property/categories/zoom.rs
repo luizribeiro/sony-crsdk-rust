@@ -70,7 +70,7 @@ impl Category for Zoom {
             C::ZoomTypeStatus,
             "Zoom Type",
             "Current zoom type (optical, clear image, digital).",
-            Some(V::Integer),
+            Some(V::ZoomTypeStatus),
         ),
         PropertyDef::new(
             C::ZoomSpeedRange,
@@ -82,7 +82,7 @@ impl Category for Zoom {
             C::ZoomDrivingStatus,
             "Zoom Drive",
             "Zoom motor driving status.",
-            Some(V::Integer),
+            Some(V::ZoomDrivingStatus),
         ),
         PropertyDef::new(
             C::ZoomPositionCurrentValue,

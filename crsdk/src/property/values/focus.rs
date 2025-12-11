@@ -390,6 +390,107 @@ impl fmt::Display for FocusIndicator {
     }
 }
 
+/// Focus frame state indicating the status of the focus frame.
+///
+/// This is used in focus frame information to indicate whether the
+/// frame is focused, moving, or in another state.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum FocusFrameState {
+    /// Unknown state
+    Unknown = 0x0000,
+    /// Frame is not focused
+    NotFocused = 0x0001,
+    /// Frame is focused
+    Focused = 0x0002,
+    /// Focus frame selection mode
+    FocusFrameSelection = 0x0003,
+    /// Frame is moving
+    Moving = 0x0004,
+    /// Registration AF mode
+    RegistrationAF = 0x0006,
+    /// Island state
+    Island = 0x0007,
+}
+
+impl ToCrsdk<u64> for FocusFrameState {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for FocusFrameState {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0000 => Self::Unknown,
+            0x0001 => Self::NotFocused,
+            0x0002 => Self::Focused,
+            0x0003 => Self::FocusFrameSelection,
+            0x0004 => Self::Moving,
+            0x0006 => Self::RegistrationAF,
+            0x0007 => Self::Island,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for FocusFrameState {}
+
+impl fmt::Display for FocusFrameState {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Unknown => write!(f, "Unknown"),
+            Self::NotFocused => write!(f, "Not Focused"),
+            Self::Focused => write!(f, "Focused"),
+            Self::FocusFrameSelection => write!(f, "Selection"),
+            Self::Moving => write!(f, "Moving"),
+            Self::RegistrationAF => write!(f, "Registration AF"),
+            Self::Island => write!(f, "Island"),
+        }
+    }
+}
+
+/// Tracking frame type for AF tracking indicators
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum TrackingFrameType {
+    /// Unknown tracking frame type
+    Unknown = 0x0000,
+    /// Non-target AF tracking frame
+    NonTargetAF = 0x0001,
+    /// Target AF tracking frame
+    TargetAF = 0x0002,
+}
+
+impl ToCrsdk<u64> for TrackingFrameType {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for TrackingFrameType {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0000 => Self::Unknown,
+            0x0001 => Self::NonTargetAF,
+            0x0002 => Self::TargetAF,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for TrackingFrameType {}
+
+impl fmt::Display for TrackingFrameType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Unknown => write!(f, "Unknown"),
+            Self::NonTargetAF => write!(f, "Non-Target AF"),
+            Self::TargetAF => write!(f, "Target AF"),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

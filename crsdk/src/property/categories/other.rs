@@ -787,7 +787,7 @@ impl Category for Other {
             C::EframingProductionEffect,
             "E-Frame Effect",
             "Production effect for e-framing.",
-            Some(V::Integer),
+            Some(V::EframingProductionEffect),
         ),
         PropertyDef::new(
             C::EframingHDMICrop,

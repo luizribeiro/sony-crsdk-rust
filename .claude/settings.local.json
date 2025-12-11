@@ -7,7 +7,9 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(grep:*)",
-      "Bash(cargo run:*)"
+      "Bash(cargo run:*)",
+      "Bash(1)",
+      "Bash(cargo fmt:*)"
     ],
     "deny": [],
     "ask": []

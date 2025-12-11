@@ -185,6 +185,47 @@ impl fmt::Display for PrioritySetInAWB {
     }
 }
 
+/// White balance switch between preset and memory modes
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum WhiteBalanceSwitch {
+    /// Preset white balance mode
+    Preset = 1,
+    /// Memory A white balance
+    MemoryA = 2,
+    /// Memory B white balance
+    MemoryB = 3,
+}
+
+impl ToCrsdk<u64> for WhiteBalanceSwitch {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for WhiteBalanceSwitch {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            1 => Self::Preset,
+            2 => Self::MemoryA,
+            3 => Self::MemoryB,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for WhiteBalanceSwitch {}
+
+impl fmt::Display for WhiteBalanceSwitch {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Preset => write!(f, "Preset"),
+            Self::MemoryA => write!(f, "Memory A"),
+            Self::MemoryB => write!(f, "Memory B"),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

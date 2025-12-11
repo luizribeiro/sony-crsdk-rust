@@ -8,25 +8,28 @@ use std::fmt;
 use crsdk_sys::DevicePropertyCode;
 
 use super::values::{
-    Aperture, AspectRatio, AudioStreamChannel, AutoManual, BatteryLevel, ColorTemperature,
-    CompressionFileFormat, EframingType, ExposureComp, ExposureCtrlType, ExposureProgram,
-    FaceFrameType, FileType, FlashMode, FocusArea, FocusIndicator, FocusMode, FocusTrackingStatus,
-    GridLineType, ImageQuality, ImageSize, Integer, Iso, LiveViewDisplayEffect, LockIndicator,
-    MeterLevel, MeteringMode, MovieQuality, OnOff, Percentage, PrioritySetInAF, PrioritySetInAWB,
-    ShutterMode, ShutterModeStatus, ShutterSpeed, SilentModeApertureDrive, SubjectRecognitionAF,
-    Switch, VideoStreamCodec, WhiteBalance,
+    Aperture, AspectRatio, AudioInputCHInputSelect, AudioStreamChannel, AutoManual, BatteryLevel,
+    CameraPowerStatus, ColorTemperature, CompressionFileFormat, EframingType, ExposureComp,
+    ExposureCtrlType, ExposureProgram, FaceFrameType, FileType, FlashMode, FocusArea,
+    FocusFrameState, FocusFrameType, FocusIndicator, FocusMode, FocusTrackingStatus, FrameInfoType,
+    GainUnitSetting, GridLineType, ImageQuality, ImageSize, Integer, Iso, LiveViewDisplayEffect,
+    LiveViewProtocol, LockIndicator, MeterLevel, MeteringMode, MovieQuality, MovieShootingMode,
+    OnOff, Percentage, PictureProfile, PrioritySetInAF, PrioritySetInAWB, ShutterMode,
+    ShutterModeStatus, ShutterSpeed, SilentModeApertureDrive, SubjectRecognitionAF, Switch,
+    TrackingFrameType, VideoStreamCodec, WhiteBalance, WhiteBalanceSwitch, ZoomDrivingStatus,
+    ZoomTypeStatus,
 };
 use super::{property_value_type, PropertyValueType};
 use super::{
-    AFTrackForSpeedChange, ApertureDriveInAF, AudioSignals, AudioStreamBitDepth,
-    BatteryRemainDisplayUnit, CameraOperatingMode, ColorSpace, CreativeLook, CustomWBSizeSetting,
-    DRangeOptimizer, DeviceOverheatingState, DispMode, DriveMode, FTPConnectionStatus,
-    FocusOperation, FunctionOfTouchOperation, GainBaseSensitivity, HighIsoNR,
-    ImageStabilizationLevelMovie, ImageStabilizationSteadyShotMovie, ImagerScanMode,
-    IntervalRecMode, IntervalRecShutterType, IntervalRecStatus, IrisDisplayUnit,
-    IsoAutoMinShutterSpeedMode, IsoAutoMinShutterSpeedPreset, LensCompensationShading,
-    LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState, MonitoringOutputFormat,
-    MovieFileFormat, NDFilterMode, NearFarEnableStatus, PictureEffect,
+    AFTrackForSpeedChange, AFTrackingSensitivity, ApertureDriveInAF, AudioSignals,
+    AudioStreamBitDepth, AutoPowerOffTemperature, BatteryRemainDisplayUnit, CameraOperatingMode,
+    ColorSpace, CreativeLook, CustomWBSizeSetting, DRangeOptimizer, DeviceOverheatingState,
+    DispMode, DriveMode, EframingProductionEffect, FTPConnectionStatus, FocusOperation,
+    FunctionOfTouchOperation, GainBaseSensitivity, HighIsoNR, ImageStabilizationLevelMovie,
+    ImageStabilizationSteadyShotMovie, ImagerScanMode, IntervalRecMode, IntervalRecShutterType,
+    IntervalRecStatus, IrisDisplayUnit, IsoAutoMinShutterSpeedMode, IsoAutoMinShutterSpeedPreset,
+    LensCompensationShading, LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState,
+    MonitoringOutputFormat, MovieFileFormat, NDFilterMode, NearFarEnableStatus, PictureEffect,
     PictureProfileBlackGammaRange, PictureProfileColorMode, PictureProfileGamma, PlaybackMedia,
     PowerSource, PriorityKeySettings, RAWFileCompressionType, RecorderStatus, RecordingMedia,
     RecordingMediaMovie, RecordingState, RemoconZoomSpeedType, RightLeftEyeSelect, SdkControlMode,
@@ -76,6 +79,8 @@ pub enum TypedValue {
     ShutterMode(ShutterMode),
     /// Exposure control type (P/A/S/M vs Flexible)
     ExposureCtrlType(ExposureCtrlType),
+    /// Gain unit setting (dB/ISO)
+    GainUnitSetting(GainUnitSetting),
     /// Focus mode (AF-S/AF-C/MF/etc.)
     FocusMode(FocusMode),
     /// Focus area (Wide/Zone/Center/Spot/etc.)
@@ -88,10 +93,16 @@ pub enum TypedValue {
     FocusTrackingStatus(FocusTrackingStatus),
     /// Focus indicator (lock state)
     FocusIndicator(FocusIndicator),
+    /// Focus frame state
+    FocusFrameState(FocusFrameState),
+    /// Tracking frame type (Target AF/Non-Target AF)
+    TrackingFrameType(TrackingFrameType),
     /// White balance setting (Auto/Daylight/Tungsten/etc.)
     WhiteBalance(WhiteBalance),
     /// Priority setting in AWB (Standard/Ambience/White)
     PrioritySetInAWB(PrioritySetInAWB),
+    /// White balance switch (Preset/Memory A/Memory B)
+    WhiteBalanceSwitch(WhiteBalanceSwitch),
     /// Color temperature in Kelvin
     ColorTemperature(ColorTemperature),
     /// Drive mode (Single/Continuous/Bracket/Timer/etc.)
@@ -112,6 +123,8 @@ pub enum TypedValue {
     MovieFileFormat(MovieFileFormat),
     /// Movie quality setting
     MovieQuality(MovieQuality),
+    /// Movie shooting mode (Off/Cine EI/Custom/etc.)
+    MovieShootingMode(MovieShootingMode),
     /// Movie recording state
     RecordingState(RecordingState),
     /// Recorder status (main or proxy)
@@ -162,6 +175,10 @@ pub enum TypedValue {
     PowerSource(PowerSource),
     /// Battery remaining display unit
     BatteryRemainDisplayUnit(BatteryRemainDisplayUnit),
+    /// Auto power-off temperature threshold
+    AutoPowerOffTemperature(AutoPowerOffTemperature),
+    /// Camera power status
+    CameraPowerStatus(CameraPowerStatus),
     /// Focus operation direction
     FocusOperation(FocusOperation),
     /// Shutter type
@@ -176,6 +193,8 @@ pub enum TypedValue {
     AudioStreamBitDepth(AudioStreamBitDepth),
     /// Audio stream channel count
     AudioStreamChannel(AudioStreamChannel),
+    /// Audio input channel source selection
+    AudioInputCHInputSelect(AudioInputCHInputSelect),
     /// Touch operation function
     FunctionOfTouchOperation(FunctionOfTouchOperation),
     /// Soft skin effect level
@@ -198,8 +217,12 @@ pub enum TypedValue {
     RecordingMedia(RecordingMedia),
     /// Recording media (movie)
     RecordingMediaMovie(RecordingMediaMovie),
+    /// E-framing production effect
+    EframingProductionEffect(EframingProductionEffect),
     /// AF tracking responsiveness
     AFTrackForSpeedChange(AFTrackForSpeedChange),
+    /// AF tracking sensitivity
+    AFTrackingSensitivity(AFTrackingSensitivity),
     /// Timecode/userbit display
     TCUBDisplaySetting(TCUBDisplaySetting),
     /// Subject recognition animal/bird priority
@@ -232,6 +255,10 @@ pub enum TypedValue {
     CompressionFileFormat(CompressionFileFormat),
     /// Zoom speed type
     RemoconZoomSpeedType(RemoconZoomSpeedType),
+    /// Zoom type status (optical/smart/clear image/digital)
+    ZoomTypeStatus(ZoomTypeStatus),
+    /// Zoom motor driving status
+    ZoomDrivingStatus(ZoomDrivingStatus),
     /// ND filter mode
     NDFilterMode(NDFilterMode),
     /// Creative Look style preset
@@ -246,12 +273,18 @@ pub enum TypedValue {
     PictureProfileColorMode(PictureProfileColorMode),
     /// Picture profile gamma curve
     PictureProfileGamma(PictureProfileGamma),
+    /// Picture profile selection (PP1-PP11)
+    PictureProfile(PictureProfile),
     /// Picture profile black gamma range
     PictureProfileBlackGammaRange(PictureProfileBlackGammaRange),
     /// Grid line overlay type
     GridLineType(GridLineType),
     /// Face frame type
     FaceFrameType(FaceFrameType),
+    /// Focus frame type
+    FocusFrameType(FocusFrameType),
+    /// Frame info type
+    FrameInfoType(FrameInfoType),
     /// Imager/sensor scan mode
     ImagerScanMode(ImagerScanMode),
     /// Auto-framing/E-framing type
@@ -268,6 +301,8 @@ pub enum TypedValue {
     LockIndicator(LockIndicator),
     /// Live view display effect mode
     LiveViewDisplayEffect(LiveViewDisplayEffect),
+    /// Live view protocol
+    LiveViewProtocol(LiveViewProtocol),
     /// Silent mode aperture drive setting
     SilentModeApertureDrive(SilentModeApertureDrive),
     /// Percentage value
@@ -329,11 +364,23 @@ impl TypedValue {
             PVT::FocusIndicator => FocusIndicator::from_raw(raw)
                 .map(TypedValue::FocusIndicator)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::FocusFrameState => FocusFrameState::from_raw(raw)
+                .map(TypedValue::FocusFrameState)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::FocusFrameType => FocusFrameType::from_raw(raw)
+                .map(TypedValue::FocusFrameType)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::TrackingFrameType => TrackingFrameType::from_raw(raw)
+                .map(TypedValue::TrackingFrameType)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::WhiteBalance => WhiteBalance::from_raw(raw)
                 .map(TypedValue::WhiteBalance)
                 .unwrap_or(TypedValue::Unknown(raw)),
             PVT::PrioritySetInAWB => PrioritySetInAWB::from_raw(raw)
                 .map(TypedValue::PrioritySetInAWB)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::WhiteBalanceSwitch => WhiteBalanceSwitch::from_raw(raw)
+                .map(TypedValue::WhiteBalanceSwitch)
                 .unwrap_or(TypedValue::Unknown(raw)),
             PVT::DriveMode => DriveMode::from_raw(raw)
                 .map(TypedValue::DriveMode)
@@ -358,6 +405,9 @@ impl TypedValue {
                 .unwrap_or(TypedValue::Unknown(raw)),
             PVT::MovieFileFormat => MovieFileFormat::from_raw(raw)
                 .map(TypedValue::MovieFileFormat)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::MovieShootingMode => MovieShootingMode::from_raw(raw)
+                .map(TypedValue::MovieShootingMode)
                 .unwrap_or(TypedValue::Unknown(raw)),
             PVT::RecordingState => RecordingState::from_raw(raw)
                 .map(TypedValue::RecordingState)
@@ -434,6 +484,12 @@ impl TypedValue {
             PVT::BatteryRemainDisplayUnit => BatteryRemainDisplayUnit::from_raw(raw)
                 .map(TypedValue::BatteryRemainDisplayUnit)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::AutoPowerOffTemperature => AutoPowerOffTemperature::from_raw(raw)
+                .map(TypedValue::AutoPowerOffTemperature)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::CameraPowerStatus => CameraPowerStatus::from_raw(raw)
+                .map(TypedValue::CameraPowerStatus)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::FocusOperation => FocusOperation::from_raw(raw)
                 .map(TypedValue::FocusOperation)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -454,6 +510,9 @@ impl TypedValue {
                 .unwrap_or(TypedValue::Unknown(raw)),
             PVT::AudioStreamChannel => AudioStreamChannel::from_raw(raw)
                 .map(TypedValue::AudioStreamChannel)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::AudioInputCHInputSelect => AudioInputCHInputSelect::from_raw(raw)
+                .map(TypedValue::AudioInputCHInputSelect)
                 .unwrap_or(TypedValue::Unknown(raw)),
             PVT::FunctionOfTouchOperation => FunctionOfTouchOperation::from_raw(raw)
                 .map(TypedValue::FunctionOfTouchOperation)
@@ -490,8 +549,14 @@ impl TypedValue {
             PVT::RecordingMediaMovie => RecordingMediaMovie::from_raw(raw)
                 .map(TypedValue::RecordingMediaMovie)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::EframingProductionEffect => EframingProductionEffect::from_raw(raw)
+                .map(TypedValue::EframingProductionEffect)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::AFTrackForSpeedChange => AFTrackForSpeedChange::from_raw(raw)
                 .map(TypedValue::AFTrackForSpeedChange)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::AFTrackingSensitivity => AFTrackingSensitivity::from_raw(raw)
+                .map(TypedValue::AFTrackingSensitivity)
                 .unwrap_or(TypedValue::Unknown(raw)),
             PVT::TCUBDisplaySetting => TCUBDisplaySetting::from_raw(raw)
                 .map(TypedValue::TCUBDisplaySetting)
@@ -536,6 +601,12 @@ impl TypedValue {
             PVT::ZoomOperation => ZoomOperation::from_raw(raw)
                 .map(TypedValue::ZoomOperation)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::ZoomTypeStatus => ZoomTypeStatus::from_raw(raw)
+                .map(TypedValue::ZoomTypeStatus)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::ZoomDrivingStatus => ZoomDrivingStatus::from_raw(raw)
+                .map(TypedValue::ZoomDrivingStatus)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::RAWFileCompressionType => RAWFileCompressionType::from_raw(raw)
                 .map(TypedValue::RAWFileCompressionType)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -566,6 +637,9 @@ impl TypedValue {
             PVT::PictureProfileGamma => PictureProfileGamma::from_raw(raw)
                 .map(TypedValue::PictureProfileGamma)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::PictureProfile => PictureProfile::from_raw(raw)
+                .map(TypedValue::PictureProfile)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::PictureProfileBlackGammaRange => PictureProfileBlackGammaRange::from_raw(raw)
                 .map(TypedValue::PictureProfileBlackGammaRange)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -581,6 +655,9 @@ impl TypedValue {
             PVT::FaceFrameType => FaceFrameType::from_raw(raw)
                 .map(TypedValue::FaceFrameType)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::FrameInfoType => FrameInfoType::from_raw(raw)
+                .map(TypedValue::FrameInfoType)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::ShutterModeStatus => ShutterModeStatus::from_raw(raw)
                 .map(TypedValue::ShutterModeStatus)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -590,8 +667,14 @@ impl TypedValue {
             PVT::ExposureCtrlType => ExposureCtrlType::from_raw(raw)
                 .map(TypedValue::ExposureCtrlType)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::GainUnitSetting => GainUnitSetting::from_raw(raw)
+                .map(TypedValue::GainUnitSetting)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::LiveViewDisplayEffect => LiveViewDisplayEffect::from_raw(raw)
                 .map(TypedValue::LiveViewDisplayEffect)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::LiveViewProtocol => LiveViewProtocol::from_raw(raw)
+                .map(TypedValue::LiveViewProtocol)
                 .unwrap_or(TypedValue::Unknown(raw)),
             PVT::SilentModeApertureDrive => SilentModeApertureDrive::from_raw(raw)
                 .map(TypedValue::SilentModeApertureDrive)
@@ -652,14 +735,19 @@ impl TypedValue {
             TypedValue::ShutterModeStatus(v) => v.to_raw(),
             TypedValue::ShutterMode(v) => v.to_raw(),
             TypedValue::ExposureCtrlType(v) => v.to_raw(),
+            TypedValue::GainUnitSetting(v) => v.to_raw(),
             TypedValue::FocusMode(v) => v.to_raw(),
             TypedValue::FocusArea(v) => v.to_raw(),
             TypedValue::SubjectRecognitionAF(v) => v.to_raw(),
             TypedValue::PrioritySetInAF(v) => v.to_raw(),
             TypedValue::FocusTrackingStatus(v) => v.to_raw(),
             TypedValue::FocusIndicator(v) => v.to_raw(),
+            TypedValue::FocusFrameState(v) => v.to_raw(),
+            TypedValue::FocusFrameType(v) => v.to_raw(),
+            TypedValue::TrackingFrameType(v) => v.to_raw(),
             TypedValue::WhiteBalance(v) => v.to_raw(),
             TypedValue::PrioritySetInAWB(v) => v.to_raw(),
+            TypedValue::WhiteBalanceSwitch(v) => v.to_raw(),
             TypedValue::ColorTemperature(v) => v.to_raw(),
             TypedValue::DriveMode(v) => v.to_raw(),
             TypedValue::IntervalRecShutterType(v) => v.to_raw(),
@@ -670,6 +758,7 @@ impl TypedValue {
             TypedValue::ImageSize(v) => v.to_raw(),
             TypedValue::MovieFileFormat(v) => v.to_raw(),
             TypedValue::MovieQuality(v) => v.to_raw(),
+            TypedValue::MovieShootingMode(v) => v.to_raw(),
             TypedValue::RecordingState(v) => v.to_raw(),
             TypedValue::RecorderStatus(v) => v.to_raw(),
             TypedValue::TimeCodeFormat(v) => v.to_raw(),
@@ -695,6 +784,8 @@ impl TypedValue {
             TypedValue::TouchOperation(v) => v.to_raw(),
             TypedValue::PowerSource(v) => v.to_raw(),
             TypedValue::BatteryRemainDisplayUnit(v) => v.to_raw(),
+            TypedValue::AutoPowerOffTemperature(v) => v.to_raw(),
+            TypedValue::CameraPowerStatus(v) => v.to_raw(),
             TypedValue::FocusOperation(v) => v.to_raw(),
             TypedValue::ShutterType(v) => v.to_raw(),
             TypedValue::DeviceOverheatingState(v) => v.to_raw(),
@@ -702,6 +793,7 @@ impl TypedValue {
             TypedValue::AudioSignals(v) => v.to_raw(),
             TypedValue::AudioStreamBitDepth(v) => v.to_raw(),
             TypedValue::AudioStreamChannel(v) => v.to_raw(),
+            TypedValue::AudioInputCHInputSelect(v) => v.to_raw(),
             TypedValue::FunctionOfTouchOperation(v) => v.to_raw(),
             TypedValue::SoftSkinEffect(v) => v.to_raw(),
             TypedValue::WindNoiseReduction(v) => v.to_raw(),
@@ -713,7 +805,9 @@ impl TypedValue {
             TypedValue::ApertureDriveInAF(v) => v.to_raw(),
             TypedValue::RecordingMedia(v) => v.to_raw(),
             TypedValue::RecordingMediaMovie(v) => v.to_raw(),
+            TypedValue::EframingProductionEffect(v) => v.to_raw(),
             TypedValue::AFTrackForSpeedChange(v) => v.to_raw(),
+            TypedValue::AFTrackingSensitivity(v) => v.to_raw(),
             TypedValue::TCUBDisplaySetting(v) => v.to_raw(),
             TypedValue::SubjectRecognitionAnimalBirdPriority(v) => v.to_raw(),
             TypedValue::SubjectRecognitionAnimalBirdDetectionParts(v) => v.to_raw(),
@@ -727,6 +821,8 @@ impl TypedValue {
             TypedValue::GainBaseSensitivity(v) => v.to_raw(),
             TypedValue::FTPConnectionStatus(v) => v.to_raw(),
             TypedValue::ZoomOperation(v) => v.to_raw(),
+            TypedValue::ZoomTypeStatus(v) => v.to_raw(),
+            TypedValue::ZoomDrivingStatus(v) => v.to_raw(),
             TypedValue::RAWFileCompressionType(v) => v.to_raw(),
             TypedValue::CompressionFileFormat(v) => v.to_raw(),
             TypedValue::RemoconZoomSpeedType(v) => v.to_raw(),
@@ -737,9 +833,11 @@ impl TypedValue {
             TypedValue::PictureEffect(v) => v.to_raw(),
             TypedValue::PictureProfileColorMode(v) => v.to_raw(),
             TypedValue::PictureProfileGamma(v) => v.to_raw(),
+            TypedValue::PictureProfile(v) => v.to_raw(),
             TypedValue::PictureProfileBlackGammaRange(v) => v.to_raw(),
             TypedValue::GridLineType(v) => v.to_raw(),
             TypedValue::FaceFrameType(v) => v.to_raw(),
+            TypedValue::FrameInfoType(v) => v.to_raw(),
             TypedValue::ImagerScanMode(v) => v.to_raw(),
             TypedValue::EframingType(v) => v.to_raw(),
             TypedValue::BatteryLevel(v) => v.to_raw(),
@@ -748,6 +846,7 @@ impl TypedValue {
             TypedValue::AutoManual(v) => v.to_raw(),
             TypedValue::LockIndicator(v) => v.to_raw(),
             TypedValue::LiveViewDisplayEffect(v) => v.to_raw(),
+            TypedValue::LiveViewProtocol(v) => v.to_raw(),
             TypedValue::SilentModeApertureDrive(v) => v.to_raw(),
             TypedValue::Percentage(v) => v.to_raw(),
             TypedValue::Integer(v) => v.to_raw(),
@@ -769,14 +868,19 @@ impl fmt::Display for TypedValue {
             TypedValue::ShutterModeStatus(v) => write!(f, "{}", v),
             TypedValue::ShutterMode(v) => write!(f, "{}", v),
             TypedValue::ExposureCtrlType(v) => write!(f, "{}", v),
+            TypedValue::GainUnitSetting(v) => write!(f, "{}", v),
             TypedValue::FocusMode(v) => write!(f, "{}", v),
             TypedValue::FocusArea(v) => write!(f, "{}", v),
             TypedValue::SubjectRecognitionAF(v) => write!(f, "{}", v),
             TypedValue::PrioritySetInAF(v) => write!(f, "{}", v),
             TypedValue::FocusTrackingStatus(v) => write!(f, "{}", v),
             TypedValue::FocusIndicator(v) => write!(f, "{}", v),
+            TypedValue::FocusFrameState(v) => write!(f, "{}", v),
+            TypedValue::FocusFrameType(v) => write!(f, "{}", v),
+            TypedValue::TrackingFrameType(v) => write!(f, "{}", v),
             TypedValue::WhiteBalance(v) => write!(f, "{}", v),
             TypedValue::PrioritySetInAWB(v) => write!(f, "{}", v),
+            TypedValue::WhiteBalanceSwitch(v) => write!(f, "{}", v),
             TypedValue::ColorTemperature(v) => write!(f, "{}", v),
             TypedValue::DriveMode(v) => write!(f, "{}", v),
             TypedValue::IntervalRecShutterType(v) => write!(f, "{}", v),
@@ -787,6 +891,7 @@ impl fmt::Display for TypedValue {
             TypedValue::ImageSize(v) => write!(f, "{}", v),
             TypedValue::MovieFileFormat(v) => write!(f, "{}", v),
             TypedValue::MovieQuality(v) => write!(f, "{}", v),
+            TypedValue::MovieShootingMode(v) => write!(f, "{}", v),
             TypedValue::RecordingState(v) => write!(f, "{}", v),
             TypedValue::RecorderStatus(v) => write!(f, "{}", v),
             TypedValue::TimeCodeFormat(v) => write!(f, "{}", v),
@@ -812,6 +917,8 @@ impl fmt::Display for TypedValue {
             TypedValue::TouchOperation(v) => write!(f, "{}", v),
             TypedValue::PowerSource(v) => write!(f, "{}", v),
             TypedValue::BatteryRemainDisplayUnit(v) => write!(f, "{}", v),
+            TypedValue::AutoPowerOffTemperature(v) => write!(f, "{}", v),
+            TypedValue::CameraPowerStatus(v) => write!(f, "{}", v),
             TypedValue::FocusOperation(v) => write!(f, "{}", v),
             TypedValue::ShutterType(v) => write!(f, "{}", v),
             TypedValue::DeviceOverheatingState(v) => write!(f, "{}", v),
@@ -819,6 +926,7 @@ impl fmt::Display for TypedValue {
             TypedValue::AudioSignals(v) => write!(f, "{}", v),
             TypedValue::AudioStreamBitDepth(v) => write!(f, "{}", v),
             TypedValue::AudioStreamChannel(v) => write!(f, "{}", v),
+            TypedValue::AudioInputCHInputSelect(v) => write!(f, "{}", v),
             TypedValue::FunctionOfTouchOperation(v) => write!(f, "{}", v),
             TypedValue::SoftSkinEffect(v) => write!(f, "{}", v),
             TypedValue::WindNoiseReduction(v) => write!(f, "{}", v),
@@ -830,7 +938,9 @@ impl fmt::Display for TypedValue {
             TypedValue::ApertureDriveInAF(v) => write!(f, "{}", v),
             TypedValue::RecordingMedia(v) => write!(f, "{}", v),
             TypedValue::RecordingMediaMovie(v) => write!(f, "{}", v),
+            TypedValue::EframingProductionEffect(v) => write!(f, "{}", v),
             TypedValue::AFTrackForSpeedChange(v) => write!(f, "{}", v),
+            TypedValue::AFTrackingSensitivity(v) => write!(f, "{}", v),
             TypedValue::TCUBDisplaySetting(v) => write!(f, "{}", v),
             TypedValue::SubjectRecognitionAnimalBirdPriority(v) => write!(f, "{}", v),
             TypedValue::SubjectRecognitionAnimalBirdDetectionParts(v) => write!(f, "{}", v),
@@ -844,6 +954,8 @@ impl fmt::Display for TypedValue {
             TypedValue::GainBaseSensitivity(v) => write!(f, "{}", v),
             TypedValue::FTPConnectionStatus(v) => write!(f, "{}", v),
             TypedValue::ZoomOperation(v) => write!(f, "{}", v),
+            TypedValue::ZoomTypeStatus(v) => write!(f, "{}", v),
+            TypedValue::ZoomDrivingStatus(v) => write!(f, "{}", v),
             TypedValue::RAWFileCompressionType(v) => write!(f, "{}", v),
             TypedValue::CompressionFileFormat(v) => write!(f, "{}", v),
             TypedValue::RemoconZoomSpeedType(v) => write!(f, "{}", v),
@@ -854,17 +966,20 @@ impl fmt::Display for TypedValue {
             TypedValue::PictureEffect(v) => write!(f, "{}", v),
             TypedValue::PictureProfileColorMode(v) => write!(f, "{}", v),
             TypedValue::PictureProfileGamma(v) => write!(f, "{}", v),
+            TypedValue::PictureProfile(v) => write!(f, "{}", v),
+            TypedValue::PictureProfileBlackGammaRange(v) => write!(f, "{}", v),
             TypedValue::GridLineType(v) => write!(f, "{}", v),
             TypedValue::ImagerScanMode(v) => write!(f, "{}", v),
-            TypedValue::PictureProfileBlackGammaRange(v) => write!(f, "{}", v),
             TypedValue::EframingType(v) => write!(f, "{}", v),
             TypedValue::FaceFrameType(v) => write!(f, "{}", v),
+            TypedValue::FrameInfoType(v) => write!(f, "{}", v),
             TypedValue::BatteryLevel(v) => write!(f, "{}", v),
             TypedValue::Switch(v) => write!(f, "{}", v),
             TypedValue::OnOff(v) => write!(f, "{}", v),
             TypedValue::AutoManual(v) => write!(f, "{}", v),
             TypedValue::LockIndicator(v) => write!(f, "{}", v),
             TypedValue::LiveViewDisplayEffect(v) => write!(f, "{}", v),
+            TypedValue::LiveViewProtocol(v) => write!(f, "{}", v),
             TypedValue::SilentModeApertureDrive(v) => write!(f, "{}", v),
             TypedValue::Percentage(v) => write!(f, "{}", v),
             TypedValue::Integer(v) => write!(f, "{}", v),

@@ -428,6 +428,55 @@ impl fmt::Display for RecorderStatus {
     }
 }
 
+/// Movie shooting mode configuration.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum MovieShootingMode {
+    /// Movie shooting mode off
+    Off = 0x0001,
+    /// Cine EI mode
+    CineEI = 0x0301,
+    /// Cine EI Quick mode
+    CineEIQuick = 0x0302,
+    /// Custom mode
+    Custom = 0x0401,
+    /// Flexible ISO mode
+    FlexibleISO = 0x0501,
+}
+
+impl ToCrsdk<u64> for MovieShootingMode {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for MovieShootingMode {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0001 => Self::Off,
+            0x0301 => Self::CineEI,
+            0x0302 => Self::CineEIQuick,
+            0x0401 => Self::Custom,
+            0x0501 => Self::FlexibleISO,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for MovieShootingMode {}
+
+impl fmt::Display for MovieShootingMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Off => write!(f, "Off"),
+            Self::CineEI => write!(f, "Cine EI"),
+            Self::CineEIQuick => write!(f, "Cine EI Quick"),
+            Self::Custom => write!(f, "Custom"),
+            Self::FlexibleISO => write!(f, "Flexible ISO"),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

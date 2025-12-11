@@ -154,7 +154,7 @@ impl Category for Exposure {
             C::GainUnitSetting,
             "Gain Unit",
             "Display gain as ISO values or decibels (dB). dB is common in video workflows.",
-            Some(V::Integer),
+            Some(V::GainUnitSetting),
         ),
         PropertyDef::new(
             C::GaindBValue,

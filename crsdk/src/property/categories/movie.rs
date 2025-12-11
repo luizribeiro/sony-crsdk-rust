@@ -52,7 +52,7 @@ impl Category for Movie {
             C::MovieShootingMode,
             "Movie Mode",
             "Overall movie shooting mode configuration.",
-            Some(V::Integer),
+            Some(V::MovieShootingMode),
         ),
         PropertyDef::new(
             C::MovieShootingModeColorGamut,

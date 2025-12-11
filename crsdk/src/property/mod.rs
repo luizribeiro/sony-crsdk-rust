@@ -41,12 +41,13 @@ pub use categories::{
 
 // Re-export all value types from values/
 pub use values::{
-    AspectRatio, AutoManual, FileType, FlashMode, FocusArea, FocusIndicator, FocusMode,
-    FocusTrackingStatus, ImageQuality, ImageSize, LiveViewDisplayEffect, LockIndicator,
-    MeteringMode, OnOff, PrioritySetInAF, PrioritySetInAWB, PropertyValueType, ShutterMode,
-    ShutterModeStatus, SilentModeApertureDrive, SubjectRecognitionAF, Switch, WhiteBalance,
+    AspectRatio, AutoManual, FileType, FlashMode, FocusArea, FocusFrameState, FocusIndicator,
+    FocusMode, FocusTrackingStatus, ImageQuality, ImageSize, LiveViewDisplayEffect,
+    LiveViewProtocol, LockIndicator, MeteringMode, OnOff, PrioritySetInAF, PrioritySetInAWB,
+    PropertyValueType, ShutterMode, ShutterModeStatus, SilentModeApertureDrive,
+    SubjectRecognitionAF, Switch, TrackingFrameType, WhiteBalance, WhiteBalanceSwitch,
 };
-pub use values::{ExposureCtrlType, ExposureProgram};
+pub use values::{ExposureCtrlType, ExposureProgram, GainUnitSetting};
 
 // Re-export drive and movie types from values/
 pub use values::{
@@ -59,22 +60,24 @@ pub use values::{LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState, 
 
 // Re-export common/other types from values/
 pub use values::{
-    AFTrackForSpeedChange, ApertureDriveInAF, AudioSignals, AudioStreamBitDepth,
-    AudioStreamChannel, BatteryRemainDisplayUnit, CameraOperatingMode, ColorSpace,
+    AFTrackForSpeedChange, AFTrackingSensitivity, ApertureDriveInAF, AudioInputCHInputSelect,
+    AudioSignals, AudioStreamBitDepth, AudioStreamChannel, AutoPowerOffTemperature,
+    BatteryRemainDisplayUnit, CameraOperatingMode, CameraPowerStatus, ColorSpace,
     CompressionFileFormat, CreativeLook, CustomWBSizeSetting, DRangeOptimizer,
-    DeviceOverheatingState, DispMode, EframingType, FTPConnectionStatus, FaceFrameType,
-    FocusOperation, FunctionOfTouchOperation, GainBaseSensitivity, GridLineType, HighIsoNR,
-    ImageStabilizationLevelMovie, ImageStabilizationSteadyShotMovie, ImagerScanMode,
-    IntervalRecMode, IntervalRecStatus, IrisDisplayUnit, IsoAutoMinShutterSpeedMode,
-    IsoAutoMinShutterSpeedPreset, LensCompensationShading, MonitoringOutputFormat, NDFilterMode,
-    NearFarEnableStatus, PictureEffect, PictureProfileBlackGammaRange, PictureProfileColorMode,
+    DeviceOverheatingState, DispMode, EframingProductionEffect, EframingType, FTPConnectionStatus,
+    FaceFrameType, FocusFrameType, FocusOperation, FrameInfoType, FunctionOfTouchOperation,
+    GainBaseSensitivity, GridLineType, HighIsoNR, ImageStabilizationLevelMovie,
+    ImageStabilizationSteadyShotMovie, ImagerScanMode, IntervalRecMode, IntervalRecStatus,
+    IrisDisplayUnit, IsoAutoMinShutterSpeedMode, IsoAutoMinShutterSpeedPreset,
+    LensCompensationShading, MonitoringOutputFormat, NDFilterMode, NearFarEnableStatus,
+    PictureEffect, PictureProfile, PictureProfileBlackGammaRange, PictureProfileColorMode,
     PictureProfileGamma, PlaybackMedia, PowerSource, PriorityKeySettings, RAWFileCompressionType,
     RecordingMedia, RecordingMediaMovie, RemoconZoomSpeedType, RightLeftEyeSelect, SdkControlMode,
     SelectFinder, ShutterReleaseTimeLagControl, ShutterType, SoftSkinEffect,
     StillImageStoreDestination, StreamCipherType, StreamStatus,
     SubjectRecognitionAnimalBirdDetectionParts, SubjectRecognitionAnimalBirdPriority,
     TCUBDisplaySetting, TimeShiftTriggerSetting, TouchOperation, VideoStreamCodec,
-    WindNoiseReduction, ZoomOperation, APSC_S35,
+    WindNoiseReduction, ZoomDrivingStatus, ZoomOperation, ZoomTypeStatus, APSC_S35,
 };
 
 #[cfg(test)]

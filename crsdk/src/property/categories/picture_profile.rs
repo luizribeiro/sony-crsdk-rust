@@ -22,7 +22,7 @@ impl Category for PictureProfile {
             C::PictureProfile,
             "PP Select",
             "Picture profile selection. Profiles define gamma curve, color mode, and other parameters for different looks.",
-            Some(V::Integer),
+            Some(V::PictureProfile),
         ),
         PropertyDef::new(
             C::PictureProfileBlackLevel,

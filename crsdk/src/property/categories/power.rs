@@ -16,7 +16,7 @@ impl Category for Power {
             C::AutoPowerOffTemperature,
             "Auto Off Temp",
             "Temperature threshold for automatic power-off to prevent overheating.",
-            Some(V::Integer),
+            Some(V::AutoPowerOffTemperature),
         ),
         PropertyDef::new(
             C::BatteryRemainDisplayUnit,
@@ -118,7 +118,7 @@ impl Category for Power {
             C::CameraPowerStatus,
             "Power Status",
             "Current power state of the camera.",
-            Some(V::Integer),
+            Some(V::CameraPowerStatus),
         ),
         PropertyDef::new(
             C::RecordablePowerSources,

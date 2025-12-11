@@ -3,7 +3,7 @@
 use std::fmt;
 
 use super::super::traits::PropertyValue;
-use crate::error::Result;
+use crate::error::{Error, Result};
 use crate::types::{FromCrsdk, ToCrsdk};
 
 /// Battery level indicator.
@@ -95,5 +95,54 @@ mod tests {
     fn test_battery_level_round_trip() {
         let bl = BatteryLevel::from_raw(65541).unwrap();
         assert_eq!(bl.to_raw(), 65541);
+    }
+}
+
+/// Camera power status.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum CameraPowerStatus {
+    /// Camera is off
+    Off = 0x01,
+    /// Camera is in standby mode
+    Standby = 0x02,
+    /// Camera is powered on
+    PowerOn = 0x03,
+    /// Camera is transitioning from power on to standby
+    TransitioningFromPowerOnToStandby = 0x04,
+    /// Camera is transitioning from standby to power on
+    TransitioningFromStandbyToPowerOn = 0x05,
+}
+
+impl ToCrsdk<u64> for CameraPowerStatus {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for CameraPowerStatus {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Off,
+            0x02 => Self::Standby,
+            0x03 => Self::PowerOn,
+            0x04 => Self::TransitioningFromPowerOnToStandby,
+            0x05 => Self::TransitioningFromStandbyToPowerOn,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for CameraPowerStatus {}
+
+impl fmt::Display for CameraPowerStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Off => write!(f, "Off"),
+            Self::Standby => write!(f, "Standby"),
+            Self::PowerOn => write!(f, "Power On"),
+            Self::TransitioningFromPowerOnToStandby => write!(f, "Powering Down"),
+            Self::TransitioningFromStandbyToPowerOn => write!(f, "Powering Up"),
+        }
     }
 }

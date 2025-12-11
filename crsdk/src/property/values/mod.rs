@@ -27,39 +27,40 @@ mod power;
 mod white_balance;
 
 pub use common::{
-    AFTrackForSpeedChange, ApertureDriveInAF, AudioSignals, AudioStreamBitDepth,
-    AudioStreamChannel, AutoManual, BatteryRemainDisplayUnit, CameraOperatingMode, ColorSpace,
-    CompressionFileFormat, CreativeLook, CustomWBSizeSetting, DRangeOptimizer,
-    DeviceOverheatingState, DispMode, EframingType, FTPConnectionStatus, FaceFrameType,
-    FocusOperation, FunctionOfTouchOperation, GainBaseSensitivity, GridLineType, HighIsoNR,
-    ImageStabilizationLevelMovie, ImageStabilizationSteadyShotMovie, ImagerScanMode, Integer,
-    IntervalRecMode, IntervalRecStatus, IrisDisplayUnit, IsoAutoMinShutterSpeedMode,
-    IsoAutoMinShutterSpeedPreset, LensCompensationShading, LiveViewDisplayEffect, LockIndicator,
-    MonitoringOutputFormat, NDFilterMode, NearFarEnableStatus, OnOff, Percentage, PictureEffect,
-    PictureProfileBlackGammaRange, PictureProfileColorMode, PictureProfileGamma, PlaybackMedia,
-    PowerSource, PriorityKeySettings, PropertyValueType, RAWFileCompressionType, RecordingMedia,
-    RecordingMediaMovie, RemoconZoomSpeedType, RightLeftEyeSelect, SdkControlMode, SelectFinder,
-    ShutterReleaseTimeLagControl, ShutterType, SilentModeApertureDrive, SoftSkinEffect,
-    StillImageStoreDestination, StreamCipherType, StreamStatus,
-    SubjectRecognitionAnimalBirdDetectionParts, SubjectRecognitionAnimalBirdPriority, Switch,
-    TCUBDisplaySetting, TimeShiftTriggerSetting, TouchOperation, VideoStreamCodec,
-    WindNoiseReduction, ZoomOperation, APSC_S35,
+    AFTrackForSpeedChange, AFTrackingSensitivity, ApertureDriveInAF, AudioInputCHInputSelect,
+    AudioSignals, AudioStreamBitDepth, AudioStreamChannel, AutoManual, AutoPowerOffTemperature,
+    BatteryRemainDisplayUnit, CameraOperatingMode, ColorSpace, CompressionFileFormat, CreativeLook,
+    CustomWBSizeSetting, DRangeOptimizer, DeviceOverheatingState, DispMode,
+    EframingProductionEffect, EframingType, FTPConnectionStatus, FaceFrameType, FocusFrameType,
+    FocusOperation, FrameInfoType, FunctionOfTouchOperation, GainBaseSensitivity, GridLineType,
+    HighIsoNR, ImageStabilizationLevelMovie, ImageStabilizationSteadyShotMovie, ImagerScanMode,
+    Integer, IntervalRecMode, IntervalRecStatus, IrisDisplayUnit, IsoAutoMinShutterSpeedMode,
+    IsoAutoMinShutterSpeedPreset, LensCompensationShading, LiveViewDisplayEffect, LiveViewProtocol,
+    LockIndicator, MonitoringOutputFormat, NDFilterMode, NearFarEnableStatus, OnOff, Percentage,
+    PictureEffect, PictureProfile, PictureProfileBlackGammaRange, PictureProfileColorMode,
+    PictureProfileGamma, PlaybackMedia, PowerSource, PriorityKeySettings, PropertyValueType,
+    RAWFileCompressionType, RecordingMedia, RecordingMediaMovie, RemoconZoomSpeedType,
+    RightLeftEyeSelect, SdkControlMode, SelectFinder, ShutterReleaseTimeLagControl, ShutterType,
+    SilentModeApertureDrive, SoftSkinEffect, StillImageStoreDestination, StreamCipherType,
+    StreamStatus, SubjectRecognitionAnimalBirdDetectionParts, SubjectRecognitionAnimalBirdPriority,
+    Switch, TCUBDisplaySetting, TimeShiftTriggerSetting, TouchOperation, VideoStreamCodec,
+    WindNoiseReduction, ZoomDrivingStatus, ZoomOperation, ZoomTypeStatus, APSC_S35,
 };
 pub use drive::{DriveMode, IntervalRecShutterType};
 pub use exposure::{
-    Aperture, ExposureComp, ExposureCtrlType, ExposureProgram, Iso, MeterLevel, MeteringMode,
-    ShutterMode, ShutterModeStatus, ShutterSpeed,
+    Aperture, ExposureComp, ExposureCtrlType, ExposureProgram, GainUnitSetting, Iso, MeterLevel,
+    MeteringMode, ShutterMode, ShutterModeStatus, ShutterSpeed,
 };
 pub use flash::FlashMode;
 pub use focus::{
-    FocusArea, FocusIndicator, FocusMode, FocusTrackingStatus, PrioritySetInAF,
-    SubjectRecognitionAF,
+    FocusArea, FocusFrameState, FocusIndicator, FocusMode, FocusTrackingStatus, PrioritySetInAF,
+    SubjectRecognitionAF, TrackingFrameType,
 };
 pub use image::{AspectRatio, FileType, ImageQuality, ImageSize};
 pub use media::{LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState, SlotStatus};
 pub use movie::{
-    MovieFileFormat, MovieQuality, RecorderStatus, RecordingState, TimeCodeFormat, TimeCodeMake,
-    TimeCodeRun,
+    MovieFileFormat, MovieQuality, MovieShootingMode, RecorderStatus, RecordingState,
+    TimeCodeFormat, TimeCodeMake, TimeCodeRun,
 };
-pub use power::BatteryLevel;
-pub use white_balance::{ColorTemperature, PrioritySetInAWB, WhiteBalance};
+pub use power::{BatteryLevel, CameraPowerStatus};
+pub use white_balance::{ColorTemperature, PrioritySetInAWB, WhiteBalance, WhiteBalanceSwitch};

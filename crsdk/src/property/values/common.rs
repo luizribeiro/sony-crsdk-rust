@@ -44,10 +44,16 @@ pub enum PropertyValueType {
     FocusTrackingStatus,
     /// Focus indicator (lock state)
     FocusIndicator,
+    /// Focus frame state
+    FocusFrameState,
+    /// Tracking frame type
+    TrackingFrameType,
     /// White balance preset
     WhiteBalance,
     /// AWB priority setting
     PrioritySetInAWB,
+    /// White balance switch (preset/memory)
+    WhiteBalanceSwitch,
     /// Drive mode (single, continuous, bracket, timer)
     DriveMode,
     /// Interval recording shutter type
@@ -64,6 +70,8 @@ pub enum PropertyValueType {
     ImageSize,
     /// Movie file format (XAVC, etc.)
     MovieFileFormat,
+    /// Movie shooting mode (Off, Cine EI, Custom, etc.)
+    MovieShootingMode,
     /// Movie recording state
     RecordingState,
     /// Recorder status (main or proxy)
@@ -106,6 +114,10 @@ pub enum PropertyValueType {
     PowerSource,
     /// Battery remaining display unit
     BatteryRemainDisplayUnit,
+    /// Auto power-off temperature threshold
+    AutoPowerOffTemperature,
+    /// Camera power status
+    CameraPowerStatus,
     /// Focus operation direction
     FocusOperation,
     /// Shutter type (auto/mechanical/electronic)
@@ -120,6 +132,8 @@ pub enum PropertyValueType {
     AudioStreamBitDepth,
     /// Audio stream channel count
     AudioStreamChannel,
+    /// Audio input channel source selection
+    AudioInputCHInputSelect,
     /// Touch operation function
     FunctionOfTouchOperation,
     /// Soft skin effect level
@@ -142,8 +156,12 @@ pub enum PropertyValueType {
     RecordingMedia,
     /// Recording media selection (movie)
     RecordingMediaMovie,
+    /// E-framing production effect
+    EframingProductionEffect,
     /// AF tracking responsiveness
     AFTrackForSpeedChange,
+    /// AF tracking sensitivity
+    AFTrackingSensitivity,
     /// Timecode/userbit display setting
     TCUBDisplaySetting,
     /// Subject recognition animal/bird priority
@@ -168,8 +186,12 @@ pub enum PropertyValueType {
     ShutterMode,
     /// Exposure control type
     ExposureCtrlType,
+    /// Gain unit setting (dB vs ISO)
+    GainUnitSetting,
     /// Live view display effect
     LiveViewDisplayEffect,
+    /// Live view protocol
+    LiveViewProtocol,
     /// Silent mode aperture drive
     SilentModeApertureDrive,
     /// Right/Left eye select for AF
@@ -186,6 +208,10 @@ pub enum PropertyValueType {
     CompressionFileFormat,
     /// Zoom speed type
     RemoconZoomSpeedType,
+    /// Zoom type status (optical/smart/clear image/digital)
+    ZoomTypeStatus,
+    /// Zoom motor driving status
+    ZoomDrivingStatus,
     /// ND filter mode
     NDFilterMode,
     /// Creative Look style
@@ -200,6 +226,8 @@ pub enum PropertyValueType {
     PictureProfileGamma,
     /// Picture profile color mode
     PictureProfileColorMode,
+    /// Picture profile selection (PP1-PP11)
+    PictureProfile,
     /// Picture profile black gamma range
     PictureProfileBlackGammaRange,
     /// Grid line overlay type
@@ -218,6 +246,10 @@ pub enum PropertyValueType {
     MonitoringOutputFormat,
     /// Face frame type
     FaceFrameType,
+    /// Focus frame type
+    FocusFrameType,
+    /// Frame info type
+    FrameInfoType,
 
     // Generic toggle types
     /// On/Off toggle (0=Off, 1=On)
@@ -502,6 +534,47 @@ impl fmt::Display for LiveViewDisplayEffect {
             Self::Unknown => write!(f, "Unknown"),
             Self::On => write!(f, "On"),
             Self::Off => write!(f, "Off"),
+        }
+    }
+}
+
+/// Live view protocol setting (None=0, Main=1, Alt=2).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u32)]
+pub enum LiveViewProtocol {
+    /// No protocol
+    None = 0,
+    /// Main protocol
+    Main = 1,
+    /// Alternate protocol
+    Alt = 2,
+}
+
+impl ToCrsdk<u64> for LiveViewProtocol {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for LiveViewProtocol {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u32 {
+            0 => Self::None,
+            1 => Self::Main,
+            2 => Self::Alt,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for LiveViewProtocol {}
+
+impl fmt::Display for LiveViewProtocol {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::None => write!(f, "None"),
+            Self::Main => write!(f, "Main"),
+            Self::Alt => write!(f, "Alt"),
         }
     }
 }
@@ -1067,6 +1140,43 @@ impl fmt::Display for BatteryRemainDisplayUnit {
     }
 }
 
+/// Auto power-off temperature threshold.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum AutoPowerOffTemperature {
+    /// Standard temperature threshold
+    Standard = 0x01,
+    /// High temperature threshold
+    High = 0x02,
+}
+
+impl ToCrsdk<u64> for AutoPowerOffTemperature {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for AutoPowerOffTemperature {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Standard,
+            0x02 => Self::High,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for AutoPowerOffTemperature {}
+
+impl fmt::Display for AutoPowerOffTemperature {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Standard => write!(f, "Standard"),
+            Self::High => write!(f, "High"),
+        }
+    }
+}
+
 /// Focus operation direction.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(i8)]
@@ -1358,6 +1468,67 @@ impl fmt::Display for AudioStreamChannel {
             Self::Ch1 => write!(f, "1 Channel"),
             Self::Ch2 => write!(f, "2 Channels"),
             Self::Ch4 => write!(f, "4 Channels"),
+        }
+    }
+}
+
+/// Audio input channel source selection.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum AudioInputCHInputSelect {
+    /// Input off
+    Off = 0x01,
+    /// Input 1
+    INPUT1 = 0x02,
+    /// Input 2
+    INPUT2 = 0x03,
+    /// Internal microphone
+    InternalMIC = 0x04,
+    /// Shoe channel 1
+    ShoeCH1 = 0x05,
+    /// Shoe channel 2
+    ShoeCH2 = 0x06,
+    /// Stereo microphone jack left
+    StereoMicJackL = 0x07,
+    /// Stereo microphone jack right
+    StereoMicJackR = 0x08,
+}
+
+impl ToCrsdk<u64> for AudioInputCHInputSelect {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for AudioInputCHInputSelect {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Off,
+            0x02 => Self::INPUT1,
+            0x03 => Self::INPUT2,
+            0x04 => Self::InternalMIC,
+            0x05 => Self::ShoeCH1,
+            0x06 => Self::ShoeCH2,
+            0x07 => Self::StereoMicJackL,
+            0x08 => Self::StereoMicJackR,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for AudioInputCHInputSelect {}
+
+impl fmt::Display for AudioInputCHInputSelect {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Off => write!(f, "Off"),
+            Self::INPUT1 => write!(f, "Input 1"),
+            Self::INPUT2 => write!(f, "Input 2"),
+            Self::InternalMIC => write!(f, "Internal Mic"),
+            Self::ShoeCH1 => write!(f, "Shoe CH1"),
+            Self::ShoeCH2 => write!(f, "Shoe CH2"),
+            Self::StereoMicJackL => write!(f, "Stereo Mic Jack L"),
+            Self::StereoMicJackR => write!(f, "Stereo Mic Jack R"),
         }
     }
 }
@@ -1877,6 +2048,47 @@ impl fmt::Display for RecordingMediaMovie {
     }
 }
 
+/// E-framing production effect setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum EframingProductionEffect {
+    /// Effect disabled
+    Off = 0x0001,
+    /// Interval zoom in/out effect with 15 second duration
+    IntervalZoomInOut15sec = 0x0002,
+    /// Interval zoom in/out effect with 30 second duration
+    IntervalZoomInOut30sec = 0x0003,
+}
+
+impl ToCrsdk<u64> for EframingProductionEffect {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for EframingProductionEffect {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0001 => Self::Off,
+            0x0002 => Self::IntervalZoomInOut15sec,
+            0x0003 => Self::IntervalZoomInOut30sec,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for EframingProductionEffect {}
+
+impl fmt::Display for EframingProductionEffect {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Off => write!(f, "Off"),
+            Self::IntervalZoomInOut15sec => write!(f, "Interval Zoom 15s"),
+            Self::IntervalZoomInOut30sec => write!(f, "Interval Zoom 30s"),
+        }
+    }
+}
+
 /// AF tracking responsiveness setting.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
@@ -1914,6 +2126,55 @@ impl fmt::Display for AFTrackForSpeedChange {
             Self::Stable => write!(f, "Stable"),
             Self::Standard => write!(f, "Standard"),
             Self::Responsive => write!(f, "Responsive"),
+        }
+    }
+}
+
+/// AF tracking sensitivity setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum AFTrackingSensitivity {
+    /// Level 1 (Locked On) - most stable, least responsive
+    Level1 = 0x01,
+    /// Level 2
+    Level2 = 0x02,
+    /// Level 3 (Standard)
+    Level3 = 0x03,
+    /// Level 4
+    Level4 = 0x04,
+    /// Level 5 (Responsive) - least stable, most responsive
+    Level5 = 0x05,
+}
+
+impl ToCrsdk<u64> for AFTrackingSensitivity {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for AFTrackingSensitivity {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Level1,
+            0x02 => Self::Level2,
+            0x03 => Self::Level3,
+            0x04 => Self::Level4,
+            0x05 => Self::Level5,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for AFTrackingSensitivity {}
+
+impl fmt::Display for AFTrackingSensitivity {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Level1 => write!(f, "Level 1 (Locked On)"),
+            Self::Level2 => write!(f, "Level 2"),
+            Self::Level3 => write!(f, "Level 3 (Standard)"),
+            Self::Level4 => write!(f, "Level 4"),
+            Self::Level5 => write!(f, "Level 5 (Responsive)"),
         }
     }
 }
@@ -2590,6 +2851,88 @@ impl fmt::Display for RemoconZoomSpeedType {
     }
 }
 
+/// Zoom type status (current active zoom mode).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ZoomTypeStatus {
+    /// Optical zoom
+    Optical = 0x01,
+    /// Smart zoom (digital zoom with minimal quality loss)
+    Smart = 0x02,
+    /// Clear Image Zoom (advanced digital zoom)
+    ClearImage = 0x03,
+    /// Digital zoom (standard digital zoom)
+    Digital = 0x04,
+}
+
+impl ToCrsdk<u64> for ZoomTypeStatus {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for ZoomTypeStatus {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Optical,
+            0x02 => Self::Smart,
+            0x03 => Self::ClearImage,
+            0x04 => Self::Digital,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for ZoomTypeStatus {}
+
+impl fmt::Display for ZoomTypeStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Optical => write!(f, "Optical Zoom"),
+            Self::Smart => write!(f, "Smart Zoom"),
+            Self::ClearImage => write!(f, "Clear Image Zoom"),
+            Self::Digital => write!(f, "Digital Zoom"),
+        }
+    }
+}
+
+/// Zoom motor driving status.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ZoomDrivingStatus {
+    /// Zoom motor not driving
+    NotDriving = 0x01,
+    /// Zoom motor is driving
+    Driving = 0x02,
+}
+
+impl ToCrsdk<u64> for ZoomDrivingStatus {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for ZoomDrivingStatus {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::NotDriving,
+            0x02 => Self::Driving,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for ZoomDrivingStatus {}
+
+impl fmt::Display for ZoomDrivingStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::NotDriving => write!(f, "Stopped"),
+            Self::Driving => write!(f, "Driving"),
+        }
+    }
+}
+
 /// ND filter mode setting.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
@@ -3150,6 +3493,83 @@ impl fmt::Display for PictureProfileColorMode {
     }
 }
 
+/// Picture profile selection (PP1-PP11).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum PictureProfile {
+    /// Picture profile off
+    Off = 0x00,
+    /// Picture profile 1
+    PP1 = 0x01,
+    /// Picture profile 2
+    PP2 = 0x02,
+    /// Picture profile 3
+    PP3 = 0x03,
+    /// Picture profile 4
+    PP4 = 0x04,
+    /// Picture profile 5
+    PP5 = 0x05,
+    /// Picture profile 6
+    PP6 = 0x06,
+    /// Picture profile 7
+    PP7 = 0x07,
+    /// Picture profile 8
+    PP8 = 0x08,
+    /// Picture profile 9
+    PP9 = 0x09,
+    /// Picture profile 10
+    PP10 = 0x0A,
+    /// Picture profile 11
+    PP11 = 0x0B,
+}
+
+impl ToCrsdk<u64> for PictureProfile {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for PictureProfile {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x00 => Self::Off,
+            0x01 => Self::PP1,
+            0x02 => Self::PP2,
+            0x03 => Self::PP3,
+            0x04 => Self::PP4,
+            0x05 => Self::PP5,
+            0x06 => Self::PP6,
+            0x07 => Self::PP7,
+            0x08 => Self::PP8,
+            0x09 => Self::PP9,
+            0x0A => Self::PP10,
+            0x0B => Self::PP11,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for PictureProfile {}
+
+impl fmt::Display for PictureProfile {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Off => write!(f, "Off"),
+            Self::PP1 => write!(f, "PP1"),
+            Self::PP2 => write!(f, "PP2"),
+            Self::PP3 => write!(f, "PP3"),
+            Self::PP4 => write!(f, "PP4"),
+            Self::PP5 => write!(f, "PP5"),
+            Self::PP6 => write!(f, "PP6"),
+            Self::PP7 => write!(f, "PP7"),
+            Self::PP8 => write!(f, "PP8"),
+            Self::PP9 => write!(f, "PP9"),
+            Self::PP10 => write!(f, "PP10"),
+            Self::PP11 => write!(f, "PP11"),
+        }
+    }
+}
+
 /// Picture profile black gamma range setting.
 ///
 /// Defines the range of shadow tones affected by black gamma adjustment.
@@ -3618,6 +4038,132 @@ impl fmt::Display for FaceFrameType {
             Self::SelectedFace => write!(f, "Selected Face"),
             Self::AFTargetSelection => write!(f, "AF Target Selection"),
             Self::SmileDetectionSelect => write!(f, "Smile Detection Select"),
+        }
+    }
+}
+
+/// Frame information type.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum FrameInfoType {
+    /// Unknown frame info type
+    Unknown = 0x0000,
+    /// Focus frame information
+    FocusFrameInfo = 0x0001,
+    /// Magnifier position
+    MagnifierPosition = 0x0002,
+    /// Face frame information
+    FaceFrameInfo = 0x0004,
+    /// Tracking frame information
+    TrackingFrameInfo = 0x0005,
+    /// Framing frame information
+    FramingFrameInfo = 0x0006,
+    /// Level information
+    Level = 0x0007,
+}
+
+impl ToCrsdk<u64> for FrameInfoType {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for FrameInfoType {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0000 => Self::Unknown,
+            0x0001 => Self::FocusFrameInfo,
+            0x0002 => Self::MagnifierPosition,
+            0x0004 => Self::FaceFrameInfo,
+            0x0005 => Self::TrackingFrameInfo,
+            0x0006 => Self::FramingFrameInfo,
+            0x0007 => Self::Level,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for FrameInfoType {}
+
+impl fmt::Display for FrameInfoType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Unknown => write!(f, "Unknown"),
+            Self::FocusFrameInfo => write!(f, "Focus Frame Info"),
+            Self::MagnifierPosition => write!(f, "Magnifier Position"),
+            Self::FaceFrameInfo => write!(f, "Face Frame Info"),
+            Self::TrackingFrameInfo => write!(f, "Tracking Frame Info"),
+            Self::FramingFrameInfo => write!(f, "Framing Frame Info"),
+            Self::Level => write!(f, "Level"),
+        }
+    }
+}
+
+/// Focus frame type.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum FocusFrameType {
+    /// Unknown focus frame type
+    Unknown = 0x0000,
+    /// Phase detection AF sensor
+    PhaseDetectionAFSensor = 0x0001,
+    /// Phase detection image sensor
+    PhaseDetectionImageSensor = 0x0002,
+    /// Wide focus frame
+    Wide = 0x0003,
+    /// Zone focus frame
+    Zone = 0x0004,
+    /// Central emphasis focus frame
+    CentralEmphasis = 0x0005,
+    /// Contrast flexible main focus frame
+    ContrastFlexibleMain = 0x0006,
+    /// Contrast flexible assist focus frame
+    ContrastFlexibleAssist = 0x0007,
+    /// Contrast focus frame
+    Contrast = 0x0008,
+    /// Frame somewhere (arbitrary position)
+    FrameSomewhere = 0x000F,
+}
+
+impl ToCrsdk<u64> for FocusFrameType {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for FocusFrameType {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0000 => Self::Unknown,
+            0x0001 => Self::PhaseDetectionAFSensor,
+            0x0002 => Self::PhaseDetectionImageSensor,
+            0x0003 => Self::Wide,
+            0x0004 => Self::Zone,
+            0x0005 => Self::CentralEmphasis,
+            0x0006 => Self::ContrastFlexibleMain,
+            0x0007 => Self::ContrastFlexibleAssist,
+            0x0008 => Self::Contrast,
+            0x000F => Self::FrameSomewhere,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for FocusFrameType {}
+
+impl fmt::Display for FocusFrameType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Unknown => write!(f, "Unknown"),
+            Self::PhaseDetectionAFSensor => write!(f, "Phase Detection AF Sensor"),
+            Self::PhaseDetectionImageSensor => write!(f, "Phase Detection Image Sensor"),
+            Self::Wide => write!(f, "Wide"),
+            Self::Zone => write!(f, "Zone"),
+            Self::CentralEmphasis => write!(f, "Central Emphasis"),
+            Self::ContrastFlexibleMain => write!(f, "Contrast Flexible Main"),
+            Self::ContrastFlexibleAssist => write!(f, "Contrast Flexible Assist"),
+            Self::Contrast => write!(f, "Contrast"),
+            Self::FrameSomewhere => write!(f, "Frame Somewhere"),
         }
     }
 }

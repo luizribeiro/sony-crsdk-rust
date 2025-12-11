@@ -76,7 +76,7 @@ impl Category for WhiteBalance {
             C::WhiteBalanceSwitch,
             "WB Switch",
             "Quick switch between white balance presets.",
-            Some(V::Integer),
+            Some(V::WhiteBalanceSwitch),
         ),
         PropertyDef::new(
             C::WhiteBalancePresetColorTemperature,

@@ -28,7 +28,7 @@ impl Category for Focus {
             C::AFTrackingSensitivity,
             "AF Track Sens.",
             "How quickly AF reacts to subject distance changes. High sensitivity tracks fast-moving subjects but may be distracted. Low sensitivity is more stable but slower to adapt.",
-            Some(V::Integer),
+            Some(V::AFTrackingSensitivity),
         ),
         PropertyDef::new(
             C::FocusMagnifierSetting,

@@ -785,6 +785,43 @@ impl fmt::Display for ExposureCtrlType {
     }
 }
 
+/// Gain unit setting (dB vs ISO)
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum GainUnitSetting {
+    /// Decibels (dB)
+    DB = 1,
+    /// ISO sensitivity
+    ISO = 2,
+}
+
+impl ToCrsdk<u64> for GainUnitSetting {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for GainUnitSetting {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            1 => Self::DB,
+            2 => Self::ISO,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for GainUnitSetting {}
+
+impl fmt::Display for GainUnitSetting {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::DB => write!(f, "dB"),
+            Self::ISO => write!(f, "ISO"),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

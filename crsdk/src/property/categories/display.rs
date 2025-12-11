@@ -136,7 +136,7 @@ impl Category for Display {
             C::LiveViewProtocol,
             "LV Protocol",
             "Protocol used for live view streaming.",
-            Some(V::Integer),
+            Some(V::LiveViewProtocol),
         ),
         PropertyDef::new(
             C::LiveViewArea,
