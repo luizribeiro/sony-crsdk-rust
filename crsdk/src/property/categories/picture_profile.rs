@@ -52,7 +52,7 @@ impl Category for PictureProfile {
             C::PictureProfileKneeMode,
             "PP Knee Mode",
             "Highlight compression mode. Auto adjusts dynamically, Manual gives direct control.",
-            Some(V::Integer),
+            Some(V::PictureProfileKneeMode),
         ),
         PropertyDef::new(
             C::PictureProfileKneeAutoSetMaxPoint,
@@ -64,7 +64,7 @@ impl Category for PictureProfile {
             C::PictureProfileKneeAutoSetSensitivity,
             "PP Knee Auto Sens",
             "Sensitivity of auto knee detection.",
-            Some(V::Integer),
+            Some(V::PictureProfileKneeAutoSetSensitivity),
         ),
         PropertyDef::new(
             C::PictureProfileKneeManualSetPoint,
@@ -142,7 +142,7 @@ impl Category for PictureProfile {
             C::PictureProfileDetailAdjustMode,
             "PP Detail Mode",
             "Detail adjustment mode.",
-            Some(V::Integer),
+            Some(V::PictureProfileDetailAdjustMode),
         ),
         PropertyDef::new(
             C::PictureProfileDetailAdjustVHBalance,
@@ -250,19 +250,19 @@ impl Category for PictureProfile {
             C::PictureProfileResetEnableStatus,
             "PP Reset Status",
             "Whether picture profile can be reset.",
-            Some(V::Integer),
+            Some(V::PictureProfileResetEnableStatus),
         ),
         PropertyDef::new(
             C::CreativeLookResetEnableStatus,
             "CL Reset Status",
             "Whether creative look can be reset.",
-            Some(V::Integer),
+            Some(V::CreativeLookResetEnableStatus),
         ),
         PropertyDef::new(
             C::PlaybackContentsGammaType,
             "Playback Gamma",
             "Gamma type of playback content.",
-            Some(V::Integer),
+            Some(V::PlaybackContentsGammaType),
         ),
     ];
 }

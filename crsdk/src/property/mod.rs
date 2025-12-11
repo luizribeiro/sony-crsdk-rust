@@ -41,18 +41,21 @@ pub use categories::{
 
 // Re-export all value types from values/
 pub use values::{
-    AspectRatio, AutoManual, FileType, FlashMode, FocusArea, FocusFrameState, FocusIndicator,
-    FocusMode, FocusTrackingStatus, ImageQuality, ImageSize, LiveViewDisplayEffect,
+    AspectRatio, AutoManual, FileType, FlashMode, FocusArea, FocusBracketOrder,
+    FocusBracketShootingStatus, FocusDrivingStatus, FocusFrameState, FocusIndicator, FocusMode,
+    FocusTouchSpotStatus, FocusTrackingStatus, ImageQuality, ImageSize, LiveViewDisplayEffect,
     LiveViewProtocol, LockIndicator, MeteringMode, OnOff, PrioritySetInAF, PrioritySetInAWB,
-    PropertyValueType, ShutterMode, ShutterModeStatus, SilentModeApertureDrive,
+    PropertyValueType, PushAutoFocus, ShutterMode, ShutterModeStatus, SilentModeApertureDrive,
     SubjectRecognitionAF, Switch, TrackingFrameType, WhiteBalance, WhiteBalanceSwitch,
 };
 pub use values::{ExposureCtrlType, ExposureProgram, GainUnitSetting};
 
 // Re-export drive and movie types from values/
 pub use values::{
-    DriveMode, IntervalRecShutterType, MovieFileFormat, MovieQuality, RecorderStatus,
-    RecordingState, TimeCodeFormat, TimeCodeMake, TimeCodeRun,
+    DriveMode, IntervalRecShutterType, MovieFileFormat, MoviePlayingState, MovieQuality,
+    MovieRecReviewPlayingState, MovieShootingModeColorGamut, MovieShootingModeTargetDisplay,
+    PlaybackContentsGammaType, RecorderSaveDestination, RecorderStatus, RecordingFolderFormat,
+    RecordingState, TimeCodeFormat, TimeCodeMake, TimeCodeRun, VideoRecordingFormatQuality,
 };
 
 // Re-export media types from values/
@@ -63,21 +66,24 @@ pub use values::{
     AFTrackForSpeedChange, AFTrackingSensitivity, ApertureDriveInAF, AudioInputCHInputSelect,
     AudioSignals, AudioStreamBitDepth, AudioStreamChannel, AutoPowerOffTemperature,
     BatteryRemainDisplayUnit, CameraOperatingMode, CameraPowerStatus, ColorSpace,
-    CompressionFileFormat, CreativeLook, CustomWBSizeSetting, DRangeOptimizer,
-    DeviceOverheatingState, DispMode, EframingProductionEffect, EframingType, FTPConnectionStatus,
-    FaceFrameType, FocusFrameType, FocusOperation, FrameInfoType, FunctionOfTouchOperation,
+    CompressionFileFormat, CreativeLook, CreativeLookResetEnableStatus, CustomWBSizeSetting,
+    DRangeOptimizer, DeviceOverheatingState, DispMode, EframingProductionEffect, EframingType,
+    FTPConnectionStatus, FaceFrameType, FocusFrameType, FocusOperation,
+    FocusOperationWithInt16EnableStatus, FrameInfoType, FunctionOfTouchOperation,
     GainBaseSensitivity, GridLineType, HighIsoNR, ImageStabilizationLevelMovie,
     ImageStabilizationSteadyShotMovie, ImagerScanMode, IntervalRecMode, IntervalRecStatus,
     IrisDisplayUnit, IsoAutoMinShutterSpeedMode, IsoAutoMinShutterSpeedPreset,
     LensCompensationShading, MonitoringOutputFormat, NDFilterMode, NearFarEnableStatus,
     PictureEffect, PictureProfile, PictureProfileBlackGammaRange, PictureProfileColorMode,
-    PictureProfileGamma, PlaybackMedia, PowerSource, PriorityKeySettings, RAWFileCompressionType,
-    RecordingMedia, RecordingMediaMovie, RemoconZoomSpeedType, RightLeftEyeSelect, SdkControlMode,
-    SelectFinder, ShutterReleaseTimeLagControl, ShutterType, SoftSkinEffect,
-    StillImageStoreDestination, StreamCipherType, StreamStatus,
-    SubjectRecognitionAnimalBirdDetectionParts, SubjectRecognitionAnimalBirdPriority,
-    TCUBDisplaySetting, TimeShiftTriggerSetting, TouchOperation, VideoStreamCodec,
-    WindNoiseReduction, ZoomDrivingStatus, ZoomOperation, ZoomTypeStatus, APSC_S35,
+    PictureProfileDetailAdjustMode, PictureProfileGamma, PictureProfileKneeAutoSetSensitivity,
+    PictureProfileKneeMode, PictureProfileResetEnableStatus, PlaybackMedia, PowerSource,
+    PriorityKeySettings, RAWFileCompressionType, RecordingMedia, RecordingMediaMovie,
+    RemoconZoomSpeedType, RightLeftEyeSelect, SdkControlMode, SelectFinder,
+    ShutterReleaseTimeLagControl, ShutterType, SoftSkinEffect, StillImageStoreDestination,
+    StreamCipherType, StreamStatus, SubjectRecognitionAnimalBirdDetectionParts,
+    SubjectRecognitionAnimalBirdPriority, TCUBDisplaySetting, TimeCodePresetResetEnableStatus,
+    TimeShiftTriggerSetting, TouchOperation, VideoStreamCodec, WindNoiseReduction,
+    ZoomDrivingStatus, ZoomOperation, ZoomTypeStatus, APSC_S35,
 };
 
 #[cfg(test)]

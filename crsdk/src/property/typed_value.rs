@@ -11,33 +11,40 @@ use super::values::{
     Aperture, AspectRatio, AudioInputCHInputSelect, AudioStreamChannel, AutoManual, BatteryLevel,
     CameraPowerStatus, ColorTemperature, CompressionFileFormat, EframingType, ExposureComp,
     ExposureCtrlType, ExposureProgram, FaceFrameType, FileType, FlashMode, FocusArea,
-    FocusFrameState, FocusFrameType, FocusIndicator, FocusMode, FocusTrackingStatus, FrameInfoType,
-    GainUnitSetting, GridLineType, ImageQuality, ImageSize, Integer, Iso, LiveViewDisplayEffect,
-    LiveViewProtocol, LockIndicator, MeterLevel, MeteringMode, MovieQuality, MovieShootingMode,
-    OnOff, Percentage, PictureProfile, PrioritySetInAF, PrioritySetInAWB, ShutterMode,
-    ShutterModeStatus, ShutterSpeed, SilentModeApertureDrive, SubjectRecognitionAF, Switch,
-    TrackingFrameType, VideoStreamCodec, WhiteBalance, WhiteBalanceSwitch, ZoomDrivingStatus,
-    ZoomTypeStatus,
+    FocusBracketOrder, FocusBracketShootingStatus, FocusDrivingStatus, FocusFrameState,
+    FocusFrameType, FocusIndicator, FocusMode, FocusTouchSpotStatus, FocusTrackingStatus,
+    FrameInfoType, GainUnitSetting, GridLineType, ImageQuality, ImageSize, Integer, Iso,
+    LiveViewDisplayEffect, LiveViewProtocol, LockIndicator, MeterLevel, MeteringMode,
+    MoviePlayingState, MovieQuality, MovieRecReviewPlayingState, MovieShootingMode,
+    MovieShootingModeColorGamut, MovieShootingModeTargetDisplay, OnOff, Percentage, PictureProfile,
+    PlaybackContentsGammaType, PrioritySetInAF, PrioritySetInAWB, PushAutoFocus,
+    RecorderSaveDestination, RecordingFolderFormat, ShutterMode, ShutterModeStatus, ShutterSpeed,
+    SilentModeApertureDrive, SubjectRecognitionAF, Switch, TrackingFrameType,
+    VideoRecordingFormatQuality, VideoStreamCodec, WhiteBalance, WhiteBalanceSwitch,
+    ZoomDrivingStatus, ZoomTypeStatus,
 };
 use super::{property_value_type, PropertyValueType};
 use super::{
     AFTrackForSpeedChange, AFTrackingSensitivity, ApertureDriveInAF, AudioSignals,
     AudioStreamBitDepth, AutoPowerOffTemperature, BatteryRemainDisplayUnit, CameraOperatingMode,
-    ColorSpace, CreativeLook, CustomWBSizeSetting, DRangeOptimizer, DeviceOverheatingState,
-    DispMode, DriveMode, EframingProductionEffect, FTPConnectionStatus, FocusOperation,
-    FunctionOfTouchOperation, GainBaseSensitivity, HighIsoNR, ImageStabilizationLevelMovie,
+    ColorSpace, CreativeLook, CreativeLookResetEnableStatus, CustomWBSizeSetting, DRangeOptimizer,
+    DeviceOverheatingState, DispMode, DriveMode, EframingProductionEffect, FTPConnectionStatus,
+    FocusOperation, FocusOperationWithInt16EnableStatus, FunctionOfTouchOperation,
+    GainBaseSensitivity, HighIsoNR, ImageStabilizationLevelMovie,
     ImageStabilizationSteadyShotMovie, ImagerScanMode, IntervalRecMode, IntervalRecShutterType,
     IntervalRecStatus, IrisDisplayUnit, IsoAutoMinShutterSpeedMode, IsoAutoMinShutterSpeedPreset,
     LensCompensationShading, LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState,
     MonitoringOutputFormat, MovieFileFormat, NDFilterMode, NearFarEnableStatus, PictureEffect,
-    PictureProfileBlackGammaRange, PictureProfileColorMode, PictureProfileGamma, PlaybackMedia,
-    PowerSource, PriorityKeySettings, RAWFileCompressionType, RecorderStatus, RecordingMedia,
-    RecordingMediaMovie, RecordingState, RemoconZoomSpeedType, RightLeftEyeSelect, SdkControlMode,
-    SelectFinder, ShutterReleaseTimeLagControl, ShutterType, SlotStatus, SoftSkinEffect,
+    PictureProfileBlackGammaRange, PictureProfileColorMode, PictureProfileDetailAdjustMode,
+    PictureProfileGamma, PictureProfileKneeAutoSetSensitivity, PictureProfileKneeMode,
+    PictureProfileResetEnableStatus, PlaybackMedia, PowerSource, PriorityKeySettings,
+    RAWFileCompressionType, RecorderStatus, RecordingMedia, RecordingMediaMovie, RecordingState,
+    RemoconZoomSpeedType, RightLeftEyeSelect, SdkControlMode, SelectFinder,
+    ShutterReleaseTimeLagControl, ShutterType, SlotStatus, SoftSkinEffect,
     StillImageStoreDestination, StreamCipherType, StreamStatus,
     SubjectRecognitionAnimalBirdDetectionParts, SubjectRecognitionAnimalBirdPriority,
-    TCUBDisplaySetting, TimeCodeFormat, TimeCodeMake, TimeCodeRun, TimeShiftTriggerSetting,
-    TouchOperation, WindNoiseReduction, ZoomOperation, APSC_S35,
+    TCUBDisplaySetting, TimeCodeFormat, TimeCodeMake, TimeCodePresetResetEnableStatus, TimeCodeRun,
+    TimeShiftTriggerSetting, TouchOperation, WindNoiseReduction, ZoomOperation, APSC_S35,
 };
 use crate::property::traits::PropertyValue;
 
@@ -305,6 +312,53 @@ pub enum TypedValue {
     LiveViewProtocol(LiveViewProtocol),
     /// Silent mode aperture drive setting
     SilentModeApertureDrive(SilentModeApertureDrive),
+
+    // Focus status types
+    /// Focus motor driving status
+    FocusDrivingStatus(FocusDrivingStatus),
+    /// Focus bracket shooting status
+    FocusBracketShootingStatus(FocusBracketShootingStatus),
+    /// Focus touch spot status
+    FocusTouchSpotStatus(FocusTouchSpotStatus),
+    /// Focus bracket order
+    FocusBracketOrder(FocusBracketOrder),
+    /// Push auto focus action
+    PushAutoFocus(PushAutoFocus),
+    /// Focus operation 16-bit enable status
+    FocusOperationWithInt16EnableStatus(FocusOperationWithInt16EnableStatus),
+
+    // Movie format types
+    /// Movie shooting mode color gamut
+    MovieShootingModeColorGamut(MovieShootingModeColorGamut),
+    /// Movie shooting mode target display
+    MovieShootingModeTargetDisplay(MovieShootingModeTargetDisplay),
+    /// Recorder save destination
+    RecorderSaveDestination(RecorderSaveDestination),
+    /// Video recording format quality
+    VideoRecordingFormatQuality(VideoRecordingFormatQuality),
+    /// Recording folder format
+    RecordingFolderFormat(RecordingFolderFormat),
+    /// Movie playing state
+    MoviePlayingState(MoviePlayingState),
+    /// Movie recording review playing state
+    MovieRecReviewPlayingState(MovieRecReviewPlayingState),
+    /// Playback contents gamma type
+    PlaybackContentsGammaType(PlaybackContentsGammaType),
+
+    // Picture profile control types
+    /// Picture profile detail adjustment mode
+    PictureProfileDetailAdjustMode(PictureProfileDetailAdjustMode),
+    /// Picture profile knee mode
+    PictureProfileKneeMode(PictureProfileKneeMode),
+    /// Picture profile knee auto-set sensitivity
+    PictureProfileKneeAutoSetSensitivity(PictureProfileKneeAutoSetSensitivity),
+    /// Picture profile reset enable status
+    PictureProfileResetEnableStatus(PictureProfileResetEnableStatus),
+    /// Creative look reset enable status
+    CreativeLookResetEnableStatus(CreativeLookResetEnableStatus),
+    /// Timecode preset reset enable status
+    TimeCodePresetResetEnableStatus(TimeCodePresetResetEnableStatus),
+
     /// Percentage value
     Percentage(Percentage),
     /// Generic integer value
@@ -679,6 +733,73 @@ impl TypedValue {
             PVT::SilentModeApertureDrive => SilentModeApertureDrive::from_raw(raw)
                 .map(TypedValue::SilentModeApertureDrive)
                 .unwrap_or(TypedValue::Unknown(raw)),
+            // Focus status types
+            PVT::FocusDrivingStatus => FocusDrivingStatus::from_raw(raw)
+                .map(TypedValue::FocusDrivingStatus)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::FocusBracketShootingStatus => FocusBracketShootingStatus::from_raw(raw)
+                .map(TypedValue::FocusBracketShootingStatus)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::FocusTouchSpotStatus => FocusTouchSpotStatus::from_raw(raw)
+                .map(TypedValue::FocusTouchSpotStatus)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::FocusBracketOrder => FocusBracketOrder::from_raw(raw)
+                .map(TypedValue::FocusBracketOrder)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::PushAutoFocus => PushAutoFocus::from_raw(raw)
+                .map(TypedValue::PushAutoFocus)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::FocusOperationWithInt16EnableStatus => {
+                FocusOperationWithInt16EnableStatus::from_raw(raw)
+                    .map(TypedValue::FocusOperationWithInt16EnableStatus)
+                    .unwrap_or(TypedValue::Unknown(raw))
+            }
+            // Movie format types
+            PVT::MovieShootingModeColorGamut => MovieShootingModeColorGamut::from_raw(raw)
+                .map(TypedValue::MovieShootingModeColorGamut)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::MovieShootingModeTargetDisplay => MovieShootingModeTargetDisplay::from_raw(raw)
+                .map(TypedValue::MovieShootingModeTargetDisplay)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::RecorderSaveDestination => RecorderSaveDestination::from_raw(raw)
+                .map(TypedValue::RecorderSaveDestination)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::VideoRecordingFormatQuality => VideoRecordingFormatQuality::from_raw(raw)
+                .map(TypedValue::VideoRecordingFormatQuality)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::RecordingFolderFormat => RecordingFolderFormat::from_raw(raw)
+                .map(TypedValue::RecordingFolderFormat)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::MoviePlayingState => MoviePlayingState::from_raw(raw)
+                .map(TypedValue::MoviePlayingState)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::MovieRecReviewPlayingState => MovieRecReviewPlayingState::from_raw(raw)
+                .map(TypedValue::MovieRecReviewPlayingState)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::PlaybackContentsGammaType => PlaybackContentsGammaType::from_raw(raw)
+                .map(TypedValue::PlaybackContentsGammaType)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            // Picture profile control types
+            PVT::PictureProfileDetailAdjustMode => PictureProfileDetailAdjustMode::from_raw(raw)
+                .map(TypedValue::PictureProfileDetailAdjustMode)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::PictureProfileKneeMode => PictureProfileKneeMode::from_raw(raw)
+                .map(TypedValue::PictureProfileKneeMode)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::PictureProfileKneeAutoSetSensitivity => {
+                PictureProfileKneeAutoSetSensitivity::from_raw(raw)
+                    .map(TypedValue::PictureProfileKneeAutoSetSensitivity)
+                    .unwrap_or(TypedValue::Unknown(raw))
+            }
+            PVT::PictureProfileResetEnableStatus => PictureProfileResetEnableStatus::from_raw(raw)
+                .map(TypedValue::PictureProfileResetEnableStatus)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::CreativeLookResetEnableStatus => CreativeLookResetEnableStatus::from_raw(raw)
+                .map(TypedValue::CreativeLookResetEnableStatus)
+                .unwrap_or(TypedValue::Unknown(raw)),
+            PVT::TimeCodePresetResetEnableStatus => TimeCodePresetResetEnableStatus::from_raw(raw)
+                .map(TypedValue::TimeCodePresetResetEnableStatus)
+                .unwrap_or(TypedValue::Unknown(raw)),
             PVT::OnOff => OnOff::from_raw(raw)
                 .map(TypedValue::OnOff)
                 .unwrap_or(TypedValue::Unknown(raw)),
@@ -848,6 +969,29 @@ impl TypedValue {
             TypedValue::LiveViewDisplayEffect(v) => v.to_raw(),
             TypedValue::LiveViewProtocol(v) => v.to_raw(),
             TypedValue::SilentModeApertureDrive(v) => v.to_raw(),
+            // Focus status types
+            TypedValue::FocusDrivingStatus(v) => v.to_raw(),
+            TypedValue::FocusBracketShootingStatus(v) => v.to_raw(),
+            TypedValue::FocusTouchSpotStatus(v) => v.to_raw(),
+            TypedValue::FocusBracketOrder(v) => v.to_raw(),
+            TypedValue::PushAutoFocus(v) => v.to_raw(),
+            TypedValue::FocusOperationWithInt16EnableStatus(v) => v.to_raw(),
+            // Movie format types
+            TypedValue::MovieShootingModeColorGamut(v) => v.to_raw(),
+            TypedValue::MovieShootingModeTargetDisplay(v) => v.to_raw(),
+            TypedValue::RecorderSaveDestination(v) => v.to_raw(),
+            TypedValue::VideoRecordingFormatQuality(v) => v.to_raw(),
+            TypedValue::RecordingFolderFormat(v) => v.to_raw(),
+            TypedValue::MoviePlayingState(v) => v.to_raw(),
+            TypedValue::MovieRecReviewPlayingState(v) => v.to_raw(),
+            TypedValue::PlaybackContentsGammaType(v) => v.to_raw(),
+            // Picture profile control types
+            TypedValue::PictureProfileDetailAdjustMode(v) => v.to_raw(),
+            TypedValue::PictureProfileKneeMode(v) => v.to_raw(),
+            TypedValue::PictureProfileKneeAutoSetSensitivity(v) => v.to_raw(),
+            TypedValue::PictureProfileResetEnableStatus(v) => v.to_raw(),
+            TypedValue::CreativeLookResetEnableStatus(v) => v.to_raw(),
+            TypedValue::TimeCodePresetResetEnableStatus(v) => v.to_raw(),
             TypedValue::Percentage(v) => v.to_raw(),
             TypedValue::Integer(v) => v.to_raw(),
             TypedValue::Unknown(v) => *v,
@@ -981,6 +1125,29 @@ impl fmt::Display for TypedValue {
             TypedValue::LiveViewDisplayEffect(v) => write!(f, "{}", v),
             TypedValue::LiveViewProtocol(v) => write!(f, "{}", v),
             TypedValue::SilentModeApertureDrive(v) => write!(f, "{}", v),
+            // Focus status types
+            TypedValue::FocusDrivingStatus(v) => write!(f, "{}", v),
+            TypedValue::FocusBracketShootingStatus(v) => write!(f, "{}", v),
+            TypedValue::FocusTouchSpotStatus(v) => write!(f, "{}", v),
+            TypedValue::FocusBracketOrder(v) => write!(f, "{}", v),
+            TypedValue::PushAutoFocus(v) => write!(f, "{}", v),
+            TypedValue::FocusOperationWithInt16EnableStatus(v) => write!(f, "{}", v),
+            // Movie format types
+            TypedValue::MovieShootingModeColorGamut(v) => write!(f, "{}", v),
+            TypedValue::MovieShootingModeTargetDisplay(v) => write!(f, "{}", v),
+            TypedValue::RecorderSaveDestination(v) => write!(f, "{}", v),
+            TypedValue::VideoRecordingFormatQuality(v) => write!(f, "{}", v),
+            TypedValue::RecordingFolderFormat(v) => write!(f, "{}", v),
+            TypedValue::MoviePlayingState(v) => write!(f, "{}", v),
+            TypedValue::MovieRecReviewPlayingState(v) => write!(f, "{}", v),
+            TypedValue::PlaybackContentsGammaType(v) => write!(f, "{}", v),
+            // Picture profile control types
+            TypedValue::PictureProfileDetailAdjustMode(v) => write!(f, "{}", v),
+            TypedValue::PictureProfileKneeMode(v) => write!(f, "{}", v),
+            TypedValue::PictureProfileKneeAutoSetSensitivity(v) => write!(f, "{}", v),
+            TypedValue::PictureProfileResetEnableStatus(v) => write!(f, "{}", v),
+            TypedValue::CreativeLookResetEnableStatus(v) => write!(f, "{}", v),
+            TypedValue::TimeCodePresetResetEnableStatus(v) => write!(f, "{}", v),
             TypedValue::Percentage(v) => write!(f, "{}", v),
             TypedValue::Integer(v) => write!(f, "{}", v),
             TypedValue::Unknown(v) => write!(f, "0x{:X}", v),

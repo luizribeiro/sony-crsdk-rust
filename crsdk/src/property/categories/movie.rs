@@ -58,13 +58,13 @@ impl Category for Movie {
             C::MovieShootingModeColorGamut,
             "Movie Gamut",
             "Color gamut for movie shooting.",
-            Some(V::Integer),
+            Some(V::MovieShootingModeColorGamut),
         ),
         PropertyDef::new(
             C::MovieShootingModeTargetDisplay,
             "Target Display",
             "Target display type for movie shooting.",
-            Some(V::Integer),
+            Some(V::MovieShootingModeTargetDisplay),
         ),
         PropertyDef::new(
             C::RecorderControlProxySetting,
@@ -268,7 +268,7 @@ impl Category for Movie {
             C::RecorderSaveDestination,
             "Save Destination",
             "Destination for recorded footage.",
-            Some(V::Integer),
+            Some(V::RecorderSaveDestination),
         ),
         PropertyDef::new(
             C::RecorderMainStatus,
@@ -286,7 +286,7 @@ impl Category for Movie {
             C::RecordingFolderFormat,
             "Folder Format",
             "Recording folder structure format.",
-            Some(V::Integer),
+            Some(V::RecordingFolderFormat),
         ),
         PropertyDef::new(
             C::RecordingFileNumber,
@@ -310,7 +310,7 @@ impl Category for Movie {
             C::VideoRecordingFormatQuality,
             "Rec Quality",
             "Video recording quality level.",
-            Some(V::Integer),
+            Some(V::VideoRecordingFormatQuality),
         ),
         PropertyDef::new(
             C::VideoRecordingFormatBitrateSetting,
@@ -334,7 +334,7 @@ impl Category for Movie {
             C::TimeCodePresetResetEnableStatus,
             "TC Reset",
             "Whether timecode preset can be reset.",
-            Some(V::Integer),
+            Some(V::TimeCodePresetResetEnableStatus),
         ),
         PropertyDef::new(
             C::MovieIntervalRecIntervalTime,
@@ -418,7 +418,7 @@ impl Category for Movie {
             C::MovieRecReviewPlayingState,
             "Review State",
             "Playback state during recording review.",
-            Some(V::Integer),
+            Some(V::MovieRecReviewPlayingState),
         ),
         PropertyDef::new(
             C::MoviePlayingSpeed,
@@ -430,7 +430,7 @@ impl Category for Movie {
             C::MoviePlayingState,
             "Play State",
             "Current movie playback state.",
-            Some(V::Integer),
+            Some(V::MoviePlayingState),
         ),
         PropertyDef::new(
             C::RecorderStartProxy,

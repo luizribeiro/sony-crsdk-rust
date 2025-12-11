@@ -112,7 +112,7 @@ impl Category for Focus {
             C::FocusBracketOrder,
             "Focus Brkt Order",
             "Direction of focus movement through the bracket sequence. Start from near or far end of the focus range.",
-            Some(V::Integer),
+            Some(V::FocusBracketOrder),
         ),
         PropertyDef::new(
             C::FocusBracketExposureLock1stImg,
@@ -226,7 +226,7 @@ impl Category for Focus {
             C::PushAutoFocus,
             "Push AF",
             "Activates autofocus once. Similar to back-button focus—camera focuses then stops.",
-            Some(V::Integer),
+            Some(V::PushAutoFocus),
         ),
         PropertyDef::new(
             C::FocusSpeedDirectSync,
@@ -262,7 +262,7 @@ impl Category for Focus {
             C::FocusTouchSpotStatus,
             "Touch Focus Status",
             "Shows if touch-to-focus is active at a specific screen position.",
-            Some(V::Integer),
+            Some(V::FocusTouchSpotStatus),
         ),
         PropertyDef::new(
             C::FocusTrackingStatus,
@@ -280,7 +280,7 @@ impl Category for Focus {
             C::FocusBracketShootingStatus,
             "Focus Brkt Status",
             "Current state of focus bracket shooting. Shows if a bracket sequence is in progress.",
-            Some(V::Integer),
+            Some(V::FocusBracketShootingStatus),
         ),
         PropertyDef::new(
             C::FocusPositionCurrentValue,
@@ -292,7 +292,7 @@ impl Category for Focus {
             C::FocusDrivingStatus,
             "Focus Drive Status",
             "Current state of the focus motor. Shows if focus is moving, stopped, or actively adjusting.",
-            Some(V::Integer),
+            Some(V::FocusDrivingStatus),
         ),
         PropertyDef::new(
             C::ZoomAndFocusPresetDataVersion,
@@ -310,7 +310,7 @@ impl Category for Focus {
             C::FocusOperationWithInt16EnableStatus,
             "Focus 16-bit Avail",
             "Indicates whether 16-bit precision focus control is available on this camera.",
-            Some(V::Integer),
+            Some(V::FocusOperationWithInt16EnableStatus),
         ),
     ];
 }

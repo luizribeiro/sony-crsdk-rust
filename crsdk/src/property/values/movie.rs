@@ -477,6 +477,338 @@ impl fmt::Display for MovieShootingMode {
     }
 }
 
+/// Movie shooting mode color gamut.
+///
+/// Color gamut selection for movie shooting modes like Cine EI.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum MovieShootingModeColorGamut {
+    /// S-Gamut3.Cine color gamut
+    SGamut3Cine = 0x01,
+    /// S-Gamut3 color gamut
+    SGamut3 = 0x02,
+}
+
+impl ToCrsdk<u64> for MovieShootingModeColorGamut {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for MovieShootingModeColorGamut {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::SGamut3Cine,
+            0x02 => Self::SGamut3,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for MovieShootingModeColorGamut {}
+
+impl fmt::Display for MovieShootingModeColorGamut {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::SGamut3Cine => write!(f, "S-Gamut3.Cine"),
+            Self::SGamut3 => write!(f, "S-Gamut3"),
+        }
+    }
+}
+
+/// Movie shooting mode target display.
+///
+/// Target display color space for movie output.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum MovieShootingModeTargetDisplay {
+    /// BT.709 (standard HD)
+    BT709 = 0x01,
+    /// BT.2020 (wide color gamut for HDR)
+    BT2020 = 0x02,
+}
+
+impl ToCrsdk<u64> for MovieShootingModeTargetDisplay {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for MovieShootingModeTargetDisplay {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::BT709,
+            0x02 => Self::BT2020,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for MovieShootingModeTargetDisplay {}
+
+impl fmt::Display for MovieShootingModeTargetDisplay {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::BT709 => write!(f, "BT.709"),
+            Self::BT2020 => write!(f, "BT.2020"),
+        }
+    }
+}
+
+/// Recorder save destination.
+///
+/// Where recorded footage is saved (internal, external, or both).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum RecorderSaveDestination {
+    /// External media only
+    External = 0x0001,
+    /// Internal media only
+    Internal = 0x0010,
+    /// Both external and internal media
+    ExternalAndInternal = 0x0011,
+}
+
+impl ToCrsdk<u64> for RecorderSaveDestination {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for RecorderSaveDestination {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0001 => Self::External,
+            0x0010 => Self::Internal,
+            0x0011 => Self::ExternalAndInternal,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for RecorderSaveDestination {}
+
+impl fmt::Display for RecorderSaveDestination {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::External => write!(f, "External"),
+            Self::Internal => write!(f, "Internal"),
+            Self::ExternalAndInternal => write!(f, "Ext+Int"),
+        }
+    }
+}
+
+/// Video recording format quality level.
+///
+/// Quality tier for video recording.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum VideoRecordingFormatQuality {
+    /// Quality level 1 (highest)
+    Level1 = 0x0001,
+    /// Quality level 2
+    Level2 = 0x0002,
+    /// Quality level 3
+    Level3 = 0x0003,
+}
+
+impl ToCrsdk<u64> for VideoRecordingFormatQuality {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for VideoRecordingFormatQuality {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0001 => Self::Level1,
+            0x0002 => Self::Level2,
+            0x0003 => Self::Level3,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for VideoRecordingFormatQuality {}
+
+impl fmt::Display for VideoRecordingFormatQuality {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Level1 => write!(f, "Level 1"),
+            Self::Level2 => write!(f, "Level 2"),
+            Self::Level3 => write!(f, "Level 3"),
+        }
+    }
+}
+
+/// Recording folder format.
+///
+/// How recording folders are organized.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum RecordingFolderFormat {
+    /// Standard folder format
+    Standard = 0x01,
+    /// Date-based folder format
+    Date = 0x02,
+}
+
+impl ToCrsdk<u64> for RecordingFolderFormat {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for RecordingFolderFormat {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Standard,
+            0x02 => Self::Date,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for RecordingFolderFormat {}
+
+impl fmt::Display for RecordingFolderFormat {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Standard => write!(f, "Standard"),
+            Self::Date => write!(f, "Date"),
+        }
+    }
+}
+
+/// Movie playing state.
+///
+/// Current state of movie playback.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum MoviePlayingState {
+    /// Not currently playing
+    NotPlaying = 0x00,
+    /// Currently playing
+    Playing = 0x01,
+}
+
+impl ToCrsdk<u64> for MoviePlayingState {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for MoviePlayingState {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x00 => Self::NotPlaying,
+            0x01 => Self::Playing,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for MoviePlayingState {}
+
+impl fmt::Display for MoviePlayingState {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::NotPlaying => write!(f, "Stopped"),
+            Self::Playing => write!(f, "Playing"),
+        }
+    }
+}
+
+/// Movie recording review playing state.
+///
+/// Playback state during recording review.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum MovieRecReviewPlayingState {
+    /// Review not playing
+    NotPlaying = 0x00,
+    /// Review playing
+    Playing = 0x01,
+}
+
+impl ToCrsdk<u64> for MovieRecReviewPlayingState {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for MovieRecReviewPlayingState {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x00 => Self::NotPlaying,
+            0x01 => Self::Playing,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for MovieRecReviewPlayingState {}
+
+impl fmt::Display for MovieRecReviewPlayingState {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::NotPlaying => write!(f, "Stopped"),
+            Self::Playing => write!(f, "Playing"),
+        }
+    }
+}
+
+/// Playback contents gamma type.
+///
+/// Gamma type of the content being played back.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum PlaybackContentsGammaType {
+    /// S-Gamut3 with S-Log3
+    SGamut3SLog3 = 0x0001,
+    /// S-Gamut3.Cine with S-Log3
+    SGamut3CineSLog3 = 0x0002,
+    /// BT.2020 with HLG
+    BT2020HLG = 0x0003,
+    /// BT.2020 with S-Log3
+    BT2020SLog3 = 0x0004,
+    /// Other gamma types
+    Others = 0xFFFF,
+}
+
+impl ToCrsdk<u64> for PlaybackContentsGammaType {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for PlaybackContentsGammaType {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0001 => Self::SGamut3SLog3,
+            0x0002 => Self::SGamut3CineSLog3,
+            0x0003 => Self::BT2020HLG,
+            0x0004 => Self::BT2020SLog3,
+            0xFFFF => Self::Others,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for PlaybackContentsGammaType {}
+
+impl fmt::Display for PlaybackContentsGammaType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::SGamut3SLog3 => write!(f, "S-Gamut3/S-Log3"),
+            Self::SGamut3CineSLog3 => write!(f, "S-Gamut3.Cine/S-Log3"),
+            Self::BT2020HLG => write!(f, "BT.2020/HLG"),
+            Self::BT2020SLog3 => write!(f, "BT.2020/S-Log3"),
+            Self::Others => write!(f, "Other"),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

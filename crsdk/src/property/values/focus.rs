@@ -491,6 +491,201 @@ impl fmt::Display for TrackingFrameType {
     }
 }
 
+/// Focus motor driving status.
+///
+/// Indicates whether the focus motor is currently moving or stationary.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum FocusDrivingStatus {
+    /// Focus motor is not driving
+    NotDriving = 0x01,
+    /// Focus motor is actively driving
+    Driving = 0x02,
+}
+
+impl ToCrsdk<u64> for FocusDrivingStatus {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for FocusDrivingStatus {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::NotDriving,
+            0x02 => Self::Driving,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for FocusDrivingStatus {}
+
+impl fmt::Display for FocusDrivingStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::NotDriving => write!(f, "Stopped"),
+            Self::Driving => write!(f, "Driving"),
+        }
+    }
+}
+
+/// Focus bracket shooting status.
+///
+/// Indicates whether a focus bracket sequence is currently in progress.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum FocusBracketShootingStatus {
+    /// Not shooting focus bracket sequence
+    NotShooting = 0x00,
+    /// Actively shooting focus bracket sequence
+    Shooting = 0x01,
+}
+
+impl ToCrsdk<u64> for FocusBracketShootingStatus {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for FocusBracketShootingStatus {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x00 => Self::NotShooting,
+            0x01 => Self::Shooting,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for FocusBracketShootingStatus {}
+
+impl fmt::Display for FocusBracketShootingStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::NotShooting => write!(f, "Idle"),
+            Self::Shooting => write!(f, "Shooting"),
+        }
+    }
+}
+
+/// Focus touch spot status.
+///
+/// Indicates whether touch-to-focus is active at a screen position.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum FocusTouchSpotStatus {
+    /// Touch focus is stopped/inactive
+    Stopped = 0x01,
+    /// Touch focus is running/active
+    Running = 0x02,
+}
+
+impl ToCrsdk<u64> for FocusTouchSpotStatus {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for FocusTouchSpotStatus {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Stopped,
+            0x02 => Self::Running,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for FocusTouchSpotStatus {}
+
+impl fmt::Display for FocusTouchSpotStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Stopped => write!(f, "Stopped"),
+            Self::Running => write!(f, "Running"),
+        }
+    }
+}
+
+/// Focus bracket order.
+///
+/// Direction of focus movement through the bracket sequence.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum FocusBracketOrder {
+    /// Start at focus point, go to minus (near), then to plus (far)
+    ZeroToMinusToPlus = 0x01,
+    /// Start at focus point, go only to plus (far)
+    ZeroToPlus = 0x02,
+}
+
+impl ToCrsdk<u64> for FocusBracketOrder {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for FocusBracketOrder {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::ZeroToMinusToPlus,
+            0x02 => Self::ZeroToPlus,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for FocusBracketOrder {}
+
+impl fmt::Display for FocusBracketOrder {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::ZeroToMinusToPlus => write!(f, "0→-→+"),
+            Self::ZeroToPlus => write!(f, "0→+"),
+        }
+    }
+}
+
+/// Push auto focus action.
+///
+/// Triggers a single autofocus action.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum PushAutoFocus {
+    /// Release/up (stop AF)
+    Up = 0x0001,
+    /// Press/down (start AF)
+    Down = 0x0002,
+}
+
+impl ToCrsdk<u64> for PushAutoFocus {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for PushAutoFocus {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u16 {
+            0x0001 => Self::Up,
+            0x0002 => Self::Down,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for PushAutoFocus {}
+
+impl fmt::Display for PushAutoFocus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Up => write!(f, "Up"),
+            Self::Down => write!(f, "Down"),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

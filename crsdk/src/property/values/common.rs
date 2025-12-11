@@ -251,6 +251,52 @@ pub enum PropertyValueType {
     /// Frame info type
     FrameInfoType,
 
+    // Focus status types
+    /// Focus motor driving status
+    FocusDrivingStatus,
+    /// Focus bracket shooting status
+    FocusBracketShootingStatus,
+    /// Focus touch spot status
+    FocusTouchSpotStatus,
+    /// Focus bracket order
+    FocusBracketOrder,
+    /// Push auto focus action
+    PushAutoFocus,
+    /// Focus operation 16-bit enable status
+    FocusOperationWithInt16EnableStatus,
+
+    // Movie format types
+    /// Movie shooting mode color gamut
+    MovieShootingModeColorGamut,
+    /// Movie shooting mode target display
+    MovieShootingModeTargetDisplay,
+    /// Recorder save destination
+    RecorderSaveDestination,
+    /// Video recording format quality
+    VideoRecordingFormatQuality,
+    /// Recording folder format
+    RecordingFolderFormat,
+    /// Movie playing state
+    MoviePlayingState,
+    /// Movie recording review playing state
+    MovieRecReviewPlayingState,
+    /// Playback contents gamma type
+    PlaybackContentsGammaType,
+
+    // Picture profile control types
+    /// Picture profile detail adjustment mode
+    PictureProfileDetailAdjustMode,
+    /// Picture profile knee mode
+    PictureProfileKneeMode,
+    /// Picture profile knee auto-set sensitivity
+    PictureProfileKneeAutoSetSensitivity,
+    /// Picture profile reset enable status
+    PictureProfileResetEnableStatus,
+    /// Creative look reset enable status
+    CreativeLookResetEnableStatus,
+    /// Timecode preset reset enable status
+    TimeCodePresetResetEnableStatus,
+
     // Generic toggle types
     /// On/Off toggle (0=Off, 1=On)
     OnOff,
@@ -3610,6 +3656,284 @@ impl fmt::Display for PictureProfileBlackGammaRange {
             Self::Wide => write!(f, "Wide"),
             Self::Middle => write!(f, "Middle"),
             Self::Narrow => write!(f, "Narrow"),
+        }
+    }
+}
+
+/// Picture profile detail adjustment mode.
+///
+/// Controls whether detail (sharpening) is adjusted automatically or manually.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum PictureProfileDetailAdjustMode {
+    /// Automatic detail adjustment
+    Auto = 0x01,
+    /// Manual detail adjustment
+    Manual = 0x02,
+}
+
+impl ToCrsdk<u64> for PictureProfileDetailAdjustMode {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for PictureProfileDetailAdjustMode {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Auto,
+            0x02 => Self::Manual,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for PictureProfileDetailAdjustMode {}
+
+impl fmt::Display for PictureProfileDetailAdjustMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Auto => write!(f, "Auto"),
+            Self::Manual => write!(f, "Manual"),
+        }
+    }
+}
+
+/// Picture profile knee mode.
+///
+/// Controls highlight compression mode. Auto adjusts dynamically,
+/// Manual gives direct control over knee point and slope.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(i8)]
+pub enum PictureProfileKneeMode {
+    /// Automatic knee adjustment
+    Auto = 0x01,
+    /// Manual knee adjustment
+    Manual = 0x02,
+}
+
+impl ToCrsdk<u64> for PictureProfileKneeMode {
+    fn to_crsdk(&self) -> u64 {
+        *self as i8 as u64
+    }
+}
+
+impl FromCrsdk<u64> for PictureProfileKneeMode {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as i8 {
+            0x01 => Self::Auto,
+            0x02 => Self::Manual,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for PictureProfileKneeMode {}
+
+impl fmt::Display for PictureProfileKneeMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Auto => write!(f, "Auto"),
+            Self::Manual => write!(f, "Manual"),
+        }
+    }
+}
+
+/// Picture profile knee auto-set sensitivity.
+///
+/// Controls how aggressively auto knee compression responds to highlights.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum PictureProfileKneeAutoSetSensitivity {
+    /// Low sensitivity (less aggressive compression)
+    Low = 0x01,
+    /// Medium sensitivity
+    Mid = 0x02,
+    /// High sensitivity (more aggressive compression)
+    High = 0x03,
+}
+
+impl ToCrsdk<u64> for PictureProfileKneeAutoSetSensitivity {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for PictureProfileKneeAutoSetSensitivity {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x01 => Self::Low,
+            0x02 => Self::Mid,
+            0x03 => Self::High,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for PictureProfileKneeAutoSetSensitivity {}
+
+impl fmt::Display for PictureProfileKneeAutoSetSensitivity {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Low => write!(f, "Low"),
+            Self::Mid => write!(f, "Mid"),
+            Self::High => write!(f, "High"),
+        }
+    }
+}
+
+/// Picture profile reset enable status.
+///
+/// Indicates whether the picture profile can be reset.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum PictureProfileResetEnableStatus {
+    /// Reset is disabled
+    Disable = 0x00,
+    /// Reset is enabled
+    Enable = 0x01,
+}
+
+impl ToCrsdk<u64> for PictureProfileResetEnableStatus {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for PictureProfileResetEnableStatus {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x00 => Self::Disable,
+            0x01 => Self::Enable,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for PictureProfileResetEnableStatus {}
+
+impl fmt::Display for PictureProfileResetEnableStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Disable => write!(f, "Disabled"),
+            Self::Enable => write!(f, "Enabled"),
+        }
+    }
+}
+
+/// Creative look reset enable status.
+///
+/// Indicates whether the creative look can be reset.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum CreativeLookResetEnableStatus {
+    /// Reset is disabled
+    Disable = 0x00,
+    /// Reset is enabled
+    Enable = 0x01,
+}
+
+impl ToCrsdk<u64> for CreativeLookResetEnableStatus {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for CreativeLookResetEnableStatus {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x00 => Self::Disable,
+            0x01 => Self::Enable,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for CreativeLookResetEnableStatus {}
+
+impl fmt::Display for CreativeLookResetEnableStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Disable => write!(f, "Disabled"),
+            Self::Enable => write!(f, "Enabled"),
+        }
+    }
+}
+
+/// Timecode preset reset enable status.
+///
+/// Indicates whether the timecode preset can be reset.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum TimeCodePresetResetEnableStatus {
+    /// Reset is disabled
+    Disable = 0x00,
+    /// Reset is enabled
+    Enable = 0x01,
+}
+
+impl ToCrsdk<u64> for TimeCodePresetResetEnableStatus {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for TimeCodePresetResetEnableStatus {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x00 => Self::Disable,
+            0x01 => Self::Enable,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for TimeCodePresetResetEnableStatus {}
+
+impl fmt::Display for TimeCodePresetResetEnableStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Disable => write!(f, "Disabled"),
+            Self::Enable => write!(f, "Enabled"),
+        }
+    }
+}
+
+/// Focus operation with 16-bit precision enable status.
+///
+/// Indicates whether 16-bit precision focus control is available.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum FocusOperationWithInt16EnableStatus {
+    /// 16-bit focus operation is disabled
+    Disable = 0x00,
+    /// 16-bit focus operation is enabled
+    Enable = 0x01,
+}
+
+impl ToCrsdk<u64> for FocusOperationWithInt16EnableStatus {
+    fn to_crsdk(&self) -> u64 {
+        *self as u64
+    }
+}
+
+impl FromCrsdk<u64> for FocusOperationWithInt16EnableStatus {
+    fn from_crsdk(raw: u64) -> Result<Self> {
+        Ok(match raw as u8 {
+            0x00 => Self::Disable,
+            0x01 => Self::Enable,
+            _ => return Err(Error::InvalidPropertyValue),
+        })
+    }
+}
+
+impl PropertyValue for FocusOperationWithInt16EnableStatus {}
+
+impl fmt::Display for FocusOperationWithInt16EnableStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Disable => write!(f, "Disabled"),
+            Self::Enable => write!(f, "Enabled"),
         }
     }
 }

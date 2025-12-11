@@ -30,21 +30,25 @@ pub use common::{
     AFTrackForSpeedChange, AFTrackingSensitivity, ApertureDriveInAF, AudioInputCHInputSelect,
     AudioSignals, AudioStreamBitDepth, AudioStreamChannel, AutoManual, AutoPowerOffTemperature,
     BatteryRemainDisplayUnit, CameraOperatingMode, ColorSpace, CompressionFileFormat, CreativeLook,
-    CustomWBSizeSetting, DRangeOptimizer, DeviceOverheatingState, DispMode,
-    EframingProductionEffect, EframingType, FTPConnectionStatus, FaceFrameType, FocusFrameType,
-    FocusOperation, FrameInfoType, FunctionOfTouchOperation, GainBaseSensitivity, GridLineType,
-    HighIsoNR, ImageStabilizationLevelMovie, ImageStabilizationSteadyShotMovie, ImagerScanMode,
-    Integer, IntervalRecMode, IntervalRecStatus, IrisDisplayUnit, IsoAutoMinShutterSpeedMode,
+    CreativeLookResetEnableStatus, CustomWBSizeSetting, DRangeOptimizer, DeviceOverheatingState,
+    DispMode, EframingProductionEffect, EframingType, FTPConnectionStatus, FaceFrameType,
+    FocusFrameType, FocusOperation, FocusOperationWithInt16EnableStatus, FrameInfoType,
+    FunctionOfTouchOperation, GainBaseSensitivity, GridLineType, HighIsoNR,
+    ImageStabilizationLevelMovie, ImageStabilizationSteadyShotMovie, ImagerScanMode, Integer,
+    IntervalRecMode, IntervalRecStatus, IrisDisplayUnit, IsoAutoMinShutterSpeedMode,
     IsoAutoMinShutterSpeedPreset, LensCompensationShading, LiveViewDisplayEffect, LiveViewProtocol,
     LockIndicator, MonitoringOutputFormat, NDFilterMode, NearFarEnableStatus, OnOff, Percentage,
     PictureEffect, PictureProfile, PictureProfileBlackGammaRange, PictureProfileColorMode,
-    PictureProfileGamma, PlaybackMedia, PowerSource, PriorityKeySettings, PropertyValueType,
-    RAWFileCompressionType, RecordingMedia, RecordingMediaMovie, RemoconZoomSpeedType,
-    RightLeftEyeSelect, SdkControlMode, SelectFinder, ShutterReleaseTimeLagControl, ShutterType,
-    SilentModeApertureDrive, SoftSkinEffect, StillImageStoreDestination, StreamCipherType,
-    StreamStatus, SubjectRecognitionAnimalBirdDetectionParts, SubjectRecognitionAnimalBirdPriority,
-    Switch, TCUBDisplaySetting, TimeShiftTriggerSetting, TouchOperation, VideoStreamCodec,
-    WindNoiseReduction, ZoomDrivingStatus, ZoomOperation, ZoomTypeStatus, APSC_S35,
+    PictureProfileDetailAdjustMode, PictureProfileGamma, PictureProfileKneeAutoSetSensitivity,
+    PictureProfileKneeMode, PictureProfileResetEnableStatus, PlaybackMedia, PowerSource,
+    PriorityKeySettings, PropertyValueType, RAWFileCompressionType, RecordingMedia,
+    RecordingMediaMovie, RemoconZoomSpeedType, RightLeftEyeSelect, SdkControlMode, SelectFinder,
+    ShutterReleaseTimeLagControl, ShutterType, SilentModeApertureDrive, SoftSkinEffect,
+    StillImageStoreDestination, StreamCipherType, StreamStatus,
+    SubjectRecognitionAnimalBirdDetectionParts, SubjectRecognitionAnimalBirdPriority, Switch,
+    TCUBDisplaySetting, TimeCodePresetResetEnableStatus, TimeShiftTriggerSetting, TouchOperation,
+    VideoStreamCodec, WindNoiseReduction, ZoomDrivingStatus, ZoomOperation, ZoomTypeStatus,
+    APSC_S35,
 };
 pub use drive::{DriveMode, IntervalRecShutterType};
 pub use exposure::{
@@ -53,14 +57,17 @@ pub use exposure::{
 };
 pub use flash::FlashMode;
 pub use focus::{
-    FocusArea, FocusFrameState, FocusIndicator, FocusMode, FocusTrackingStatus, PrioritySetInAF,
-    SubjectRecognitionAF, TrackingFrameType,
+    FocusArea, FocusBracketOrder, FocusBracketShootingStatus, FocusDrivingStatus, FocusFrameState,
+    FocusIndicator, FocusMode, FocusTouchSpotStatus, FocusTrackingStatus, PrioritySetInAF,
+    PushAutoFocus, SubjectRecognitionAF, TrackingFrameType,
 };
 pub use image::{AspectRatio, FileType, ImageQuality, ImageSize};
 pub use media::{LiveViewStatus, MediaSlotRecordingType, MediaSlotWritingState, SlotStatus};
 pub use movie::{
-    MovieFileFormat, MovieQuality, MovieShootingMode, RecorderStatus, RecordingState,
-    TimeCodeFormat, TimeCodeMake, TimeCodeRun,
+    MovieFileFormat, MoviePlayingState, MovieQuality, MovieRecReviewPlayingState,
+    MovieShootingMode, MovieShootingModeColorGamut, MovieShootingModeTargetDisplay,
+    PlaybackContentsGammaType, RecorderSaveDestination, RecorderStatus, RecordingFolderFormat,
+    RecordingState, TimeCodeFormat, TimeCodeMake, TimeCodeRun, VideoRecordingFormatQuality,
 };
 pub use power::{BatteryLevel, CameraPowerStatus};
 pub use white_balance::{ColorTemperature, PrioritySetInAWB, WhiteBalance, WhiteBalanceSwitch};
